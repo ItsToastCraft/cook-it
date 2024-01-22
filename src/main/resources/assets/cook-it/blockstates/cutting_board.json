@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "cook-it:block/cutting_board", "uvlock": false },
+    "facing=east":  { "model": "cook-it:block/cutting_board", "y":  90, "uvlock": false },
+    "facing=south": { "model": "cook-it:block/cutting_board", "y": 180, "uvlock": false },
+    "facing=west":  { "model": "cook-it:block/cutting_board", "y": 270, "uvlock": false }
+  }
+}
