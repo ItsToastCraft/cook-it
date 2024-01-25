@@ -35,7 +35,7 @@ public class CuttingBoard extends HorizontalFacingBlock {
     @Override
     public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext ctx) {
         Direction dir = state.get(FACING);
-        switch(dir) {
+        switch (dir) {
             case NORTH, SOUTH:
                 return VoxelShapes.cuboid(0.0625f, 0f, -0.125f, 0.9375f, 0.0625f, 1.125f);
             case EAST, WEST:

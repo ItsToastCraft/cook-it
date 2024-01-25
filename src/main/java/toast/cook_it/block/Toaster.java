@@ -12,7 +12,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.IntProperty;
@@ -28,7 +27,6 @@ import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
-import toast.cook_it.CookIt;
 import toast.cook_it.item.ModItems;
 
 
@@ -36,6 +34,7 @@ public class Toaster extends HorizontalFacingBlock {
     // New blockstate (yippee) | 0 = no bread, 1 = 1 bread, 2 = 2 bread, 3 = 1 toasted, 4 = 2 toasted
 
     public static IntProperty TOASTER_STATE = IntProperty.of("toaster_state", 0, 4);
+
     public Toaster(Settings settings) {
 
         super(settings);
@@ -98,7 +97,7 @@ public class Toaster extends HorizontalFacingBlock {
             }
 
 
-        return ActionResult.SUCCESS;
+            return ActionResult.SUCCESS;
 
         }
 
@@ -121,7 +120,7 @@ public class Toaster extends HorizontalFacingBlock {
     public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
         int toastState = state.get(TOASTER_STATE);
         if (!world.isClient) {
-            world.playSound(null,pos.getX(), pos.getY(), pos.getZ(), SoundEvents.ENTITY_IRON_GOLEM_REPAIR, SoundCategory.MASTER, 1f, 1f);
+            world.playSound(null, pos.getX(), pos.getY(), pos.getZ(), SoundEvents.ENTITY_IRON_GOLEM_REPAIR, SoundCategory.MASTER, 1f, 1f);
         }
         if (toastState == 1) { // 600 ticks = 30 seconds
             world.setBlockState(pos, state.with(TOASTER_STATE, 3));

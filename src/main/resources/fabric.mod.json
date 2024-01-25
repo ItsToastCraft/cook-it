@@ -20,6 +20,11 @@
 		],
 		"fabric-datagen": [
 			"toast.cook_it.CookItDataGenerator"
+		],
+		"client": [
+			{
+				"value": "toast.cook_it.CookItClient"
+			}
 		]
 	},
 	"mixins": [

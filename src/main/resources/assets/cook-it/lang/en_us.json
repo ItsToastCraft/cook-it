@@ -2,5 +2,9 @@
   "item.cook-it.chef_hat": "Chef Hat",
   "item.cook-it.rolling_pin": "Rolling Pin",
   "item.cook-it.knife": "Kitchen Knife",
-  "block.cook-it.cutting_board": "Cutting Board"
+  "item.cook-it.croissant": "Croissant",
+
+  "block.cook-it.cutting_board": "Cutting Board",
+  "block.cook-it.baking_sheet": "Baking Sheet",
+  "block.cook-it.toaster": "Toaster"
 }
