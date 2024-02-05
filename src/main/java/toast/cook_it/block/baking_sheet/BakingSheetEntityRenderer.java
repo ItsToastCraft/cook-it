@@ -26,8 +26,8 @@ public class BakingSheetEntityRenderer implements BlockEntityRenderer<BakingShee
 
             if (!stack.isEmpty()) {
                 matrices.push();
-                matrices.scale(0.5f, 0.5f, 0.5f);
-                matrices.translate((double) (i % 2) / 2 + 0.75, 0.5625, (double) (i % 8) / 6 + 0.5);
+                matrices.scale(0.5625f,0.5625f,0.5625f);
+                matrices.translate((double) (i % 2) / 2.325 + 0.6875f, 0.5625, (double) (i % 8) / 6 + 0.325f);
                 client.getItemRenderer().renderItem(stack, ModelTransformationMode.NONE, light, overlay, matrices, vertexConsumers, blockEntity.getWorld(), 0);
                 matrices.pop();
             }

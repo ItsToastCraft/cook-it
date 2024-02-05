@@ -11,14 +11,14 @@ import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
-import toast.cook_it.block.ModBlocks;
+import toast.cook_it.block.CookItBlocks;
 
 public class BakingSheetEntity extends BlockEntity implements ImplementedInventory {
 
     private final DefaultedList<ItemStack> items = DefaultedList.ofSize(8, ItemStack.EMPTY);
 
     public BakingSheetEntity(BlockPos pos, BlockState state) {
-        super(ModBlocks.BAKING_SHEET_ENTITY, pos, state);
+        super(CookItBlocks.BAKING_SHEET_ENTITY, pos, state);
     }
 
     @Override

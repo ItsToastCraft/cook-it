@@ -2,9 +2,15 @@
   "item.cook-it.chef_hat": "Chef Hat",
   "item.cook-it.rolling_pin": "Rolling Pin",
   "item.cook-it.knife": "Kitchen Knife",
+  "item.cook-it.butcher_knife": "Butcher Knife",
   "item.cook-it.croissant": "Croissant",
+  "item.cook-it.milk": "Milk",
+  "item.cook-it.fire_extinguisher": "Fire Extinguisher",
+
 
   "block.cook-it.cutting_board": "Cutting Board",
   "block.cook-it.baking_sheet": "Baking Sheet",
-  "block.cook-it.toaster": "Toaster"
+  "block.cook-it.toaster": "Toaster",
+  "block.cook-it.oven": "Oven",
+  "block.cook-it.microwave": "Microwave"
 }

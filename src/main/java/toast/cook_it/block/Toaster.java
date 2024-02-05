@@ -27,7 +27,7 @@ import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
-import toast.cook_it.item.ModItems;
+import toast.cook_it.item.CookItItems;
 
 
 public class Toaster extends HorizontalFacingBlock {
@@ -89,7 +89,7 @@ public class Toaster extends HorizontalFacingBlock {
         if (heldItem.getItem() == Items.AIR) {
 
             if (toastState > 2) {
-                player.getInventory().insertStack(new ItemStack(ModItems.TOAST));
+                player.getInventory().insertStack(new ItemStack(CookItItems.TOAST));
                 world.setBlockState(pos, state.with(TOASTER_STATE, toastState - 1));
                 if (toastState == 3) {
                     world.setBlockState(pos, state.with(TOASTER_STATE, 0));

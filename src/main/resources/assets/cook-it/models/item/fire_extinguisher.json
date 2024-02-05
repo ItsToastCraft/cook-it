@@ -1,0 +1,9 @@
+{
+  "parent": "cook-it:item/fire_extinguisher/fire_extinguisher_full",
+
+  "overrides": [
+    {"predicate": {"extinguisher_fuel":0}, "model": "cook-it:item/fire_extinguisher/fire_extinguisher_full"},
+    {"predicate": {"extinguisher_fuel":1}, "model": "cook-it:item/fire_extinguisher/fire_extinguisher_half"},
+    {"predicate": {"extinguisher_fuel":2}, "model": "cook-it:item/fire_extinguisher/fire_extinguisher_empty"}
+  ]
+}

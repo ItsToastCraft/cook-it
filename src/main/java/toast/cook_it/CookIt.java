@@ -4,8 +4,8 @@ import net.fabricmc.api.ModInitializer;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import toast.cook_it.block.ModBlocks;
-import toast.cook_it.item.ModItems;
+import toast.cook_it.block.CookItBlocks;
+import toast.cook_it.item.CookItItems;
 
 public class CookIt implements ModInitializer {
     // This logger is used to write text to the console and the log file.
@@ -24,8 +24,8 @@ public class CookIt implements ModInitializer {
         // However, some things (like resources) may still be uninitialized.
         // Proceed with mild caution.
         LOGGER.info("Baking pastries...");
-        ModItems.registerItems();
-        ModBlocks.registerBlocks();
+        CookItItems.registerItems();
+        CookItBlocks.registerBlocks();
 
     }
 }
