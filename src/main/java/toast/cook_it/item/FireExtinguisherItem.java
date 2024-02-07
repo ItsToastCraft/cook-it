@@ -36,16 +36,16 @@ public class FireExtinguisherItem extends Item {
         world1.playSound(null, hitPos.x, hitPos.y, hitPos.z, SoundEvents.WEATHER_RAIN, SoundCategory.BLOCKS, 1f, 1f);
 
         // Summons particles and removes fire wherever they land
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 500; i++) {
             double offsetDistance = 4;
 
             double offsetX = -MathHelper.sin((float) playerYaw) * MathHelper.cos((float) playerPitch) * offsetDistance;
             double offsetY = -MathHelper.sin((float) playerPitch) * offsetDistance;
             double offsetZ = MathHelper.cos((float) playerYaw) * MathHelper.cos((float) playerPitch) * offsetDistance;
 
-            double particleX = pos.x + (hitPos.x - pos.x) * i / 100 + offsetX + ((Math.random() * 4) - 2);
-            double particleY = pos.y + 1 + (hitPos.y + 1 - pos.y) * i / 100 + offsetY + Math.random() * 2.5;
-            double particleZ = pos.z + (hitPos.z - pos.z) * i / 100 + offsetZ + ((Math.random() * 4) - 2);
+            double particleX = pos.x + (hitPos.x - pos.x) * i / 1000 + offsetX + ((Math.random() * 4) - 2);
+            double particleY = pos.y + 1 + (hitPos.y + 1 - pos.y) * i / 1000 + offsetY + Math.random() * 2.5;
+            double particleZ = pos.z + (hitPos.z - pos.z) * i / 1000 + offsetZ + ((Math.random() * 4) - 2);
 
             world1.addParticle(ParticleTypes.CLOUD, particleX, particleY, particleZ, 0f, -0.05f, 0f);
 

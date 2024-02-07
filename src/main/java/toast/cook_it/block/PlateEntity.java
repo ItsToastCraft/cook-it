@@ -1,4 +1,4 @@
-package toast.cook_it.block.baking_sheet;
+package toast.cook_it.block;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
@@ -11,15 +11,13 @@ import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
-import toast.cook_it.block.CookItBlocks;
-import toast.cook_it.block.ImplementedInventory;
 
-public class BakingSheetEntity extends BlockEntity implements ImplementedInventory {
+public class PlateEntity extends BlockEntity implements ImplementedInventory {
 
-    private final DefaultedList<ItemStack> items = DefaultedList.ofSize(8, ItemStack.EMPTY);
+    private final DefaultedList<ItemStack> items = DefaultedList.ofSize(1, ItemStack.EMPTY);
 
-    public BakingSheetEntity(BlockPos pos, BlockState state) {
-        super(CookItBlocks.BAKING_SHEET_ENTITY, pos, state);
+    public PlateEntity(BlockPos pos, BlockState state) {
+        super(CookItBlocks.PLATE_ENTITY, pos, state);
     }
 
     @Override

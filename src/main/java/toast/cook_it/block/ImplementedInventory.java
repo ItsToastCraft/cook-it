@@ -1,4 +1,4 @@
-package toast.cook_it.block.baking_sheet;
+package toast.cook_it.block;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventories;

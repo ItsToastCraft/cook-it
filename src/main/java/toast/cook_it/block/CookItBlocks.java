@@ -27,6 +27,12 @@ public class CookItBlocks {
 
     public static final Block MICROWAVE = registerBlock("microwave", new Microwave(FabricBlockSettings.create()));
 
+    public static final Block PLATE = registerBlock("plate", new Plate(FabricBlockSettings.create()));
+
+    public static final BlockEntityType<PlateEntity> PLATE_ENTITY = Registry.register(
+            Registries.BLOCK_ENTITY_TYPE,
+            new Identifier(CookIt.MOD_ID, "plate"), FabricBlockEntityTypeBuilder.create(PlateEntity::new, PLATE).build());
+
     public static Block registerBlock(String name, Block block) {
         registerBlockItem(name, block);
         return Registry.register(Registries.BLOCK, new Identifier(CookIt.MOD_ID, name), block);
