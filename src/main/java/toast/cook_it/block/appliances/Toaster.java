@@ -1,4 +1,4 @@
-package toast.cook_it.block;
+package toast.cook_it.block.appliances;
 
 
 import com.mojang.serialization.MapCodec;
@@ -27,7 +27,7 @@ import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
-import toast.cook_it.item.CookItItems;
+import toast.cook_it.registries.CookItItems;
 
 
 public class Toaster extends HorizontalFacingBlock {

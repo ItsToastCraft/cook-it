@@ -1,4 +1,4 @@
-package toast.cook_it.block.baking_sheet;
+package toast.cook_it.block.containers.baking_sheet;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;

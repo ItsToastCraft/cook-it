@@ -1,13 +1,19 @@
-package toast.cook_it.block.baking_sheet;
+package toast.cook_it.block.containers.baking_sheet;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockEntityProvider;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ShapeContext;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
+import net.minecraft.nbt.NbtList;
+import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
@@ -15,6 +21,8 @@ import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
+
+import java.util.List;
 
 public class BakingSheet extends Block implements BlockEntityProvider {
 
@@ -66,5 +74,25 @@ public class BakingSheet extends Block implements BlockEntityProvider {
     @Override
     public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext ctx) {
         return VoxelShapes.cuboid(0.1875, 0f, 0.0625f, 0.8125f, 0.125f, 0.9375f);
+    }
+    @Override
+    public void appendTooltip(ItemStack stack, BlockView world, List<Text> tooltip, TooltipContext context) {
+        NbtCompound nbt = stack.getSubNbt("BlockEntityTag");
+        if (nbt == null || !nbt.contains("Items")) return;
+
+        NbtList itemsTag = nbt.getList("Items", NbtElement.COMPOUND_TYPE);
+
+        if (!itemsTag.isEmpty()) {
+            tooltip.add((Text.literal("Items:").formatted(Formatting.GRAY)));
+        }
+
+        for (int i = 0; i < itemsTag.size(); i++) {
+            NbtCompound itemTag = itemsTag.getCompound(i);
+            ItemStack itemStack = ItemStack.fromNbt(itemTag);
+            if (!itemStack.isEmpty()) {
+                String itemName = itemStack.getName().getString();
+                tooltip.add((Text.literal(itemName).formatted(Formatting.BLUE)));
+            }
+        }
     }
 }

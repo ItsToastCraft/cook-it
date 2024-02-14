@@ -1,4 +1,4 @@
-package toast.cook_it.block;
+package toast.cook_it.block.containers.plate;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -22,18 +22,15 @@ public class PlateEntityRenderer implements BlockEntityRenderer<PlateEntity> {
     public void render(PlateEntity blockEntity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
         final MinecraftClient client = MinecraftClient.getInstance();
 
+        ItemStack stack = blockEntity.getStack(0);
 
-        for (int i = 0; i < blockEntity.getItems().size(); i++) {
-            ItemStack stack = blockEntity.getStack(i);
-
-            if (!stack.isEmpty()) {
-                matrices.push();
-                matrices.scale(0.5625f,0.5625f,0.5625f);
-                matrices.translate(0.875f, 0.5625, 0.875f);
-                matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(90));
-                client.getItemRenderer().renderItem(stack, ModelTransformationMode.NONE, light, overlay, matrices, vertexConsumers, blockEntity.getWorld(), 0);
-                matrices.pop();
-            }
+        if (!stack.isEmpty()) {
+            matrices.push();
+            matrices.scale(0.5625f,0.5625f,0.5625f);
+            matrices.translate(0.875f, 0.625f, 0.875f);
+            matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(90));
+            client.getItemRenderer().renderItem(stack, ModelTransformationMode.NONE, light, overlay, matrices, vertexConsumers, blockEntity.getWorld(), 0);
+            matrices.pop();
         }
     }
 }

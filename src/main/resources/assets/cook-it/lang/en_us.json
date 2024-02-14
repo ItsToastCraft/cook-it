@@ -7,10 +7,11 @@
   "item.cook-it.milk": "Milk",
   "item.cook-it.fire_extinguisher": "Fire Extinguisher",
 
-
   "block.cook-it.cutting_board": "Cutting Board",
   "block.cook-it.baking_sheet": "Baking Sheet",
   "block.cook-it.toaster": "Toaster",
   "block.cook-it.oven": "Oven",
-  "block.cook-it.microwave": "Microwave"
+  "block.cook-it.microwave": "Microwave",
+  "block.cook-it.plate": "Plate",
+  "block.cook-it.pizza": "Pepperoni Pizza"
 }

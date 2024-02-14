@@ -1,4 +1,4 @@
-package toast.cook_it.item;
+package toast.cook_it.registries;
 
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroupEntries;
@@ -9,9 +9,10 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 import toast.cook_it.CookIt;
+import toast.cook_it.item.FireExtinguisherItem;
 
-import static toast.cook_it.block.CookItBlocks.CUTTING_BOARD;
-import static toast.cook_it.block.CookItBlocks.TOASTER;
+import static toast.cook_it.registries.CookItBlocks.CUTTING_BOARD;
+import static toast.cook_it.registries.CookItBlocks.TOASTER;
 
 public class CookItItems {
 
@@ -29,7 +30,6 @@ public class CookItItems {
     public static final Item MILK = registerItem("milk", new Item(new FabricItemSettings()));
 
     private static void creativeEntries(FabricItemGroupEntries entries) {
-
         entries.add(CHEF_HAT);
         //entries.add(CHEF_SHIRT);
         entries.add(ROLLING_PIN);

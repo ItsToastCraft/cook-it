@@ -1,4 +1,4 @@
-package toast.cook_it.block;
+package toast.cook_it.block.containers;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.block.Block;
