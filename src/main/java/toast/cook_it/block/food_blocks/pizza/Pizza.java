@@ -15,7 +15,7 @@ import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
-import toast.cook_it.registries.CookItBlocks;
+import toast.cook_it.registries.CookItItems;
 
 public class Pizza extends Block {
     public static final IntProperty PIZZA_AMOUNT = IntProperty.of("pizza_amount", 0, 4);
@@ -46,7 +46,7 @@ public class Pizza extends Block {
         } else {
             if (heldItem.isEmpty()) {
                 if (pizzaAmount > 1) {
-                    player.getInventory().offerOrDrop(new ItemStack(CookItBlocks.PIZZA));
+                    player.getInventory().offerOrDrop(new ItemStack(CookItItems.PIZZA_SLICE));
                     world.setBlockState(pos, state.with(PIZZA_AMOUNT, pizzaAmount - 1));
                 } else {
                     world.breakBlock(pos, false);

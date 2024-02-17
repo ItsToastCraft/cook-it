@@ -1,5 +1,4 @@
 {
-
   "variants": {
     "plate_amount=1":
     {"model": "cook-it:block/plate/plate_1"},

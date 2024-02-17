@@ -3,30 +3,38 @@ package toast.cook_it.block.appliances.oven;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockEntityProvider;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.ShapeContext;
+import net.minecraft.block.TranslucentBlock;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
+import net.minecraft.state.StateManager;
+import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.util.shape.VoxelShapes;
-import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-public class Oven extends Block implements BlockEntityProvider {
+public class Oven extends TranslucentBlock implements BlockEntityProvider {
+    public static final BooleanProperty OPEN = BooleanProperty.of("open");
+    public static final BooleanProperty ON = BooleanProperty.of("on");
+
     public Oven(Settings settings) {
         super(settings);
+        setDefaultState(getDefaultState().with(OPEN, false).with(ON, false));
     }
     @Override
-    public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext ctx) {
-        return VoxelShapes.cuboid(0f,0f,0f,1f,1f,1f);
+    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+        builder.add(OPEN).add(ON);
     }
+
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         world.updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
+        boolean open = state.get(OPEN);
+        boolean on = state.get(ON);
         OvenEntity blockEntity = (OvenEntity) world.getBlockEntity(pos);
 
         ItemStack heldItem = player.getStackInHand(hand);
@@ -34,19 +42,31 @@ public class Oven extends Block implements BlockEntityProvider {
         if (world.isClient) {
             return ActionResult.SUCCESS;
         } else {
-            if (heldItem.isEmpty() && !blockEntity.getStack(0).isEmpty()) {
-                player.getInventory().offerOrDrop(blockEntity.getStack(0));
-            } else if (blockEntity.getStack(0).isEmpty()) {
-                blockEntity.setStack(0, new ItemStack(heldItem.getItem()));
+            if (!open && heldItem.isEmpty()) {
+                world.setBlockState(pos, state.with(OPEN, true));
+                world.playSound(null, pos, SoundEvents.BLOCK_IRON_TRAPDOOR_OPEN, SoundCategory.BLOCKS);
+                return ActionResult.PASS;
+            }
+            if (!heldItem.isEmpty()) {
+                world.setBlockState(pos, state.with(OPEN, false));
+                blockEntity.setStack(0, new ItemStack(heldItem.getItem(), 1));
                 heldItem.decrement(1);
+
+                world.playSound(null, pos, SoundEvents.BLOCK_IRON_TRAPDOOR_CLOSE, SoundCategory.BLOCKS);
+            } else if (!blockEntity.getStack(0).isEmpty()){
+
+                player.getInventory().insertStack(blockEntity.getStack(0));
+            } else {
+                world.setBlockState(pos, state.with(OPEN, false));
+
             }
         }
+
         return ActionResult.SUCCESS;
     }
 
     @Nullable
     @Override
-
     public OvenEntity createBlockEntity(BlockPos pos, BlockState state) { return new OvenEntity(pos, state); }
 
 

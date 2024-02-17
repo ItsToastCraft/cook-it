@@ -1,21 +1,22 @@
 {
 	"credit": "Made with Blockbench",
+	"texture_size": [32, 32],
 	"textures": {
-		"plate": "cook-it:block/plate",
+		"1": "cook-it:block/large_plate",
 		"particle": "cook-it:block/plate"
 	},
 	"elements": [
 		{
-			"from": [4, 0, 4],
-			"to": [12, 1, 12],
-			"rotation": {"angle": 0, "axis": "y", "origin": [8, 0, 8]},
+			"from": [2, 0, 2],
+			"to": [14, 4, 14],
+			"rotation": {"angle": 0, "axis": "y", "origin": [-8, 0, 8]},
 			"faces": {
-				"north": {"uv": [8, 0, 16, 1], "texture": "#plate"},
-				"east": {"uv": [8, 4, 16, 5], "texture": "#plate"},
-				"south": {"uv": [8, 8, 16, 9], "texture": "#plate"},
-				"west": {"uv": [8, 12, 16, 13], "texture": "#plate"},
-				"up": {"uv": [8, 8, 0, 0], "texture": "#plate"},
-				"down": {"uv": [8, 8, 0, 16], "texture": "#plate"}
+				"north": {"uv": [6, 0, 12, 2], "texture": "#1"},
+				"east": {"uv": [6, 2, 12, 4], "texture": "#1"},
+				"south": {"uv": [6, 4, 12, 6], "texture": "#1"},
+				"west": {"uv": [6, 6, 12, 8], "texture": "#1"},
+				"up": {"uv": [6, 6, 0, 0], "texture": "#1"},
+				"down": {"uv": [6, 6, 0, 12], "texture": "#1"}
 			}
 		}
 	],

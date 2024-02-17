@@ -6,6 +6,7 @@
   "item.cook-it.croissant": "Croissant",
   "item.cook-it.milk": "Milk",
   "item.cook-it.fire_extinguisher": "Fire Extinguisher",
+  "item.cook-it.pizza_slice": "Pizza Slice",
 
   "block.cook-it.cutting_board": "Cutting Board",
   "block.cook-it.baking_sheet": "Baking Sheet",
@@ -13,5 +14,7 @@
   "block.cook-it.oven": "Oven",
   "block.cook-it.microwave": "Microwave",
   "block.cook-it.plate": "Plate",
-  "block.cook-it.pizza": "Pepperoni Pizza"
+  "block.cook-it.pizza": "Pizza",
+
+  "itemGroup.cook-it.items": "Cook It!"
 }
