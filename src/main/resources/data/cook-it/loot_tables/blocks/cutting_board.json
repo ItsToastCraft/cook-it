@@ -11,7 +11,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "cook-it:plate"
+          "name": "cook-it:cutting_board"
         }
       ],
       "rolls": 1.0

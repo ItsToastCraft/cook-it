@@ -12,6 +12,7 @@ public class CookItDataGenerator implements DataGeneratorEntrypoint {
         // Adding a provider example:
         //
         // pack.addProvider(AdvancementsProvider::new);
+        pack.addProvider(CookItLootTables::new);
     }
 
 }
