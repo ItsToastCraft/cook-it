@@ -1,6 +1,8 @@
 package toast.cook_it;
 
 import net.fabricmc.api.ModInitializer;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +30,6 @@ public class CookIt implements ModInitializer {
         CookItItems.registerItems();
         CookItBlocks.registerBlocks();
         CookItBlockEntities.registerEntities();
-
+        Registry.register(Registries.ITEM_GROUP, new Identifier(CookIt.MOD_ID, "items"), CookItItems.COOK_IT_GROUP);
     }
 }

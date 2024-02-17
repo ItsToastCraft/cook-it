@@ -12,24 +12,25 @@ import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
-import toast.cook_it.block.ImplementedInventory;
 
 public abstract class CookingBlockEntity extends BlockEntity implements ImplementedInventory {
+    protected DefaultedList<ItemStack> items;
 
-    private final DefaultedList<ItemStack> items = DefaultedList.ofSize(1, ItemStack.EMPTY);
 
-    public CookingBlockEntity(BlockEntityType<?> blockEntity, BlockPos pos, BlockState state) {
+
+    public CookingBlockEntity(BlockEntityType<?> blockEntity, BlockPos pos, BlockState state, int invSize) {
         super(blockEntity, pos, state);
+        this.items = DefaultedList.ofSize(invSize, ItemStack.EMPTY);
     }
 
     @Override
     public DefaultedList<ItemStack> getItems() {
-        return items;
+        return this.items;
     }
 
     @Override
     public void readNbt(NbtCompound nbt) {
-        items.clear();
+        this.items.clear();
         super.readNbt(nbt);
 
         Inventories.readNbt(nbt, this.items);
@@ -37,7 +38,7 @@ public abstract class CookingBlockEntity extends BlockEntity implements Implemen
 
     @Override
     public void writeNbt(NbtCompound nbt) {
-        Inventories.writeNbt(nbt, items);
+        Inventories.writeNbt(nbt, this.items);
 
         super.writeNbt(nbt);
     }

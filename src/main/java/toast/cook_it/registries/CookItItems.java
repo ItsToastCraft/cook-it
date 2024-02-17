@@ -1,21 +1,25 @@
 package toast.cook_it.registries;
 
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
+import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroupEntries;
-import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.minecraft.block.Block;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.*;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import toast.cook_it.CookIt;
 import toast.cook_it.item.FireExtinguisherItem;
 
-import static toast.cook_it.registries.CookItBlocks.CUTTING_BOARD;
-import static toast.cook_it.registries.CookItBlocks.TOASTER;
+import java.util.ArrayList;
+import java.util.List;
+
+import static toast.cook_it.registries.CookItBlocks.BLOCKS;
 
 public class CookItItems {
-
+    public static final List<Item> ITEMS = new ArrayList<>();
     public static final Item CHEF_HAT = registerItem("chef_hat", new Item(new FabricItemSettings().equipmentSlot(stack -> EquipmentSlot.HEAD)));
     //public static final Item CHEF_SHIRT = registerItem("chef_shirt", new ArmorItem(CHEF_OUTFIT, ArmorItem.Type.CHESTPLATE, new FabricItemSettings()));
     public static final Item ROLLING_PIN = registerItem("rolling_pin", new Item(new FabricItemSettings()));
@@ -24,27 +28,36 @@ public class CookItItems {
 
     public static final Item TOAST = registerItem("toast", new Item(new FabricItemSettings()));
     public static final Item CROISSANT = registerItem("croissant", new Item(new FabricItemSettings().food(new FoodComponent.Builder().hunger(3).build())));
-    public static final Item COOKIE = registerItem("cookie", new Item(new FabricItemSettings().food(new FoodComponent.Builder().hunger(3).build())));
+    //public static final Item COOKIE = registerItem("cookie", new Item(new FabricItemSettings().food(new FoodComponent.Builder().hunger(3).build())));
     public static final Item FIRE_EXTINGUISHER = registerItem("fire_extinguisher", new FireExtinguisherItem(new FabricItemSettings().maxDamage(256)));
     public static final Item BUTCHER_KNIFE = registerItem("butcher_knife", new Item(new FabricItemSettings()));
-    public static final Item MILK = registerItem("milk", new Item(new FabricItemSettings()));
+    //public static final Item MILK = registerItem("milk", new Item(new FabricItemSettings()));
+    public static final Item PIZZA_SLICE = registerItem("pizza_slice", new Item(new FabricItemSettings().food(new FoodComponent.Builder().hunger(5).build())));
 
     private static void creativeEntries(FabricItemGroupEntries entries) {
         entries.add(CHEF_HAT);
-        //entries.add(CHEF_SHIRT);
-        entries.add(ROLLING_PIN);
-        entries.add(CUTTING_BOARD);
-        entries.add(KITCHEN_KNIFE);
-        entries.add(TOASTER);
-        entries.add(TOAST);
-        entries.add(CROISSANT);
-        entries.add(COOKIE);
+
     }
     private static Item registerItem(String name, Item item) {
+        CookItItems.ITEMS.add(item);
+
         return Registry.register(Registries.ITEM, new Identifier(CookIt.MOD_ID, name), item);
     }
     public static void registerItems() {
-        ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS).register(CookItItems::creativeEntries);
+
     }
+     public static final ItemGroup COOK_IT_GROUP = FabricItemGroup.builder()
+            .icon(() -> new ItemStack(CHEF_HAT))
+            .displayName(Text.translatable("itemGroup.cook-it.items"))
+            .entries((context, entries) -> {
+                for (Item item : ITEMS) {
+                    entries.add(item);
+                }
+                for (Block block : BLOCKS) {
+                    entries.add(block);
+                }
+            })
+            .build();
+
 }
 

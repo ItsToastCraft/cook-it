@@ -1,7 +1,6 @@
 package toast.cook_it.block.containers.plate;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockEntityProvider;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ShapeContext;
 import net.minecraft.block.entity.BlockEntity;
@@ -22,11 +21,11 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import toast.cook_it.registries.CookItBlocks;
 
-public class Plate extends Block implements BlockEntityProvider {
+public class LargePlate extends Plate {
 
     public static final IntProperty PLATES_AMOUNT = IntProperty.of("plate_amount", 1, 4);
 
-    public Plate(Settings settings) {
+    public LargePlate(Settings settings) {
         super(settings);
         setDefaultState(getDefaultState().with(PLATES_AMOUNT, 1));
     }
@@ -39,7 +38,7 @@ public class Plate extends Block implements BlockEntityProvider {
     @Override
     public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext ctx) {
         int plateAmount = state.get(PLATES_AMOUNT);
-        return VoxelShapes.cuboid(0.25f, 0f, 0.25f, 0.75f, 0.0625f * plateAmount, 0.75f);
+        return VoxelShapes.cuboid(0.125f, 0f, 0.125f, 0.875f, 0.0625f * plateAmount, 0.875f);
     }
 
     @Override
@@ -56,7 +55,7 @@ public class Plate extends Block implements BlockEntityProvider {
             // Otherwise give back whatever is on the plate (because there's only one sooo)
             if (heldItem.isEmpty()) {
                 if (plateAmount > 1) {
-                    player.getInventory().offerOrDrop(new ItemStack(CookItBlocks.PLATE));
+                    player.getInventory().offerOrDrop(new ItemStack(CookItBlocks.LARGE_PLATE));
                     world.setBlockState(pos, state.with(PLATES_AMOUNT, plateAmount - 1));
                 } else {
                     player.getInventory().offerOrDrop(blockEntity.getStack(0));
@@ -66,7 +65,7 @@ public class Plate extends Block implements BlockEntityProvider {
                 // If there is a plate in the player's hand, and there are less than 5 plates in the stack, add one to the stack
                 // If there is anything else in the player's hand, put that item on the plate.
                 if (heldItem.getItem() instanceof BlockItem blockItem) {
-                    if (blockItem.getBlock() == CookItBlocks.PLATE && plateAmount < 4 && blockEntity.getStack(0) == ItemStack.EMPTY) {
+                    if (blockItem.getBlock() == CookItBlocks.LARGE_PLATE && plateAmount < 4 && blockEntity.getStack(0) == ItemStack.EMPTY) {
                         heldItem.decrement(1);
                         world.setBlockState(pos, state.with(PLATES_AMOUNT, plateAmount + 1));
                     } else if (blockEntity.getStack(0).isEmpty() && blockItem.getBlock() == CookItBlocks.PIZZA && plateAmount == 1) {
@@ -88,5 +87,5 @@ public class Plate extends Block implements BlockEntityProvider {
 
     @Nullable
 
-    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) { return new PlateEntity(pos, state); }
+    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) { return new LargePlateEntity(pos, state); }
 }
