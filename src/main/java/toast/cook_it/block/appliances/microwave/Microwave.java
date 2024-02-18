@@ -1,9 +1,12 @@
 package toast.cook_it.block.appliances.microwave;
 
+import com.mojang.serialization.MapCodec;
 import net.minecraft.block.*;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.BlockEntityTicker;
+import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
@@ -12,15 +15,15 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.random.Random;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldAccess;
 import org.jetbrains.annotations.Nullable;
+import toast.cook_it.registries.CookItBlockEntities;
+import toast.cook_it.registries.CookItSounds;
 
-public class Microwave extends TranslucentBlock implements BlockEntityProvider {
+public class Microwave extends BlockWithEntity implements BlockEntityProvider {
     public static final BooleanProperty OPEN = BooleanProperty.of("open");
     public static final BooleanProperty ON = BooleanProperty.of("on");
 
@@ -28,9 +31,19 @@ public class Microwave extends TranslucentBlock implements BlockEntityProvider {
         super(settings);
         setDefaultState(getDefaultState().with(OPEN, false).with(ON, false));
     }
+
+    @Override
+    protected MapCodec<? extends BlockWithEntity> getCodec() {
+        return null;
+    }
+
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
         builder.add(OPEN).add(ON);
+    }
+    @Override
+    public BlockRenderType getRenderType(BlockState state) {
+        return BlockRenderType.MODEL /*that does somthing*/ ;
     }
 
     @Override
@@ -53,12 +66,16 @@ public class Microwave extends TranslucentBlock implements BlockEntityProvider {
             if (!open && heldItem.isEmpty()) {
                 world.setBlockState(pos, state.with(OPEN, true).with(ON, false));
                 world.playSound(null, pos, SoundEvents.BLOCK_IRON_TRAPDOOR_OPEN, SoundCategory.BLOCKS);
+
                 return ActionResult.PASS;
             }
             if (!heldItem.isEmpty()) {
                 world.setBlockState(pos, state.with(OPEN, false).with(ON, true));
                 blockEntity.setStack(0, new ItemStack(heldItem.getItem(), 1));
                 heldItem.decrement(1);
+
+
+                world.playSound(null, pos, CookItSounds.MICROWAVE_EVENT, SoundCategory.BLOCKS);
                 world.playSound(null, pos, SoundEvents.BLOCK_IRON_TRAPDOOR_CLOSE, SoundCategory.BLOCKS);
             } else if (!blockEntity.getStack(0).isEmpty()){
                 player.getInventory().insertStack(blockEntity.getStack(0));
@@ -72,18 +89,12 @@ public class Microwave extends TranslucentBlock implements BlockEntityProvider {
         return ActionResult.SUCCESS;
     }
 
-    private void scheduleTick(WorldAccess world, BlockPos pos, int delay) {
-        if (!world.isClient() && !world.getBlockTickScheduler().isQueued(pos, this)) {
-            world.scheduleBlockTick(pos, this, delay);
-        }
-
-    }
-
     @Override
-    public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
-
-
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
+        return validateTicker(type, CookItBlockEntities.MICROWAVE_ENTITY,
+                (world1, pos, state1, blockEntity) -> blockEntity.tick(world1, pos, state1, blockEntity));
     }
+
 
     @Nullable
     @Override
