@@ -1,0 +1,27 @@
+{
+  "display": {
+    "icon": {
+      "item": "cook-it:microwave"
+    },
+    "title": "Microwave boy!",
+    "description": "Obtain a microwave.",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "cook-it:cook-it",
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "cook-it:microwave"
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

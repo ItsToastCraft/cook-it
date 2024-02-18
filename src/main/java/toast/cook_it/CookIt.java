@@ -6,6 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import toast.cook_it.block.ModBlocks;
 import toast.cook_it.item.ModItems;
+import toast.cook_it.recipe.ModRecipes;
+import toast.cook_it.screen.ModScreenHandlers;
 
 public class CookIt implements ModInitializer {
     // This logger is used to write text to the console and the log file.
@@ -26,6 +28,8 @@ public class CookIt implements ModInitializer {
         LOGGER.info("Baking pastries...");
         ModItems.registerItems();
         ModBlocks.registerBlocks();
+        ModScreenHandlers.registerScreenHandlers();
+        ModRecipes.registerRecipes();
 
     }
 }

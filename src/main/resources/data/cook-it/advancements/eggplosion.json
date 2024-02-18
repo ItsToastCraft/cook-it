@@ -1,0 +1,31 @@
+{
+  "display": {
+    "icon": {
+      "item": "cook-it:cocaine"
+    },
+    "title": "Eggplosion!",
+    "description": "put an egg into a microwave!",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "cook-it:cook-it",
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:recipe_crafted",
+      "conditions": {
+        "recipe_id": "cook-it:cocaine",
+        "ingredients": [
+          {
+            "items":  [
+              "minecraft:egg"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "rewards": {
+    "experience": 15
+  }
+}

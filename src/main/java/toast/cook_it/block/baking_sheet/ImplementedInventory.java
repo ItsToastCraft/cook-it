@@ -5,7 +5,7 @@ import net.minecraft.inventory.Inventories;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.collection.DefaultedList;
-
+// YOU PIECE OF TOAST YOU COULD MAKE IT GLOBAL MY SKELETON IS IMPLODING MY BODY FROM ANGER RAAAAAAAAAAAAAAAAAA
 /**
  * A simple {@code Inventory} implementation with only default methods + an item list getter.
  * <p>

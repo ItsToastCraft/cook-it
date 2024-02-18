@@ -6,5 +6,11 @@
 
   "block.cook-it.cutting_board": "Cutting Board",
   "block.cook-it.baking_sheet": "Baking Sheet",
-  "block.cook-it.toaster": "Toaster"
+  "block.cook-it.toaster": "Toaster",
+  "block.cook-it.microwave": "Microwave",
+  "panel.cook-it.microwave": "Microwave Panel",
+  "item.cook-it.pocket": "Pocket",
+  "item.cook-it.cocaine": "Cocaine",
+  "item.cook-it.hot_pocket": "Hot Pocket",
+  "cook-it.microwaving": "Microwaving"
 }

@@ -4,7 +4,10 @@ import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroupEntries;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.FoodComponent;
+import net.minecraft.item.FoodComponents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroups;
 import net.minecraft.registry.Registries;
@@ -24,7 +27,15 @@ public class ModItems {
     public static final Item KITCHEN_KNIFE = registerItem("knife", new Item(new FabricItemSettings().maxDamage(4)));
 
     public static final Item TOAST = registerItem("toast", new Item(new FabricItemSettings()));
+
     public static final Item CROISSANT = registerItem("croissant", new Item(new FabricItemSettings().food(new FoodComponent.Builder().hunger(3).build())));
+
+
+    public static final Item POCKET = registerItem("pocket", new Item(new FabricItemSettings().food(new FoodComponent.Builder().hunger(2).build())));
+    public static final Item HOT_POCKET = registerItem("hot_pocket", new Item(new FabricItemSettings().food(new FoodComponent.Builder().hunger(9).build())));
+    public static final Item COCAINE = registerItem("cocaine", new Item(new FabricItemSettings().food(new FoodComponent.Builder().hunger(1).statusEffect(new StatusEffectInstance(StatusEffects.NAUSEA, 22*20, 1), 1.0f)
+            .build())));
+
     private static void creativeEntries(FabricItemGroupEntries entries) {
 
         entries.add(CHEF_HAT);
@@ -35,6 +46,9 @@ public class ModItems {
         entries.add(TOASTER);
         entries.add(TOAST);
         entries.add(CROISSANT);
+        entries.add(POCKET);
+        entries.add(HOT_POCKET);
+        entries.add(COCAINE);
     }
     private static Item registerItem(String name, Item item) {
         return Registry.register(Registries.ITEM, new Identifier(CookIt.MOD_ID, name), item);
