@@ -1,12 +1,40 @@
 {
   "variants": {
-    "open=false,on=false":
+    "open=false,on=false,facing=north":
     {"model": "cook-it:block/microwave/microwave"},
-    "open=true,on=false":
+    "open=false,on=false,facing=east":
+    {"model": "cook-it:block/microwave/microwave", "y": 90},
+    "open=false,on=false,facing=south":
+    {"model": "cook-it:block/microwave/microwave", "y": 180},
+    "open=false,on=false,facing=west":
+    {"model": "cook-it:block/microwave/microwave", "y": 270},
+
+    "open=true,on=false,facing=north":
     {"model": "cook-it:block/microwave/microwave_open"},
-    "open=false,on=true":
+    "open=true,on=false,facing=east":
+    {"model": "cook-it:block/microwave/microwave_open", "y": 90},
+    "open=true,on=false,facing=south":
+    {"model": "cook-it:block/microwave/microwave_open", "y": 180},
+    "open=true,on=false,facing=west":
+    {"model": "cook-it:block/microwave/microwave_open", "y": 270},
+
+    "open=false,on=true,facing=north":
     {"model": "cook-it:block/microwave/microwave_on"},
-    "open=true,on=true":
-    {"model": "cook-it:block/microwave/microwave_open_on"}
+    "open=false,on=true,facing=east":
+    {"model": "cook-it:block/microwave/microwave_on", "y": 90},
+    "open=false,on=true,facing=south":
+    {"model": "cook-it:block/microwave/microwave_on", "y": 180},
+    "open=false,on=true,facing=west":
+    {"model": "cook-it:block/microwave/microwave_on", "y": 270},
+
+    "open=true,on=true,facing=north":
+    {"model": "cook-it:block/microwave/microwave_open_on"},
+    "open=true,on=true,facing=east":
+    {"model": "cook-it:block/microwave/microwave_open_on", "y": 90},
+    "open=true,on=true,facing=south":
+    {"model": "cook-it:block/microwave/microwave_open_on", "y": 180},
+    "open=true,on=true,facing=west":
+    {"model": "cook-it:block/microwave/microwave_open_on", "y": 270}
+
   }
 }

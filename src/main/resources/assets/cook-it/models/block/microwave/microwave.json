@@ -10,9 +10,10 @@
 			"to": [15, 7, 13],
 			"rotation": {"angle": 0, "axis": "y", "origin": [0, 0, 2]},
 			"faces": {
-				"east": {"uv": [7, 8.5, 12, 11.5], "texture": "#microwave"},
+				"north": {"uv": [11.5, 8.5, 12, 11.5], "texture": "#microwave"},
+				"east": {"uv": [7, 8.5, 11.5, 11.5], "texture": "#microwave"},
 				"south": {"uv": [13.5, 4.5, 14, 7.5], "texture": "#microwave"},
-				"west": {"uv": [0, 10, 5, 14], "texture": "#microwave"}
+				"west": {"uv": [12, 8.5, 7, 11.5], "texture": "#microwave"}
 			}
 		},
 		{
@@ -20,7 +21,7 @@
 			"to": [14, 7, 13],
 			"rotation": {"angle": 0, "axis": "y", "origin": [0, 0, 2]},
 			"faces": {
-				"north": {"uv": [7, 4.5, 14, 8], "texture": "#microwave"},
+				"north": {"uv": [7.5, 4.5, 13.5, 7.5], "texture": "#microwave"},
 				"south": {"uv": [7.5, 4.5, 13.5, 7.5], "texture": "#microwave"},
 				"up": {"uv": [0, 4.5, 5.5, 5], "texture": "#microwave"}
 			}
@@ -30,7 +31,8 @@
 			"to": [2, 7, 13],
 			"rotation": {"angle": 0, "axis": "y", "origin": [0, 0, 2]},
 			"faces": {
-				"east": {"uv": [7, 8, 12, 12], "texture": "#microwave"},
+				"north": {"uv": [0.5, 11, 1, 13.5], "texture": "#microwave"},
+				"east": {"uv": [5, 10.5, 0.5, 13.5], "texture": "#microwave"},
 				"south": {"uv": [7, 4.5, 7.5, 7.5], "texture": "#microwave"},
 				"west": {"uv": [0.5, 10.5, 5, 13.5], "texture": "#microwave"}
 			}
@@ -40,11 +42,12 @@
 			"to": [15, 8, 13],
 			"rotation": {"angle": 0, "axis": "y", "origin": [0, 0, 2]},
 			"faces": {
+				"north": {"uv": [0, 4, 7, 4.5], "texture": "#microwave"},
 				"east": {"uv": [7, 8, 12, 8.5], "texture": "#microwave"},
 				"south": {"uv": [7, 4, 14, 4.5], "texture": "#microwave"},
 				"west": {"uv": [0, 10, 5, 10.5], "texture": "#microwave"},
 				"up": {"uv": [7, 4.5, 0, 0], "texture": "#microwave"},
-				"down": {"uv": [7, 5, 0, 10], "texture": "#microwave"}
+				"down": {"uv": [7, 0, 0, 5], "texture": "#microwave"}
 			}
 		},
 		{
@@ -52,11 +55,11 @@
 			"to": [15, 1, 13],
 			"rotation": {"angle": 0, "axis": "y", "origin": [0, 0, 2]},
 			"faces": {
-				"north": {"uv": [7, 0, 14, 0.5], "texture": "#microwave"},
+				"north": {"uv": [0, 9, 7, 9.5], "texture": "#microwave"},
 				"east": {"uv": [7, 11.5, 11.5, 12], "texture": "#microwave"},
 				"south": {"uv": [7, 7.5, 14, 8], "texture": "#microwave"},
 				"west": {"uv": [0.5, 13.5, 5, 14], "texture": "#microwave"},
-				"up": {"uv": [7, 5, 0, 9.5], "texture": "#microwave"},
+				"up": {"uv": [7, 9.5, 0, 5], "texture": "#microwave"},
 				"down": {"uv": [7, 5, 0, 9.5], "texture": "#microwave"}
 			}
 		},
@@ -79,8 +82,8 @@
 				"north": {"uv": [7, 0, 14, 4], "texture": "#microwave"},
 				"east": {"uv": [11.5, 8, 12, 12], "texture": "#microwave"},
 				"west": {"uv": [0, 10, 0.5, 14], "texture": "#microwave"},
-				"up": {"uv": [5.5, 5, 0, 4.5], "texture": "#microwave"},
-				"down": {"uv": [5.5, 9.5, 0, 10], "texture": "#microwave"}
+				"up": {"uv": [7, 5, 0, 4.5], "texture": "#microwave"},
+				"down": {"uv": [7, 9.5, 0, 10], "texture": "#microwave"}
 			}
 		},
 		{
@@ -89,8 +92,8 @@
 			"rotation": {"angle": 0, "axis": "y", "origin": [-2, 4, 4]},
 			"faces": {
 				"north": {"uv": [5, 10, 5.5, 12.5], "texture": "#microwave"},
-				"up": {"uv": [7.5, 12.5, 7, 12], "texture": "#microwave"},
-				"down": {"uv": [8, 12, 7.5, 12.5], "texture": "#microwave"}
+				"up": {"uv": [5.5, 10.5, 5, 10], "texture": "#microwave"},
+				"down": {"uv": [5.5, 12, 5, 12.5], "texture": "#microwave"}
 			}
 		}
 	],

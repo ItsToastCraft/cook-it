@@ -1,0 +1,14 @@
+{
+  "comment": "This is literally a crime against humanity but it's just a test recipe :sob:",
+  "type": "cook-it:microwaving",
+  "ingredients": [
+    {
+      "item": "cook-it:raw_croissant"
+    }
+  ],
+  "output": {
+    "item": "cook-it:croissant"
+  },
+  "time": 200,
+  "event": "none:none"
+}

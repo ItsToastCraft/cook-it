@@ -27,8 +27,8 @@ public class CookItItems {
     public static final Item KITCHEN_KNIFE = registerItem("knife", new SwordItem(ToolMaterials.IRON, 1, 0.01f, new FabricItemSettings()));
 
     public static final Item TOAST = registerItem("toast", new Item(new FabricItemSettings()));
+    public static final Item RAW_CROISSANT = registerItem("raw_croissant", new Item(new FabricItemSettings().food(new FoodComponent.Builder().hunger(1).build())));
     public static final Item CROISSANT = registerItem("croissant", new Item(new FabricItemSettings().food(new FoodComponent.Builder().hunger(3).build())));
-    //public static final Item COOKIE = registerItem("cookie", new Item(new FabricItemSettings().food(new FoodComponent.Builder().hunger(3).build())));
     public static final Item FIRE_EXTINGUISHER = registerItem("fire_extinguisher", new FireExtinguisherItem(new FabricItemSettings().maxDamage(256)));
     public static final Item BUTCHER_KNIFE = registerItem("butcher_knife", new Item(new FabricItemSettings()));
     //public static final Item MILK = registerItem("milk", new Item(new FabricItemSettings()));

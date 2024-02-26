@@ -3,6 +3,7 @@
   "item.cook-it.rolling_pin": "Rolling Pin",
   "item.cook-it.knife": "Kitchen Knife",
   "item.cook-it.butcher_knife": "Butcher Knife",
+  "item.cook-it.raw_croissant": "Raw Croissant",
   "item.cook-it.croissant": "Croissant",
   "item.cook-it.milk": "Milk",
   "item.cook-it.fire_extinguisher": "Fire Extinguisher",
@@ -16,5 +17,7 @@
   "block.cook-it.plate": "Plate",
   "block.cook-it.pizza": "Pizza",
 
-  "itemGroup.cook-it.items": "Cook It!"
+  "itemGroup.cook-it.items": "Cook It!",
+  "subtitles.cook-it.microwave_hum": "Microwave Hums",
+  "subtitles.cook-it.microwave_beep": "Microwave Beeps"
 }

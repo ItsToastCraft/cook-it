@@ -6,9 +6,7 @@ import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import toast.cook_it.registries.CookItBlockEntities;
-import toast.cook_it.registries.CookItBlocks;
-import toast.cook_it.registries.CookItItems;
+import toast.cook_it.registries.*;
 
 public class CookIt implements ModInitializer {
     // This logger is used to write text to the console and the log file.
@@ -29,6 +27,8 @@ public class CookIt implements ModInitializer {
         LOGGER.info("Baking pastries...");
         CookItItems.registerItems();
         CookItBlocks.registerBlocks();
+        CookItRecipes.registerRecipes();
+        CookItSounds.registerSounds();
         CookItBlockEntities.registerEntities();
         Registry.register(Registries.ITEM_GROUP, new Identifier(CookIt.MOD_ID, "items"), CookItItems.COOK_IT_GROUP);
     }

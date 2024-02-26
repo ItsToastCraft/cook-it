@@ -1,0 +1,13 @@
+{
+  "type": "cook-it:microwaving",
+  "ingredients": [
+    {
+      "item": "minecraft:egg"
+    }
+  ],
+  "output": {
+    "item": "minecraft:egg"
+  },
+  "time": 10,
+  "event": "advancement:eggplosion"
+}

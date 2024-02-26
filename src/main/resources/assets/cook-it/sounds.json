@@ -1,0 +1,15 @@
+{
+  "microwave": {
+    "subtitle": "subtitles.cook-it.microwave_hum",
+    "sounds": [
+      "cook-it:block/microwave"
+    ]
+  },
+  "microwave_beep": {
+    "subtitle": "subtitles.cook-it.microwave_beep",
+    "sounds": [
+      "cook-it:block/microwave_beep"
+    ]
+  }
+}
+

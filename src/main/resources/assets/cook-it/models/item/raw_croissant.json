@@ -1,0 +1,6 @@
+{
+	"parent": "cook-it:item/croissant",
+	"textures": {
+		"2": "cook-it:item/croissant_unbaked"
+	}
+}
