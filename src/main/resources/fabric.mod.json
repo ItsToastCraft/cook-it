@@ -3,15 +3,15 @@
 	"id": "cook-it",
 	"version": "${version}",
 	"name": "Cook It!",
-	"description": "Expanded cooking in Minecraft!",
+	"description": "This is an example description! Tell everyone what your mod is about!",
 	"authors": [
 		"ToastTextures"
 	],
 	"contact": {
 		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/ItsToastCraft/cook-it"
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
 	},
-	"license": "GPL-3.0",
+	"license": "CC0-1.0",
 	"icon": "assets/cook-it/icon.png",
 	"environment": "*",
 	"entrypoints": {
@@ -19,7 +19,7 @@
           "toast.cook_it.CookIt"
 		],
 		"fabric-datagen": [
-			"toast.cook_it.datagen.CookItDataGenerator"
+			"toast.cook_it.CookItDataGenerator"
 		],
 		"client": [
 			{

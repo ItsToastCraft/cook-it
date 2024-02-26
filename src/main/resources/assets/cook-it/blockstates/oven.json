@@ -1,8 +1,0 @@
-{
-  "variants": {
-    "open=false":
-    {"model": "cook-it:block/oven"},
-    "open=true":
-    {"model": "cook-it:block/oven_open"}
-  }
-}
