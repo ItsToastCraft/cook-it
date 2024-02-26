@@ -1,7 +1,12 @@
 {
   "variants": {
-    "": {
-      "model": "cook-it:block/microwave"
-    }
+    "open=false,on=false":
+    {"model": "cook-it:block/microwave/microwave"},
+    "open=true,on=false":
+    {"model": "cook-it:block/microwave/microwave_open"},
+    "open=false,on=true":
+    {"model": "cook-it:block/microwave/microwave_on"},
+    "open=true,on=true":
+    {"model": "cook-it:block/microwave/microwave_open_on"}
   }
 }

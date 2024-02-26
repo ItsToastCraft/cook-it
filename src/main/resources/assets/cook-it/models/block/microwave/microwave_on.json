@@ -1,0 +1,6 @@
+{
+	"parent": "cook-it:block/microwave/microwave",
+	"textures": {
+		"microwave": "cook-it:block/microwave_on"
+	}
+}

@@ -1,0 +1,13 @@
+{
+  "type": "cook-it:microwaving",
+  "ingredients": [
+    {
+      "item": "cook-it:croissant"
+    }
+  ],
+  "output": {
+    "item": "minecraft:stone"
+  },
+  "time": 1,
+  "event": "none:none"
+}
