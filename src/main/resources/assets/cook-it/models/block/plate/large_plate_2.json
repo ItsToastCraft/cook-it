@@ -1,0 +1,64 @@
+{
+	"credit": "Made with Blockbench",
+	"texture_size": [32, 32],
+	"textures": {
+		"plate": "cook-it:block/large_plate",
+		"particle": "cook-it:block/plate"
+	},
+	"elements": [
+		{
+			"from": [2, 0, 2],
+			"to": [14, 2, 14],
+			"rotation": {"angle": 0, "axis": "y", "origin": [-8, 0, 8]},
+			"faces": {
+				"north": {"uv": [6, 0, 12, 1], "texture": "#plate"},
+				"east": {"uv": [6, 2, 12, 3], "texture": "#plate"},
+				"south": {"uv": [6, 4, 12, 5], "texture": "#plate"},
+				"west": {"uv": [6, 6, 12, 7], "texture": "#plate"},
+				"up": {"uv": [6, 6, 0, 0], "texture": "#plate"},
+				"down": {"uv": [6, 6, 0, 12], "texture": "#plate"}
+			}
+		}
+	],
+	"display": {
+		"thirdperson_righthand": {
+			"rotation": [90, 0, 0],
+			"translation": [0, 2, 4],
+			"scale": [0.55, 0.55, 0.55]
+		},
+		"thirdperson_lefthand": {
+			"rotation": [90, 0, 0],
+			"translation": [0, 2, 4],
+			"scale": [0.55, 0.55, 0.55]
+		},
+		"firstperson_righthand": {
+			"translation": [0, 9, 0]
+		},
+		"firstperson_lefthand": {
+			"translation": [0, 9, 0]
+		},
+		"ground": {
+			"translation": [0, 2, 0],
+			"scale": [0.5, 0.5, 0.5]
+		},
+		"gui": {
+			"rotation": [30, 225, 0],
+			"scale": [0.625, 0.625, 0.625]
+		},
+		"head": {
+			"translation": [0, 14.5, 0]
+		},
+		"fixed": {
+			"rotation": [-90, 0, 0],
+			"translation": [0, 0, -7]
+		}
+	},
+	"groups": [
+		{
+			"name": "Plates",
+			"origin": [8, 0, 8],
+			"color": 0,
+			"children": [0]
+		}
+	]
+}

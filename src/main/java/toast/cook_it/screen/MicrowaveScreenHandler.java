@@ -10,8 +10,8 @@ import net.minecraft.screen.ArrayPropertyDelegate;
 import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
-import toast.cook_it.CookIt;
-import toast.cook_it.block.microwave.MicrowaveEntity;
+import toast.cook_it.block.appliances.microwave.MicrowaveEntity;
+import toast.cook_it.registries.CookItScreenHandlers;
 
 public class MicrowaveScreenHandler extends ScreenHandler {
     private final Inventory inventory;
@@ -25,7 +25,7 @@ public class MicrowaveScreenHandler extends ScreenHandler {
 
     public MicrowaveScreenHandler(int syncId, PlayerInventory pInventory, BlockEntity blockEntity,
                                   PropertyDelegate arrayPropertyDelegate) {
-        super(ModScreenHandlers.MICROWAVE_SCREEN_HANDLER, syncId);
+        super(CookItScreenHandlers.MICROWAVE_SCREEN_HANDLER, syncId);
         checkSize(((Inventory) blockEntity), 2);
         this.inventory=((Inventory) blockEntity);
         inventory.onOpen(pInventory.player);
@@ -90,7 +90,7 @@ public class MicrowaveScreenHandler extends ScreenHandler {
     public int getScaledProgress() {
         int progress = this.propertyDelegate.get(0);
         int maxProgress = this.propertyDelegate.get(1);
-        int progressArrowSize = 27;
+        int progressArrowSize = 26;
 
         return maxProgress !=0 && progress != 0 ? progress * progressArrowSize / maxProgress : 0;
     }

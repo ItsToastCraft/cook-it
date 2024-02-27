@@ -6,7 +6,7 @@
     }
   ],
   "output": {
-    "item": "cook-it:cocaine"
+    "item": "minecraft:egg"
   },
   "time": 10,
   "event": "advancement:eggplosion"

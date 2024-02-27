@@ -5,7 +5,6 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.screen.ScreenHandler;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import toast.cook_it.CookIt;
@@ -40,6 +39,7 @@ public class MicrowaveScreen extends HandledScreen<MicrowaveScreenHandler> {
 
     private void renderProgressThingy(DrawContext context, int x, int y) {
         if (handler.isCrafting()) {
+
             context.drawTexture(TEXTURE, x + 85, y + 30, 176, 0, 8, handler.getScaledProgress());
         }
     }

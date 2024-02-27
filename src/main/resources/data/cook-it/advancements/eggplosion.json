@@ -1,7 +1,7 @@
 {
   "display": {
     "icon": {
-      "item": "cook-it:cocaine"
+      "item": "minecraft:egg"
     },
     "title": "Eggplosion!",
     "description": "put an egg into a microwave!",
@@ -14,7 +14,7 @@
     "requirement": {
       "trigger": "minecraft:recipe_crafted",
       "conditions": {
-        "recipe_id": "cook-it:cocaine",
+        "recipe_id": "minecraft:egg",
         "ingredients": [
           {
             "items":  [

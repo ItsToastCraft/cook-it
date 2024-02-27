@@ -1,0 +1,13 @@
+{
+  "type": "cook-it:microwaving",
+  "ingredients": [
+    {
+      "item": "cook-it:raw_croissant"
+    }
+  ],
+  "output": {
+    "item": "cook-it:croissant"
+  },
+  "time": 150,
+  "event": "none:none"
+}
