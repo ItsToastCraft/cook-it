@@ -1,9 +1,9 @@
 {
-	"credit": "Made with Blockbench",
+	"credit": "Made by ToastTextures using Blockbench",
 	"texture_size": [32, 32],
 	"textures": {
 		"cutting_board": "cook-it:block/cutting_board",
-		"particle": "cook-it:block/cutting_board"
+		"particle": "#cutting_board"
 	},
 	"elements": [
 		{

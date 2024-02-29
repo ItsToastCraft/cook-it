@@ -1,9 +1,9 @@
 {
-	"credit": "Made with Blockbench",
+	"credit": "Made by ToastTextures using Blockbench",
 	"texture_size": [32, 32],
 	"textures": {
 		"microwave": "cook-it:block/microwave",
-		"particle": "cook-it:block/microwave"
+		"particle": "#microwave"
 	},
 	"elements": [
 		{

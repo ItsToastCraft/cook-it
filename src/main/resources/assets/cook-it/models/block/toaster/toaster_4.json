@@ -1,8 +1,8 @@
 {
-	"credit": "Made with Blockbench",
+	"credit": "Made by ToastTextures using Blockbench",
 	"parent": "cook-it:block/toaster/toaster_2",
 	"textures": {
-		"1": "cook-it:block/toaster_done"
+		"toaster": "cook-it:block/toaster_done"
 	}
 
 }

@@ -1,8 +1,8 @@
 {
-	"credit": "Made with Blockbench",
+	"credit": "Made by ToastTextures using Blockbench",
 	"textures": {
-		"plate": "cook-it:block/plate",
-		"particle": "cook-it:block/plate"
+		"particle": "cook-it:block/plate/plate/white_plate",
+		"plate": "cook-it:block/plate/plate/white_plate"
 	},
 	"elements": [
 		{

@@ -1,0 +1,79 @@
+{
+	"credit": "Made with Blockbench",
+	"textures": {
+		"spatula": "cook-it:item/spatula"
+	},
+	"elements": [
+		{
+			"from": [7.5, 3.75, -0.25],
+			"to": [9.5, 4.75, 9.75],
+			"rotation": {"angle": 22.5, "axis": "x", "origin": [-2.5, 3.75, -0.25]},
+			"faces": {
+				"north": {"uv": [11, 0, 13, 1], "texture": "#spatula"},
+				"east": {"uv": [0, 14, 10, 15], "texture": "#spatula"},
+				"south": {"uv": [11, 1, 13, 2], "texture": "#spatula"},
+				"west": {"uv": [0, 15, 10, 16], "texture": "#spatula"},
+				"up": {"uv": [9, 10, 7, 0], "texture": "#spatula"},
+				"down": {"uv": [11, 0, 9, 10], "texture": "#spatula"}
+			}
+		},
+		{
+			"from": [5, 0, 9],
+			"to": [12, 0, 16],
+			"rotation": {"angle": 0, "axis": "y", "origin": [-2, 0, 0]},
+			"faces": {
+				"north": {"uv": [0, 0, 7, 0], "texture": "#spatula"},
+				"east": {"uv": [0, 0, 7, 0], "texture": "#spatula"},
+				"south": {"uv": [0, 0, 7, 0], "texture": "#spatula"},
+				"west": {"uv": [0, 0, 7, 0], "texture": "#spatula"},
+				"up": {"uv": [7, 7, 0, 0], "texture": "#spatula"},
+				"down": {"uv": [7, 0, 0, 7], "texture": "#spatula"}
+			}
+		}
+	],
+	"gui_light": "front",
+	"display": {
+		"thirdperson_righthand": {
+			"rotation": [-67.5, 0, 180],
+			"translation": [0.25, 1.25, 4.75],
+			"scale": [0.625, 0.625, 0.625]
+		},
+		"thirdperson_lefthand": {
+			"rotation": [-62.5, 0, -180],
+			"translation": [-0.25, 0.5, 5],
+			"scale": [0.625, 0.625, 0.625]
+		},
+		"firstperson_righthand": {
+			"rotation": [-122.75, 0, 180],
+			"translation": [5, 5, 0]
+		},
+		"firstperson_lefthand": {
+			"rotation": [-112.5, 0, 180],
+			"translation": [5, 5, 0]
+		},
+		"ground": {
+			"translation": [0, 2, 0],
+			"scale": [0.5, 0.5, 0.5]
+		},
+		"gui": {
+			"rotation": [-90, 45, 0],
+			"translation": [-0.75, 0, 0]
+		},
+		"head": {
+			"rotation": [90, -33.25, 0],
+			"translation": [4.75, 7.75, 7]
+		},
+		"fixed": {
+			"rotation": [-112.5, 0, 0],
+			"translation": [0, -1.75, -6.25]
+		}
+	},
+	"groups": [
+		{
+			"name": "Spatula",
+			"origin": [-1, 0, 0],
+			"color": 0,
+			"children": [0, 1]
+		}
+	]
+}

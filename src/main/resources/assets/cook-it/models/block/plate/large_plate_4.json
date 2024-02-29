@@ -1,9 +1,9 @@
 {
-	"credit": "Made with Blockbench",
+	"credit": "Made by ToastTextures using Blockbench",
 	"texture_size": [32, 32],
 	"textures": {
-		"1": "cook-it:block/large_plate",
-		"particle": "cook-it:block/plate"
+		"plate": "cook-it:block/large_plate",
+		"particle": "#plate"
 	},
 	"elements": [
 		{

@@ -10,7 +10,11 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 import toast.cook_it.CookIt;
+
 import toast.cook_it.block.appliances.Toaster;
+import toast.cook_it.block.Bench;
+
+
 import toast.cook_it.block.appliances.microwave.Microwave;
 import toast.cook_it.block.appliances.oven.Oven;
 import toast.cook_it.block.containers.CuttingBoard;
@@ -27,7 +31,7 @@ public class CookItBlocks {
     public static final Block CUTTING_BOARD = registerBlock("cutting_board", new CuttingBoard(FabricBlockSettings.copyOf(Blocks.SPRUCE_PLANKS)));
     public static final Block TOASTER = registerBlock("toaster", new Toaster(FabricBlockSettings.copyOf(Blocks.WHITE_CONCRETE)));
     public static final Block BAKING_SHEET = registerBlock("baking_sheet", new BakingSheet(FabricBlockSettings.copyOf(Blocks.IRON_BLOCK)));
-    public static final Block BENCH = registerBlock("bench", new Block(FabricBlockSettings.create()));
+    public static final Block BENCH = registerBlock("bench", new Bench(FabricBlockSettings.create()));
     public static final Block OVEN = registerBlock("oven", new Oven(FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).nonOpaque()));
 
     public static final Block MICROWAVE = registerBlock("microwave", new Microwave(FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).nonOpaque()));
