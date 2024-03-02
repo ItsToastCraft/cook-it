@@ -8,7 +8,5 @@
     {"model": "cook-it:block/plate/plate_3"},
     "plate_amount=4":
     {"model": "cook-it:block/plate/plate_4"}
-
-
   }
 }

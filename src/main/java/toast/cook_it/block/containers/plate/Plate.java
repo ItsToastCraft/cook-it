@@ -20,7 +20,6 @@ import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
-import toast.cook_it.registries.CookItBlocks;
 
 public class Plate extends Block implements BlockEntityProvider {
 
@@ -56,7 +55,7 @@ public class Plate extends Block implements BlockEntityProvider {
             // Otherwise give back whatever is on the plate (because there's only one sooo)
             if (heldItem.isEmpty()) {
                 if (plateAmount > 1) {
-                    player.getInventory().offerOrDrop(new ItemStack(CookItBlocks.PLATE));
+                    player.getInventory().offerOrDrop(new ItemStack(world.getBlockState(pos).getBlock()));
                     world.setBlockState(pos, state.with(PLATES_AMOUNT, plateAmount - 1));
                 } else {
                     player.getInventory().offerOrDrop(blockEntity.getStack(0));
@@ -66,16 +65,12 @@ public class Plate extends Block implements BlockEntityProvider {
                 // If there is a plate in the player's hand, and there are less than 5 plates in the stack, add one to the stack
                 // If there is anything else in the player's hand, put that item on the plate.
                 if (heldItem.getItem() instanceof BlockItem blockItem) {
-                    if (blockItem.getBlock() == CookItBlocks.PLATE && plateAmount < 4 && blockEntity.getStack(0) == ItemStack.EMPTY) {
+                    if (blockItem.getBlock() == world.getBlockState(pos).getBlock() && plateAmount < 4 && blockEntity.getStack(0) == ItemStack.EMPTY) {
                         heldItem.decrement(1);
                         world.setBlockState(pos, state.with(PLATES_AMOUNT, plateAmount + 1));
-                    } else if (blockEntity.getStack(0).isEmpty() && blockItem.getBlock() == CookItBlocks.PIZZA && plateAmount == 1) {
-                        blockEntity.setStack(0, new ItemStack(heldItem.getItem()));
-                        heldItem.decrement(1);
                     }
                     return ActionResult.SUCCESS;
-                } else if (heldItem.getItem() == Items.EGG)
-                {
+                } else if (heldItem.getItem() == Items.EGG) {
                     world.createExplosion(null, pos.getX(), pos.getY(), pos.getZ(), 3, World.ExplosionSourceType.BLOCK);
                 } else if (blockEntity.getStack(0).isEmpty() && plateAmount == 1) {
                     blockEntity.setStack(0, new ItemStack(heldItem.getItem()));

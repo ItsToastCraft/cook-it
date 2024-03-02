@@ -1,0 +1,12 @@
+{
+  "variants": {
+    "plate_amount=1":
+    {"model": "cook-it:block/plate/plate/white_plate_1"},
+    "plate_amount=2":
+    {"model": "cook-it:block/plate/plate/white_plate_2"},
+    "plate_amount=3":
+    {"model": "cook-it:block/plate/plate/white_plate_3"},
+    "plate_amount=4":
+    {"model": "cook-it:block/plate/plate/white_plate_4"}
+  }
+}

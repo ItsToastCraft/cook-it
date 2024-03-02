@@ -16,7 +16,6 @@ import toast.cook_it.block.appliances.oven.OvenEntityRenderer;
 import toast.cook_it.block.containers.baking_sheet.BakingSheetEntity;
 import toast.cook_it.block.containers.baking_sheet.BakingSheetEntityRenderer;
 import toast.cook_it.block.containers.plate.PlateEntity;
-import toast.cook_it.block.containers.plate.LargePlateEntity;
 import toast.cook_it.block.containers.plate.PlateEntityRenderer;
 
 
@@ -25,14 +24,13 @@ public class CookItBlockEntities {
     public static BlockEntityType<MicrowaveEntity> MICROWAVE_ENTITY;
     public static BlockEntityType<OvenEntity> OVEN_ENTITY;
     public static BlockEntityType<PlateEntity> PLATE_ENTITY;
-    public static BlockEntityType<PlateEntity> LARGE_PLATE_ENTITY;
 
     public static void registerEntities() {
-        BAKING_SHEET_ENTITY = registerBlockEntities("baking_sheet", BakingSheetEntity::new, CookItBlocks.BAKING_SHEET);
-        MICROWAVE_ENTITY = registerBlockEntities("microwave", MicrowaveEntity::new, CookItBlocks.MICROWAVE);
-        OVEN_ENTITY = registerBlockEntities("oven", OvenEntity::new, CookItBlocks.OVEN);
-        PLATE_ENTITY = registerBlockEntities("plate", PlateEntity::new, CookItBlocks.PLATE);
-        LARGE_PLATE_ENTITY = registerBlockEntities("large_plate", LargePlateEntity::new, CookItBlocks.LARGE_PLATE);
+        BAKING_SHEET_ENTITY = registerBlockEntities("baking_sheet", BakingSheetEntity::new, new Block[]{CookItBlocks.BAKING_SHEET});
+        MICROWAVE_ENTITY = registerBlockEntities("microwave", MicrowaveEntity::new, new Block[]{CookItBlocks.MICROWAVE});
+        OVEN_ENTITY = registerBlockEntities("oven", OvenEntity::new, new Block[]{CookItBlocks.OVEN});
+        PLATE_ENTITY = registerBlockEntities("plate", PlateEntity::new, CookItBlocks.PLATES.toArray(Block[]::new));
+
     }
 
     public static void registerRenderers() {
@@ -40,10 +38,10 @@ public class CookItBlockEntities {
         BlockEntityRendererFactories.register(MICROWAVE_ENTITY, MicrowaveEntityRenderer::new);
         BlockEntityRendererFactories.register(OVEN_ENTITY, OvenEntityRenderer::new);
         BlockEntityRendererFactories.register(PLATE_ENTITY, PlateEntityRenderer::new);
-        BlockEntityRendererFactories.register(LARGE_PLATE_ENTITY, PlateEntityRenderer::new);
+
     }
 
-    public static <T extends BlockEntity> BlockEntityType<T> registerBlockEntities(String name, FabricBlockEntityTypeBuilder.Factory<T> factory, Block block) {
+    public static <T extends BlockEntity> BlockEntityType<T> registerBlockEntities(String name, FabricBlockEntityTypeBuilder.Factory<T> factory, Block[] block) {
         return Registry.register(Registries.BLOCK_ENTITY_TYPE, new Identifier(CookIt.MOD_ID, name), FabricBlockEntityTypeBuilder.create(factory, block).build());
     }
 }

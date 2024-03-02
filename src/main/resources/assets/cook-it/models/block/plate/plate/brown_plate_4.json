@@ -1,5 +1,7 @@
-
 {
-	"parent": "cook-it:block/plate/plate/plate_4",
-	"plate": "cook-it:block/plate/plate/plate/brown_large_plate"
+	"parent": "cook-it:block/plate/plate_4",
+	"textures": {
+		"plate": "cook-it:block/colored/plate/brown_plate"
+	}
+
 }
