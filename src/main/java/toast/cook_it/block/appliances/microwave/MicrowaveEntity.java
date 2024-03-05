@@ -69,11 +69,11 @@ public class MicrowaveEntity extends CookingBlockEntity implements ImplementedIn
                 this.resetProgress();
 
                 //Kaboom stuff
-                boolean curr_event = Objects.equals(recipe.get().value().getEvent(), "advancement:eggplosion");
-                if (curr_event) {
+                float explosionPower = recipe.get().value().getExplosionPower();
+                if (explosionPower > 0) {
                     CookIt.LOGGER.info("explosion!");
                     if (this.world != null) {
-                        this.world.createExplosion(null, pos.getX(), pos.getY(), pos.getZ(), 4.0F, World.ExplosionSourceType.BLOCK);
+                        this.world.createExplosion(null, pos.getX(), pos.getY(), pos.getZ(), explosionPower, World.ExplosionSourceType.BLOCK);
                     }
                 }
             }
