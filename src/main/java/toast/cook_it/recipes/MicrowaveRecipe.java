@@ -22,11 +22,14 @@ public class MicrowaveRecipe  implements Recipe<SimpleInventory> {
     private final List<Ingredient> recipeItems;
     private final Integer maxProgress;
     private final String event;
-    public MicrowaveRecipe(List<Ingredient> ingredients, ItemStack itemStack, Integer maxProgress, String event) {
-        this.output=itemStack;
-        this.recipeItems=ingredients;
+    private final float explosionPower;
+
+    public MicrowaveRecipe(List<Ingredient> ingredients, ItemStack itemStack, Integer maxProgress, String event, float explosionPower) {
+        this.output = itemStack;
+        this.recipeItems = ingredients;
         this.maxProgress = maxProgress;
         this.event = event;
+        this.explosionPower = explosionPower;
     }
     @Override
     public boolean matches(SimpleInventory inventory, World world) {
@@ -54,6 +57,10 @@ public class MicrowaveRecipe  implements Recipe<SimpleInventory> {
         return event;
     }
 
+    public float getExplosionPower() {
+        return explosionPower;
+    }
+
     @Override
     public boolean fits(int width, int height) {
         return true;
@@ -73,6 +80,7 @@ public class MicrowaveRecipe  implements Recipe<SimpleInventory> {
     public RecipeType<?> getType() {
         return Type.INSTANCE;
     }
+
     public static class Type implements RecipeType<MicrowaveRecipe> {
         public static final Type INSTANCE = new Type();
         public static final String ID = "microwaving";
@@ -86,7 +94,9 @@ public class MicrowaveRecipe  implements Recipe<SimpleInventory> {
                 validateAmount(Ingredient.DISALLOW_EMPTY_CODEC, 9).fieldOf("ingredients").forGetter(MicrowaveRecipe::getIngredients),
                 ItemStack.RECIPE_RESULT_CODEC.fieldOf("output").forGetter(r -> r.output),
                 returnInt(0, 2137420).fieldOf("time").forGetter(MicrowaveRecipe::getMaxProgress),
-                returnString().fieldOf("event").forGetter(MicrowaveRecipe::getEvent)
+                returnString().optionalFieldOf("event", "").forGetter(MicrowaveRecipe::getEvent),
+                Codecs.validate(Codec.FLOAT, a -> a < 0 ? DataResult.error(() -> "Negative recipe explosion power") : DataResult.success(a))
+                    .optionalFieldOf("explosion_power", 0.0f).forGetter(MicrowaveRecipe::getExplosionPower)
         ).apply(in, MicrowaveRecipe::new));
 
         private static Codec<String> returnString() {
@@ -117,7 +127,8 @@ public class MicrowaveRecipe  implements Recipe<SimpleInventory> {
             ItemStack output = buf.readItemStack();
             int time = buf.readInt();
             String event = buf.readString();
-            return new MicrowaveRecipe(inputs, output, time, event);
+            byte explosionPower = buf.readByte();
+            return new MicrowaveRecipe(inputs, output, time, event, explosionPower);
         }
 
         @Override
@@ -129,6 +140,9 @@ public class MicrowaveRecipe  implements Recipe<SimpleInventory> {
             }
 
             buf.writeItemStack(recipe.getResult(null));
+            buf.writeInt(recipe.maxProgress);
+            buf.writeString(recipe.event);
+            buf.writeFloat(recipe.explosionPower);
         }
     }
 

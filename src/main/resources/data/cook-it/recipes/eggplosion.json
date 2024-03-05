@@ -9,5 +9,6 @@
     "item": "minecraft:egg"
   },
   "time": 10,
-  "event": "advancement:eggplosion"
+  "event": "advancement:eggplosion",
+  "explosion_power": 4.0
 }
