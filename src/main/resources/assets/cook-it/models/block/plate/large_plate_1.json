@@ -4,6 +4,7 @@
 	"textures": {
 		"plate": "cook-it:block/large_plate",
 		"particle": "#plate"
+
 	},
 	"elements": [
 		{
@@ -43,7 +44,8 @@
 		},
 		"gui": {
 			"rotation": [30, 225, 0],
-			"scale": [0.625, 0.625, 0.625]
+			"translation": [0, 2, 0],
+			"scale": [0.825, 0.825, 0.825]
 		},
 		"head": {
 			"translation": [0, 14.5, 0]

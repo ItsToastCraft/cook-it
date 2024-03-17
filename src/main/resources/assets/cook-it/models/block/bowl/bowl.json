@@ -1,0 +1,91 @@
+{
+	"credit": "Made by ToastTextures using Blockbench",
+	"ambientocclusion": false,
+	"textures": {
+		"bowl": "cook-it:block/colored/bowl/",
+		"particle": "#bowl"
+	},
+	"elements": [
+		{
+			"from": [4, 1, 4],
+			"to": [12, 5, 12],
+			"faces": {
+				"north": {"uv": [8, 0, 16, 4], "texture": "#bowl"},
+				"east": {"uv": [8, 4, 16, 8], "texture": "#bowl"},
+				"south": {"uv": [8, 8, 16, 12], "texture": "#bowl"},
+				"west": {"uv": [8, 12, 16, 16], "texture": "#bowl"},
+				"down": {"uv": [8, 0, 0, 8], "texture": "#bowl"}
+			}
+		},
+		{
+			"from": [4, 5, 4],
+			"to": [12, 1, 12],
+			"faces": {
+				"north": {"uv": [8, 4, 16, 0], "texture": "#bowl"},
+				"east": {"uv": [8, 8, 16, 4], "texture": "#bowl"},
+				"south": {"uv": [8, 12, 16, 8], "texture": "#bowl"},
+				"west": {"uv": [8, 16, 16, 12], "texture": "#bowl"},
+				"up": {"uv": [0, 0, 8, 8], "texture": "#bowl"}
+			}
+		},
+		{
+			"from": [5, 0, 5],
+			"to": [11, 1, 11],
+			"faces": {
+				"north": {"uv": [9, 6, 15, 7], "texture": "#bowl"},
+				"east": {"uv": [9, 6, 15, 7], "texture": "#bowl"},
+				"south": {"uv": [9, 6, 15, 7], "texture": "#bowl"},
+				"west": {"uv": [9, 6, 15, 7], "texture": "#bowl"},
+				"down": {"uv": [1, 1, 7, 7], "texture": "#bowl"}
+			}
+		}
+	],
+	"gui_light": "front",
+	"display": {
+		"thirdperson_righthand": {
+			"rotation": [75, 45, 0],
+			"translation": [0, 3, 1],
+			"scale": [0.5, 0.5, 0.5]
+		},
+		"thirdperson_lefthand": {
+			"rotation": [75, 45, 0],
+			"translation": [0, 3, 1],
+			"scale": [0.5, 0.5, 0.5]
+		},
+		"firstperson_righthand": {
+			"rotation": [0, 45, 0],
+			"translation": [0, 7, 0],
+			"scale": [0.625, 0.625, 0.625]
+		},
+		"firstperson_lefthand": {
+			"rotation": [0, 225, 0],
+			"translation": [0, 7, 0],
+			"scale": [0.625, 0.625, 0.625]
+		},
+		"ground": {
+			"translation": [0, 2, 0],
+			"scale": [0.5, 0.5, 0.5]
+		},
+		"gui": {
+			"rotation": [30, 225, 0],
+			"translation": [0, 1, 0],
+			"scale": [0.825, 0.825, 0.825]
+		},
+		"head": {
+			"translation": [0, 15.25, 0]
+		},
+		"fixed": {
+			"rotation": [-90, 0, 0],
+			"translation": [0, 0, -5],
+			"scale": [0.75, 0.75, 0.75]
+		}
+	},
+	"groups": [
+		{
+			"name": "Bowl",
+			"origin": [8, 8, 8],
+			"color": 0,
+			"children": [0, 1, 2]
+		}
+	]
+}

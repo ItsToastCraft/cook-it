@@ -30,7 +30,7 @@ public class CookItItems {
     public static final Item SPATULA = registerItem("spatula", new Item(new FabricItemSettings()));
     public static final Item WHISk = registerItem("whisk", new Item(new FabricItemSettings()));
 
-    public static final Item TOAST = registerItem("toast", new Item(new FabricItemSettings()));
+    public static final Item TOAST = registerItem("toast", new Item(new FabricItemSettings().food(new FoodComponent.Builder().hunger(3).build())));
     public static final Item RAW_CROISSANT = registerItem("raw_croissant", new Item(new FabricItemSettings().food(new FoodComponent.Builder().hunger(1).build())));
     public static final Item CROISSANT = registerItem("croissant", new Item(new FabricItemSettings().food(new FoodComponent.Builder().hunger(3).build())));
     public static final Item FIRE_EXTINGUISHER = registerItem("fire_extinguisher", new FireExtinguisherItem(new FabricItemSettings().maxDamage(256)));

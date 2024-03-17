@@ -1,0 +1,8 @@
+{
+	"parent": "cook-it:block/bowl/bowl",
+	"textures": {
+		"bowl": "cook-it:block/colored/bowl/brown_bowl"
+	}
+
+}
+
