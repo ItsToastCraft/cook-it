@@ -1,0 +1,33 @@
+{
+	"credit": "Made with Blockbench",
+	"texture_size": [32, 32],
+	"textures": {
+		"cinnamon_roll": "cook-it:item/cinnamon_roll",
+		"particle": "#cinnamon_roll"
+	},
+	"elements": [
+		{
+			"from": [4, 0, 4],
+			"to": [12, 3, 12],
+			"faces": {
+				"north": {"uv": [4.016, 4.016, 7.984, 5.484], "texture": "#cinnamon_roll"},
+				"east": {"uv": [4.016, 5.516, 7.984, 6.984], "texture": "#cinnamon_roll"},
+				"south": {"uv": [4.016, 7.016, 7.984, 8.484], "texture": "#cinnamon_roll"},
+				"west": {"uv": [0.016, 8.016, 3.984, 9.484], "texture": "#cinnamon_roll"},
+				"up": {"uv": [3.984, 3.984, 0.016, 0.016], "texture": "#cinnamon_roll"},
+				"down": {"uv": [3.984, 4.016, 0.016, 7.984], "texture": "#cinnamon_roll"}
+			}
+		},
+		{
+			"from": [3.75, -0.25, 3.75],
+			"to": [12.25, 3.25, 12.25],
+			"faces": {
+				"north": {"uv": [8.016, 0.016, 11.984, 1.484], "texture": "#cinnamon_roll"},
+				"east": {"uv": [8.016, 1.516, 11.984, 2.984], "texture": "#cinnamon_roll"},
+				"south": {"uv": [8.016, 3.016, 11.984, 4.484], "texture": "#cinnamon_roll"},
+				"west": {"uv": [8.016, 4.516, 11.984, 5.984], "texture": "#cinnamon_roll"},
+				"up": {"uv": [7.984, 3.984, 4.016, 0.016], "texture": "#cinnamon_roll"}
+			}
+		}
+	]
+}

@@ -19,24 +19,35 @@ import static toast.cook_it.registries.CookItBlocks.BLOCKS;
 
 public class CookItItems {
     public static final List<Item> ITEMS = new ArrayList<>();
-    public static final Item CHEF_HAT = registerItem("chef_hat", new Item(new FabricItemSettings().equipmentSlot(stack -> EquipmentSlot.HEAD)));
     //public static final Item CHEF_SHIRT = registerItem("chef_shirt", new ArmorItem(CHEF_OUTFIT, ArmorItem.Type.CHESTPLATE, new FabricItemSettings()));
+
 
     // -- Utensils --
     public static final Item ROLLING_PIN = registerItem("rolling_pin", new Item(new FabricItemSettings()));
     public static final Item KITCHEN_KNIFE = registerItem("knife", new SwordItem(ToolMaterials.IRON, 1, -2, new FabricItemSettings()));
     public static final Item BUTCHER_KNIFE = registerItem("butcher_knife", new SwordItem(ToolMaterials.IRON, 1, -1, new FabricItemSettings()));
-
     public static final Item SPATULA = registerItem("spatula", new Item(new FabricItemSettings()));
-    public static final Item WHISk = registerItem("whisk", new Item(new FabricItemSettings()));
+    public static final Item WHISK = registerItem("whisk", new Item(new FabricItemSettings()));
 
+
+    // -- Food --
     public static final Item TOAST = registerItem("toast", new Item(new FabricItemSettings().food(new FoodComponent.Builder().hunger(3).build())));
     public static final Item RAW_CROISSANT = registerItem("raw_croissant", new Item(new FabricItemSettings().food(new FoodComponent.Builder().hunger(1).build())));
     public static final Item CROISSANT = registerItem("croissant", new Item(new FabricItemSettings().food(new FoodComponent.Builder().hunger(3).build())));
-    public static final Item FIRE_EXTINGUISHER = registerItem("fire_extinguisher", new FireExtinguisherItem(new FabricItemSettings().maxDamage(256)));
-
-    //public static final Item MILK = registerItem("milk", new Item(new FabricItemSettings()));
     public static final Item PIZZA_SLICE = registerItem("pizza_slice", new Item(new FabricItemSettings().food(new FoodComponent.Builder().hunger(5).build())));
+
+    public static final Item DONUT = registerItem("donut", new Item(new FabricItemSettings().food(new FoodComponent.Builder().hunger(4).build())));
+
+    public static final Item MUFFIN = registerItem("muffin", new Item(new FabricItemSettings().food(new FoodComponent.Builder().hunger(5).build())));
+
+    public static final Item CINNAMON_ROLL = registerItem("cinnamon_roll", new Item(new FabricItemSettings().food(new FoodComponent.Builder().hunger(3).build())));
+
+
+    // -- Miscellaneous --
+    public static final Item FIRE_EXTINGUISHER = registerItem("fire_extinguisher", new FireExtinguisherItem(new FabricItemSettings().maxDamage(256)));
+    public static final Item CHEF_HAT = registerItem("chef_hat", new Item(new FabricItemSettings().equipmentSlot(stack -> EquipmentSlot.HEAD)));
+
+    // public static final Item MILK = registerItem("milk", new Item(new FabricItemSettings()));
 
     private static Item registerItem(String name, Item item) {
         CookItItems.ITEMS.add(item);
