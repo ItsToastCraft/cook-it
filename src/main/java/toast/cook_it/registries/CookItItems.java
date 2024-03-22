@@ -32,15 +32,25 @@ public class CookItItems {
 
     // -- Food --
     public static final Item TOAST = registerItem("toast", new Item(new FabricItemSettings().food(new FoodComponent.Builder().hunger(3).build())));
-    public static final Item RAW_CROISSANT = registerItem("raw_croissant", new Item(new FabricItemSettings().food(new FoodComponent.Builder().hunger(1).build())));
+    public static final Item RAW_CROISSANT = registerItem("raw_croissant", new Item(new FabricItemSettings()));
     public static final Item CROISSANT = registerItem("croissant", new Item(new FabricItemSettings().food(new FoodComponent.Builder().hunger(3).build())));
     public static final Item PIZZA_SLICE = registerItem("pizza_slice", new Item(new FabricItemSettings().food(new FoodComponent.Builder().hunger(5).build())));
 
-    public static final Item DONUT = registerItem("donut", new Item(new FabricItemSettings().food(new FoodComponent.Builder().hunger(4).build())));
+    private static final Item DONUT = registerItem("plain_donut", new Item(new FabricItemSettings().food(new FoodComponent.Builder().hunger(3).build())));
+    public static final Item CHOCOLATE_GLAZED_DONUT = registerItem("chocolate_glazed_donut", new Item(new FabricItemSettings().food(new FoodComponent.Builder().hunger(4).build())));
+    public static final Item CHOCOLATE_GLAZED_DONUT_FROSTED = registerItem("chocolate_glazed_donut_frosted", new Item(new FabricItemSettings().food(new FoodComponent.Builder().hunger(4).build())));
+    public static final Item PINK_GLAZED_DONUT = registerItem("pink_glazed_donut", new Item(new FabricItemSettings().food(new FoodComponent.Builder().hunger(4).build())));
+    public static final Item VANILLA_GLAZED_DONUT = registerItem("vanilla_glazed_donut", new Item(new FabricItemSettings().food(new FoodComponent.Builder().hunger(4).build())));
+    public static final Item VANILLA_GLAZED_DONUT_FROSTED = registerItem("vanilla_glazed_donut_frosted", new Item(new FabricItemSettings().food(new FoodComponent.Builder().hunger(4).build())));
+    private static final Item DONUT_WITH_NUTS = registerItem("peanut_donut", new Item(new FabricItemSettings().food(new FoodComponent.Builder().hunger(4).build())));
 
-    public static final Item MUFFIN = registerItem("muffin", new Item(new FabricItemSettings().food(new FoodComponent.Builder().hunger(5).build())));
+    public static final Item MUFFIN = registerItem("plain_muffin", new Item(new FabricItemSettings().food(new FoodComponent.Builder().hunger(5).build())));
+    public static final Item BLUEBERRY_MUFFIN = registerItem("blueberry_muffin", new Item(new FabricItemSettings().food(new FoodComponent.Builder().hunger(6).build())));
+    public static final Item CHOCOLATE_CHIP_MUFFIN = registerItem("chocolate_muffin", new Item(new FabricItemSettings().food(new FoodComponent.Builder().hunger(6).build())));
+    public static final Item CHOCOLATE_MUFFIN = registerItem("chocolate_muffin", new Item(new FabricItemSettings().food(new FoodComponent.Builder().hunger(7).build())));
 
     public static final Item CINNAMON_ROLL = registerItem("cinnamon_roll", new Item(new FabricItemSettings().food(new FoodComponent.Builder().hunger(3).build())));
+    public static final Item CINNAMON_ROLL_GLAZED = registerItem("cinnamon_roll_glazed", new Item(new FabricItemSettings().food(new FoodComponent.Builder().hunger(4).build())));
 
 
     // -- Miscellaneous --

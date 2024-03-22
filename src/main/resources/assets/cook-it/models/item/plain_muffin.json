@@ -1,36 +1,34 @@
 {
 	"credit": "Made by ToastTextures using Blockbench",
-	"parent": "cook-it:item/croissant",
 	"texture_size": [32, 32],
 	"textures": {
-		"muffin": "cook-it:item/blueberry_muffin",
+		"muffin": "cook-it:item/plain_muffin",
 		"particle": "#muffin"
 	},
 	"elements": [
-		{
-			"from": [4, 0, 4],
-			"to": [12, 5, 12],
-			"rotation": {"angle": 0, "axis": "y", "origin": [0, 0, 11]},
-			"faces": {
-				"north": {"uv": [5, 6.5, 9, 9], "texture": "#muffin"},
-				"east": {"uv": [9, 0, 13, 2.5], "texture": "#muffin"},
-				"south": {"uv": [9, 2.5, 13, 5], "texture": "#muffin"},
-				"west": {"uv": [5, 4, 9, 6.5], "texture": "#muffin"},
-				"up": {"uv": [9, 4, 5, 0], "texture": "#muffin"},
-				"down": {"uv": [9, 0, 5, 4], "texture": "#muffin"}
-			}
-		},
 		{
 			"from": [3, 5, 3],
 			"to": [13, 9, 13],
 			"rotation": {"angle": 0, "axis": "y", "origin": [0, 0, 11]},
 			"faces": {
-				"north": {"uv": [5, 9, 10, 11], "texture": "#muffin"},
-				"east": {"uv": [9, 5, 14, 7], "texture": "#muffin"},
-				"south": {"uv": [9, 7, 14, 9], "texture": "#muffin"},
-				"west": {"uv": [0, 10, 5, 12], "texture": "#muffin"},
+				"north": {"uv": [5, 6, 10, 8], "texture": "#muffin"},
+				"east": {"uv": [5, 0, 10, 2], "texture": "#muffin"},
+				"south": {"uv": [5, 2, 10, 4], "texture": "#muffin"},
+				"west": {"uv": [5, 4, 10, 6], "texture": "#muffin"},
 				"up": {"uv": [5, 5, 0, 0], "texture": "#muffin"},
 				"down": {"uv": [5, 5, 0, 10], "texture": "#muffin"}
+			}
+		},
+		{
+			"from": [4, 0, 4],
+			"to": [12, 5, 12],
+			"rotation": {"angle": 0, "axis": "y", "origin": [0, 0, 11]},
+			"faces": {
+				"north": {"uv": [5, 8, 9, 10.5], "texture": "#muffin"},
+				"east": {"uv": [10, 5, 14, 7.5], "texture": "#muffin"},
+				"south": {"uv": [10, 0, 14, 2.5], "texture": "#muffin"},
+				"west": {"uv": [10, 2.5, 14, 5], "texture": "#muffin"},
+				"down": {"uv": [4.5, 5.5, 0.5, 9.5], "texture": "#muffin", "cullface": "down"}
 			}
 		}
 	],

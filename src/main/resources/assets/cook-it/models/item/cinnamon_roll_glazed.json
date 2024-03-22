@@ -1,0 +1,7 @@
+{
+	"parent": "cook-it:item/cinnamon_roll",
+	"textures": {
+		"donut": "cook-it:item/cinnamon_roll_glazed"
+	}
+
+}

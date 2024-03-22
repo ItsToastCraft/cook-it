@@ -1,0 +1,101 @@
+{
+	"credit": "Made with Blockbench",
+	"parent": "cook-it:item/croissant",
+	"texture_size": [32, 32],
+	"textures": {
+		"donut": "cook-it:item/plain_donut",
+		"particle": "#donut"
+	},
+	"elements": [
+		{
+			"from": [10, 0, 3],
+			"to": [13, 4, 13],
+			"rotation": {"angle": 0, "axis": "y", "origin": [0, 0, 11]},
+			"faces": {
+				"north": {"uv": [6.5, 8, 8, 10], "texture": "#donut"},
+				"east": {"uv": [0, 0, 5, 2], "texture": "#donut"},
+				"south": {"uv": [8, 8, 9.5, 10], "texture": "#donut"},
+				"west": {"uv": [0, 2, 5, 4], "texture": "#donut", "cullface": "west"},
+				"up": {"uv": [6.5, 7, 5, 2], "texture": "#donut"},
+				"down": {"uv": [1.5, 6, 0, 11], "texture": "#donut"}
+			}
+		},
+		{
+			"from": [3, 0, 3],
+			"to": [6, 4, 13],
+			"rotation": {"angle": 0, "axis": "y", "origin": [0, 0, 11]},
+			"faces": {
+				"north": {"uv": [8.5, 2, 10, 4], "texture": "#donut"},
+				"east": {"uv": [0, 4, 5, 6], "texture": "#donut"},
+				"south": {"uv": [8.5, 4, 10, 6], "texture": "#donut"},
+				"west": {"uv": [5, 0, 10, 2], "texture": "#donut", "cullface": "west"},
+				"up": {"uv": [3, 11, 1.5, 6], "texture": "#donut"},
+				"down": {"uv": [4.5, 6, 3, 11], "texture": "#donut"}
+			}
+		},
+		{
+			"from": [6, 0, 10],
+			"to": [10, 4, 13],
+			"rotation": {"angle": 0, "axis": "y", "origin": [0, 0, 11]},
+			"faces": {
+				"north": {"uv": [6.5, 2, 8.5, 4], "texture": "#donut"},
+				"south": {"uv": [6.5, 4, 8.5, 6], "texture": "#donut"},
+				"up": {"uv": [10.5, 7.5, 8.5, 6], "texture": "#donut"},
+				"down": {"uv": [6.5, 9, 4.5, 10.5], "texture": "#donut"}
+			}
+		},
+		{
+			"from": [6, 0, 3],
+			"to": [10, 4, 6],
+			"rotation": {"angle": 0, "axis": "y", "origin": [0, 0, 11]},
+			"faces": {
+				"north": {"uv": [6.5, 6, 8.5, 8], "texture": "#donut"},
+				"south": {"uv": [4.5, 7, 6.5, 9], "texture": "#donut"},
+				"up": {"uv": [11.5, 9, 9.5, 7.5], "texture": "#donut"},
+				"down": {"uv": [11.5, 9, 9.5, 10.5], "texture": "#donut"}
+			}
+		}
+	],
+	"gui_light": "front",
+	"display": {
+		"thirdperson_righthand": {
+			"rotation": [-90, -7, -180],
+			"translation": [0, 2, 5],
+			"scale": [0.625, 0.625, 0.625]
+		},
+		"thirdperson_lefthand": {
+			"rotation": [-90, 0, -180],
+			"translation": [0, 2, 5],
+			"scale": [0.625, 0.625, 0.625]
+		},
+		"firstperson_righthand": {
+			"rotation": [0, 122, 0],
+			"translation": [0, 5.75, 0],
+			"scale": [0.5, 0.5, 0.5]
+		},
+		"firstperson_lefthand": {
+			"rotation": [0, 117.5, 0],
+			"translation": [0, 5.75, 0],
+			"scale": [0.5, 0.5, 0.5]
+		},
+		"ground": {
+			"translation": [0, 3, 0],
+			"scale": [0.5, 0.5, 0.5]
+		},
+		"gui": {
+			"rotation": [30, 225, 0],
+			"scale": [0.625, 0.625, 0.625]
+		},
+		"head": {
+			"translation": [0, 14.25, 0]
+		}
+	},
+	"groups": [
+		{
+			"name": "donut",
+			"origin": [0, 0, 0],
+			"color": 0,
+			"children": [0, 1, 2, 3]
+		}
+	]
+}

@@ -1,0 +1,8 @@
+{
+	"comment": "Seriously, what does the pink frosting taste like because it certainly isn't strawberry...?",
+	"parent": "cook-it:item/plain_donut",
+	"textures": {
+		"donut": "cook-it:item/pink_donut"
+	}
+
+}

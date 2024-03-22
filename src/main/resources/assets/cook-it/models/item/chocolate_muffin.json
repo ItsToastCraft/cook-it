@@ -1,0 +1,7 @@
+{
+	"parent": "cook-it:item/plain_muffin",
+	"textures": {
+		"muffin": "cook-it:item/chocolate_muffin"
+	}
+
+}

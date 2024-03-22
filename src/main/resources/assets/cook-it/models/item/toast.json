@@ -1,43 +1,46 @@
 {
-	"credit": "Made with Blockbench",
+	"credit": "Made by ToastTextures using Blockbench",
 	"textures": {
-		"0": "cook-it:item/toast",
-		"particle": "cook-it:item/toast"
+		"toast": "cook-it:item/toast",
+		"particle": "#toast"
 	},
 	"elements": [
 		{
-			"from": [4, 0, 7],
-			"to": [12, 8, 9],
+			"from": [4, 0, 4],
+			"to": [12, 2, 12],
 			"faces": {
-				"north": {"uv": [8, 8, 0, 0], "rotation": 180, "texture": "#0"},
-				"east": {"uv": [8, 2, 16, 4], "rotation": 90, "texture": "#0"},
-				"south": {"uv": [8, 8, 0, 16], "texture": "#0"},
-				"west": {"uv": [8, 6, 16, 8], "rotation": 270, "texture": "#0"},
-				"up": {"uv": [8, 4, 16, 6], "texture": "#0"},
-				"down": {"uv": [8, 0, 16, 2], "rotation": 180, "texture": "#0"}
+				"north": {"uv": [8, 0, 16, 2], "texture": "#toast"},
+				"east": {"uv": [8, 2, 16, 4], "texture": "#toast"},
+				"south": {"uv": [8, 4, 16, 6], "texture": "#toast"},
+				"west": {"uv": [8, 6, 16, 8], "texture": "#toast"},
+				"up": {"uv": [8, 8, 0, 0], "texture": "#toast"},
+				"down": {"uv": [8, 8, 0, 16], "texture": "#toast"}
 			}
 		}
 	],
 	"display": {
 		"thirdperson_righthand": {
-			"translation": [0, 3.5, -0.25],
-			"scale": [0.5625, 0.5625, 0.5625]
+			"rotation": [-90, 0, -180],
+			"translation": [0, 2, 6],
+			"scale": [0.625, 0.625, 0.625]
 		},
 		"thirdperson_lefthand": {
-			"translation": [0, 3.5, 0.25],
-			"scale": [0.5625, 0.5625, 0.5625]
+			"rotation": [-90, 0, -180],
+			"translation": [0, 2, 6],
+			"scale": [0.625, 0.625, 0.625]
 		},
 		"firstperson_righthand": {
-			"rotation": [-180, 62.5, -180],
-			"translation": [0, 9, 0]
+			"rotation": [0, 122, 0],
+			"translation": [0, 5.75, 0],
+			"scale": [0.5, 0.5, 0.5]
 		},
 		"firstperson_lefthand": {
 			"rotation": [0, 117.5, 0],
-			"translation": [0, 9, 0]
+			"translation": [0, 5.75, 0],
+			"scale": [0.5, 0.5, 0.5]
 		},
 		"ground": {
-			"rotation": [90, 0, 0],
-			"translation": [0, -2, 0],
+			"translation": [0, 3, 0],
 			"scale": [0.5, 0.5, 0.5]
 		},
 		"gui": {
@@ -45,10 +48,7 @@
 			"scale": [0.625, 0.625, 0.625]
 		},
 		"head": {
-			"translation": [0, 15, 0]
-		},
-		"fixed": {
-			"translation": [0, 4, 0]
+			"translation": [0, 14.25, 0]
 		}
 	}
 }
