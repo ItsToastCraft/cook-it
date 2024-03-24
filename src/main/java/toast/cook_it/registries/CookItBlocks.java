@@ -18,6 +18,7 @@ import toast.cook_it.block.appliances.oven.Oven;
 import toast.cook_it.block.containers.Bowl;
 import toast.cook_it.block.containers.CuttingBoard;
 import toast.cook_it.block.containers.baking_sheet.BakingSheet;
+import toast.cook_it.block.containers.muffin_tin.MuffinTin;
 import toast.cook_it.block.containers.plate.Plate;
 
 import java.util.ArrayList;
@@ -34,6 +35,7 @@ public class CookItBlocks {
     public static final Block OVEN = registerBlock("oven", new Oven(FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).nonOpaque()));
 
     public static final Block MICROWAVE = registerBlock("microwave", new Microwave(FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).nonOpaque()));
+    public static final Block MUFFIN_TIN = registerBlock("muffin_tin", new MuffinTin(FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).nonOpaque()));;
 
     public static void registerColoredBlocks() {
         for (DyeColor color : DyeColor.values()) {

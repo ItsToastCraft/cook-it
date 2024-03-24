@@ -15,11 +15,14 @@ import toast.cook_it.block.appliances.oven.OvenEntity;
 import toast.cook_it.block.appliances.oven.OvenEntityRenderer;
 import toast.cook_it.block.containers.baking_sheet.BakingSheetEntity;
 import toast.cook_it.block.containers.baking_sheet.BakingSheetEntityRenderer;
+import toast.cook_it.block.containers.muffin_tin.MuffinTinEntity;
+import toast.cook_it.block.containers.muffin_tin.MuffinTinEntityRenderer;
 import toast.cook_it.block.containers.plate.PlateEntity;
 import toast.cook_it.block.containers.plate.PlateEntityRenderer;
 
 
 public class CookItBlockEntities {
+    public static BlockEntityType<MuffinTinEntity> MUFFIN_TIN_ENTITY;
     public static BlockEntityType<BakingSheetEntity> BAKING_SHEET_ENTITY;
     public static BlockEntityType<MicrowaveEntity> MICROWAVE_ENTITY;
     public static BlockEntityType<OvenEntity> OVEN_ENTITY;
@@ -27,6 +30,7 @@ public class CookItBlockEntities {
 
     public static void registerEntities() {
         BAKING_SHEET_ENTITY = registerBlockEntities("baking_sheet", BakingSheetEntity::new, new Block[]{CookItBlocks.BAKING_SHEET});
+        MUFFIN_TIN_ENTITY =registerBlockEntities("muffin_tin", MuffinTinEntity::new, new Block[]{CookItBlocks.MUFFIN_TIN});
         MICROWAVE_ENTITY = registerBlockEntities("microwave", MicrowaveEntity::new, new Block[]{CookItBlocks.MICROWAVE});
         OVEN_ENTITY = registerBlockEntities("oven", OvenEntity::new, new Block[]{CookItBlocks.OVEN});
         PLATE_ENTITY = registerBlockEntities("plate", PlateEntity::new, CookItBlocks.PLATES.toArray(Block[]::new));
@@ -35,6 +39,7 @@ public class CookItBlockEntities {
 
     public static void registerRenderers() {
         BlockEntityRendererFactories.register(BAKING_SHEET_ENTITY, BakingSheetEntityRenderer::new);
+        BlockEntityRendererFactories.register(MUFFIN_TIN_ENTITY, MuffinTinEntityRenderer::new);
         BlockEntityRendererFactories.register(MICROWAVE_ENTITY, MicrowaveEntityRenderer::new);
         BlockEntityRendererFactories.register(OVEN_ENTITY, OvenEntityRenderer::new);
         BlockEntityRendererFactories.register(PLATE_ENTITY, PlateEntityRenderer::new);

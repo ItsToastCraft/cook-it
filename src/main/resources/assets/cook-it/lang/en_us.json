@@ -3,18 +3,37 @@
   "item.cook-it.rolling_pin": "Rolling Pin",
   "item.cook-it.knife": "Kitchen Knife",
   "item.cook-it.butcher_knife": "Butcher Knife",
+  "item.cook-it.fire_extinguisher": "Fire Extinguisher",
+
+  "item.cook-it.pizza_slice": "Pizza Slice",
+  "item.cook-it.toast": "Toast",
   "item.cook-it.raw_croissant": "Raw Croissant",
   "item.cook-it.croissant": "Croissant",
-  "item.cook-it.milk": "Milk",
-  "item.cook-it.fire_extinguisher": "Fire Extinguisher",
-  "item.cook-it.pizza_slice": "Pizza Slice",
+
+  "item.cook-it.plain_donut": "Donut",
+  "item.cook-it.chocolate_glazed_donut": "Chocolate Glazed Donut",
+  "item.cook-it.chocolate_glazed_donut_frosted": "Chocolate Glazed n' Frosted Donut",
+  "item.cook-it.vanilla_glazed_donut": "Vanilla Glazed Donut",
+  "item.cook-it.vanilla_glazed_donut_frosted": "Vanilla Glazed n' Frosted Donut",
+  "item.cook-it.pink_glazed_donut": "Pink Glazed Donut",
+  "item.cook-it.peanut_donut": "Chocolate Glazed Donut with Peanuts",
+
+  "item.cook-it.plain_muffin": "Muffin",
+  "item.cook-it.blueberry_muffin": "Blueberry Muffin",
+  "item.cook-it.chocolate_chip_muffin": "Chocolate Chip Muffin",
+  "item.cook-it.chocolate_muffin": " Chocolate Muffin",
+
+  "item.cook-it.cinnamon_roll": "Cinnamon Roll",
+  "item.cook-it.cinnamon_roll_glazed": "Glazed Cinnamon Roll",
 
   "block.cook-it.cutting_board": "Cutting Board",
+  "block.cook-it.muffin_tin": "Muffin Tin",
   "block.cook-it.baking_sheet": "Baking Sheet",
   "block.cook-it.toaster": "Toaster",
   "block.cook-it.oven": "Oven",
   "block.cook-it.microwave": "Microwave",
   "block.cook-it.pizza": "Pizza",
+
 
   "block.cook-it.red_plate": "Red Plate",
   "block.cook-it.red_large_plate": "Red Large Plate",

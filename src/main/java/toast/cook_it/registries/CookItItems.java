@@ -46,7 +46,7 @@ public class CookItItems {
 
     public static final Item MUFFIN = registerItem("plain_muffin", new Item(new FabricItemSettings().food(new FoodComponent.Builder().hunger(5).build())));
     public static final Item BLUEBERRY_MUFFIN = registerItem("blueberry_muffin", new Item(new FabricItemSettings().food(new FoodComponent.Builder().hunger(6).build())));
-    public static final Item CHOCOLATE_CHIP_MUFFIN = registerItem("chocolate_muffin", new Item(new FabricItemSettings().food(new FoodComponent.Builder().hunger(6).build())));
+    public static final Item CHOCOLATE_CHIP_MUFFIN = registerItem("chocolate_chip_muffin", new Item(new FabricItemSettings().food(new FoodComponent.Builder().hunger(6).build())));
     public static final Item CHOCOLATE_MUFFIN = registerItem("chocolate_muffin", new Item(new FabricItemSettings().food(new FoodComponent.Builder().hunger(7).build())));
 
     public static final Item CINNAMON_ROLL = registerItem("cinnamon_roll", new Item(new FabricItemSettings().food(new FoodComponent.Builder().hunger(3).build())));

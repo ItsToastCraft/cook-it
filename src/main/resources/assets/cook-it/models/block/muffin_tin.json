@@ -1,0 +1,193 @@
+{
+	"credit": "Made by ToastTextures using Blockbench",
+	"textures": {
+		"particle": "cook-it:block/muffin_tin",
+		"baking_sheet": "cook-it:block/muffin_tin"
+	},
+	"elements": [
+		{
+			"from": [3, 1, 1],
+			"to": [13, 2, 14],
+			"faces": {
+				"north": {"uv": [0, 12, 10, 13], "texture": "#baking_sheet"},
+				"east": {"uv": [0, 0, 1, 13], "rotation": 90, "texture": "#baking_sheet"},
+				"south": {"uv": [10, 0, 0, 1], "texture": "#baking_sheet"},
+				"west": {"uv": [9, 0, 10, 13], "rotation": 90, "texture": "#baking_sheet"},
+				"up": {"uv": [0, 0, 10, 13], "texture": "#baking_sheet"}
+			}
+		},
+		{
+			"from": [9, 0.025, 2],
+			"to": [12, 2.025, 5],
+			"faces": {
+				"north": {"uv": [13, 13, 16, 15], "texture": "#baking_sheet"},
+				"east": {"uv": [10, 11, 13, 13], "texture": "#baking_sheet"},
+				"south": {"uv": [13, 11, 16, 13], "texture": "#baking_sheet"},
+				"west": {"uv": [10, 13, 13, 15], "texture": "#baking_sheet"},
+				"down": {"uv": [0, 13, 3, 16], "texture": "#baking_sheet"}
+			}
+		},
+		{
+			"from": [9, 0.025, 6],
+			"to": [12, 2.025, 9],
+			"faces": {
+				"north": {"uv": [10, 7, 13, 9], "texture": "#baking_sheet"},
+				"east": {"uv": [10, 9, 13, 11], "texture": "#baking_sheet"},
+				"south": {"uv": [13, 9, 16, 11], "texture": "#baking_sheet"},
+				"west": {"uv": [13, 7, 16, 9], "texture": "#baking_sheet"},
+				"down": {"uv": [13, 4, 16, 7], "texture": "#baking_sheet"}
+			}
+		},
+		{
+			"from": [9, 0.025, 10],
+			"to": [12, 2.025, 13],
+			"faces": {
+				"north": {"uv": [13, 2, 16, 4], "texture": "#baking_sheet"},
+				"east": {"uv": [10, 2, 13, 4], "texture": "#baking_sheet"},
+				"south": {"uv": [13, 0, 16, 2], "texture": "#baking_sheet"},
+				"west": {"uv": [10, 0, 13, 2], "texture": "#baking_sheet"},
+				"down": {"uv": [10, 4, 13, 7], "texture": "#baking_sheet"}
+			}
+		},
+		{
+			"from": [4, 0.025, 2],
+			"to": [7, 2.025, 5],
+			"faces": {
+				"north": {"uv": [13, 13, 16, 15], "texture": "#baking_sheet"},
+				"east": {"uv": [10, 11, 13, 13], "texture": "#baking_sheet"},
+				"south": {"uv": [13, 11, 16, 13], "texture": "#baking_sheet"},
+				"west": {"uv": [10, 13, 13, 15], "texture": "#baking_sheet"},
+				"down": {"uv": [0, 13, 3, 16], "texture": "#baking_sheet"}
+			}
+		},
+		{
+			"from": [4, 0.025, 6],
+			"to": [7, 2.025, 9],
+			"faces": {
+				"north": {"uv": [10, 7, 13, 9], "texture": "#baking_sheet"},
+				"east": {"uv": [10, 9, 13, 11], "texture": "#baking_sheet"},
+				"south": {"uv": [13, 9, 16, 11], "texture": "#baking_sheet"},
+				"west": {"uv": [13, 7, 16, 9], "texture": "#baking_sheet"},
+				"down": {"uv": [13, 4, 16, 7], "texture": "#baking_sheet"}
+			}
+		},
+		{
+			"from": [4, 0.025, 10],
+			"to": [7, 2.025, 13],
+			"faces": {
+				"north": {"uv": [13, 2, 16, 4], "texture": "#baking_sheet"},
+				"east": {"uv": [10, 2, 13, 4], "texture": "#baking_sheet"},
+				"south": {"uv": [13, 0, 16, 2], "texture": "#baking_sheet"},
+				"west": {"uv": [10, 0, 13, 2], "texture": "#baking_sheet"},
+				"down": {"uv": [10, 4, 13, 7], "texture": "#baking_sheet"}
+			}
+		},
+		{
+			"from": [7, 2.025, 5],
+			"to": [4, 0.025, 2],
+			"faces": {
+				"north": {"uv": [13, 13, 16, 15], "texture": "#baking_sheet"},
+				"east": {"uv": [10, 11, 13, 13], "texture": "#baking_sheet"},
+				"south": {"uv": [13, 11, 16, 13], "texture": "#baking_sheet"},
+				"west": {"uv": [10, 13, 13, 15], "texture": "#baking_sheet"},
+				"up": {"uv": [0, 13, 3, 16], "texture": "#baking_sheet"}
+			}
+		},
+		{
+			"from": [7, 2.025, 9],
+			"to": [4, 0.025, 6],
+			"faces": {
+				"north": {"uv": [10, 7, 13, 9], "texture": "#baking_sheet"},
+				"east": {"uv": [10, 9, 13, 11], "texture": "#baking_sheet"},
+				"south": {"uv": [13, 9, 16, 11], "texture": "#baking_sheet"},
+				"west": {"uv": [13, 7, 16, 9], "texture": "#baking_sheet"},
+				"up": {"uv": [0, 13, 3, 16], "texture": "#baking_sheet"}
+			}
+		},
+		{
+			"from": [7, 2.025, 13],
+			"to": [4, 0.025, 10],
+			"faces": {
+				"north": {"uv": [13, 2, 16, 4], "texture": "#baking_sheet"},
+				"east": {"uv": [10, 2, 13, 4], "texture": "#baking_sheet"},
+				"south": {"uv": [13, 0, 16, 2], "texture": "#baking_sheet"},
+				"west": {"uv": [10, 0, 13, 2], "texture": "#baking_sheet"},
+				"up": {"uv": [0, 13, 3, 16], "texture": "#baking_sheet"}
+			}
+		},
+		{
+			"from": [12, 2.025, 13],
+			"to": [9, 0.025, 10],
+			"faces": {
+				"north": {"uv": [13, 2, 16, 4], "texture": "#baking_sheet"},
+				"east": {"uv": [10, 2, 13, 4], "texture": "#baking_sheet"},
+				"south": {"uv": [13, 0, 16, 2], "texture": "#baking_sheet"},
+				"west": {"uv": [10, 0, 13, 2], "texture": "#baking_sheet"},
+				"up": {"uv": [0, 13, 3, 16], "texture": "#baking_sheet"}
+			}
+		},
+		{
+			"from": [12, 2.025, 9],
+			"to": [9, 0.025, 6],
+			"faces": {
+				"north": {"uv": [10, 7, 13, 9], "texture": "#baking_sheet"},
+				"east": {"uv": [10, 9, 13, 11], "texture": "#baking_sheet"},
+				"south": {"uv": [13, 9, 16, 11], "texture": "#baking_sheet"},
+				"west": {"uv": [13, 7, 16, 9], "texture": "#baking_sheet"},
+				"up": {"uv": [0, 13, 3, 16], "texture": "#baking_sheet"}
+			}
+		},
+		{
+			"from": [12, 2.025, 5],
+			"to": [9, 0.025, 2],
+			"faces": {
+				"north": {"uv": [13, 13, 16, 15], "texture": "#baking_sheet"},
+				"east": {"uv": [10, 11, 13, 13], "texture": "#baking_sheet"},
+				"south": {"uv": [13, 11, 16, 13], "texture": "#baking_sheet"},
+				"west": {"uv": [10, 13, 13, 15], "texture": "#baking_sheet"},
+				"up": {"uv": [0, 13, 3, 16], "texture": "#baking_sheet"}
+			}
+		}
+	],
+	"display": {
+		"thirdperson_righthand": {
+			"rotation": [180, 180, 180],
+			"translation": [0, 3, -0.5],
+			"scale": [0.625, 0.625, 0.625]
+		},
+		"thirdperson_lefthand": {
+			"rotation": [180, 180, -180],
+			"translation": [0, 3, 0.5],
+			"scale": [0.625, 0.625, 0.625]
+		},
+		"firstperson_righthand": {
+			"rotation": [0, 117.5, 0],
+			"translation": [0, 5.75, 0],
+			"scale": [0.5, 0.5, 0.5]
+		},
+		"firstperson_lefthand": {
+			"rotation": [0, 117.5, 0],
+			"translation": [0, 5.75, 0],
+			"scale": [0.5, 0.5, 0.5]
+		},
+		"ground": {
+			"translation": [0, 3, 0],
+			"scale": [0.5, 0.5, 0.5]
+		},
+		"gui": {
+			"rotation": [30, 225, 0],
+			"scale": [0.625, 0.625, 0.625]
+		},
+		"head": {
+			"translation": [0, 14.25, 0]
+		}
+	},
+	"groups": [
+		{
+			"name": "CupcakeTin",
+			"origin": [0, 0, 0],
+			"color": 0,
+			"children": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+		}
+	]
+}
