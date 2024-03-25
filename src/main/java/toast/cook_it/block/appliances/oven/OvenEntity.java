@@ -11,7 +11,7 @@ public class OvenEntity extends CookingBlockEntity implements ImplementedInvento
 
 
     public OvenEntity(BlockPos pos, BlockState state) {
-        super(CookItBlockEntities.OVEN_ENTITY,pos, state, 1);
+        super(CookItBlockEntities.OVEN_ENTITY,pos, state, 2);
     }
 
 }

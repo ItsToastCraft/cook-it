@@ -17,7 +17,8 @@ public class OvenEntityRenderer implements BlockEntityRenderer<OvenEntity> {
     @Override
     public void render(OvenEntity blockEntity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
         final MinecraftClient client = MinecraftClient.getInstance();
-        ItemStack stack = blockEntity.getStack(0);
+        for (int i = 0; i < 2; i++) {
+            ItemStack stack = blockEntity.getStack(i);
 
             if (!stack.isEmpty()) {
                 matrices.push();
@@ -26,5 +27,6 @@ public class OvenEntityRenderer implements BlockEntityRenderer<OvenEntity> {
                 client.getItemRenderer().renderItem(stack, ModelTransformationMode.NONE, light, overlay, matrices, vertexConsumers, blockEntity.getWorld(), 0);
                 matrices.pop();
             }
+        }
         }
 }
