@@ -14,20 +14,22 @@ public class CookItModels {
     static TextureKey PLATE = TextureKey.of("plate");
     static TextureKey BOWL = TextureKey.of("bowl");
     static TextureKey CUTTING_BOARD = TextureKey.of("cutting_board");
+    static TextureKey ROLLING_PIN = TextureKey.of("rolling_pin");
 
-    public static final Model TEMPLATE_PLATE_1 = newParent("plate_1", PLATE);
-    public static final Model TEMPLATE_PLATE_2 = newParent("plate_2", PLATE);
-    public static final Model TEMPLATE_PLATE_3 = newParent("plate_3", PLATE);
-    public static final Model TEMPLATE_PLATE_4 = newParent("plate_4", PLATE);
-    public static final Model TEMPLATE_LARGE_PLATE_1 = newParent("large_plate_1", PLATE);
-    public static final Model TEMPLATE_LARGE_PLATE_2 = newParent("large_plate_2", PLATE);
-    public static final Model TEMPLATE_LARGE_PLATE_3 = newParent("large_plate_3", PLATE);
-    public static final Model TEMPLATE_LARGE_PLATE_4 = newParent("large_plate_4", PLATE);
-    public static final Model TEMPLATE_BOWL = newParent("bowl", BOWL);
-    public static final Model TEMPLATE_CUTTING_BOARD = newParent("cutting_board", CUTTING_BOARD);
+    public static final Model TEMPLATE_PLATE_1 = newParent("block/plate_1", PLATE);
+    public static final Model TEMPLATE_PLATE_2 = newParent("block/plate_2", PLATE);
+    public static final Model TEMPLATE_PLATE_3 = newParent("block/plate_3", PLATE);
+    public static final Model TEMPLATE_PLATE_4 = newParent("block/plate_4", PLATE);
+    public static final Model TEMPLATE_LARGE_PLATE_1 = newParent("block/large_plate_1", PLATE);
+    public static final Model TEMPLATE_LARGE_PLATE_2 = newParent("block/large_plate_2", PLATE);
+    public static final Model TEMPLATE_LARGE_PLATE_3 = newParent("block/large_plate_3", PLATE);
+    public static final Model TEMPLATE_LARGE_PLATE_4 = newParent("block/large_plate_4", PLATE);
+    public static final Model TEMPLATE_BOWL = newParent("block/bowl", BOWL);
+    public static final Model TEMPLATE_CUTTING_BOARD = newParent("block/cutting_board", CUTTING_BOARD);
+    public static final Model TEMPLATE_ROLLING_PIN = newParent("item/oak_rolling_pin", ROLLING_PIN);
 
     private static Model newParent(String parent, TextureKey... requiredTextureKeys) {
-        return new Model(Optional.of(new Identifier(CookIt.MOD_ID, "block/" + parent)), Optional.empty(), requiredTextureKeys);
+        return new Model(Optional.of(new Identifier(CookIt.MOD_ID, parent)), Optional.empty(), requiredTextureKeys);
     }
 
     public static TextureMap coloredTextureMap(TextureKey type, Block block, String folder) {

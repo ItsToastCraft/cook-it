@@ -1,0 +1,6 @@
+{
+  "parent": "cook-it:item/oak_rolling_pin",
+  "textures": {
+    "rolling_pin": "cook-it:item/dark_oak_rolling_pin"
+  }
+}

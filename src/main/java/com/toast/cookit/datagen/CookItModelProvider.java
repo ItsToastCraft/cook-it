@@ -1,11 +1,13 @@
 package com.toast.cookit.datagen;
 
 import com.toast.cookit.CookIt;
-import com.toast.cookit.block.containers.cutting_board.CuttingBoard;
+import com.toast.cookit.registries.CookItItems;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricModelProvider;
 import net.minecraft.block.Block;
 import net.minecraft.data.client.*;
+import net.minecraft.item.Item;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import net.minecraft.state.property.Properties;
 import com.toast.cookit.block.containers.Bowl;
@@ -13,7 +15,6 @@ import com.toast.cookit.block.containers.plate.Plate;
 import com.toast.cookit.registries.CookItBlocks;
 import net.minecraft.util.math.Direction;
 
-import static com.toast.cookit.CookIt.SUPPORTED_WOOD_TYPES;
 import static com.toast.cookit.datagen.CookItModels.*;
 
 public class CookItModelProvider extends FabricModelProvider {
@@ -69,5 +70,8 @@ public class CookItModelProvider extends FabricModelProvider {
 
     @Override
     public void generateItemModels(ItemModelGenerator itemModelGenerator) {
+        for (Item rollingPin : CookItItems.ROLLING_PINS) {
+            TEMPLATE_ROLLING_PIN.upload(ModelIds.getItemModelId(rollingPin), TextureMap.of(ROLLING_PIN, new Identifier(CookIt.MOD_ID, "item/" + Registries.ITEM.getId(rollingPin).getPath())), itemModelGenerator.writer);
+        }
     }
 }
