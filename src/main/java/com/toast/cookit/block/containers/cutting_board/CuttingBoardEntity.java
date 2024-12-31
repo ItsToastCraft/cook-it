@@ -8,6 +8,7 @@ import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtString;
 import net.minecraft.particle.ItemStackParticleEffect;
@@ -51,7 +52,11 @@ public class CuttingBoardEntity extends CookingBlockEntity implements Implemente
 
 
     public void processRecipe(ItemStack tool, boolean tryReset) {
-        if (this.getStack(0).isOf(Item.fromBlock(CookItBlocks.UNCOOKED_PIZZA)) || this.getStack(0).isOf(Item.fromBlock(CookItBlocks.PIZZA_CRUST))) {processPizza(tool); return;}
+        if (this.getStack(0).isOf(Item.fromBlock(CookItBlocks.UNCOOKED_PIZZA)) || this.getStack(0).isOf(Item.fromBlock(CookItBlocks.PIZZA_CRUST))) {
+            if (processPizza(tool))
+                return;
+        }
+
         List<RecipeEntry<CuttingBoardRecipe>> recipes = getCurrentRecipe();
         if (!recipes.isEmpty()) {
             this.clicks++;
@@ -77,24 +82,36 @@ public class CuttingBoardEntity extends CookingBlockEntity implements Implemente
         }
     }
 
-    public void processPizza(ItemStack tool) {
+    public boolean processPizza(ItemStack tool) {
 
-        NbtList toppings = this.getStack(0).getOrCreateSubNbt("BlockEntityTag").getList("toppings", 8);
+        NbtList toppings = this.getStack(0).getOrCreateSubNbt("BlockEntityTag").getList("toppings", NbtElement.STRING_TYPE);
         CookIt.LOGGER.warn(String.valueOf(this.getStack(0).getNbt()));
-        if (!toppings.getString(2).isEmpty()) { return; }
 
-        String name = PizzaToppings.fromItem(tool.getItem());
-
-        if (name != null) {
-            for (int i = 0; i < 3; i++) {
-                if (toppings.getString(i).isEmpty()) {
-                    toppings.add(NbtString.of(name));
-                    tool.decrement(1);
-                    break;
-                }
-            }
-            this.getStack(0).getOrCreateSubNbt("BlockEntityTag").put("toppings", toppings);
+        // The pizza has maxed out toppings, so no change happened
+        if (toppings.size() == 3) {
+            return false;
         }
+
+        // Try and get the topping from the held item, so the pizza has changed
+        PizzaToppings topping = PizzaToppings.fromItem(tool.getItem());
+        if (topping != null) {
+
+            // Once the user has put toppings on the crust, the process is non-reversible, and it is now an uncooked pizza
+            if (this.getStack(0).getItem() == CookItBlocks.PIZZA_CRUST.asItem()) {
+                NbtCompound compound = this.getStack(0).getNbt();
+                ItemStack uncookedPizza = CookItBlocks.UNCOOKED_PIZZA.asItem().getDefaultStack();
+                uncookedPizza.setNbt(compound);
+                this.setStack(0, uncookedPizza);
+            }
+
+            // no need to loop, at this point we're already sure there's a topping slot available.
+            toppings.add(NbtString.of(topping.asString()));
+            tool.decrement(1);
+            // set the topping to whatever it is
+            this.getStack(0).getOrCreateSubNbt("BlockEntityTag").put("toppings", toppings);
+            return true;
+        }
+        return false;
     }
 
     private void complete(RecipeEntry<CuttingBoardRecipe> recipeEntry) {

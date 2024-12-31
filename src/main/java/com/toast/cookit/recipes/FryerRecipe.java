@@ -43,7 +43,7 @@ public class FryerRecipe implements Recipe<SimpleInventory> {
 
     @Override
     public ItemStack craft(SimpleInventory inventory, DynamicRegistryManager registryManager) {
-        return output;
+        return output.copy();
     }
 
     @Override

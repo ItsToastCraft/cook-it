@@ -4,7 +4,7 @@ import com.toast.cookit.block.containers.mixing_bowl.MixingBowlEntity;
 import com.toast.cookit.block.containers.mixing_bowl.MixingBowlEntityRenderer;
 import com.toast.cookit.block.containers.pizza_pan.PizzaPanEntity;
 import com.toast.cookit.block.containers.pizza_pan.PizzaPanEntityRenderer;
-import com.toast.cookit.block.food_blocks.pizza.PizzaEntity;
+import com.toast.cookit.block.entity.PizzaEntity;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.minecraft.block.Block;
 import net.minecraft.block.entity.BlockEntity;
@@ -28,7 +28,7 @@ import com.toast.cookit.block.containers.muffin_tin.MuffinTinEntity;
 import com.toast.cookit.block.containers.muffin_tin.MuffinTinEntityRenderer;
 import com.toast.cookit.block.containers.plate.PlateEntity;
 import com.toast.cookit.block.containers.plate.PlateEntityRenderer;
-import com.toast.cookit.block.food_blocks.pizza.PizzaEntityRenderer;
+import com.toast.cookit.client.render.PizzaEntityRenderer;
 
 
 public class CookItBlockEntities {

@@ -24,10 +24,19 @@ public enum PizzaToppings implements StringIdentifiable {
         return this.name;
     }
 
-    public static String fromItem(Item item) {
+    public static PizzaToppings fromItem(Item item) {
         for (PizzaToppings topping : values()) {
             if (topping.getItem().equals(item)) {
-                return topping.name;
+                return topping;
+            }
+        }
+        return null;
+    }
+
+    public static PizzaToppings fromName(String name) {
+        for (PizzaToppings topping : values()) {
+            if (topping.getName().equals(name)) {
+                return topping;
             }
         }
         return null;

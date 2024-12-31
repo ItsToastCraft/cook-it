@@ -98,7 +98,7 @@ public class OvenEntity extends CookingBlockEntity implements ImplementedInvento
                         if (!containerItems.get(i).getNbt().isEmpty()) {
                             output.setNbt(containerItems.get(i).getNbt());
                         }
-                            output.writeNbt(nbtCompound);
+                        output.writeNbt(nbtCompound);
                     }
                 } else {
                     containerItems.get(i).writeNbt(nbtCompound);
@@ -108,8 +108,11 @@ public class OvenEntity extends CookingBlockEntity implements ImplementedInvento
             item.getOrCreateSubNbt("BlockEntityTag").put("Items", nbtList);
         } else {
             Optional<RecipeEntry<OvenRecipe>> recipe = getCurrentRecipe(item);
+            NbtCompound nbtCompound = item.getOrCreateNbt();
             this.removeStack(index, 1);
-            this.setStack(index, recipe.get().value().getResult(null));
+            ItemStack result = recipe.get().value().craft(new SimpleInventory(item), this.world.getRegistryManager());
+            result.setNbt(nbtCompound);
+            this.setStack(index, result);
         }
     }
 

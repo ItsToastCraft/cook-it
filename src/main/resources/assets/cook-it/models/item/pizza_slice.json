@@ -1,6 +1,9 @@
 {
 	"credit": "Made by ToastTextures using Blockbench",
-	"parent": "cook-it:block/pizza/pizza_1",
+	"parent": "minecraft:builtin/entity",
+	"textures": {
+		"particle": "cook-it:block/pizza_cheese"
+	},
 	"display": {
 		"thirdperson_righthand": {
 			"rotation": [90, -60, 0],

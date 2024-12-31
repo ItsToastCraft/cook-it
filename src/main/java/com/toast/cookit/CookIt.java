@@ -1,6 +1,8 @@
 package com.toast.cookit;
 
+import com.toast.cookit.block.containers.cutting_board.CuttingBoard;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
 import net.minecraft.particle.DefaultParticleType;
 import net.minecraft.registry.Registries;
@@ -40,5 +42,11 @@ public class CookIt implements ModInitializer {
         Registry.register(Registries.PARTICLE_TYPE, new Identifier(MOD_ID, "oil"), OIL_PARTICLE);
 
         Registry.register(Registries.ITEM_GROUP, new Identifier(CookIt.MOD_ID, "items"), CookItItems.COOK_IT_GROUP);
+        PlayerBlockBreakEvents.BEFORE.register((world, player, pos, state, blockEntity) -> {
+            if (state.getBlock() instanceof CuttingBoard cuttingBoard) {
+                return cuttingBoard.pickUpCookingBoardItems(state, world, pos, player);
+            }
+            return false;
+        });
     }
 }

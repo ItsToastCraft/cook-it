@@ -1,10 +1,13 @@
 package com.toast.cookit.block.food_blocks.pizza;
 
+import com.toast.cookit.block.entity.PizzaEntity;
 import com.toast.cookit.registries.CookItBlocks;
 import com.toast.cookit.registries.CookItItems;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ShapeContext;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtList;
@@ -20,24 +23,11 @@ import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
 public class CookedPizza extends Pizza{
-
-    public static final IntProperty PIZZA_AMOUNT = IntProperty.of("pizza_amount", 1, 4);
-
-
     public CookedPizza(Settings settings) {
         super(settings);
-
-        setDefaultState(getDefaultState().with(PIZZA_AMOUNT, 4));
-
-    }
-
-    @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-
-        builder.add(PIZZA_AMOUNT);
-
     }
 
     private final VoxelShape SLICE_1 = VoxelShapes.cuboid(0.0625f, 0.0f, 0.0625f, 0.5f, 0.125f, 0.5f);
@@ -46,7 +36,7 @@ public class CookedPizza extends Pizza{
 
     @Override
     public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext ctx) {
-        int pizzaAmount = state.get(PIZZA_AMOUNT);
+        int pizzaAmount = world.getBlockEntity(pos) instanceof PizzaEntity pizzaEntity ? pizzaEntity.getSliceCount() : 4;
 
         switch (pizzaAmount) {
             case (1) -> {
@@ -67,28 +57,50 @@ public class CookedPizza extends Pizza{
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         super.onUse(state, world, pos, player, hand, hit);
         world.updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
-        int pizzaAmount = state.get(PIZZA_AMOUNT);
         ItemStack heldItem = player.getStackInHand(hand);
         PizzaEntity entity = (PizzaEntity) world.getBlockEntity(pos);
         if (entity == null || world.isClient) {
             return ActionResult.SUCCESS;
         } else {
-
+            int pizzaAmount = entity.getSliceCount();
             if (world.getBlockState(pos).getBlock() == CookItBlocks.PIZZA && heldItem.isEmpty()) {
 
                 NbtList toppings = entity.getToppings();
 
                 ItemStack itemStack = new ItemStack(CookItItems.PIZZA_SLICE, 1);
-                if (!toppings.isEmpty()) { itemStack.getOrCreateNbt().put("toppings", toppings); }
+                if (!toppings.isEmpty()) {
+                    itemStack.getOrCreateNbt().put("toppings", toppings);
+                }
+
                 player.getInventory().offerOrDrop(itemStack);
                 world.playSound(null, pos, SoundEvents.BLOCK_WOOL_BREAK, SoundCategory.BLOCKS);
                 if (pizzaAmount > 1) {
-                    world.setBlockState(pos, state.with(PIZZA_AMOUNT, pizzaAmount - 1));
+                    entity.setSliceCount(entity.getSliceCount() - 1);
                 } else {
                     world.breakBlock(pos, false);
                 }
             }
         }
         return ActionResult.PASS;
+    }
+
+    @Override
+    public @Nullable BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+        return new PizzaEntity(pos, state, true);
+    }
+
+    @Override
+    public BlockState onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player) {
+        if (world.getBlockEntity(pos) instanceof PizzaEntity pizzaEntity) {
+            int pizzaAmount = pizzaEntity.getSliceCount();
+            if (pizzaAmount > 0) {
+                ItemStack itemStack = new ItemStack(CookItItems.PIZZA_SLICE, pizzaAmount);
+                if (!pizzaEntity.getToppings().isEmpty()) {
+                    itemStack.getOrCreateNbt().put("toppings", pizzaEntity.getToppings());
+                }
+                dropStack(world, pos, itemStack);
+            }
+        }
+        return super.onBreak(world, pos, state, player);
     }
 }

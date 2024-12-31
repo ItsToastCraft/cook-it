@@ -18,6 +18,7 @@ import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldAccess;
 import org.jetbrains.annotations.Nullable;
 
 public class CuttingBoard extends HorizontalFacingBlock implements BlockEntityProvider {
@@ -63,16 +64,36 @@ public class CuttingBoard extends HorizontalFacingBlock implements BlockEntityPr
         return ActionResult.SUCCESS;
     }
 
-    @Override
-    public void onBlockBreakStart(BlockState state, World world, BlockPos pos, PlayerEntity player) {
-        super.onBlockBreakStart(state, world, pos, player);
+    // pickups items, boolean used to cancel the block break if the block wasn't empty
+    public boolean pickUpCookingBoardItems(BlockState state, World world, BlockPos pos, PlayerEntity player) {
         CuttingBoardEntity blockEntity = (CuttingBoardEntity) world.getBlockEntity(pos);
-
         if (blockEntity != null && !blockEntity.isEmpty()) {
             player.getInventory().insertStack(blockEntity.getStack(0));
             blockEntity.setClicks(0);
+            world.updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
+            return false;
         }
+        return true;
+    }
 
+    // cancels particles
+    @Override
+    public BlockState onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player) {
+        if (world.isClient && world.getBlockEntity(pos) instanceof CuttingBoardEntity cuttingBoardEntity) {
+            if (!cuttingBoardEntity.isEmpty()) {
+                return state;
+            }
+        }
+        return super.onBreak(world, pos, state, player);
+    }
+
+    // pick up item in survival before break
+    @Override
+    public void onBlockBreakStart(BlockState state, World world, BlockPos pos, PlayerEntity player) {
+        if (!world.isClient) {
+            pickUpCookingBoardItems(state, world, pos, player);
+        }
+        super.onBlockBreakStart(state, world, pos, player);
     }
 
     @Override

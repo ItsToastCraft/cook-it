@@ -1,6 +1,7 @@
 package com.toast.cookit.item.armor.ChefOutfit;
 
 import com.toast.cookit.CookItClient;
+import com.toast.cookit.client.CookItEntityModelLayers;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -46,15 +47,9 @@ public class ChefOutfitItem extends ArmorItem {
 
     @Environment(EnvType.CLIENT)
     protected BipedEntityModel<LivingEntity> provideArmorModelForSlot(EquipmentSlot slot) {
-
         var models = MinecraftClient.getInstance().getEntityModelLoader();
 
-
-
-        return new FullArmorModel(models.getModelPart(CookItClient.CHEF_OUTFIT), slot);
-
-
-
+        return new FullArmorModel(models.getModelPart(CookItEntityModelLayers.CHEF_OUTFIT), slot);
     }
 
     @Environment(EnvType.CLIENT)

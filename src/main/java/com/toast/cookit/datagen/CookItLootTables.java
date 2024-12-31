@@ -10,6 +10,7 @@ import com.toast.cookit.registries.CookItBlocks;
 import net.minecraft.loot.LootPool;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.condition.BlockStatePropertyLootCondition;
+import net.minecraft.loot.condition.EntityPropertiesLootCondition;
 import net.minecraft.loot.entry.ItemEntry;
 import net.minecraft.loot.function.SetCountLootFunction;
 import net.minecraft.loot.provider.number.ConstantLootNumberProvider;
@@ -49,20 +50,6 @@ public class CookItLootTables extends FabricBlockLootTableProvider {
                     )
             );
         }
-        addDrop(CookItBlocks.PIZZA, ((Block block) ->
-                LootTable.builder().pool(
-                        LootPool.builder().rolls(ConstantLootNumberProvider.create(1.0f)).with(ItemEntry.builder(CookItItems.PIZZA_SLICE)
-                                .apply(SetCountLootFunction.builder(ConstantLootNumberProvider.create(1.0f)).conditionally(
-                                        BlockStatePropertyLootCondition.builder(block).properties(StatePredicate.Builder.create().exactMatch(CookedPizza.PIZZA_AMOUNT, 1))))
-                                .apply(SetCountLootFunction.builder(ConstantLootNumberProvider.create(2.0f)).conditionally(
-                                        BlockStatePropertyLootCondition.builder(block).properties(StatePredicate.Builder.create().exactMatch(CookedPizza.PIZZA_AMOUNT, 2))))
-                                .apply(SetCountLootFunction.builder(ConstantLootNumberProvider.create(3.0f)).conditionally(
-                                        BlockStatePropertyLootCondition.builder(block).properties(StatePredicate.Builder.create().exactMatch(CookedPizza.PIZZA_AMOUNT, 3))))
-                                .apply(SetCountLootFunction.builder(ConstantLootNumberProvider.create(4.0f)).conditionally(
-                                        BlockStatePropertyLootCondition.builder(block).properties(StatePredicate.Builder.create().exactMatch(CookedPizza.PIZZA_AMOUNT, 4))))
-                        )
-                ))
-        );
     }
 
 }
