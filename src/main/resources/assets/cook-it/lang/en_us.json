@@ -117,6 +117,9 @@
   "block.cook-it.oak_cutting_board": "Oak Cutting Board",
   "block.cook-it.spruce_cutting_board": "Spruce Cutting Board",
 
+  "topping.cook-it.porkchop": "Pork",
+  "topping.cook-it.beef": "Beef",
+  "topping.cook-it.kelp": "Kelp",
 
   "itemGroup.cook-it.items": "Cook It!",
   "subtitles.cook-it.microwave_hum": "Microwave Hums",

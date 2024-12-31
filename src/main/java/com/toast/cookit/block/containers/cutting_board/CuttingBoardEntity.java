@@ -52,7 +52,7 @@ public class CuttingBoardEntity extends CookingBlockEntity implements Implemente
 
 
     public void processRecipe(ItemStack tool, boolean tryReset) {
-        if (this.getStack(0).isOf(Item.fromBlock(CookItBlocks.UNCOOKED_PIZZA)) || this.getStack(0).isOf(Item.fromBlock(CookItBlocks.PIZZA_CRUST))) {
+        if (this.getStack(0).isOf(Item.fromBlock(CookItBlocks.UNCOOKED_PIZZA))) {
             if (processPizza(tool))
                 return;
         }
@@ -97,12 +97,12 @@ public class CuttingBoardEntity extends CookingBlockEntity implements Implemente
         if (topping != null) {
 
             // Once the user has put toppings on the crust, the process is non-reversible, and it is now an uncooked pizza
-            if (this.getStack(0).getItem() == CookItBlocks.PIZZA_CRUST.asItem()) {
-                NbtCompound compound = this.getStack(0).getNbt();
-                ItemStack uncookedPizza = CookItBlocks.UNCOOKED_PIZZA.asItem().getDefaultStack();
-                uncookedPizza.setNbt(compound);
-                this.setStack(0, uncookedPizza);
-            }
+//            if (this.getStack(0).getItem() == CookItBlocks.PIZZA_CRUST.asItem()) {
+//                NbtCompound compound = this.getStack(0).getNbt();
+//                ItemStack uncookedPizza = CookItBlocks.UNCOOKED_PIZZA.asItem().getDefaultStack();
+//                uncookedPizza.setNbt(compound);
+//                this.setStack(0, uncookedPizza);
+//            }
 
             // no need to loop, at this point we're already sure there's a topping slot available.
             toppings.add(NbtString.of(topping.asString()));

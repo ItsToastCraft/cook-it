@@ -39,7 +39,8 @@ public class CookItItems {
     public static final Item UNCOOKED_FRENCH_FRIES = registerItem("uncooked_french_fries", new Fries(new FabricItemSettings(), CookItFoodTypes.FRYING));
 
     // -- Food --
-    public static final Item TOAST = registerItem("toast", new CookItFood(new FabricItemSettings().food(new FoodComponent.Builder().hunger(3).build()), CookItFoodTypes.DONE ));
+    public static final Item CHEESE = registerItem("cheese", new Item(new FabricItemSettings().food(new FoodComponent.Builder().hunger(3).build())));
+    public static final Item TOAST = registerItem("toast", new CookItFood(new FabricItemSettings().food(new FoodComponent.Builder().hunger(4).build()), CookItFoodTypes.DONE));
     public static final Item RAW_CROISSANT = registerItem("raw_croissant", new CookItFood(new FabricItemSettings(), CookItFoodTypes.BAKING));
     public static final Item CROISSANT = registerItem("croissant", new CookItFood(new FabricItemSettings().food(new FoodComponent.Builder().hunger(3).build()), CookItFoodTypes.DONE));
     public static final Item PIZZA_SLICE = registerItem("pizza_slice", new CookItFood(new FabricItemSettings().food(new FoodComponent.Builder().hunger(5).build()), CookItFoodTypes.DONE));
@@ -57,14 +58,14 @@ public class CookItItems {
     public static final Item VANILLA_DONUT_STRIPED = registerItem("vanilla_donut_striped", new Donut(new FabricItemSettings().food(new FoodComponent.Builder().hunger(4).build())));
     public static final Item DONUT_WITH_NUTS = registerItem("peanut_donut", new Donut(new FabricItemSettings().food(new FoodComponent.Builder().hunger(4).build())));
 
-    public static final Item MUFFIN = registerItem("plain_muffin", new Item(new FabricItemSettings().food(new FoodComponent.Builder().hunger(5).build())));
-    public static final Item BLUEBERRY_MUFFIN = registerItem("blueberry_muffin", new Item(new FabricItemSettings().food(new FoodComponent.Builder().hunger(6).build())));
-    public static final Item CHOCOLATE_CHIP_MUFFIN = registerItem("chocolate_chip_muffin", new Item(new FabricItemSettings().food(new FoodComponent.Builder().hunger(6).build())));
-    public static final Item CHOCOLATE_MUFFIN = registerItem("chocolate_muffin", new Item(new FabricItemSettings().food(new FoodComponent.Builder().hunger(7).build())));
+    public static final Item MUFFIN = registerItem("plain_muffin", new CookItFood(new FabricItemSettings().food(new FoodComponent.Builder().hunger(5).build()), CookItFoodTypes.DONE));
+    public static final Item BLUEBERRY_MUFFIN = registerItem("blueberry_muffin", new CookItFood(new FabricItemSettings().food(new FoodComponent.Builder().hunger(6).build()), CookItFoodTypes.DONE));
+    public static final Item CHOCOLATE_CHIP_MUFFIN = registerItem("chocolate_chip_muffin", new CookItFood(new FabricItemSettings().food(new FoodComponent.Builder().hunger(6).build()), CookItFoodTypes.DONE));
+    public static final Item CHOCOLATE_MUFFIN = registerItem("chocolate_muffin", new CookItFood(new FabricItemSettings().food(new FoodComponent.Builder().hunger(7).build()), CookItFoodTypes.DONE));
 
     public static final Item RAW_CINNAMON_ROLL = registerItem("raw_cinnamon_roll", new CookItFood(new FabricItemSettings(), CookItFoodTypes.BAKING));
-    public static final Item CINNAMON_ROLL = registerItem("cinnamon_roll", new Item(new FabricItemSettings().food(new FoodComponent.Builder().hunger(3).build())));
-    public static final Item CINNAMON_ROLL_GLAZED = registerItem("cinnamon_roll_glazed", new Item(new FabricItemSettings().food(new FoodComponent.Builder().hunger(4).build())));
+    public static final Item CINNAMON_ROLL = registerItem("cinnamon_roll", new CookItFood(new FabricItemSettings().food(new FoodComponent.Builder().hunger(3).build()), CookItFoodTypes.DONE));
+    public static final Item CINNAMON_ROLL_GLAZED = registerItem("cinnamon_roll_glazed", new CookItFood(new FabricItemSettings().food(new FoodComponent.Builder().hunger(4).build()), CookItFoodTypes.DONE));
 
     // -- Accessories --
     public static final Item CHEF_HAT = registerItem("chef_hat", new Item(new FabricItemSettings().equipmentSlot(stack -> EquipmentSlot.HEAD)));

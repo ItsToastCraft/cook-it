@@ -42,7 +42,7 @@ public class CookIt implements ModInitializer {
             if (state.getBlock() instanceof CuttingBoard cuttingBoard) {
                 return cuttingBoard.pickUpCookingBoardItems(state, world, pos, player);
             }
-            return false;
+            return true;
         });
     }
 }

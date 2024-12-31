@@ -2,6 +2,8 @@ package com.toast.cookit.block.food_blocks.pizza;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.StringIdentifiable;
 
 public enum PizzaToppings implements StringIdentifiable {
@@ -40,6 +42,10 @@ public enum PizzaToppings implements StringIdentifiable {
             }
         }
         return null;
+    }
+
+    public MutableText getTranslationKey() {
+        return Text.translatable("topping.cook-it." + this.name);
     }
 
     @Override
