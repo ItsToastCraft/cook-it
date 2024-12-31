@@ -26,7 +26,7 @@ public class CookItModels {
     public static final Model TEMPLATE_LARGE_PLATE_4 = newParent("block/large_plate_4", PLATE);
     public static final Model TEMPLATE_BOWL = newParent("block/bowl", BOWL);
     public static final Model TEMPLATE_CUTTING_BOARD = newParent("block/cutting_board", CUTTING_BOARD);
-    public static final Model TEMPLATE_ROLLING_PIN = newParent("item/oak_rolling_pin", ROLLING_PIN);
+    public static final Model TEMPLATE_ROLLING_PIN = newParent("item/rolling_pin", ROLLING_PIN);
 
     private static Model newParent(String parent, TextureKey... requiredTextureKeys) {
         return new Model(Optional.of(new Identifier(CookIt.MOD_ID, parent)), Optional.empty(), requiredTextureKeys);

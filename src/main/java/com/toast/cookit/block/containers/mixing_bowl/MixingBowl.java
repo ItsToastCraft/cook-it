@@ -1,6 +1,5 @@
 package com.toast.cookit.block.containers.mixing_bowl;
 
-import com.toast.cookit.CookIt;
 import net.minecraft.block.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -34,7 +33,6 @@ public class MixingBowl extends Block {
         world.updateListeners(blockPos, blockState, blockState, Block.NOTIFY_LISTENERS);
         ItemStack item = player.getStackInHand(hand);
         assert item.getNbt() != null;
-        CookIt.LOGGER.info(item.getNbt().toString());
         return ActionResult.SUCCESS;
     }
 
