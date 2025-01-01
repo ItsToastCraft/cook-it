@@ -1,7 +1,6 @@
 package com.toast.cookit.datagen;
 
 import com.toast.cookit.CookIt;
-import com.toast.cookit.registries.CookItItems;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.minecraft.block.Block;
@@ -10,14 +9,11 @@ import net.minecraft.data.server.recipe.ShapedRecipeJsonBuilder;
 import net.minecraft.item.Item;
 import net.minecraft.recipe.book.RecipeCategory;
 import net.minecraft.registry.Registries;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
 import com.toast.cookit.block.containers.Bowl;
-import com.toast.cookit.block.containers.plate.Plate;
+import com.toast.cookit.block.containers.Plate;
 import com.toast.cookit.registries.CookItBlocks;
 
-import static com.toast.cookit.CookIt.MOD_ID;
 import static com.toast.cookit.registries.CookItItems.ROLLING_PINS;
 
 public class CookItRecipeGenerator extends FabricRecipeProvider {

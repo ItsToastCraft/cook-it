@@ -1,8 +1,6 @@
 package com.toast.cookit.datagen;
 
-import com.toast.cookit.block.containers.plate.Plate;
-import com.toast.cookit.block.food_blocks.pizza.CookedPizza;
-import com.toast.cookit.registries.CookItItems;
+import com.toast.cookit.block.containers.Plate;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricBlockLootTableProvider;
 import net.minecraft.block.Block;
@@ -10,7 +8,6 @@ import com.toast.cookit.registries.CookItBlocks;
 import net.minecraft.loot.LootPool;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.condition.BlockStatePropertyLootCondition;
-import net.minecraft.loot.condition.EntityPropertiesLootCondition;
 import net.minecraft.loot.entry.ItemEntry;
 import net.minecraft.loot.function.SetCountLootFunction;
 import net.minecraft.loot.provider.number.ConstantLootNumberProvider;

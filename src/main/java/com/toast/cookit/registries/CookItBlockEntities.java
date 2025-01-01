@@ -1,9 +1,9 @@
 package com.toast.cookit.registries;
 
-import com.toast.cookit.block.containers.mixing_bowl.MixingBowlEntity;
-import com.toast.cookit.block.containers.mixing_bowl.MixingBowlEntityRenderer;
-import com.toast.cookit.block.containers.pizza_pan.PizzaPanEntity;
-import com.toast.cookit.block.containers.pizza_pan.PizzaPanEntityRenderer;
+import com.toast.cookit.block.entity.MixingBowlEntity;
+import com.toast.cookit.client.render.MixingBowlEntityRenderer;
+import com.toast.cookit.block.entity.PizzaPanEntity;
+import com.toast.cookit.client.render.PizzaPanEntityRenderer;
 import com.toast.cookit.block.entity.PizzaEntity;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.minecraft.block.Block;
@@ -14,21 +14,8 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 import com.toast.cookit.CookIt;
-import com.toast.cookit.block.appliances.fryer.FryerEntity;
-import com.toast.cookit.block.appliances.fryer.FryerEntityRenderer;
-import com.toast.cookit.block.appliances.microwave.MicrowaveEntity;
-import com.toast.cookit.block.appliances.microwave.MicrowaveEntityRenderer;
-import com.toast.cookit.block.appliances.oven.OvenEntity;
-import com.toast.cookit.block.appliances.oven.OvenEntityRenderer;
-import com.toast.cookit.block.containers.baking_sheet.BakingSheetEntity;
-import com.toast.cookit.block.containers.baking_sheet.BakingSheetEntityRenderer;
-import com.toast.cookit.block.containers.cutting_board.CuttingBoardEntity;
-import com.toast.cookit.block.containers.cutting_board.CuttingBoardEntityRenderer;
-import com.toast.cookit.block.containers.muffin_tin.MuffinTinEntity;
-import com.toast.cookit.block.containers.muffin_tin.MuffinTinEntityRenderer;
-import com.toast.cookit.block.containers.plate.PlateEntity;
-import com.toast.cookit.block.containers.plate.PlateEntityRenderer;
-import com.toast.cookit.client.render.PizzaEntityRenderer;
+import com.toast.cookit.block.entity.*;
+import com.toast.cookit.client.render.*;
 
 
 public class CookItBlockEntities {

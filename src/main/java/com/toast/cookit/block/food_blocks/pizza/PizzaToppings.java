@@ -22,10 +22,6 @@ public enum PizzaToppings implements StringIdentifiable {
         return this.item;
     }
 
-    public String getName() {
-        return this.name;
-    }
-
     public static PizzaToppings fromItem(Item item) {
         for (PizzaToppings topping : values()) {
             if (topping.getItem().equals(item)) {
@@ -37,7 +33,7 @@ public enum PizzaToppings implements StringIdentifiable {
 
     public static PizzaToppings fromName(String name) {
         for (PizzaToppings topping : values()) {
-            if (topping.getName().equals(name)) {
+            if (topping.asString().equals(name)) {
                 return topping;
             }
         }

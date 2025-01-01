@@ -63,9 +63,7 @@ public class Pizza extends BlockWithEntity implements BlockEntityProvider {
 
         NbtList toppings = nbt.getList("toppings", NbtElement.STRING_TYPE);
 
-        if (!toppings.isEmpty()) {
-            tooltip.add((Text.literal("Toppings:").formatted(Formatting.GRAY)));
-        }
+        tooltip.add((Text.literal("Toppings:").formatted(Formatting.GRAY)));
 
         for (int i = 0; i < toppings.size(); i++) {
             MutableText topping = Objects.requireNonNull(PizzaToppings.fromName(toppings.getString(i))).getTranslationKey();

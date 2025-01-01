@@ -1,6 +1,5 @@
 package com.toast.cookit.registries;
 
-import com.toast.cookit.block.containers.mixing_bowl.MixingBowl;
 import com.toast.cookit.block.food_blocks.pizza.CookedPizza;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
@@ -15,16 +14,8 @@ import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
 import com.toast.cookit.CookIt;
 import com.toast.cookit.block.Bench;
-import com.toast.cookit.block.appliances.Toaster;
-import com.toast.cookit.block.appliances.fryer.Fryer;
-import com.toast.cookit.block.appliances.microwave.Microwave;
-import com.toast.cookit.block.appliances.oven.Oven;
-import com.toast.cookit.block.containers.Bowl;
-import com.toast.cookit.block.containers.cutting_board.CuttingBoard;
-import com.toast.cookit.block.containers.pizza_pan.PizzaPan;
-import com.toast.cookit.block.containers.baking_sheet.BakingSheet;
-import com.toast.cookit.block.containers.muffin_tin.MuffinTin;
-import com.toast.cookit.block.containers.plate.Plate;
+import com.toast.cookit.block.appliances.*;
+import com.toast.cookit.block.containers.*;
 import com.toast.cookit.block.food_blocks.pizza.Pizza;
 
 import java.util.ArrayList;
@@ -41,6 +32,7 @@ public class CookItBlocks {
     public static final List<Block> CONTAINERS = new ArrayList<>();
 
     // -- Appliances --
+
     public static final Block FRYER = registerBlock("fryer", new Fryer(FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).nonOpaque()));
     public static final Block TOASTER = registerBlock("toaster", new Toaster(FabricBlockSettings.copyOf(Blocks.WHITE_CONCRETE)));
     public static final Block OVEN = registerBlock("oven", new Oven(FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).nonOpaque()));
@@ -52,10 +44,10 @@ public class CookItBlocks {
     public static final Block PIZZA_CRUST = registerBlock("pizza_crust", new Pizza(FabricBlockSettings.create()));
 
     // -- Containers --
-    public static final Block MUFFIN_TIN = registerBlock("muffin_tin", new MuffinTin(FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).nonOpaque()));
-    public static final Block BAKING_SHEET = registerBlock("baking_sheet", new BakingSheet(FabricBlockSettings.copyOf(Blocks.IRON_BLOCK)));
-    public static final Block PIZZA_PAN = registerBlock("pizza_pan", new PizzaPan(FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).nonOpaque()));
-    public static final Block MIXING_BOWL = registerBlock("mixing_bowl", new MixingBowl(FabricBlockSettings.copyOf(Blocks.IRON_BLOCK)));
+    public static final Block MUFFIN_TIN = registerBlock("muffin_tin", new MuffinTin(FabricBlockSettings.create().strength(0.2f)));
+    public static final Block BAKING_SHEET = registerBlock("baking_sheet", new BakingSheet(FabricBlockSettings.copyOf(MUFFIN_TIN)));
+    public static final Block PIZZA_PAN = registerBlock("pizza_pan", new PizzaPan(FabricBlockSettings.copyOf(MUFFIN_TIN)));
+    public static final Block MIXING_BOWL = registerBlock("mixing_bowl", new MixingBowl(FabricBlockSettings.copyOf(MUFFIN_TIN)));
 
     // -- Miscellaneous --
     public static final Block BENCH = registerBlock("bench", new Bench(FabricBlockSettings.create()));

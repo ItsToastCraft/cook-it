@@ -18,14 +18,13 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
-import com.toast.cookit.CookIt;
-import com.toast.cookit.block.CookingBlockEntity;
-import com.toast.cookit.block.containers.cutting_board.CuttingBoardEntity;
-import com.toast.cookit.block.containers.plate.PlateEntity;
+import com.toast.cookit.block.entity.CookingBlockEntity;
+import com.toast.cookit.block.entity.CuttingBoardEntity;
+import com.toast.cookit.block.entity.PlateEntity;
 
 import java.util.List;
 
-import static com.toast.cookit.block.containers.plate.Plate.PLATES_AMOUNT;
+import static com.toast.cookit.block.containers.Plate.PLATES_AMOUNT;
 
 public class FryerBasket extends Item {
     public FryerBasket(Settings settings) {

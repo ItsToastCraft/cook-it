@@ -1,6 +1,6 @@
 package com.toast.cookit;
 
-import com.toast.cookit.block.containers.cutting_board.CuttingBoard;
+import com.toast.cookit.block.containers.CuttingBoard;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;

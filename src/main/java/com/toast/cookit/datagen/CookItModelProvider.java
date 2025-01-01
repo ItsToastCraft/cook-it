@@ -11,7 +11,7 @@ import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import net.minecraft.state.property.Properties;
 import com.toast.cookit.block.containers.Bowl;
-import com.toast.cookit.block.containers.plate.Plate;
+import com.toast.cookit.block.containers.Plate;
 import com.toast.cookit.registries.CookItBlocks;
 import net.minecraft.util.math.Direction;
 

@@ -1,6 +1,6 @@
 package com.toast.cookit;
 
-import com.toast.cookit.block.containers.pizza_pan.PizzaPanItemRenderer;
+import com.toast.cookit.client.render.PizzaPanItemRenderer;
 import com.toast.cookit.client.CookItEntityModelLayers;
 import com.toast.cookit.client.render.PizzaItemRenderer;
 import com.toast.cookit.item.armor.ChefOutfitRenderer;
@@ -14,7 +14,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.item.ModelPredicateProviderRegistry;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.util.Identifier;
-import com.toast.cookit.block.containers.baking_sheet.BakingSheetItemRenderer;
+import com.toast.cookit.client.render.BakingSheetItemRenderer;
 import com.toast.cookit.registries.*;
 
 @Environment(EnvType.CLIENT)
@@ -31,7 +31,6 @@ public class CookItClient implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putBlock(CookItBlocks.MICROWAVE, RenderLayer.getTranslucent());
         BlockRenderLayerMap.INSTANCE.putBlock(CookItBlocks.MUFFIN_TIN, RenderLayer.getCutout());
         BlockRenderLayerMap.INSTANCE.putBlock(CookItBlocks.FRYER, RenderLayer.getTranslucent());
-        BlockRenderLayerMap.INSTANCE.putBlock(CookItBlocks.PIZZA_PAN, RenderLayer.getTranslucent());
         BlockRenderLayerMap.INSTANCE.putBlock(CookItBlocks.PIZZA_CRUST, RenderLayer.getTranslucent());
 
         ChefOutfitRenderer.register();
