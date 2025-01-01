@@ -8,7 +8,7 @@
 		"ToastTextures"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
+		"homepage": "https://cook-it.toasttextures.dev/",
 		"sources": "https://github.com/ItsToastCraft/cook-it"
 	},
 	"license": "GPL-3.0",
@@ -16,13 +16,13 @@
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-          "com.toast.cookit.CookIt"
+          "dev.toasttextures.cookit.CookIt"
 		],
 		"fabric-datagen": [
-			"com.toast.cookit.datagen.CookItDataGenerator"
+			"dev.toasttextures.cookit.datagen.CookItDataGenerator"
 		],
 		"client": [
-			"com.toast.cookit.CookItClient"
+			"dev.toasttextures.cookit.CookItClient"
 		]
 	},
 	"accessWidener" : "cook-it.accesswidener",
