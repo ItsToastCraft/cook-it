@@ -16,7 +16,8 @@ public class CookItDataGenerator implements DataGeneratorEntrypoint {
         pack.addProvider(CookItModelProvider::new);
         pack.addProvider(CookItLootTables::new);
         pack.addProvider(CookItRecipeGenerator::new);
-        pack.addProvider(CookItTagProvider::new);
+        pack.addProvider(CookItBlockTagProvider::new);
+        pack.addProvider(CookItItemTagProvider::new);
         CookIt.LOGGER.info("Generating assets!");
 
     }

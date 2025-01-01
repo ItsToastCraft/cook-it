@@ -4,19 +4,19 @@ import com.toast.cookit.registries.CookItBlocks;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
 import net.minecraft.block.Block;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.registry.tag.BlockTags;
 
 import java.util.concurrent.CompletableFuture;
 
-public class CookItTagProvider extends FabricTagProvider.BlockTagProvider {
-    public CookItTagProvider(FabricDataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> completableFuture) {
-        super(output, completableFuture);
+public class CookItBlockTagProvider extends FabricTagProvider<Block> {
+    public CookItBlockTagProvider(FabricDataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> completableFuture) {
+        super(output, RegistryKeys.BLOCK,  completableFuture);
     }
 
     @Override
     protected void configure(RegistryWrapper.WrapperLookup arg) {
-
         getOrCreateTagBuilder(BlockTags.AXE_MINEABLE)
                 .add(CookItBlocks.CUTTING_BOARDS.toArray(new Block[0]));
         getOrCreateTagBuilder(BlockTags.PICKAXE_MINEABLE)

@@ -45,10 +45,14 @@
 
   "item.cook-it.acacia_rolling_pin": "Acacia Rolling Pin",
   "item.cook-it.birch_rolling_pin": "Birch Rolling Pin",
+  "item.cook-it.cherry_rolling_pin": "Cherry Rolling Pin",
+  "item.cook-it.crimson_rolling_pin": "Crimson Rolling Pin",
   "item.cook-it.dark_oak_rolling_pin": "Dark Oak Rolling Pin",
   "item.cook-it.jungle_rolling_pin": "Jungle Rolling Pin",
+  "item.cook-it.mangrove_rolling_pin": "Mangrove Rolling Pin",
   "item.cook-it.oak_rolling_pin": "Oak Rolling Pin",
   "item.cook-it.spruce_rolling_pin": "Spruce Rolling Pin",
+  "item.cook-it.warped_rolling_pin": "Warped Rolling Pin",
 
   "block.cook-it.muffin_tin": "Muffin Tin",
   "block.cook-it.baking_sheet": "Baking Sheet",
@@ -57,6 +61,7 @@
   "block.cook-it.oven": "Oven",
   "block.cook-it.microwave": "Microwave",
   "block.cook-it.pizza": "Pizza",
+  "block.cook-it.pizza_crust": "Pizza Crust",
   "block.cook-it.uncooked_pizza": "Uncooked Pizza",
   "block.cook-it.pizza_pan": "Pizza Pan",
   "block.cook-it.mixing_bowl": "Mixing Bowl",
@@ -112,10 +117,14 @@
 
   "block.cook-it.acacia_cutting_board": "Acacia Cutting Board",
   "block.cook-it.birch_cutting_board": "Birch Cutting Board",
+  "block.cook-it.cherry_cutting_board": "Cherry Cutting Board",
+  "block.cook-it.crimson_cutting_board": "Crimson Cutting Board",
   "block.cook-it.dark_oak_cutting_board": "Dark Oak Cutting Board",
   "block.cook-it.jungle_cutting_board": "Jungle Cutting Board",
+  "block.cook-it.mangrove_cutting_board": "Mangrove Cutting Board",
   "block.cook-it.oak_cutting_board": "Oak Cutting Board",
   "block.cook-it.spruce_cutting_board": "Spruce Cutting Board",
+  "block.cook-it.warped_cutting_board": "Warped Cutting Board",
 
   "topping.cook-it.porkchop": "Pork",
   "topping.cook-it.beef": "Beef",
