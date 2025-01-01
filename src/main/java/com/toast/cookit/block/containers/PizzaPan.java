@@ -46,7 +46,13 @@ public class PizzaPan extends BlockWithEntity implements BlockEntityProvider {
         world.updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
         PizzaPanEntity blockEntity = (PizzaPanEntity) world.getBlockEntity(pos);
         if (blockEntity == null) { return ActionResult.FAIL; }
-
+        if (player.isSneaking()) {
+            ItemStack item = this.asItem().getDefaultStack();
+            blockEntity.setStackNbt(item);
+            player.getInventory().insertStack(item);
+            world.breakBlock(pos,false);
+            return ActionResult.SUCCESS;
+        }
         ItemStack heldItem = player.getStackInHand(hand);
         boolean hasPizza = !blockEntity.isEmpty();
         if (heldItem.getItem() instanceof BlockItem blockItem) {

@@ -35,7 +35,7 @@ public class PizzaPanItemRenderer implements BuiltinItemRendererRegistry.Dynamic
             //matrices.scale(0.5625f,0.5625f,0.5625f);
             matrices.translate(0.5f,0.5125f,0.5f);
 
-            MinecraftClient.getInstance().getItemRenderer().renderItem(new ItemStack(itemStack.getItem()), ModelTransformationMode.NONE, light, overlay, matrices, vertexConsumers, MinecraftClient.getInstance().world, 0);
+            MinecraftClient.getInstance().getItemRenderer().renderItem(itemStack, ModelTransformationMode.NONE, light, overlay, matrices, vertexConsumers, MinecraftClient.getInstance().world, 0);
             matrices.pop();
         }
     }

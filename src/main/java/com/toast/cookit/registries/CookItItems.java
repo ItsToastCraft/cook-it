@@ -43,7 +43,7 @@ public class CookItItems {
     public static final Item TOAST = registerItem("toast", new CookItFood(new FabricItemSettings().food(new FoodComponent.Builder().hunger(4).build()), CookItFoodTypes.DONE));
     public static final Item RAW_CROISSANT = registerItem("raw_croissant", new CookItFood(new FabricItemSettings(), CookItFoodTypes.BAKING));
     public static final Item CROISSANT = registerItem("croissant", new CookItFood(new FabricItemSettings().food(new FoodComponent.Builder().hunger(3).build()), CookItFoodTypes.DONE));
-    public static final Item PIZZA_SLICE = registerItem("pizza_slice", new CookItFood(new FabricItemSettings().food(new FoodComponent.Builder().hunger(5).build()), CookItFoodTypes.DONE));
+    public static final Item PIZZA_SLICE = registerItem("pizza_slice", new PizzaSlice(new FabricItemSettings().food(new FoodComponent.Builder().hunger(5).build())));
     public static final Item FRENCH_FRIES = registerItem("french_fries", new Fries(new FabricItemSettings().food(new FoodComponent.Builder().hunger(4).build()), CookItFoodTypes.DONE));
     public static final Item RAW_DONUT = registerItem("raw_donut", new CookItFood(new FabricItemSettings(), CookItFoodTypes.FRYING));
     public static final Item DONUT = registerItem("plain_donut", new Donut(new FabricItemSettings().food(new FoodComponent.Builder().hunger(3).build())));
