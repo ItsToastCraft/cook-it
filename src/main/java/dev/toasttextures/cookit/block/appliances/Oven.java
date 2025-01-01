@@ -24,6 +24,7 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import dev.toasttextures.cookit.registries.CookItBlockEntities;
+import static dev.toasttextures.cookit.registries.CookItBlocks.CONTAINERS;
 
 public class Oven extends BlockWithEntity implements BlockEntityProvider {
     public static final BooleanProperty OPEN = BooleanProperty.of("open");
@@ -81,7 +82,7 @@ public class Oven extends BlockWithEntity implements BlockEntityProvider {
                     openOven(world, pos, state, false);
                     return ActionResult.SUCCESS;
                 }
-            } else {
+            } else if (CONTAINERS.contains(Block.getBlockFromItem(heldItem.getItem()))) {
                 // If the oven is open and the player is holding something, try to put the held item into the oven
                 for (int i = 0; i < blockEntity.getItems().size(); i++) {
                     if (blockEntity.getStack(i).isEmpty()) {
@@ -92,7 +93,7 @@ public class Oven extends BlockWithEntity implements BlockEntityProvider {
             }
         }
 
-        return ActionResult.SUCCESS;
+        return ActionResult.FAIL;
     }
     public BlockState getPlacementState(ItemPlacementContext ctx) {
         return this.getDefaultState().with(FACING, ctx.getHorizontalPlayerFacing().getOpposite());

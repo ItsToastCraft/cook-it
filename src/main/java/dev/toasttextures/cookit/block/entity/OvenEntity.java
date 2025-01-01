@@ -1,6 +1,5 @@
 package dev.toasttextures.cookit.block.entity;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.inventory.SimpleInventory;
@@ -8,6 +7,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.recipe.RecipeEntry;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvent;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import dev.toasttextures.cookit.block.ImplementedInventory;
@@ -68,7 +70,7 @@ public class OvenEntity extends CookingBlockEntity implements ImplementedInvento
                     this.done = false;
                 } else {
                     craftRecipe(i);
-                    world.updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
+                    this.markDirty();
                     this.done = true;
                     world.setBlockState(pos, state.with(DONE, true));
 
@@ -93,8 +95,8 @@ public class OvenEntity extends CookingBlockEntity implements ImplementedInvento
                 Optional<RecipeEntry<OvenRecipe>> recipe = getCurrentRecipe(containerItems.get(i));
                 if (recipe.isPresent()) {
                     if (!containerItems.get(i).isEmpty() && recipe.get().value().getMaxProgress() <= this.progress[index]) {
-                        ItemStack output = recipe.get().value().getResult(null);
-                        if (!containerItems.get(i).getNbt().isEmpty()) {
+                        ItemStack output = recipe.get().value().craft(new SimpleInventory(item), this.world.getRegistryManager());
+                        if (containerItems.get(i).getNbt() != null) {
                             output.setNbt(containerItems.get(i).getNbt());
                         }
                         output.writeNbt(nbtCompound);
@@ -113,6 +115,8 @@ public class OvenEntity extends CookingBlockEntity implements ImplementedInvento
             result.setNbt(nbtCompound);
             this.setStack(index, result);
         }
+        assert world != null;
+        world.playSound(null, this.getPos(), SoundEvent.of(new Identifier("block.note_block.xylophone")), SoundCategory.BLOCKS, 1.0f, 1.5f);
     }
 
     private Optional<RecipeEntry<OvenRecipe>> getCurrentRecipe(ItemStack itemStack) {
