@@ -89,15 +89,15 @@ public class MixingBowlRecipe implements Recipe<SimpleInventory> {
     public static class Serializer implements RecipeSerializer<MixingBowlRecipe> {
         public static final Serializer INSTANCE = new Serializer();
         public static final Codec<MixingBowlRecipe> CODEC = RecordCodecBuilder.create(in -> in.group(
-                validateAmount(Ingredient.DISALLOW_EMPTY_CODEC).fieldOf("ingredients").forGetter(MixingBowlRecipe::getIngredients),
+                validateAmount().fieldOf("ingredients").forGetter(MixingBowlRecipe::getIngredients),
                 ItemStack.RECIPE_RESULT_CODEC.optionalFieldOf("liquid", new ItemStack(Items.BUCKET, 1)).forGetter(r -> r.liquid),
                 ItemStack.RECIPE_RESULT_CODEC.fieldOf("output").forGetter(r -> r.output),
                 Codec.INT.fieldOf("clicks").forGetter(MixingBowlRecipe::getMixes)
         ).apply(in, MixingBowlRecipe::new));
 
-        private static Codec<List<Ingredient>> validateAmount(Codec<Ingredient> delegate) {
+        private static Codec<List<Ingredient>> validateAmount() {
             return Codecs.validate(Codecs.validate(
-                    delegate.listOf(), list -> list.size() > 9 ? DataResult.error(() -> "Recipe has too many ingredients!") : DataResult.success(list)),
+                    Ingredient.DISALLOW_EMPTY_CODEC.listOf(), list -> list.size() > 9 ? DataResult.error(() -> "Recipe has too many ingredients!") : DataResult.success(list)),
                     list -> list.isEmpty() ? DataResult.error(() -> "Recipe has no ingredients!") : DataResult.success(list));
         }
 
@@ -124,7 +124,6 @@ public class MixingBowlRecipe implements Recipe<SimpleInventory> {
             for (Ingredient ingredient : recipe.getIngredients()) {
                 ingredient.write(buf);
             }
-            buf.writeItemStack(recipe.getResult(null));
             buf.writeItemStack(recipe.getResult(null));
             buf.writeInt(recipe.getMixes());
         }
