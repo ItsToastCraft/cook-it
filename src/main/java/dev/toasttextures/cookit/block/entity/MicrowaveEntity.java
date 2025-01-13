@@ -1,11 +1,9 @@
 package dev.toasttextures.cookit.block.entity;
 
 
-import dev.toasttextures.cookit.block.appliances.Microwave;
 import net.minecraft.block.BlockState;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.inventory.SimpleInventory;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.recipe.RecipeEntry;
 import net.minecraft.sound.SoundCategory;
@@ -89,9 +87,7 @@ public class MicrowaveEntity extends CookingBlockEntity implements ImplementedIn
     private void craftRecipe() {
         Optional<RecipeEntry<MicrowaveRecipe>> recipe = getCurrentRecipe();
 
-        this.removeStack(INPUT_SLOT, 1);
-
-        this.setStack(INPUT_SLOT, new ItemStack(recipe.get().value().getResult(null).getItem(), getStack(INPUT_SLOT).getCount() + recipe.get().value().getResult(null).getCount()));
+        this.setStack(INPUT_SLOT, recipe.get().value().craft(new SimpleInventory(this.getStack(0)), Objects.requireNonNull(this.world).getRegistryManager()));
     }
 
     private void resetProgress() { this.progress = 0; }
@@ -102,7 +98,6 @@ public class MicrowaveEntity extends CookingBlockEntity implements ImplementedIn
 
     private boolean hasRecipe() {
         Optional<RecipeEntry<MicrowaveRecipe>> recipe = getCurrentRecipe();
-
         return recipe.isPresent();
     }
 
@@ -118,7 +113,7 @@ public class MicrowaveEntity extends CookingBlockEntity implements ImplementedIn
     private void playMicrowaveSound(World world, BlockPos pos, BlockState state, boolean on) {
         if (on && !state.get(OPEN)) {
             world.playSound(null, pos, CookItSounds.MICROWAVE_SOUND_EVENT, SoundCategory.BLOCKS, 0.3f, 1.0f);
-            world.setBlockState(pos, state.with(Microwave.ON, true));
+            world.setBlockState(pos, state.with(ON, true));
         } else {
             world.setBlockState(pos, state.with(ON, false));
             if (state.get(OPEN)) return;

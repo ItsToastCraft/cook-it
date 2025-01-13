@@ -1,6 +1,8 @@
 package dev.toasttextures.cookit.block.containers;
 
 import dev.toasttextures.cookit.block.entity.PlateEntity;
+import dev.toasttextures.cookit.item.CookItFood;
+import dev.toasttextures.cookit.registries.CookItFoodTypes;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockEntityProvider;
 import net.minecraft.block.BlockState;
@@ -34,8 +36,6 @@ public class Plate extends Block implements BlockEntityProvider {
         setDefaultState(getDefaultState().with(PLATES_AMOUNT, 1));
     }
 
-
-
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
         builder.add(PLATES_AMOUNT);
@@ -49,8 +49,6 @@ public class Plate extends Block implements BlockEntityProvider {
         } else {
             return VoxelShapes.cuboid(0.25f, 0f, 0.25f, 0.75f, 0.0625f * plateAmount, 0.75f);
         }
-
-
     }
 
     @Override
@@ -60,41 +58,42 @@ public class Plate extends Block implements BlockEntityProvider {
         int plateAmount = state.get(PLATES_AMOUNT);
         ItemStack heldItem = player.getStackInHand(hand);
 
-        if (world.isClient) {
+        if (world.isClient || blockEntity == null) {
             return ActionResult.SUCCESS;
+        }
+        // Let custom processing for fryer basket occur
+        if (heldItem.getItem().equals(CookItItems.FRYER_BASKET)) {
+            return ActionResult.PASS;
+        }
+        // If there is no item in the player's hand and there is more than one plate, give one plate
+        // Otherwise give back whatever is on the plate (because there's only one sooo)
+        if (heldItem.isEmpty()) {
+            ItemStack item = new ItemStack(this.asItem(), 1);
+            if (!blockEntity.getStack(0).isEmpty()) {
+                blockEntity.writeNbt(item.getOrCreateSubNbt("BlockEntityTag"));
+                blockEntity.removeStack(0);
+            }
+            if (plateAmount == 1) {
+                world.breakBlock(pos, false);
+                player.getInventory().offerOrDrop(item);
+                return ActionResult.SUCCESS;
+            }
+            world.setBlockState(pos, state.with(PLATES_AMOUNT, plateAmount - 1));
         } else {
-            // If there is no item in the player's hand and there is more than one plate, give one plate
-            // Otherwise give back whatever is on the plate (because there's only one sooo)
-            if (heldItem.isEmpty()) {
-                if (plateAmount > 1) {
-                    player.getInventory().offerOrDrop(new ItemStack(world.getBlockState(pos).getBlock()));
-                    world.setBlockState(pos, state.with(PLATES_AMOUNT, plateAmount - 1));
-                    world.playSound(null, pos, SoundEvents.BLOCK_LANTERN_BREAK, SoundCategory.BLOCKS, 1, 3.0f);
-                } else if (!blockEntity.getStack(0).isEmpty()) {
-                    player.getInventory().offerOrDrop(blockEntity.getStack(0));
-                    world.playSound(null, pos, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.BLOCKS, 1, 3.0f);
-                    blockEntity.setStack(0, ItemStack.EMPTY);
-                }
-            } else {
-                // If there is a plate in the player's hand, and there are less than 5 plates in the stack, add one to the stack
-                // If there is anything else in the player's hand, put that item on the plate.
-                if (heldItem.getItem() instanceof BlockItem blockItem) {
-                    if (blockItem.getBlock() == world.getBlockState(pos).getBlock() && plateAmount < 4 && blockEntity.getStack(0) == ItemStack.EMPTY) {
-                        heldItem.decrement(1);
-                        world.playSound(null, pos, SoundEvents.BLOCK_COPPER_PLACE, SoundCategory.BLOCKS, 1, 1.75f);
-                        world.setBlockState(pos, state.with(PLATES_AMOUNT, plateAmount + 1));
-                    }
-                    return ActionResult.SUCCESS;
-                } else if (heldItem.getItem().equals(CookItItems.FRYER_BASKET)) {
-                    return ActionResult.FAIL;
-                } else if (blockEntity.getStack(0).isEmpty() && plateAmount == 1) {
-                    blockEntity.setStack(0, new ItemStack(heldItem.getItem()));
-                    world.playSound(null, pos, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.BLOCKS, 1, 1.0f);
-                    heldItem.decrement(1);
-                }
+            // Add another plate if the player is holding one of the same type and there aren't already 4 on there.
+            if (heldItem.getItem() instanceof BlockItem blockItem && blockItem.getBlock().equals(this.asBlock()) && plateAmount < 4 && blockEntity.getStack(0).isEmpty()) {
+                heldItem.decrement(1);
+                world.playSound(null, pos, SoundEvents.BLOCK_COPPER_PLACE, SoundCategory.BLOCKS, 1, 1.75f);
+                world.setBlockState(pos, state.with(PLATES_AMOUNT, plateAmount + 1));
+                return ActionResult.SUCCESS;
+            // Add whatever is in the player's hand, as long as it's cooked food (sorry)
+            } else if (blockEntity.getStack(0).isEmpty() && heldItem.getItem() instanceof CookItFood food && food.getFoodType().equals(CookItFoodTypes.DONE)) {
+                blockEntity.setStack(0, heldItem.split(1));
+                world.playSound(null, pos, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.BLOCKS, 1, 1.0f);
+                return ActionResult.SUCCESS;
             }
         }
-        return ActionResult.PASS;
+        return ActionResult.FAIL;
     }
 
     public static boolean isLargePlate(Plate plate) {
@@ -102,6 +101,5 @@ public class Plate extends Block implements BlockEntityProvider {
     }
 
     @Nullable
-
     public BlockEntity createBlockEntity(BlockPos pos, BlockState state) { return new PlateEntity(pos, state); }
 }

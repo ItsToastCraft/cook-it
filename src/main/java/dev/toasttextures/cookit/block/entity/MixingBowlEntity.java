@@ -14,6 +14,7 @@ import java.util.Objects;
 
 public class MixingBowlEntity extends CookingBlockEntity implements ImplementedInventory {
     private int clicks = 0;
+    private int uses = 0;
 
     public MixingBowlEntity(BlockPos pos, BlockState state) {
         super(CookItBlockEntities.CUTTING_BOARD_ENTITY, pos, state, 1);
@@ -21,28 +22,32 @@ public class MixingBowlEntity extends CookingBlockEntity implements ImplementedI
     @Override
     public void readNbt(NbtCompound nbt) {
         super.readNbt(nbt);
-
-        this.clicks = nbt.getInt("cutting_board.clicks");
+        this.clicks = nbt.getInt("clicks");
+        this.uses = nbt.getInt("uses");
     }
 
     @Override
     public void writeNbt(NbtCompound nbt) {
-        nbt.putInt("cutting_board.clicks", clicks);
+        nbt.putInt("clicks", clicks);
+        nbt.putInt("uses", uses);
         super.writeNbt(nbt);
     }
 
+    // Amount of times the entity has been clicked (mixed)
     public void setClicks(int clicks) {
         this.clicks = clicks;
     }
     public int getClicks() { return this.clicks; }
 
+    // Amount outputted by the recipe
+    public int getUses() { return this.uses; }
 
     public void processRecipe() {
         List<RecipeEntry<MixingBowlRecipe>> recipes = getCurrentRecipe();
         if (!recipes.isEmpty()) {
             this.clicks++;
             for(RecipeEntry<MixingBowlRecipe> recipeEntry : recipes) {
-                if (this.getClicks() == recipeEntry.value().getMixes()) {
+                if (this.getClicks() >= recipeEntry.value().getMixes()) {
                     
                 }
 

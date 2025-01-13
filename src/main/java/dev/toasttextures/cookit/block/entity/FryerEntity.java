@@ -81,11 +81,11 @@ public class FryerEntity extends CookingBlockEntity implements ImplementedInvent
             markDirty(world, pos, state);
 
             if (craftingFinished()) {
-                // Stop the continuous Fryer sound and play the world's most annoying beep sound
                 //playFryerSound(world, pos, state, false);
                 world.setBlockState(pos, state.with(ON, false));
                 this.craftRecipe();
                 this.resetProgress();
+                this.markDirty();
 
             }
         } else {
@@ -104,7 +104,8 @@ public class FryerEntity extends CookingBlockEntity implements ImplementedInvent
         Optional<RecipeEntry<FryerRecipe>> recipe = getCurrentRecipe();
         if (recipe.isPresent()) {
             if (!container.isEmpty() && recipe.get().value().getMaxProgress() <= this.progress) {
-                ((FryerBasket) container.getItem()).setItem(container, recipe.get().value().getResult(null).getItem().getDefaultStack());
+                ((FryerBasket) container.getItem()).setItem(container, recipe.get().value().craft(new SimpleInventory(this.getStack(0)), Objects.requireNonNull(this.world).getRegistryManager()));
+                this.markDirty();
             }
         }
 

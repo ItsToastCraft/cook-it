@@ -1,6 +1,7 @@
 package dev.toasttextures.cookit;
 
 import dev.toasttextures.cookit.block.containers.CuttingBoard;
+import dev.toasttextures.cookit.block.entity.CuttingBoardEntity;
 import dev.toasttextures.cookit.registries.*;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
@@ -40,7 +41,7 @@ public class CookIt implements ModInitializer {
         Registry.register(Registries.ITEM_GROUP, new Identifier(CookIt.MOD_ID, "items"), CookItItems.COOK_IT_GROUP);
         PlayerBlockBreakEvents.BEFORE.register((world, player, pos, state, blockEntity) -> {
             if (state.getBlock() instanceof CuttingBoard cuttingBoard) {
-                return cuttingBoard.pickUpCookingBoardItems(state, world, pos, player);
+                return cuttingBoard.resetRecipe((CuttingBoardEntity) blockEntity);
             }
             return true;
         });

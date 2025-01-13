@@ -60,6 +60,7 @@ public class MixingBowlRecipe implements Recipe<SimpleInventory> {
     public int getMixes() {
         return mixAmount;
     }
+    public int getUses() {return output.getCount();}
     public boolean liquidPresent() { return !liquid.isOf(Items.BUCKET); }
 
     @Override

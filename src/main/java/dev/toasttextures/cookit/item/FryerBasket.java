@@ -24,8 +24,6 @@ import dev.toasttextures.cookit.block.entity.PlateEntity;
 
 import java.util.List;
 
-import static dev.toasttextures.cookit.block.containers.Plate.PLATES_AMOUNT;
-
 public class FryerBasket extends Item {
     public FryerBasket(Settings settings) {
         super(settings);
@@ -56,7 +54,7 @@ public class FryerBasket extends Item {
 
         BlockPos hitPos = context.getBlockPos();
         BlockEntity block = context.getWorld().getBlockEntity(hitPos);
-        if (block instanceof PlateEntity && context.getWorld().getBlockState(hitPos).get(PLATES_AMOUNT) == 1 || block instanceof CuttingBoardEntity) {
+        if (block instanceof PlateEntity || block instanceof CuttingBoardEntity) {
             updateBlockItem((CookingBlockEntity) block, basket);
         }
 
@@ -66,8 +64,7 @@ public class FryerBasket extends Item {
     private void updateBlockItem(CookingBlockEntity block, ItemStack basket) {
         ItemStack blockItem = block.getStack(0);
         if (!blockItem.isEmpty() && getItem(basket).isEmpty()) {
-            this.setItem(basket, blockItem.copyWithCount(1));
-            block.removeStack(0, 1);
+            this.setItem(basket, blockItem.split(1));
         } else if (!this.getItem(basket).isEmpty() && blockItem.isEmpty()) {
             block.setStack(0, this.getItem(basket));
             this.setItem(basket, ItemStack.EMPTY);

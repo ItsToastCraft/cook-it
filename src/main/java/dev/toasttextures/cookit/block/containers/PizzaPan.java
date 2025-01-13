@@ -23,10 +23,11 @@ public class PizzaPan extends BlockWithEntity implements BlockEntityProvider {
     public PizzaPan(Settings settings) {
         super(settings);
     }
+    public static final MapCodec<PizzaPan> CODEC = createCodec(PizzaPan::new);
 
     @Override
     protected MapCodec<? extends BlockWithEntity> getCodec() {
-        return null;
+        return CODEC;
     }
     public BlockRenderType getRenderType(BlockState state) {
         return BlockRenderType.MODEL;

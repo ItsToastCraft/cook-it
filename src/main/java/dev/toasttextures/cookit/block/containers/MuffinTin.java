@@ -1,6 +1,7 @@
 package dev.toasttextures.cookit.block.containers;
 
 import dev.toasttextures.cookit.block.entity.MuffinTinEntity;
+import dev.toasttextures.cookit.registries.CookItBlocks;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.item.TooltipContext;
@@ -41,30 +42,14 @@ public class MuffinTin extends Block implements BlockEntityProvider {
             return ActionResult.SUCCESS;
         } else {
             MuffinTinEntity blockEntity = (MuffinTinEntity) world.getBlockEntity(blockPos);
+            ItemStack item = player.getStackInHand(hand);
+            if (!item.isEmpty()) {
+                // Check if there's goop that can be transferred to the muffin tin
+                if (item.isOf(CookItBlocks.MIXING_BOWL.asItem()) && item.getSubNbt("BlockEntityTag") != null) {
 
-            if (!player.getStackInHand(hand).isEmpty()) {
-                // Check what is the first open slot and put an item from the player's hand there
-                for (int i = 0; i < blockEntity.getItems().size(); i++) {
-                    if (blockEntity.getStack(i).isEmpty()) {
-                        // Put the stack the player is holding into the inventory
-                        blockEntity.setStack(i, new ItemStack(player.getStackInHand(hand).getItem(), 1));
-                        player.getStackInHand(hand).decrement(1);
-                        break;
-                    }
-                }
-            } else {
-                // If the player is not holding anything, give them the items in the block entity one by one
-                for (int i = blockEntity.getItems().size() - 1; i >= 0; i--) {
-                    // Find the first slot that has an item and give it to the player
-                    if (!blockEntity.getStack(i).isEmpty()) {
-                        // Give the player the stack in the inventory
-                        player.getInventory().offerOrDrop(blockEntity.getStack(i));
-                        // Remove the stack from the inventory
-                        blockEntity.setStack(i, ItemStack.EMPTY);
-                        break;
-                    }
                 }
             }
+
         }
 
 

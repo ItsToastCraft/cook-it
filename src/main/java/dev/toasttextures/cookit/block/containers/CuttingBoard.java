@@ -21,6 +21,8 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
+
 public class CuttingBoard extends HorizontalFacingBlock implements BlockEntityProvider {
     public static final MapCodec<CuttingBoard> CODEC = createCodec(CuttingBoard::new);
 
@@ -60,19 +62,27 @@ public class CuttingBoard extends HorizontalFacingBlock implements BlockEntityPr
         } else if (!heldItem.isEmpty()) {
             blockEntity.processRecipe(heldItem, false);
         } else {
-            blockEntity.processRecipe(heldItem, player.isSneaking());
+            if (!blockEntity.processRecipe(heldItem, false))
+                pickUpCookingBoardItems(state, world, pos, player);
         }
         return ActionResult.SUCCESS;
     }
 
     // pickups items, boolean used to cancel the block break if the block wasn't empty
-    public boolean pickUpCookingBoardItems(BlockState state, World world, BlockPos pos, PlayerEntity player) {
+    public void pickUpCookingBoardItems(BlockState state, World world, BlockPos pos, PlayerEntity player) {
         CuttingBoardEntity blockEntity = (CuttingBoardEntity) world.getBlockEntity(pos);
-        if (blockEntity != null && !blockEntity.isEmpty()) {
+        if (blockEntity != null && !blockEntity.isEmpty() && player.isSneaking()) {
             player.getInventory().insertStack(blockEntity.getStack(0));
             blockEntity.setClicks(0);
             world.updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
-            return false;
+        }
+    }
+
+    public boolean resetRecipe(CuttingBoardEntity blockEntity) {
+
+        if (blockEntity != null && !blockEntity.isEmpty()) {
+
+            return !blockEntity.processRecipe(ItemStack.EMPTY, true);
         }
         return true;
     }
@@ -92,7 +102,10 @@ public class CuttingBoard extends HorizontalFacingBlock implements BlockEntityPr
     @Override
     public void onBlockBreakStart(BlockState state, World world, BlockPos pos, PlayerEntity player) {
         if (!world.isClient) {
-            pickUpCookingBoardItems(state, world, pos, player);
+            CuttingBoardEntity blockEntity = (CuttingBoardEntity) world.getBlockEntity(pos);
+            if (blockEntity != null) {
+                blockEntity.processRecipe(ItemStack.EMPTY, true);
+            }
         }
         super.onBlockBreakStart(state, world, pos, player);
     }
@@ -109,7 +122,7 @@ public class CuttingBoard extends HorizontalFacingBlock implements BlockEntityPr
 
     @Override
     public BlockState getPlacementState(ItemPlacementContext ctx) {
-        return super.getPlacementState(ctx).with(Properties.HORIZONTAL_FACING, ctx.getHorizontalPlayerFacing().getOpposite());
+        return Objects.requireNonNull(super.getPlacementState(ctx)).with(Properties.HORIZONTAL_FACING, ctx.getHorizontalPlayerFacing().getOpposite());
     }
 
     @Nullable
