@@ -84,8 +84,8 @@ public class OvenEntity extends CookingBlockEntity implements ImplementedInvento
 
     private void craftRecipe(int index) {
         ItemStack item = this.getStack(index);
-        if (this.isContainer(item)) {
-            ArrayList<ItemStack> containerItems = this.getContainerItems(item);
+        if (CookingBlockEntity.isContainer(item)) {
+            ArrayList<ItemStack> containerItems = CookingBlockEntity.getContainerItems(item);
             NbtList nbtList = new NbtList();
 
             for (int i = 0; i < containerItems.size(); i++) {
@@ -116,13 +116,13 @@ public class OvenEntity extends CookingBlockEntity implements ImplementedInvento
             this.setStack(index, result);
         }
         assert world != null;
-        world.playSound(null, this.getPos(), SoundEvent.of(new Identifier("block.note_block.xylophone")), SoundCategory.BLOCKS, 1.0f, 1.5f);
+        world.playSound(null, this.getPos(), SoundEvent.of(new Identifier("block.note_block.xylophone")), SoundCategory.BLOCKS, 3.0f, 1.5f);
     }
 
     private Optional<RecipeEntry<OvenRecipe>> getCurrentRecipe(ItemStack itemStack) {
         ArrayList<ItemStack> items = new ArrayList<>();
 
-        ArrayList<ItemStack> containerItems = this.getContainerItems(itemStack);
+        ArrayList<ItemStack> containerItems = getContainerItems(itemStack);
 
         if (!containerItems.isEmpty()) {
             items.addAll(containerItems);

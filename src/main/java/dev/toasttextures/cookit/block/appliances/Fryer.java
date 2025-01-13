@@ -1,7 +1,11 @@
 package dev.toasttextures.cookit.block.appliances;
 
 import com.mojang.serialization.MapCodec;
+import dev.toasttextures.cookit.CookIt;
 import dev.toasttextures.cookit.block.entity.FryerEntity;
+import dev.toasttextures.cookit.item.CookItFood;
+import dev.toasttextures.cookit.item.FryerBasket;
+import dev.toasttextures.cookit.registries.CookItFoodTypes;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
@@ -62,9 +66,15 @@ public class Fryer extends BlockWithEntity implements BlockEntityProvider {
         if (blockEntity.isEmpty()) {
             if (heldItem.getItem().equals(CookItItems.FRYER_BASKET)) {
                 blockEntity.setStack(0, heldItem.copyAndEmpty());
-            } else {
-                return ActionResult.FAIL;
             }
+        } else if (heldItem.getItem() instanceof CookItFood food && food.getFoodType().equals(CookItFoodTypes.FRYING)) {
+            CookIt.LOGGER.warn(String.valueOf(food));
+            ItemStack stack = blockEntity.getStack(0);
+            FryerBasket.setItem(stack, heldItem.split(1));
+            CookIt.LOGGER.warn(String.valueOf(FryerBasket.getItem(stack)));
+            blockEntity.setStack(0, stack);
+            blockEntity.markDirty();
+
         } else {
             player.getInventory().insertStack(blockEntity.getStack(0));
         }

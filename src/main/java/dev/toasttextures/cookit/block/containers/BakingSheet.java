@@ -40,10 +40,20 @@ public class BakingSheet extends Block implements BlockEntityProvider {
 
     public ActionResult onUse(BlockState blockState, World world, BlockPos blockPos, PlayerEntity player, Hand hand, BlockHitResult blockHitResult) {
         world.updateListeners(blockPos, blockState, blockState, Block.NOTIFY_LISTENERS);
-        if (world.isClient) {
+        BakingSheetEntity blockEntity = (BakingSheetEntity) world.getBlockEntity(blockPos);
+        if (world.isClient || blockEntity == null) {
             return ActionResult.SUCCESS;
         } else {
-            BakingSheetEntity blockEntity = (BakingSheetEntity) world.getBlockEntity(blockPos);
+
+            if (player.isSneaking()) {
+                ItemStack sheet = this.asItem().getDefaultStack();
+                if (!blockEntity.isEmpty()) {
+                    blockEntity.setStackNbt(sheet);
+                }
+                player.getInventory().insertStack(sheet);
+                world.breakBlock(blockPos,false);
+                return ActionResult.SUCCESS;
+            }
             ItemStack item = player.getStackInHand(hand);
             if (!item.isEmpty()) {
                 // Check what is the first open slot and put an item from the player's hand there

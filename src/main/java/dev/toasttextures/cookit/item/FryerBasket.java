@@ -64,14 +64,14 @@ public class FryerBasket extends Item {
     private void updateBlockItem(CookingBlockEntity block, ItemStack basket) {
         ItemStack blockItem = block.getStack(0);
         if (!blockItem.isEmpty() && getItem(basket).isEmpty()) {
-            this.setItem(basket, blockItem.split(1));
-        } else if (!this.getItem(basket).isEmpty() && blockItem.isEmpty()) {
-            block.setStack(0, this.getItem(basket));
-            this.setItem(basket, ItemStack.EMPTY);
+            setItem(basket, blockItem.split(1));
+        } else if (!getItem(basket).isEmpty() && blockItem.isEmpty()) {
+            block.setStack(0, getItem(basket));
+            setItem(basket, ItemStack.EMPTY);
         }
     }
 
-    public void setItem(ItemStack input, ItemStack item) {
+    public static void setItem(ItemStack input, ItemStack item) {
         NbtList nbtList = new NbtList();
         NbtCompound nbtCompound = new NbtCompound();
         nbtCompound.putByte("Slot", (byte) 0);
@@ -79,12 +79,12 @@ public class FryerBasket extends Item {
         item.writeNbt(nbtCompound);
         nbtList.add(nbtCompound);
         input.getOrCreateNbt().put("Items", nbtList);
-        if (item == ItemStack.EMPTY) {
+        if (item.isEmpty()) {
             input.removeSubNbt("Items");
         }
     }
 
-    public ItemStack getItem(ItemStack input) {
+    public static ItemStack getItem(ItemStack input) {
         NbtCompound itemsTag = input.getNbt();
         if (itemsTag != null) {
             NbtList list = itemsTag.getList("Items", NbtElement.COMPOUND_TYPE);
@@ -93,8 +93,8 @@ public class FryerBasket extends Item {
     }
 
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
-        Text text = Text.literal("Item: ").formatted(Formatting.GRAY).append(Text.literal(this.getItem(stack).getName().getString()).formatted(Formatting.BLUE));
-        if (this.getItem(stack) != ItemStack.EMPTY) {
+        Text text = Text.literal("Item: ").formatted(Formatting.GRAY).append(Text.literal(getItem(stack).getName().getString()).formatted(Formatting.BLUE));
+        if (!getItem(stack).isEmpty()) {
             tooltip.add(text);
         } else {
             tooltip.remove(text);

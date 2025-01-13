@@ -43,6 +43,15 @@ public class MuffinTin extends Block implements BlockEntityProvider {
         } else {
             MuffinTinEntity blockEntity = (MuffinTinEntity) world.getBlockEntity(blockPos);
             ItemStack item = player.getStackInHand(hand);
+            if (player.isSneaking()) {
+                ItemStack sheet = this.asItem().getDefaultStack();
+                if (!blockEntity.isEmpty()) {
+                    blockEntity.setStackNbt(sheet);
+                }
+                player.getInventory().insertStack(sheet);
+                world.breakBlock(blockPos,false);
+                return ActionResult.SUCCESS;
+            }
             if (!item.isEmpty()) {
                 // Check if there's goop that can be transferred to the muffin tin
                 if (item.isOf(CookItBlocks.MIXING_BOWL.asItem()) && item.getSubNbt("BlockEntityTag") != null) {

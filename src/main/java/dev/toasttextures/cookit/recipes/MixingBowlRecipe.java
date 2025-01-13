@@ -21,11 +21,10 @@ import java.util.List;
 public class MixingBowlRecipe implements Recipe<SimpleInventory> {
     private final ItemStack output;
     private final List<Ingredient> recipeItems;
-    private final ItemStack liquid;
     private final int mixAmount;
+    private final ItemStack liquid;
 
-
-    public MixingBowlRecipe(List<Ingredient> ingredients, ItemStack liquid, ItemStack output, int mixAmount) {
+    public MixingBowlRecipe(List<Ingredient> ingredients, ItemStack output, int mixAmount, ItemStack liquid) {
         this.output = output;
         this.recipeItems = ingredients;
         this.mixAmount = mixAmount;
@@ -91,9 +90,9 @@ public class MixingBowlRecipe implements Recipe<SimpleInventory> {
         public static final Serializer INSTANCE = new Serializer();
         public static final Codec<MixingBowlRecipe> CODEC = RecordCodecBuilder.create(in -> in.group(
                 validateAmount().fieldOf("ingredients").forGetter(MixingBowlRecipe::getIngredients),
-                ItemStack.RECIPE_RESULT_CODEC.optionalFieldOf("liquid", new ItemStack(Items.BUCKET, 1)).forGetter(r -> r.liquid),
                 ItemStack.RECIPE_RESULT_CODEC.fieldOf("output").forGetter(r -> r.output),
-                Codec.INT.fieldOf("clicks").forGetter(MixingBowlRecipe::getMixes)
+                Codec.INT.fieldOf("clicks").forGetter(MixingBowlRecipe::getMixes),
+                ItemStack.RECIPE_RESULT_CODEC.optionalFieldOf("liquid", new ItemStack(Items.BUCKET, 1)).forGetter(r -> r.liquid)
         ).apply(in, MixingBowlRecipe::new));
 
         private static Codec<List<Ingredient>> validateAmount() {
@@ -112,10 +111,10 @@ public class MixingBowlRecipe implements Recipe<SimpleInventory> {
             DefaultedList<Ingredient> inputs = DefaultedList.ofSize(buf.readInt(), Ingredient.EMPTY);
 
             inputs.replaceAll(ignored -> Ingredient.fromPacket(buf));
-            ItemStack liquid = buf.readItemStack();
             ItemStack output = buf.readItemStack();
             int clicks = buf.readInt();
-            return new MixingBowlRecipe(inputs, liquid, output, clicks);
+            ItemStack liquid = buf.readItemStack();
+            return new MixingBowlRecipe(inputs, output, clicks, liquid);
         }
 
         @Override
@@ -125,8 +124,10 @@ public class MixingBowlRecipe implements Recipe<SimpleInventory> {
             for (Ingredient ingredient : recipe.getIngredients()) {
                 ingredient.write(buf);
             }
+
             buf.writeItemStack(recipe.getResult(null));
             buf.writeInt(recipe.getMixes());
+            buf.writeItemStack(recipe.getLiquid());
         }
     }
 }

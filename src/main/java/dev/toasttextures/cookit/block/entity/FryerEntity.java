@@ -58,7 +58,6 @@ public class FryerEntity extends CookingBlockEntity implements ImplementedInvent
         if (world.isClient()) {
             return;
         }
-
         if (this.hasRecipe()) {
             if (this.progress % 8 == 1)
                 world.playSound(null, this.pos, SoundEvents.BLOCK_BUBBLE_COLUMN_UPWARDS_AMBIENT, SoundCategory.BLOCKS, 0.5f, 8.0f);
@@ -141,7 +140,6 @@ public class FryerEntity extends CookingBlockEntity implements ImplementedInvent
 
     private boolean hasRecipe() {
         Optional<RecipeEntry<FryerRecipe>> recipe = getCurrentRecipe();
-
         return recipe.isPresent();
     }
 
@@ -156,19 +154,17 @@ public class FryerEntity extends CookingBlockEntity implements ImplementedInvent
         return Objects.requireNonNull(getWorld()).getRecipeManager().getFirstMatch(FryerRecipe.Type.INSTANCE, inv, getWorld());
     }
 
-    @Override
-    public ArrayList<ItemStack> getContainerItems(ItemStack container) {
+    public static ArrayList<ItemStack> getContainerItems(ItemStack container) {
 
         ArrayList<ItemStack> itemStackList = new ArrayList<>();
         NbtCompound nbt = container.getNbt();
         if (nbt != null && nbt.contains("Items")) {
             NbtList itemsTag = nbt.getList("Items", NbtElement.COMPOUND_TYPE);
-            for (int j = 0; j < itemsTag.size(); j++) {
-                NbtCompound itemTag = itemsTag.getCompound(j);
-                ItemStack itemStack = ItemStack.fromNbt(itemTag);
 
-                itemStackList.add(itemStack);
-            }
+            NbtCompound itemTag = itemsTag.getCompound(0);
+            ItemStack itemStack = ItemStack.fromNbt(itemTag);
+            itemStackList.add(itemStack);
+
         }
         return itemStackList;
     }

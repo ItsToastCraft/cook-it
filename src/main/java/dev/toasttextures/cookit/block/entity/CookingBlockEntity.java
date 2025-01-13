@@ -60,13 +60,19 @@ public abstract class CookingBlockEntity extends BlockEntity implements Implemen
         return createNbt();
     }
 
-    public boolean isContainer(ItemStack item) {
-        NbtList nbtList = item.getOrCreateSubNbt("BlockEntityTag").getList("Items", NbtElement.COMPOUND_TYPE);
 
+    // Checks if the item is a container that stores more items in its NBT
+    // Many items in this mod do this, like baking sheets, pizza pans, and muffin tins
+    public static boolean isContainer(ItemStack item) {
+        return isContainer(item, "BlockEntityTag");
+    }
+    public static boolean isContainer(ItemStack item, String key) {
+        NbtList nbtList = item.getOrCreateSubNbt(key).getList("Items", NbtElement.COMPOUND_TYPE);
         return !nbtList.isEmpty();
     }
 
-    public ArrayList<ItemStack> getContainerItems(ItemStack container) {
+
+    public static ArrayList<ItemStack> getContainerItems(ItemStack container) {
 
         ArrayList<ItemStack> itemStackList = new ArrayList<>();
         NbtCompound nbt = container.getSubNbt("BlockEntityTag");

@@ -1,6 +1,8 @@
 package dev.toasttextures.cookit.item;
 
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.CampfireBlock;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemUsageContext;
@@ -9,6 +11,7 @@ import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.state.property.Properties;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -64,6 +67,8 @@ public class FireExtinguisherItem extends Item {
         if (blockState.isIn(BlockTags.FIRE)) {
             world.playSound(null, pos, SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS, 0.5f, 1f);
             world.breakBlock(pos, false, null);
+        } else if (blockState.isIn(BlockTags.CAMPFIRES) && CampfireBlock.isLitCampfire(blockState)) {
+            world.setBlockState(pos, blockState.with(Properties.LIT, false));
         }
     }
 }
