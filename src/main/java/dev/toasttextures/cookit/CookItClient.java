@@ -27,11 +27,15 @@ public class CookItClient implements ClientModInitializer {
         isFiguraLoaded = (FabricLoader.getInstance().isModLoaded("figura"));
 
         CookItBlockEntities.registerRenderers();
-        BlockRenderLayerMap.INSTANCE.putBlock(CookItBlocks.OVEN, RenderLayer.getTranslucent());
-        BlockRenderLayerMap.INSTANCE.putBlock(CookItBlocks.MICROWAVE, RenderLayer.getTranslucent());
-        BlockRenderLayerMap.INSTANCE.putBlock(CookItBlocks.MUFFIN_TIN, RenderLayer.getCutout());
-        BlockRenderLayerMap.INSTANCE.putBlock(CookItBlocks.FRYER, RenderLayer.getTranslucent());
-        BlockRenderLayerMap.INSTANCE.putBlock(CookItBlocks.PIZZA_CRUST, RenderLayer.getTranslucent());
+        BlockRenderLayerMap.INSTANCE.putBlocks(RenderLayer.getTranslucent(),
+                CookItBlocks.OVEN,
+                CookItBlocks.MICROWAVE,
+                CookItBlocks.FRYER);
+
+        BlockRenderLayerMap.INSTANCE.putBlocks(RenderLayer.getCutout(),
+                CookItBlocks.MUFFIN_TIN,
+                CookItBlocks.PIZZA_CRUST,
+                CookItBlocks.VANILLA_VINE);
 
         ChefOutfitRenderer.register();
 

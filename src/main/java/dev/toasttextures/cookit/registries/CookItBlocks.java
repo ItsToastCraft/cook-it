@@ -6,6 +6,7 @@ import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.VineBlock;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
@@ -50,7 +51,7 @@ public class CookItBlocks {
 
     // -- Miscellaneous --
     public static final Block BENCH = registerBlock("bench", new Bench(FabricBlockSettings.create()));
-
+    public static final Block VANILLA_VINE = registerBlock("vanilla_vine", new VineBlock(FabricBlockSettings.copyOf(Blocks.VINE)));
 
     public static void registerColoredBlocks() {
         for (DyeColor color : DyeColor.values()) {

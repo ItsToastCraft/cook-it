@@ -44,7 +44,6 @@ public class BakingSheet extends Block implements BlockEntityProvider {
         if (world.isClient || blockEntity == null) {
             return ActionResult.SUCCESS;
         } else {
-
             if (player.isSneaking()) {
                 ItemStack sheet = this.asItem().getDefaultStack();
                 if (!blockEntity.isEmpty()) {
@@ -62,7 +61,6 @@ public class BakingSheet extends Block implements BlockEntityProvider {
                         // Put the stack the player is holding into the inventory
                         blockEntity.setStack(i, new ItemStack(item.getItem(), 1));
                         item.decrement(1);
-
                         break;
                     }
                 }
@@ -80,8 +78,6 @@ public class BakingSheet extends Block implements BlockEntityProvider {
                 }
             }
         }
-
-
         return ActionResult.SUCCESS;
     }
 
