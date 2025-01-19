@@ -7,10 +7,7 @@ import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.recipe.Ingredient;
-import net.minecraft.recipe.Recipe;
-import net.minecraft.recipe.RecipeSerializer;
-import net.minecraft.recipe.RecipeType;
+import net.minecraft.recipe.*;
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.dynamic.Codecs;
@@ -20,13 +17,13 @@ import java.util.List;
 
 public class MixingBowlRecipe implements Recipe<SimpleInventory> {
     private final ItemStack output;
-    private final List<Ingredient> recipeItems;
+    private final List<Ingredient> ingredients;
     private final int mixAmount;
     private final ItemStack liquid;
 
     public MixingBowlRecipe(List<Ingredient> ingredients, ItemStack output, int mixAmount, ItemStack liquid) {
         this.output = output;
-        this.recipeItems = ingredients;
+        this.ingredients = ingredients;
         this.mixAmount = mixAmount;
         this.liquid = liquid;
     }
@@ -36,7 +33,18 @@ public class MixingBowlRecipe implements Recipe<SimpleInventory> {
         if(world.isClient()) {
             return false;
         }
-        return recipeItems.get(0).test(inventory.getStack(0));
+        RecipeMatcher recipeMatcher = new RecipeMatcher();
+        int i = 0;
+
+        for(int j = 0; j < inventory.size(); ++j) {
+            ItemStack itemStack = inventory.getStack(j);
+            if (!itemStack.isEmpty()) {
+                ++i;
+                recipeMatcher.addInput(itemStack, 1);
+            }
+        }
+
+        return i == this.ingredients.size() && recipeMatcher.match(this, null);
     }
 
     @Override
@@ -49,8 +57,8 @@ public class MixingBowlRecipe implements Recipe<SimpleInventory> {
 
     @Override
     public DefaultedList<Ingredient> getIngredients() {
-        DefaultedList<Ingredient> list = DefaultedList.ofSize(this.recipeItems.size());
-        list.addAll(recipeItems);
+        DefaultedList<Ingredient> list = DefaultedList.ofSize(this.ingredients.size());
+        list.addAll(ingredients);
         return list;
     }
 

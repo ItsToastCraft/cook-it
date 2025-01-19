@@ -23,7 +23,6 @@
     {
       "apply": {
         "model": "cook-it:block/vanilla_vine",
-        "uvlock": true,
         "y": 90
       },
       "when": {
@@ -33,7 +32,6 @@
     {
       "apply": {
         "model": "cook-it:block/vanilla_vine",
-        "uvlock": true,
         "y": 90
       },
       "when": {
@@ -47,7 +45,6 @@
     {
       "apply": {
         "model": "cook-it:block/vanilla_vine",
-        "uvlock": true,
         "y": 180
       },
       "when": {
@@ -57,7 +54,6 @@
     {
       "apply": {
         "model": "cook-it:block/vanilla_vine",
-        "uvlock": true,
         "y": 180
       },
       "when": {
@@ -71,7 +67,6 @@
     {
       "apply": {
         "model": "cook-it:block/vanilla_vine",
-        "uvlock": true,
         "y": 270
       },
       "when": {
@@ -81,7 +76,6 @@
     {
       "apply": {
         "model": "cook-it:block/vanilla_vine",
-        "uvlock": true,
         "y": 270
       },
       "when": {
@@ -95,7 +89,6 @@
     {
       "apply": {
         "model": "cook-it:block/vanilla_vine",
-        "uvlock": true,
         "x": 270
       },
       "when": {
@@ -105,7 +98,6 @@
     {
       "apply": {
         "model": "cook-it:block/vanilla_vine",
-        "uvlock": true,
         "x": 270
       },
       "when": {

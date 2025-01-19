@@ -10,7 +10,9 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.client.color.world.BiomeColors;
 import net.minecraft.client.item.ModelPredicateProviderRegistry;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.util.Identifier;
@@ -49,6 +51,12 @@ public class CookItClient implements ClientModInitializer {
         ModelPredicateProviderRegistry.register(CookItItems.FIRE_EXTINGUISHER, new Identifier("extinguisher_fuel"), (stack, world, entity, seed) -> (float) Math.round(((float) stack.getMaxDamage() - stack.getDamage()) / 100) / 10);
         ParticleFactoryRegistry.getInstance().register(CookIt.OIL_PARTICLE, OilParticle.Factory::new);
 
-        //ColorProviderRegistry.BLOCK.register((state, view, pos, tintIndex) -> 0x3495eb, CookItBlocks.MIXING_BOWL);
+        ColorProviderRegistry.BLOCK.register((state, view, pos, tintIndex) -> {
+            if (view != null && pos != null) {
+                // Use the biome's grass color
+                return BiomeColors.getFoliageColor(view, pos);
+            }
+            return 0xFFFFFF;
+        }, CookItBlocks.VANILLA_VINE);
     }
 }
