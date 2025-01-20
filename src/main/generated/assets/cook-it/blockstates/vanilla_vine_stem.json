@@ -1,0 +1,24 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "cook-it:block/vanilla_vine_stem",
+      "uvlock": false,
+      "y": 90
+    },
+    "facing=north": {
+      "model": "cook-it:block/vanilla_vine_stem",
+      "uvlock": false,
+      "y": 0
+    },
+    "facing=south": {
+      "model": "cook-it:block/vanilla_vine_stem",
+      "uvlock": false,
+      "y": 180
+    },
+    "facing=west": {
+      "model": "cook-it:block/vanilla_vine_stem",
+      "uvlock": false,
+      "y": 270
+    }
+  }
+}

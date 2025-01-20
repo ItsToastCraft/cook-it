@@ -1,12 +1,13 @@
 package dev.toasttextures.cookit.registries;
 import dev.toasttextures.cookit.block.appliances.*;
 import dev.toasttextures.cookit.block.containers.*;
+import dev.toasttextures.cookit.block.food_blocks.VanillaVinePlant;
+import dev.toasttextures.cookit.block.food_blocks.VanillaVineStem;
 import dev.toasttextures.cookit.block.food_blocks.pizza.CookedPizza;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
-import net.minecraft.block.VineBlock;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
@@ -51,7 +52,8 @@ public class CookItBlocks {
 
     // -- Miscellaneous --
     public static final Block BENCH = registerBlock("bench", new Bench(FabricBlockSettings.create()));
-    public static final Block VANILLA_VINE = registerBlock("vanilla_vine", new VineBlock(FabricBlockSettings.copyOf(Blocks.VINE)));
+    public static final Block VANILLA_VINE_STEM = registerBlockNoItem("vanilla_vine_stem", new VanillaVineStem(FabricBlockSettings.copyOf(Blocks.VINE)));
+    public static final Block VANILLA_VINE = registerBlockNoItem("vanilla_vine", new VanillaVinePlant(FabricBlockSettings.copyOf(Blocks.VINE)));
 
     public static void registerColoredBlocks() {
         for (DyeColor color : DyeColor.values()) {
@@ -69,6 +71,9 @@ public class CookItBlocks {
             Block CUTTING_BOARD = registerBlock(woodType + "_cutting_board", new CuttingBoard(FabricBlockSettings.copyOf(Blocks.SPRUCE_PLANKS)));
             CUTTING_BOARDS.add(CUTTING_BOARD);
         }
+    }
+    public static Block registerBlockNoItem(String name, Block block) {
+        return Registry.register(Registries.BLOCK, new Identifier(CookIt.MOD_ID, name), block);
     }
     public static Block registerBlock(String name, Block block) {
         registerBlockItem(name, block);

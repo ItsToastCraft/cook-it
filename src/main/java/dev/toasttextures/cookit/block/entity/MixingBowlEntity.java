@@ -20,7 +20,7 @@ public class MixingBowlEntity extends CookingBlockEntity implements ImplementedI
     private int uses = 0;
 
     public MixingBowlEntity(BlockPos pos, BlockState state) {
-        super(CookItBlockEntities.MIXING_BOWL_ENTITY, pos, state, 5);
+        super(CookItBlockEntities.MIXING_BOWL_ENTITY, pos, state, 7);
     }
     @Override
     public void readNbt(NbtCompound nbt) {
@@ -36,7 +36,7 @@ public class MixingBowlEntity extends CookingBlockEntity implements ImplementedI
         super.writeNbt(nbt);
     }
     public Item getLiquid() {
-        return this.getStack(4).getItem();
+        return this.getStack(7).getItem();
     }
 
     // Amount of times the entity has been clicked (mixed)
@@ -53,7 +53,7 @@ public class MixingBowlEntity extends CookingBlockEntity implements ImplementedI
         if (recipe.isPresent() && recipe.get().value().getLiquid().isOf(this.getLiquid())) {
             this.clicks++;
             if (this.getClicks() >= recipe.get().value().getMixes()) {
-                this.setItems(DefaultedList.ofSize(5, ItemStack.EMPTY));
+                this.setItems(DefaultedList.ofSize(7, ItemStack.EMPTY));
                 this.setStack(0, recipe.get().value().craft(new SimpleInventory(), world.getRegistryManager()));
             }
         }

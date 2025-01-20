@@ -1,0 +1,13 @@
+{
+  "type": "cook-it:cutting",
+  "input": {
+    "item": "cook-it:plain_donut"
+  },
+  "output": {
+    "item": "cook-it:vanilla_donut"
+  },
+  "tool": {
+    "item": "cook-it:vanilla_bean"
+  },
+  "usesItem": true
+}

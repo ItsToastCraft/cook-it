@@ -1,0 +1,19 @@
+{
+	"credit": "Made by ToastTextures using Blockbench",
+	"textures": {
+		"texture": "cook-it:block",
+		"particle": "#texture"
+	},
+	"elements": [
+		{
+			"from": [0, 0, 15.2],
+			"to": [16, 16, 15.2],
+			"shade": false,
+			"rotation": {"angle": 0, "axis": "y", "origin": [0, 0, 14.4]},
+			"faces": {
+				"north": {"uv": [16, 0, 0, 16], "texture": "#texture", "tintindex": 0},
+				"south": {"uv": [0, 0, 16, 16], "texture": "#texture", "tintindex": 0}
+			}
+		}
+	]
+}

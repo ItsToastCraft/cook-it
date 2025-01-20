@@ -37,7 +37,8 @@ public class CookItClient implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putBlocks(RenderLayer.getCutout(),
                 CookItBlocks.MUFFIN_TIN,
                 CookItBlocks.PIZZA_CRUST,
-                CookItBlocks.VANILLA_VINE);
+                CookItBlocks.VANILLA_VINE,
+                CookItBlocks.VANILLA_VINE_STEM);
 
         ChefOutfitRenderer.register();
 
@@ -57,6 +58,6 @@ public class CookItClient implements ClientModInitializer {
                 return BiomeColors.getFoliageColor(view, pos);
             }
             return 0xFFFFFF;
-        }, CookItBlocks.VANILLA_VINE);
+        }, CookItBlocks.VANILLA_VINE, CookItBlocks.VANILLA_VINE_STEM);
     }
 }

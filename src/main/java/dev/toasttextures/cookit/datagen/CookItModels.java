@@ -15,7 +15,9 @@ public class CookItModels {
     static TextureKey BOWL = TextureKey.of("bowl");
     static TextureKey CUTTING_BOARD = TextureKey.of("cutting_board");
     static TextureKey ROLLING_PIN = TextureKey.of("rolling_pin");
-
+    static TextureKey VINE = TextureKey.of("vine");
+    static TextureKey DECOR = TextureKey.of("decor");
+    public static final Model PLANE = newParent("block/plane", TextureKey.TEXTURE);
     public static final Model TEMPLATE_PLATE_1 = newParent("block/plate_1", PLATE);
     public static final Model TEMPLATE_PLATE_2 = newParent("block/plate_2", PLATE);
     public static final Model TEMPLATE_PLATE_3 = newParent("block/plate_3", PLATE);
@@ -28,7 +30,7 @@ public class CookItModels {
     public static final Model TEMPLATE_CUTTING_BOARD = newParent("block/cutting_board", CUTTING_BOARD);
     public static final Model TEMPLATE_ROLLING_PIN = newParent("item/rolling_pin", ROLLING_PIN);
 
-    private static Model newParent(String parent, TextureKey... requiredTextureKeys) {
+    static Model newParent(String parent, TextureKey... requiredTextureKeys) {
         return new Model(Optional.of(new Identifier(CookIt.MOD_ID, parent)), Optional.empty(), requiredTextureKeys);
     }
 

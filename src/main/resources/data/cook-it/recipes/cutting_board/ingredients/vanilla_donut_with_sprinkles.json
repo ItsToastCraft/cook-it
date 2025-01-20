@@ -1,0 +1,13 @@
+{
+  "type": "cook-it:cutting",
+  "input": {
+    "item": "cook-it:vanilla_donut"
+  },
+  "output": {
+    "item": "cook-it:vanilla_donut_sprinkles"
+  },
+  "tool": {
+    "tag": "c:dyes"
+  },
+  "usesItem": true
+}

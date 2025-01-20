@@ -5,13 +5,17 @@
       "bonus_rolls": 0.0,
       "conditions": [
         {
-          "condition": "minecraft:survives_explosion"
+          "block": "cook-it:vanilla_vine",
+          "condition": "minecraft:block_state_property",
+          "properties": {
+            "plant_state": "2"
+          }
         }
       ],
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "cook-it:vanilla_vine"
+          "name": "cook-it:vanilla_bean"
         }
       ],
       "rolls": 1.0

@@ -1,0 +1,64 @@
+{
+  "variants": {
+    "facing=east,plant_state=0": {
+      "model": "cook-it:block/vanilla_vine",
+      "uvlock": false,
+      "y": 90
+    },
+    "facing=east,plant_state=1": {
+      "model": "cook-it:block/vanilla_vine_bloomed",
+      "uvlock": false,
+      "y": 90
+    },
+    "facing=east,plant_state=2": {
+      "model": "cook-it:block/vanilla_vine_with_beans",
+      "uvlock": false,
+      "y": 90
+    },
+    "facing=north,plant_state=0": {
+      "model": "cook-it:block/vanilla_vine",
+      "uvlock": false,
+      "y": 0
+    },
+    "facing=north,plant_state=1": {
+      "model": "cook-it:block/vanilla_vine_bloomed",
+      "uvlock": false,
+      "y": 0
+    },
+    "facing=north,plant_state=2": {
+      "model": "cook-it:block/vanilla_vine_with_beans",
+      "uvlock": false,
+      "y": 0
+    },
+    "facing=south,plant_state=0": {
+      "model": "cook-it:block/vanilla_vine",
+      "uvlock": false,
+      "y": 180
+    },
+    "facing=south,plant_state=1": {
+      "model": "cook-it:block/vanilla_vine_bloomed",
+      "uvlock": false,
+      "y": 180
+    },
+    "facing=south,plant_state=2": {
+      "model": "cook-it:block/vanilla_vine_with_beans",
+      "uvlock": false,
+      "y": 180
+    },
+    "facing=west,plant_state=0": {
+      "model": "cook-it:block/vanilla_vine",
+      "uvlock": false,
+      "y": 270
+    },
+    "facing=west,plant_state=1": {
+      "model": "cook-it:block/vanilla_vine_bloomed",
+      "uvlock": false,
+      "y": 270
+    },
+    "facing=west,plant_state=2": {
+      "model": "cook-it:block/vanilla_vine_with_beans",
+      "uvlock": false,
+      "y": 270
+    }
+  }
+}

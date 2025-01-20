@@ -19,6 +19,7 @@
   "item.cook-it.dough_rolled": "Rolled Dough",
   "item.cook-it.dough_sliced": "Sliced Dough",
   "item.cook-it.cheese": "Cheese",
+  "item.cook-it.vanilla_bean": "Vanilla Beans",
 
   "item.cook-it.raw_donut": "Raw Donut",
   "item.cook-it.plain_donut": "Donut",
@@ -34,8 +35,9 @@
 
   "item.cook-it.plain_muffin": "Muffin",
   "item.cook-it.blueberry_muffin": "Blueberry Muffin",
+  "item.cook-it.sweet_berry_muffin": "Sweet Berry Muffin",
   "item.cook-it.chocolate_chip_muffin": "Chocolate Chip Muffin",
-  "item.cook-it.chocolate_muffin": " Chocolate Muffin",
+  "item.cook-it.chocolate_muffin": "Chocolate Muffin",
 
   "item.cook-it.raw_cinnamon_roll": "Raw Cinnamon Roll",
   "item.cook-it.cinnamon_roll": "Cinnamon Roll",

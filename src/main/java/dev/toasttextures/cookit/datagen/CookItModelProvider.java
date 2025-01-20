@@ -1,6 +1,7 @@
 package dev.toasttextures.cookit.datagen;
 
 import dev.toasttextures.cookit.CookIt;
+import dev.toasttextures.cookit.block.food_blocks.VanillaVines;
 import dev.toasttextures.cookit.registries.CookItItems;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricModelProvider;
@@ -60,7 +61,46 @@ public class CookItModelProvider extends FabricModelProvider {
                     .register(Direction.WEST, BlockStateVariant.create().put(VariantSettings.Y, VariantSettings.Rotation.R270).put(VariantSettings.MODEL, identifier).put(VariantSettings.UVLOCK, false))));
             blockStateModelGenerator.registerParentedItemModel(block, identifier);
             }
+
+        {
+            Block block = CookItBlocks.VANILLA_VINE;
+            Identifier id = setTextureOutput(CookItBlocks.VANILLA_VINE, "vanilla_vine");
+            TextureMap texStage0 = TextureMap.of(TextureKey.TEXTURE, id);
+            TextureMap texStage1 = new TextureMap().put(VINE, id).put(DECOR, setTextureOutput(block, "vanilla_vine_decor"));
+            TextureMap texStage2 = new TextureMap().put(VINE, setTextureOutput(CookItBlocks.VANILLA_VINE, "vanilla_vine_done")).put(DECOR, setTextureOutput(block, "vanilla_vine_decor_done"));
+
+            Model VANILLA_VINE_MODEL = newParent("block/blooming_vine", VINE, DECOR);
+            Identifier stage0 = PLANE.upload(setModelOutput("block/", block), texStage0, blockStateModelGenerator.modelCollector);
+            Identifier stage1 = VANILLA_VINE_MODEL.upload(setModelOutput("block/", block, "_bloomed"), texStage1, blockStateModelGenerator.modelCollector);
+            Identifier stage2 = VANILLA_VINE_MODEL.upload(setModelOutput("block/", block, "_with_beans"), texStage2, blockStateModelGenerator.modelCollector);
+
+            blockStateModelGenerator.blockStateCollector.accept(VariantsBlockStateSupplier.create(block).coordinate(BlockStateVariantMap.create(Properties.HORIZONTAL_FACING, VanillaVines.PLANT_STATE)
+                    .register(Direction.NORTH, 0, BlockStateVariant.create().put(VariantSettings.Y, VariantSettings.Rotation.R0).put(VariantSettings.MODEL, stage0).put(VariantSettings.UVLOCK, false))
+                    .register(Direction.EAST, 0, BlockStateVariant.create().put(VariantSettings.Y, VariantSettings.Rotation.R90).put(VariantSettings.MODEL, stage0).put(VariantSettings.UVLOCK, false))
+                    .register(Direction.SOUTH, 0, BlockStateVariant.create().put(VariantSettings.Y, VariantSettings.Rotation.R180).put(VariantSettings.MODEL, stage0).put(VariantSettings.UVLOCK, false))
+                    .register(Direction.WEST, 0, BlockStateVariant.create().put(VariantSettings.Y, VariantSettings.Rotation.R270).put(VariantSettings.MODEL, stage0).put(VariantSettings.UVLOCK, false))
+                    .register(Direction.NORTH, 1, BlockStateVariant.create().put(VariantSettings.Y, VariantSettings.Rotation.R0).put(VariantSettings.MODEL, stage1).put(VariantSettings.UVLOCK, false))
+                    .register(Direction.EAST, 1, BlockStateVariant.create().put(VariantSettings.Y, VariantSettings.Rotation.R90).put(VariantSettings.MODEL, stage1).put(VariantSettings.UVLOCK, false))
+                    .register(Direction.SOUTH, 1, BlockStateVariant.create().put(VariantSettings.Y, VariantSettings.Rotation.R180).put(VariantSettings.MODEL, stage1).put(VariantSettings.UVLOCK, false))
+                    .register(Direction.WEST, 1, BlockStateVariant.create().put(VariantSettings.Y, VariantSettings.Rotation.R270).put(VariantSettings.MODEL, stage1).put(VariantSettings.UVLOCK, false))
+                    .register(Direction.NORTH, 2, BlockStateVariant.create().put(VariantSettings.Y, VariantSettings.Rotation.R0).put(VariantSettings.MODEL, stage2).put(VariantSettings.UVLOCK, false))
+                    .register(Direction.EAST, 2, BlockStateVariant.create().put(VariantSettings.Y, VariantSettings.Rotation.R90).put(VariantSettings.MODEL, stage2).put(VariantSettings.UVLOCK, false))
+                    .register(Direction.SOUTH, 2, BlockStateVariant.create().put(VariantSettings.Y, VariantSettings.Rotation.R180).put(VariantSettings.MODEL, stage2).put(VariantSettings.UVLOCK, false))
+                    .register(Direction.WEST, 2, BlockStateVariant.create().put(VariantSettings.Y, VariantSettings.Rotation.R270).put(VariantSettings.MODEL, stage2).put(VariantSettings.UVLOCK, false))));
+            blockStateModelGenerator.registerItemModel(block);
         }
+        {
+            Block block = CookItBlocks.VANILLA_VINE_STEM;
+            TextureMap textureMap = TextureMap.of(TextureKey.TEXTURE, setTextureOutput(CookItBlocks.VANILLA_VINE_STEM, "vanilla_vine_bottom"));
+            Identifier identifier = PLANE.upload(setModelOutput("block/", block), textureMap, blockStateModelGenerator.modelCollector);
+            blockStateModelGenerator.blockStateCollector.accept(VariantsBlockStateSupplier.create(block).coordinate(BlockStateVariantMap.create(Properties.HORIZONTAL_FACING)
+                    .register(Direction.NORTH, BlockStateVariant.create().put(VariantSettings.Y, VariantSettings.Rotation.R0).put(VariantSettings.MODEL, identifier).put(VariantSettings.UVLOCK, false))
+                    .register(Direction.EAST, BlockStateVariant.create().put(VariantSettings.Y, VariantSettings.Rotation.R90).put(VariantSettings.MODEL, identifier).put(VariantSettings.UVLOCK, false))
+                    .register(Direction.SOUTH, BlockStateVariant.create().put(VariantSettings.Y, VariantSettings.Rotation.R180).put(VariantSettings.MODEL, identifier).put(VariantSettings.UVLOCK, false))
+                    .register(Direction.WEST, BlockStateVariant.create().put(VariantSettings.Y, VariantSettings.Rotation.R270).put(VariantSettings.MODEL, identifier).put(VariantSettings.UVLOCK, false))));
+            Models.GENERATED.upload(ModelIds.getItemModelId(block.asItem()), TextureMap.of(TextureKey.LAYER0, new Identifier(CookIt.MOD_ID, "item/temp/vanilla_bean")), blockStateModelGenerator.modelCollector);
+        }
+    }
 
 
     @Override

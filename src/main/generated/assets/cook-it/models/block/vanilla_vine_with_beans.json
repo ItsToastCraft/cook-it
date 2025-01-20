@@ -1,0 +1,7 @@
+{
+  "parent": "cook-it:block/blooming_vine",
+  "textures": {
+    "decor": "cook-it:block/vanilla_vine_decor_done",
+    "vine": "cook-it:block/vanilla_vine_done"
+  }
+}
