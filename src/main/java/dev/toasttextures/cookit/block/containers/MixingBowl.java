@@ -55,7 +55,7 @@ public class MixingBowl extends BlockWithEntity implements BlockEntityProvider {
             return ActionResult.SUCCESS;
         }
         if ((item.isOf(Items.MILK_BUCKET) || item.isOf(Items.WATER_BUCKET)) && entity.getLiquid() == Items.AIR) {
-            entity.setStack(4, item.split(1));
+            entity.setStack(entity.size() - 1, item.split(1));
             player.setStackInHand(hand, new ItemStack(Items.BUCKET, 1));
             return ActionResult.SUCCESS;
         }
@@ -64,11 +64,6 @@ public class MixingBowl extends BlockWithEntity implements BlockEntityProvider {
             for(int i = 0; i < entity.size() - 1; i++) {
                 ItemStack stack = entity.getStack(i);
                 if (stack.isEmpty()) {
-
-                    if (item.isOf(Items.EGG)) {
-                        entity.setStack(i, item.split(1));
-                        return ActionResult.SUCCESS;
-                    }
                     entity.setStack(i, item.split(1));
                     return ActionResult.FAIL;
                 }

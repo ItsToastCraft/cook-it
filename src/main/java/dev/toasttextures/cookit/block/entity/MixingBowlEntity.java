@@ -36,7 +36,7 @@ public class MixingBowlEntity extends CookingBlockEntity implements ImplementedI
         super.writeNbt(nbt);
     }
     public Item getLiquid() {
-        return this.getStack(7).getItem();
+        return this.getStack(this.size() - 1).getItem();
     }
 
     // Amount of times the entity has been clicked (mixed)
@@ -53,7 +53,7 @@ public class MixingBowlEntity extends CookingBlockEntity implements ImplementedI
         if (recipe.isPresent() && recipe.get().value().getLiquid().isOf(this.getLiquid())) {
             this.clicks++;
             if (this.getClicks() >= recipe.get().value().getMixes()) {
-                this.setItems(DefaultedList.ofSize(7, ItemStack.EMPTY));
+                this.setItems(DefaultedList.ofSize(this.size(), ItemStack.EMPTY));
                 this.setStack(0, recipe.get().value().craft(new SimpleInventory(), world.getRegistryManager()));
             }
         }

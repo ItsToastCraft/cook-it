@@ -1,0 +1,32 @@
+{
+  "type": "cook-it:mixing",
+  "ingredients": [
+    {
+      "item": "minecraft:egg"
+    },
+    {
+      "item": "minecraft:wheat"
+    },
+    {
+      "item": "minecraft:wheat"
+    },
+    {
+      "item": "minecraft:sugar"
+    },
+    {
+      "item": "minecraft:cocoa_beans"
+    },
+    {
+      "item": "minecraft:cocoa_beans"
+    }
+  ],
+
+  "output": {
+    "item": "cook-it:plain_muffin",
+    "count": 6
+  },
+  "clicks": 4,
+  "liquid": {
+    "item": "minecraft:milk_bucket"
+  }
+}
