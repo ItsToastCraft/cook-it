@@ -71,24 +71,17 @@ public class VanillaVinePlant extends AbstractPlantBlock implements Fertilizable
 
     @Override
     public void grow(ServerWorld world, Random random, BlockPos pos, BlockState state) {
-        if (state.get(PLANT_STATE) == 1) {
-            world.setBlockState(pos, state.with(PLANT_STATE, 2), Block.NOTIFY_LISTENERS);
-        } else {
+        if (state.get(PLANT_STATE) == 0) {
             world.setBlockState(pos, state.with(PLANT_STATE, 1), Block.NOTIFY_LISTENERS);
-            CookIt.LOGGER.info("Scheduling tick...");
-            world.scheduleBlockTick(pos, this, random.nextBetween(50,100));
-
         }
     }
-
     @Override
-    public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
-        CookIt.LOGGER.info("Tick arrived in plant!");
+    public void randomTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
+        super.randomTick(state, world, pos, random);
         if (state.get(PLANT_STATE) == 1) {
 
-            world.setBlockState(pos, state.with(PLANT_STATE, 2));
+            world.setBlockState(pos, state.with(PLANT_STATE, 2), Block.NOTIFY_LISTENERS);
         }
-        super.scheduledTick(state, world, pos, random);
     }
     @Override
     public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {

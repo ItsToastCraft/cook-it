@@ -24,8 +24,9 @@ public interface VanillaVines {
 
     IntProperty PLANT_STATE = IntProperty.of("plant_state", 0, 2);
 
+    float GROW_CHANCE = 0.125f;
     static ActionResult removeVanilla(@Nullable Entity picker, BlockState state, World world, BlockPos pos) {
-        if (state.get(PLANT_STATE) == 2) {
+        if (hasVanilla(state)) {
             Block.dropStack(world, pos, new ItemStack(CookItItems.VANILLA_BEAN, 1));
             float f = MathHelper.nextBetween(world.random, 0.8F, 1.2F);
             world.playSound(null, pos, SoundEvents.BLOCK_SWEET_BERRY_BUSH_PICK_BERRIES, SoundCategory.BLOCKS, 1.0F, f);

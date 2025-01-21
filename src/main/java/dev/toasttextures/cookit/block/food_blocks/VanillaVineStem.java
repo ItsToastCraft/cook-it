@@ -14,6 +14,7 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
+import net.minecraft.world.World;
 import net.minecraft.world.WorldView;
 
 import java.util.Objects;
@@ -22,7 +23,6 @@ public class VanillaVineStem extends AbstractPlantStemBlock implements Fertiliza
 
     public static final MapCodec<VanillaVineStem> CODEC = createCodec(VanillaVineStem::new);
 
-    private static final float GROW_CHANCE = 0.15F;
 
 
     public VanillaVineStem(Settings settings) {
@@ -81,24 +81,27 @@ public class VanillaVineStem extends AbstractPlantStemBlock implements Fertiliza
     public BlockState getPlacementState(ItemPlacementContext ctx) {
         return Objects.requireNonNull(super.getPlacementState(ctx)).with(Properties.HORIZONTAL_FACING, ctx.getHorizontalPlayerFacing().getOpposite());
     }
-    @Override
-    public void grow(ServerWorld world, Random random, BlockPos pos, BlockState state) {
-        world.setBlockState(pos, state.with(PLANT_STATE, state.get(PLANT_STATE) + 1), Block.NOTIFY_LISTENERS);
 
-        if (state.get(PLANT_STATE) == 1) {
-            CookIt.LOGGER.info("Scheduling tick in stem...");
-            world.scheduleBlockTick(pos, this, random.nextBetween(50, 100));
-        }
-    }
     @Override
-    public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
-        CookIt.LOGGER.info("Tick arrived!");
-        if (state.get(PLANT_STATE) == 1) {
-
-            world.setBlockState(pos, state.with(PLANT_STATE, 2));
-        }
-        super.scheduledTick(state, world, pos, random);
+    public boolean isFertilizable(WorldView world, BlockPos pos, BlockState state) {
+        return false;
     }
+
+    @Override
+    public void neighborUpdate(BlockState state, World world, BlockPos pos, Block block, BlockPos neighborPos, boolean moved) {
+        super.neighborUpdate(state, world, pos, block, neighborPos, moved);
+
+        // Check if the block below the stem is valid for support
+        BlockPos support = pos.offset(state.get(Properties.HORIZONTAL_FACING).getOpposite());
+        if (support.equals(neighborPos) && !world.getBlockState(support).isSolidBlock(world, support)) {
+            // Drop items and remove the stem if support is invalid
+            world.removeBlock(pos, false);
+        } else if (neighborPos.equals(pos.up()) && world.getBlockState(neighborPos).getBlock().equals(Blocks.AIR)) {
+            world.removeBlock(pos, false);
+        }
+
+    }
+
     @Override
     public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
         Direction dir = state.get(Properties.HORIZONTAL_FACING);
