@@ -1,26 +1,22 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "SSS",
-    "SFS",
+    "IWI",
     "IRI"
   ],
   "key": {
-    "S": {
-      "item": "minecraft:smooth_stone"
-    },
-    "F": {
-      "item": "minecraft:furnace"
-    },
     "I": {
       "item": "minecraft:iron_ingot"
     },
+    "W": {
+      "item": "minecraft:water_bucket"
+    },
     "R": {
-      "item": "minecraft:redstone"
+      "item": "minecraft:red_concrete"
     }
   },
   "result": {
-    "item": "cook-it:oven",
+    "item": "cook-it:fire_extinguisher",
     "count": 1
   }
 }

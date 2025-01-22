@@ -1,7 +1,9 @@
 package dev.toasttextures.cookit.block.containers;
 
+import dev.toasttextures.cookit.CookIt;
 import dev.toasttextures.cookit.block.entity.MuffinTinEntity;
 import dev.toasttextures.cookit.registries.CookItBlocks;
+import dev.toasttextures.cookit.registries.CookItItems;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.item.TooltipContext;
@@ -10,6 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
@@ -36,12 +39,13 @@ public class MuffinTin extends Block implements BlockEntityProvider {
         return new MuffinTinEntity(pos, state);
     }
 
-    public ActionResult onUse(BlockState blockState, World world, BlockPos blockPos, PlayerEntity player, Hand hand, BlockHitResult blockHitResult) {
-        world.updateListeners(blockPos, blockState, blockState, Block.NOTIFY_LISTENERS);
+    public ActionResult onUse(BlockState state, World world, BlockPos blockPos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+        world.updateListeners(blockPos, state, state, Block.NOTIFY_LISTENERS);
         if (world.isClient) {
             return ActionResult.SUCCESS;
         } else {
             MuffinTinEntity blockEntity = (MuffinTinEntity) world.getBlockEntity(blockPos);
+            if (blockEntity == null) return ActionResult.FAIL;
             ItemStack item = player.getStackInHand(hand);
             if (player.isSneaking()) {
                 ItemStack sheet = this.asItem().getDefaultStack();
@@ -55,7 +59,19 @@ public class MuffinTin extends Block implements BlockEntityProvider {
             if (!item.isEmpty()) {
                 // Check if there's goop that can be transferred to the muffin tin
                 if (item.isOf(CookItBlocks.MIXING_BOWL.asItem()) && item.getSubNbt("BlockEntityTag") != null) {
-
+                    for (int i = 0; i < blockEntity.size(); i++) {
+                        if (blockEntity.getStack(i).isEmpty()) {
+                            MixingBowl.transferTo(item, blockEntity, i);
+                            return ActionResult.SUCCESS;
+                        }
+                    }
+                }
+            } else {
+                for (int i = blockEntity.size() - 1; i >= 0; i--) {
+                    if (!blockEntity.getStack(i).isEmpty() && !blockEntity.getStack(i).isOf(CookItItems.GOOP)) {
+                       player.getInventory().offerOrDrop(blockEntity.getStack(i).split(1));
+                       return ActionResult.SUCCESS;
+                    }
                 }
             }
 
@@ -84,8 +100,13 @@ public class MuffinTin extends Block implements BlockEntityProvider {
             NbtCompound itemTag = itemsTag.getCompound(i);
             ItemStack itemStack = ItemStack.fromNbt(itemTag);
             if (!itemStack.isEmpty()) {
-                String itemName = itemStack.getName().getString();
-                tooltip.add((Text.literal(itemName).formatted(Formatting.BLUE)));
+                MutableText itemName;
+                if (itemStack.isOf(CookItItems.GOOP) && itemStack.getNbt() != null) {
+                    itemName = (MutableText) ItemStack.fromNbt(itemStack.getNbt().getCompound("output")).getName();
+                } else {
+                    itemName =(MutableText) itemStack.getName();
+                }
+                tooltip.add((itemName.formatted(Formatting.BLUE)));
             }
         }
     }

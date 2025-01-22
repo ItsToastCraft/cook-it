@@ -1,5 +1,7 @@
 package dev.toasttextures.cookit.block.entity;
 
+import dev.toasttextures.cookit.registries.CookItBlocks;
+import dev.toasttextures.cookit.registries.CookItItems;
 import net.minecraft.block.BlockState;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.inventory.SimpleInventory;
@@ -64,7 +66,9 @@ public class OvenEntity extends CookingBlockEntity implements ImplementedInvento
             if(item.isEmpty()) { break; }
 
             Optional<RecipeEntry<OvenRecipe>> recipe = getCurrentRecipe(item);
-            if (recipe.isPresent()) {
+            if (item.isOf(CookItBlocks.MUFFIN_TIN.asItem())) {
+                this.processMuffinRecipe(world, pos, state, i);
+            } else if (recipe.isPresent()) {
                 if (recipe.get().value().getMaxProgress() >= this.progress[i]) {
                     this.progress[i]++;
                     this.done = false;
@@ -79,6 +83,43 @@ public class OvenEntity extends CookingBlockEntity implements ImplementedInvento
                 }
             } else { this.done = true; break; }
         }
+
+    }
+
+    private void processMuffinRecipe(World world, BlockPos pos, BlockState state, int slot) {
+        if (this.done) return;
+        ItemStack muffinTin = this.getStack(slot);
+
+        NbtList nbtList = new NbtList();
+        ArrayList<ItemStack> containerItems = CookingBlockEntity.getContainerItems(muffinTin);
+
+        if (400 >= this.progress[slot]) {
+            this.progress[slot]++;
+            this.done = false;
+        } else {
+            for (int i = 0; i < containerItems.size(); i++) {
+                NbtCompound nbtCompound = new NbtCompound(); // Create a new compound for each iteration
+                nbtCompound.putByte("Slot", (byte) i);
+                ItemStack stack = containerItems.get(i);
+                if (stack.isOf(CookItItems.GOOP)) {
+                    ItemStack muffin = ItemStack.fromNbt(stack.getSubNbt("output"));
+                    muffin.writeNbt(nbtCompound);
+                } else {
+                    containerItems.get(i).writeNbt(nbtCompound);
+                }
+                nbtList.add(nbtCompound);
+            }
+            muffinTin.getOrCreateSubNbt("BlockEntityTag").put("Items", nbtList);
+            this.markDirty();
+            this.done = true;
+            world.setBlockState(pos, state.with(DONE, true));
+            this.progress[slot] = 0;
+            world.playSound(null, this.getPos(), SoundEvent.of(new Identifier("block.note_block.xylophone")), SoundCategory.BLOCKS, 3.0f, 1.5f);
+            world.playSound(null, this.getPos(), SoundEvent.of(new Identifier("block.note_block.xylophone")), SoundCategory.BLOCKS, 3.0f, 2f);
+            world.playSound(null, this.getPos(), SoundEvent.of(new Identifier("block.note_block.xylophone")), SoundCategory.BLOCKS, 3.0f, 2.5f);
+
+        }
+
 
     }
 

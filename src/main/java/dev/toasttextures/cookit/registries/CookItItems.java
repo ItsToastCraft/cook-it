@@ -76,6 +76,7 @@ public class CookItItems {
 
     // -- Miscellaneous --
     public static final Item FIRE_EXTINGUISHER = registerItem("fire_extinguisher", new FireExtinguisherItem(new FabricItemSettings().maxDamage(256)));
+    public static final Item GOOP = registerItem("goop", new Item(new FabricItemSettings()));
 
     //public static final Item SPRINKLES = registerItem("sprinkles", new Item(new FabricItemSettings()));
     // public static final Item MILK = registerItem("milk", new Item(new FabricItemSettings()));
@@ -88,13 +89,13 @@ public class CookItItems {
     }
     private static Item registerItem(String name, Item item) {
         CookItItems.ITEMS.add(item);
-
         return Registry.register(Registries.ITEM, new Identifier(CookIt.MOD_ID, name), item);
     }
     public static void registerItems() {
+        CookItItems.ITEMS.remove(GOOP);
         registerWoodenItems();
     }
-     public static final ItemGroup COOK_IT_GROUP = FabricItemGroup.builder()
+    public static final ItemGroup COOK_IT_GROUP = FabricItemGroup.builder()
             .icon(() -> new ItemStack(CHEF_HAT))
             .displayName(Text.translatable("itemGroup.cook-it.items"))
             .entries((context, entries) -> {

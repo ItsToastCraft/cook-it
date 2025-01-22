@@ -17,7 +17,6 @@ public class BakingSheetItemRenderer implements BuiltinItemRendererRegistry.Dyna
     public void render(ItemStack stack, ModelTransformationMode mode, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
         // Renders the block first
         MinecraftClient.getInstance().getBlockRenderManager().renderBlockAsEntity(CookItBlocks.BAKING_SHEET.getDefaultState(), matrices, vertexConsumers, light, overlay);
-
             // Gets the NBT data of the item and checks if it is storing any other items
         NbtCompound nbt = stack.getSubNbt("BlockEntityTag");
         if (nbt == null || !nbt.contains("Items")) return;

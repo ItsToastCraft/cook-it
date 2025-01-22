@@ -1,6 +1,7 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
+    "I I",
     "IHI"
   ],
   "key": {
@@ -12,8 +13,8 @@
     }
   },
   "result": {
-    "item": "cook-it:baking_sheet",
-    "count": 2
+    "item": "cook-it:muffin_tin",
+    "count": 1
   }
 }
 

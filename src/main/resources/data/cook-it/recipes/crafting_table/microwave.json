@@ -1,26 +1,22 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "SSS",
-    "SFS",
-    "IRI"
+    "III",
+    "SPS"
   ],
   "key": {
     "S": {
       "item": "minecraft:smooth_stone"
     },
-    "F": {
-      "item": "minecraft:furnace"
-    },
     "I": {
       "item": "minecraft:iron_ingot"
     },
-    "R": {
-      "item": "minecraft:redstone"
+    "P": {
+      "item": "cook-it:white_plate"
     }
   },
   "result": {
-    "item": "cook-it:oven",
+    "item": "cook-it:microwave",
     "count": 1
   }
 }

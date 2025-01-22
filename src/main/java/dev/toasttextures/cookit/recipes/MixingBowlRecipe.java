@@ -20,12 +20,16 @@ public class MixingBowlRecipe implements Recipe<SimpleInventory> {
     private final List<Ingredient> ingredients;
     private final int mixAmount;
     private final ItemStack liquid;
+    private final boolean goop;
+    private final int goopColor;
 
-    public MixingBowlRecipe(List<Ingredient> ingredients, ItemStack output, int mixAmount, ItemStack liquid) {
+    public MixingBowlRecipe(List<Ingredient> ingredients, ItemStack output, int mixAmount, ItemStack liquid, boolean outputIsGoop, int goopColor) {
         this.output = output;
         this.ingredients = ingredients;
         this.mixAmount = mixAmount;
         this.liquid = liquid;
+        this.goop = outputIsGoop;
+        this.goopColor = goopColor;
     }
 
     @Override
@@ -70,6 +74,8 @@ public class MixingBowlRecipe implements Recipe<SimpleInventory> {
     public int getUses() {return output.getCount();}
     public boolean liquidPresent() { return !liquid.isOf(Items.BUCKET); }
 
+    public boolean hasGoop() { return goop; }
+
     @Override
     public boolean fits(int width, int height) {
         return true;
@@ -90,6 +96,10 @@ public class MixingBowlRecipe implements Recipe<SimpleInventory> {
         return Type.INSTANCE;
     }
 
+    public int goopColor() {
+        return goopColor;
+    }
+
     public static class Type implements RecipeType<MixingBowlRecipe> {
         public static final Type INSTANCE = new Type();
     }
@@ -100,7 +110,9 @@ public class MixingBowlRecipe implements Recipe<SimpleInventory> {
                 validateAmount().fieldOf("ingredients").forGetter(MixingBowlRecipe::getIngredients),
                 ItemStack.RECIPE_RESULT_CODEC.fieldOf("output").forGetter(r -> r.output),
                 Codec.INT.fieldOf("clicks").forGetter(MixingBowlRecipe::getMixes),
-                ItemStack.RECIPE_RESULT_CODEC.optionalFieldOf("liquid", new ItemStack(Items.BUCKET, 1)).forGetter(r -> r.liquid)
+                ItemStack.RECIPE_RESULT_CODEC.optionalFieldOf("liquid", new ItemStack(Items.BUCKET, 1)).forGetter(r -> r.liquid),
+                Codec.BOOL.optionalFieldOf("outputs_goop", false).forGetter(r -> r.goop),
+                Codec.INT.optionalFieldOf("goop_color", 0).forGetter(r -> r.goopColor)
         ).apply(in, MixingBowlRecipe::new));
 
         private static Codec<List<Ingredient>> validateAmount() {
@@ -122,7 +134,9 @@ public class MixingBowlRecipe implements Recipe<SimpleInventory> {
             ItemStack output = buf.readItemStack();
             int clicks = buf.readInt();
             ItemStack liquid = buf.readItemStack();
-            return new MixingBowlRecipe(inputs, output, clicks, liquid);
+            boolean goop = buf.readBoolean();
+            int goopColor = buf.readInt();
+            return new MixingBowlRecipe(inputs, output, clicks, liquid, goop, goopColor);
         }
 
         @Override
@@ -136,6 +150,8 @@ public class MixingBowlRecipe implements Recipe<SimpleInventory> {
             buf.writeItemStack(recipe.getResult(null));
             buf.writeInt(recipe.getMixes());
             buf.writeItemStack(recipe.getLiquid());
+            buf.writeBoolean(recipe.hasGoop());
+            buf.writeInt(recipe.goopColor());
         }
     }
 }

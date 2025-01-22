@@ -1,26 +1,19 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "SSS",
-    "SFS",
-    "IRI"
+    "I I",
+    "SSS"
   ],
   "key": {
     "S": {
       "item": "minecraft:smooth_stone"
     },
-    "F": {
-      "item": "minecraft:furnace"
-    },
     "I": {
       "item": "minecraft:iron_ingot"
-    },
-    "R": {
-      "item": "minecraft:redstone"
     }
   },
   "result": {
-    "item": "cook-it:oven",
+    "item": "cook-it:fryer",
     "count": 1
   }
 }

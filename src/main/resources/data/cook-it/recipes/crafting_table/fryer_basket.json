@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "I ",
+    " S"
+  ],
+  "key": {
+    "S": {
+      "item": "minecraft:stick"
+    },
+    "I": {
+      "item": "minecraft:iron_bars"
+    }
+
+  },
+  "result": {
+    "item": "cook-it:fryer_basket",
+    "count": 1
+  }
+}
+

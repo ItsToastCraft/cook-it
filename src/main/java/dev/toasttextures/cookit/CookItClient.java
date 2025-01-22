@@ -1,5 +1,8 @@
 package dev.toasttextures.cookit;
 
+import dev.toasttextures.cookit.block.containers.MixingBowl;
+import dev.toasttextures.cookit.block.entity.MixingBowlEntity;
+import dev.toasttextures.cookit.client.render.MuffinTinItemRenderer;
 import dev.toasttextures.cookit.client.render.PizzaPanItemRenderer;
 import dev.toasttextures.cookit.client.CookItEntityModelLayers;
 import dev.toasttextures.cookit.client.render.PizzaItemRenderer;
@@ -43,12 +46,14 @@ public class CookItClient implements ClientModInitializer {
         ChefOutfitRenderer.register();
 
         CookItEntityModelLayers.registerLayers();
+        BuiltinItemRendererRegistry.INSTANCE.register(CookItBlocks.BAKING_SHEET.asItem(), new BakingSheetItemRenderer());
+        BuiltinItemRendererRegistry.INSTANCE.register(CookItBlocks.MUFFIN_TIN.asItem(), new MuffinTinItemRenderer());
         BuiltinItemRendererRegistry.INSTANCE.register(CookItBlocks.PIZZA_PAN.asItem(), new PizzaPanItemRenderer());
         BuiltinItemRendererRegistry.INSTANCE.register(CookItBlocks.PIZZA.asItem(), new PizzaItemRenderer());
         BuiltinItemRendererRegistry.INSTANCE.register(CookItBlocks.UNCOOKED_PIZZA.asItem(), new PizzaItemRenderer());
         BuiltinItemRendererRegistry.INSTANCE.register(CookItItems.PIZZA_SLICE, new PizzaItemRenderer());
 
-        BuiltinItemRendererRegistry.INSTANCE.register(CookItBlocks.BAKING_SHEET.asItem(), new BakingSheetItemRenderer());
+
         ModelPredicateProviderRegistry.register(CookItItems.FIRE_EXTINGUISHER, new Identifier("extinguisher_fuel"), (stack, world, entity, seed) -> (float) Math.round(((float) stack.getMaxDamage() - stack.getDamage()) / 100) / 10);
         ParticleFactoryRegistry.getInstance().register(CookIt.OIL_PARTICLE, OilParticle.Factory::new);
 
@@ -59,5 +64,18 @@ public class CookItClient implements ClientModInitializer {
             }
             return 0xFFFFFF;
         }, CookItBlocks.VANILLA_VINE, CookItBlocks.VANILLA_VINE_STEM);
+
+        ColorProviderRegistry.BLOCK.register((state, view, pos, tintIndex) -> {
+
+            if (view != null && view.getBlockEntity(pos) instanceof MixingBowlEntity entity && state.get(MixingBowl.HAS_GOOP)) {
+                return entity.getGoopColor();
+            }
+            return 0xF8D478;
+        }, CookItBlocks.MIXING_BOWL);
+
+        ColorProviderRegistry.ITEM.register((stack, tintIndex) -> {
+            assert stack.getNbt() != null;
+            return stack.getNbt().getInt("color");
+        }, CookItItems.GOOP);
     }
 }

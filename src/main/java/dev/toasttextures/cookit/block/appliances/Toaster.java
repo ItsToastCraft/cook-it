@@ -36,11 +36,8 @@ public class Toaster extends HorizontalFacingBlock {
     public static IntProperty TOASTER_STATE = IntProperty.of("toaster_state", 0, 4);
 
     public Toaster(Settings settings) {
-
         super(settings);
-
         setDefaultState(getDefaultState().with(Properties.HORIZONTAL_FACING, Direction.NORTH).with(TOASTER_STATE, 0));
-
     }
 
     @Override
@@ -58,14 +55,11 @@ public class Toaster extends HorizontalFacingBlock {
     public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext ctx) {
 
         Direction dir = state.get(FACING);
-        switch (dir) {
-            case NORTH, SOUTH:
-                return VoxelShapes.cuboid(0.25f, 0f, 0.125f, 0.75f, 0.4375f, 0.875f);
-            case EAST, WEST:
-                return VoxelShapes.cuboid(0.125f, 0f, 0.25f, 0.875f, 0.4375f, 0.75f);
-            default:
-                return VoxelShapes.fullCube();
-        }
+        return switch (dir) {
+            case NORTH, SOUTH -> VoxelShapes.cuboid(0.25f, 0f, 0.125f, 0.75f, 0.4375f, 0.875f);
+            case EAST, WEST -> VoxelShapes.cuboid(0.125f, 0f, 0.25f, 0.875f, 0.4375f, 0.75f);
+            default -> VoxelShapes.fullCube();
+        };
 
     }
     

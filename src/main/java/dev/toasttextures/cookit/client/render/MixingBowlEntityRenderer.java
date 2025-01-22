@@ -1,8 +1,10 @@
 package dev.toasttextures.cookit.client.render;
 
+import dev.toasttextures.cookit.block.containers.MixingBowl;
 import dev.toasttextures.cookit.block.entity.MixingBowlEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
@@ -27,7 +29,8 @@ public class MixingBowlEntityRenderer implements BlockEntityRenderer<MixingBowlE
     @Override
     public void render(MixingBowlEntity blockEntity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
         final MinecraftClient client = MinecraftClient.getInstance();
-
+        BlockState state = blockEntity.getCachedState();
+        if (state.get(MixingBowl.HAS_GOOP)) return;
         for (int i = 0; i < blockEntity.size() - 1; i++) {
             ItemStack stack = blockEntity.getStack(i);
             if (!stack.isEmpty()) {

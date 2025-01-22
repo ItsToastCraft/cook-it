@@ -1,7 +1,5 @@
 package dev.toasttextures.cookit.block.containers;
 
-import dev.toasttextures.cookit.CookIt;
-import dev.toasttextures.cookit.block.entity.PizzaEntity;
 import dev.toasttextures.cookit.block.entity.PlateEntity;
 import dev.toasttextures.cookit.item.CookItFood;
 import dev.toasttextures.cookit.registries.CookItFoodTypes;
@@ -73,9 +71,7 @@ public class Plate extends Block implements BlockEntityProvider {
         if (heldItem.isEmpty()) {
             ItemStack item = new ItemStack(this.asItem(), 1);
             if (player.isSneaking()) {
-
                 if (!blockEntity.getStack(0).isEmpty()) {
-                    CookIt.LOGGER.info(String.valueOf(blockEntity.getStack(0)));
                     blockEntity.writeNbt(item.getOrCreateSubNbt("BlockEntityTag"));
                     blockEntity.removeStack(0);
                 }
@@ -107,7 +103,6 @@ public class Plate extends Block implements BlockEntityProvider {
     }
     private void decreasePlates(BlockState state, World world, BlockPos pos, PlayerEntity player, ItemStack item) {
         int plateAmount = state.get(PLATES_AMOUNT);
-        CookIt.LOGGER.info("Probably here");
         player.getInventory().offerOrDrop(item);
         if (plateAmount == 1) {
             world.breakBlock(pos, false);

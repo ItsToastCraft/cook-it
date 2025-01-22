@@ -1,7 +1,10 @@
 {
   "variants": {
-    "": {
+    "has_goop=false": {
       "model": "cook-it:block/mixing_bowl"
+    },
+    "has_goop=true": {
+      "model": "cook-it:block/mixing_bowl_filled"
     }
   }
 }

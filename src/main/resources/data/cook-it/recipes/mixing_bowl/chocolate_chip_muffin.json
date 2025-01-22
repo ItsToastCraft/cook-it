@@ -25,5 +25,7 @@
   "clicks": 4,
   "liquid": {
     "item": "minecraft:milk_bucket"
-  }
+  },
+  "outputs_goop": true,
+  "goop_color": 13400378
 }

@@ -38,8 +38,8 @@ public class BakingSheet extends Block implements BlockEntityProvider {
         return new BakingSheetEntity(pos, state);
     }
 
-    public ActionResult onUse(BlockState blockState, World world, BlockPos blockPos, PlayerEntity player, Hand hand, BlockHitResult blockHitResult) {
-        world.updateListeners(blockPos, blockState, blockState, Block.NOTIFY_LISTENERS);
+    public ActionResult onUse(BlockState state, World world, BlockPos blockPos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+        world.updateListeners(blockPos, state, state, Block.NOTIFY_LISTENERS);
         BakingSheetEntity blockEntity = (BakingSheetEntity) world.getBlockEntity(blockPos);
         if (world.isClient || blockEntity == null) {
             return ActionResult.SUCCESS;
