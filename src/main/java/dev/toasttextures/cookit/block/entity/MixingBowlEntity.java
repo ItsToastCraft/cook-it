@@ -9,7 +9,12 @@ import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.particle.ItemStackParticleEffect;
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.recipe.RecipeEntry;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 
@@ -58,6 +63,9 @@ public class MixingBowlEntity extends CookingBlockEntity implements ImplementedI
             this.clicks++;
             boolean hasGoop = recipe.get().value().hasGoop();
             int mixes = recipe.get().value().getMixes();
+            Objects.requireNonNull(world).playSound(null, pos.getX(), pos.getY(), pos.getZ(), SoundEvents.ENTITY_ITEM_FRAME_REMOVE_ITEM, SoundCategory.BLOCKS, 0.5f, 0.25f);
+            ((ServerWorld) Objects.requireNonNull(world)).spawnParticles(new ItemStackParticleEffect(ParticleTypes.ITEM, recipe.get().value().getResult(null)), pos.getX() + 0.5f, pos.getY(), pos.getZ() + 0.5f, 10, 0f,0.025f,0.0f,0.125f);
+
             if (this.getClicks() >= mixes) {
                 this.setItems(DefaultedList.ofSize(this.size(), ItemStack.EMPTY));
                 ItemStack output = recipe.get().value().craft(new SimpleInventory(), world.getRegistryManager());

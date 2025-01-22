@@ -14,6 +14,8 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.util.ActionResult;
@@ -68,6 +70,7 @@ public class MixingBowl extends BlockWithEntity implements BlockEntityProvider {
             world.breakBlock(pos,false);
             return ActionResult.SUCCESS;
         }
+        if (entity.getStack(0).isOf(CookItItems.GOOP)) { return ActionResult.CONSUME; }
         if (item.isOf(CookItItems.WHISK)) {
             boolean hasGoop = entity.processRecipe();
             if (hasGoop) {
@@ -77,6 +80,7 @@ public class MixingBowl extends BlockWithEntity implements BlockEntityProvider {
             return ActionResult.SUCCESS;
         }
         if ((item.isOf(Items.MILK_BUCKET) || item.isOf(Items.WATER_BUCKET)) && entity.getLiquid() == Items.AIR) {
+            world.playSound(null, pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BLOCK_WATER_AMBIENT, SoundCategory.BLOCKS, 0.5f, 1.25f);
             entity.setStack(entity.size() - 1, item.split(1));
             player.setStackInHand(hand, new ItemStack(Items.BUCKET, 1));
             return ActionResult.SUCCESS;
