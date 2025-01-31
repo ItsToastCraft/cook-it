@@ -22,7 +22,7 @@ import static dev.toasttextures.cookit.registries.CookItBlocks.BLOCKS;
 public class CookItItems {
     public static final List<Item> ITEMS = new ArrayList<>();
     public static final List<Item> ROLLING_PINS = new ArrayList<>();
-
+    public static final List<Item> MUFFINS = new ArrayList<>();
     // -- Utensils --
 
     public static final Item KITCHEN_KNIFE = registerItem("knife", new SwordItem(ToolMaterials.IRON, 1, -2, new FabricItemSettings().maxCount(1)));
@@ -93,6 +93,12 @@ public class CookItItems {
     }
     public static void registerItems() {
         CookItItems.ITEMS.remove(GOOP);
+        MUFFINS.add(MUFFIN);
+        MUFFINS.add(BLUEBERRY_MUFFIN);
+        MUFFINS.add(SWEET_BERRY_MUFFIN);
+        MUFFINS.add(CHOCOLATE_CHIP_MUFFIN);
+        MUFFINS.add(CHOCOLATE_MUFFIN);
+
         registerWoodenItems();
     }
     public static final ItemGroup COOK_IT_GROUP = FabricItemGroup.builder()

@@ -7,16 +7,12 @@ import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NbtList;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
 
 public abstract class CookingBlockEntity extends BlockEntity implements ImplementedInventory {
     protected DefaultedList<ItemStack> items;
@@ -58,33 +54,5 @@ public abstract class CookingBlockEntity extends BlockEntity implements Implemen
     @Override
     public NbtCompound toInitialChunkDataNbt() {
         return createNbt();
-    }
-
-
-    // Checks if the item is a container that stores more items in its NBT
-    // Many items in this mod do this, like baking sheets, pizza pans, and muffin tins
-    public static boolean isContainer(ItemStack item) {
-        return isContainer(item, "BlockEntityTag");
-    }
-    public static boolean isContainer(ItemStack item, String key) {
-        NbtList nbtList = item.getOrCreateSubNbt(key).getList("Items", NbtElement.COMPOUND_TYPE);
-        return !nbtList.isEmpty();
-    }
-
-
-    public static ArrayList<ItemStack> getContainerItems(ItemStack container) {
-
-        ArrayList<ItemStack> itemStackList = new ArrayList<>();
-        NbtCompound nbt = container.getSubNbt("BlockEntityTag");
-        if (nbt != null && nbt.contains("Items")) {
-            NbtList itemsTag = nbt.getList("Items", NbtElement.COMPOUND_TYPE);
-            for (int j = 0; j < itemsTag.size(); j++) {
-                NbtCompound itemTag = itemsTag.getCompound(j);
-                ItemStack itemStack = ItemStack.fromNbt(itemTag);
-
-                itemStackList.add(itemStack);
-            }
-        }
-        return itemStackList;
     }
 }

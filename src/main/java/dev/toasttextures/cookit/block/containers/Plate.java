@@ -72,7 +72,7 @@ public class Plate extends Block implements BlockEntityProvider {
             ItemStack item = new ItemStack(this.asItem(), 1);
             if (player.isSneaking()) {
                 if (!blockEntity.getStack(0).isEmpty()) {
-                    blockEntity.writeNbt(item.getOrCreateSubNbt("BlockEntityTag"));
+                    blockEntity.setStackNbt(item);
                     blockEntity.removeStack(0);
                 }
                 decreasePlates(state, world, pos, player, item);
