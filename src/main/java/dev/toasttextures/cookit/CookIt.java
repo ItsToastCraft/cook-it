@@ -6,7 +6,8 @@ import dev.toasttextures.cookit.registries.*;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
-import net.minecraft.particle.DefaultParticleType;
+import net.minecraft.particle.ParticleType;
+import net.minecraft.particle.SimpleParticleType;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
@@ -22,7 +23,7 @@ public class CookIt implements ModInitializer {
     public static final String MOD_ID = "cook-it";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
-    public static final DefaultParticleType OIL_PARTICLE = FabricParticleTypes.simple();
+    public static final ParticleType<SimpleParticleType> OIL_PARTICLE = FabricParticleTypes.simple();
 
     public static final List<String> SUPPORTED_WOOD_TYPES = List.of(new String[]{"acacia", "birch", "cherry", "crimson", "dark_oak", "jungle",  "oak", "mangrove", "spruce", "warped"});
     @Override

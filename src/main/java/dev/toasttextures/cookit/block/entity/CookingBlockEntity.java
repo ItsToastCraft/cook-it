@@ -31,6 +31,13 @@ public abstract class CookingBlockEntity extends BlockEntity implements Implemen
     public void setItems(DefaultedList<ItemStack> items) { this.items = items;}
 
     @Override
+    protected void readComponents(ComponentsAccess components) {
+        this.items.clear();
+        super.readComponents(components);
+        Inventories.
+    }
+
+    @Override
     public void readNbt(NbtCompound nbt) {
         this.items.clear();
         super.readNbt(nbt);
