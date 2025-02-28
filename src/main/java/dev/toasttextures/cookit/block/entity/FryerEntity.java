@@ -20,7 +20,6 @@ import dev.toasttextures.cookit.item.FryerBasket;
 import dev.toasttextures.cookit.recipes.FryerRecipe;
 import dev.toasttextures.cookit.registries.CookItBlockEntities;
 
-import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
@@ -103,7 +102,7 @@ public class FryerEntity extends CookingBlockEntity implements ImplementedInvent
         Optional<RecipeEntry<FryerRecipe>> recipe = getCurrentRecipe();
         if (recipe.isPresent()) {
             if (!container.isEmpty() && recipe.get().value().getMaxProgress() <= this.progress) {
-                ((FryerBasket) container.getItem()).setItem(container, recipe.get().value().craft(new SimpleInventory(this.getStack(0)), Objects.requireNonNull(this.world).getRegistryManager()));
+                FryerBasket.setItem(container, recipe.get().value().craft(new SimpleInventory(this.getStack(0)), Objects.requireNonNull(this.world).getRegistryManager()));
                 this.markDirty();
             }
         }
@@ -124,8 +123,6 @@ public class FryerEntity extends CookingBlockEntity implements ImplementedInvent
             }
         }
 
-
-
     private void resetProgress() {
         this.progress = 0;
     }
@@ -139,34 +136,30 @@ public class FryerEntity extends CookingBlockEntity implements ImplementedInvent
     }
 
     private boolean hasRecipe() {
-        Optional<RecipeEntry<FryerRecipe>> recipe = getCurrentRecipe();
-        return recipe.isPresent();
+        return getCurrentRecipe().isPresent();
     }
 
     private Optional<RecipeEntry<FryerRecipe>> getCurrentRecipe() {
         SimpleInventory inv = new SimpleInventory(this.size());
-        ArrayList<ItemStack> item = getContainerItems(this.getStack(0));
+        ItemStack item = getContainerItem(this.getStack(0));
         if (item.isEmpty()) {
             return Optional.empty();
         }
-        inv.setStack(0, item.get(0));
+        inv.setStack(0, item);
 
         return Objects.requireNonNull(getWorld()).getRecipeManager().getFirstMatch(FryerRecipe.Type.INSTANCE, inv, getWorld());
     }
 
-    public static ArrayList<ItemStack> getContainerItems(ItemStack container) {
+    public static ItemStack getContainerItem(ItemStack container) {
 
-        ArrayList<ItemStack> itemStackList = new ArrayList<>();
+        ItemStack itemStack = ItemStack.EMPTY;
         NbtCompound nbt = container.getNbt();
         if (nbt != null && nbt.contains("Items")) {
             NbtList itemsTag = nbt.getList("Items", NbtElement.COMPOUND_TYPE);
-
             NbtCompound itemTag = itemsTag.getCompound(0);
-            ItemStack itemStack = ItemStack.fromNbt(itemTag);
-            itemStackList.add(itemStack);
-
+            itemStack = ItemStack.fromNbt(itemTag);
         }
-        return itemStackList;
+        return itemStack;
     }
 
 //    private void playFryerSound(World world, BlockPos pos, BlockState state, boolean on) {

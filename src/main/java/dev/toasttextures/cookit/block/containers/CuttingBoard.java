@@ -79,9 +79,7 @@ public class CuttingBoard extends HorizontalFacingBlock implements BlockEntityPr
     }
 
     public boolean resetRecipe(CuttingBoardEntity blockEntity) {
-
         if (blockEntity != null && !blockEntity.isEmpty()) {
-
             return !blockEntity.processRecipe(ItemStack.EMPTY, true);
         }
         return true;

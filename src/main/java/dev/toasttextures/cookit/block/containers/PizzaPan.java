@@ -2,6 +2,7 @@ package dev.toasttextures.cookit.block.containers;
 
 import com.mojang.serialization.MapCodec;
 import dev.toasttextures.cookit.block.entity.PizzaPanEntity;
+import dev.toasttextures.cookit.util.BlockEntityUtils;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -48,11 +49,7 @@ public class PizzaPan extends BlockWithEntity implements BlockEntityProvider {
         PizzaPanEntity blockEntity = (PizzaPanEntity) world.getBlockEntity(pos);
         if (blockEntity == null) { return ActionResult.FAIL; }
         if (player.isSneaking()) {
-            ItemStack item = this.asItem().getDefaultStack();
-            blockEntity.setStackNbt(item);
-            player.getInventory().insertStack(item);
-            world.breakBlock(pos,false);
-            return ActionResult.SUCCESS;
+            return BlockEntityUtils.dropOnUse(this, blockEntity, player, world, pos);
         }
         ItemStack heldItem = player.getStackInHand(hand);
         boolean hasPizza = !blockEntity.isEmpty();
@@ -67,8 +64,6 @@ public class PizzaPan extends BlockWithEntity implements BlockEntityProvider {
         }
         return ActionResult.SUCCESS;
     }
-
-
 
     @Override
     public @Nullable BlockEntity createBlockEntity(BlockPos pos, BlockState state) {

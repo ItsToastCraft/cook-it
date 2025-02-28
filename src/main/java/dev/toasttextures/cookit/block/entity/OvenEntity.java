@@ -2,6 +2,7 @@ package dev.toasttextures.cookit.block.entity;
 
 import dev.toasttextures.cookit.registries.CookItBlocks;
 import dev.toasttextures.cookit.registries.CookItItems;
+import dev.toasttextures.cookit.util.BlockEntityUtils;
 import net.minecraft.block.BlockState;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.inventory.SimpleInventory;
@@ -77,8 +78,6 @@ public class OvenEntity extends CookingBlockEntity implements ImplementedInvento
                     this.markDirty();
                     this.done = true;
                     world.setBlockState(pos, state.with(DONE, true));
-
-
                     this.progress[i] = 0;
                 }
             } else { this.done = true; break; }
@@ -91,7 +90,7 @@ public class OvenEntity extends CookingBlockEntity implements ImplementedInvento
         ItemStack muffinTin = this.getStack(slot);
 
         NbtList nbtList = new NbtList();
-        ArrayList<ItemStack> containerItems = CookingBlockEntity.getContainerItems(muffinTin);
+        ArrayList<ItemStack> containerItems = BlockEntityUtils.getContainerItems(muffinTin);
 
         if (400 >= this.progress[slot]) {
             this.progress[slot]++;
@@ -117,16 +116,12 @@ public class OvenEntity extends CookingBlockEntity implements ImplementedInvento
             world.playSound(null, this.getPos(), SoundEvent.of(new Identifier("block.note_block.xylophone")), SoundCategory.BLOCKS, 3.0f, 1.5f);
             world.playSound(null, this.getPos(), SoundEvent.of(new Identifier("block.note_block.xylophone")), SoundCategory.BLOCKS, 3.0f, 2f);
             world.playSound(null, this.getPos(), SoundEvent.of(new Identifier("block.note_block.xylophone")), SoundCategory.BLOCKS, 3.0f, 2.5f);
-
         }
-
-
     }
-
     private void craftRecipe(int index) {
         ItemStack item = this.getStack(index);
-        if (CookingBlockEntity.isContainer(item)) {
-            ArrayList<ItemStack> containerItems = CookingBlockEntity.getContainerItems(item);
+        if (BlockEntityUtils.isContainer(item)) {
+            ArrayList<ItemStack> containerItems = BlockEntityUtils.getContainerItems(item);
             NbtList nbtList = new NbtList();
 
             for (int i = 0; i < containerItems.size(); i++) {
@@ -163,7 +158,7 @@ public class OvenEntity extends CookingBlockEntity implements ImplementedInvento
     private Optional<RecipeEntry<OvenRecipe>> getCurrentRecipe(ItemStack itemStack) {
         ArrayList<ItemStack> items = new ArrayList<>();
 
-        ArrayList<ItemStack> containerItems = getContainerItems(itemStack);
+        ArrayList<ItemStack> containerItems = BlockEntityUtils.getContainerItems(itemStack);
 
         if (!containerItems.isEmpty()) {
             items.addAll(containerItems);
