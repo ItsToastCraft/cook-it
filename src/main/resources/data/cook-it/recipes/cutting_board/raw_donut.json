@@ -1,12 +1,13 @@
 {
   "type": "cook-it:cutting",
-  "input": {
+  "ingredient": {
     "item": "cook-it:dough_rolled"
   },
   "output": {
-    "item": "cook-it:raw_donut"
+    "item": "cook-it:raw_donut",
+    "count": 4
   },
-  "count": 4,
+
   "tool": {
     "item": "cook-it:donut_cutter"
   },

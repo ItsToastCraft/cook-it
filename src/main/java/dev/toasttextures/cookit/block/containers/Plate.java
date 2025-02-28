@@ -2,6 +2,7 @@ package dev.toasttextures.cookit.block.containers;
 
 import dev.toasttextures.cookit.block.entity.PlateEntity;
 import dev.toasttextures.cookit.item.CookItFood;
+import dev.toasttextures.cookit.registries.CookItComponents;
 import dev.toasttextures.cookit.registries.CookItFoodTypes;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockEntityProvider;
@@ -11,14 +12,13 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtElement;
 import net.minecraft.registry.Registries;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.IntProperty;
-import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.ItemActionResult;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.shape.VoxelShape;
@@ -52,19 +52,20 @@ public class Plate extends Block implements BlockEntityProvider {
         }
     }
 
+
     @Override
-    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+    public ItemActionResult onUseWithItem(ItemStack heldItem, BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         world.updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
         PlateEntity blockEntity = (PlateEntity) world.getBlockEntity(pos);
         int plateAmount = state.get(PLATES_AMOUNT);
-        ItemStack heldItem = player.getStackInHand(hand);
+
 
         if (world.isClient || blockEntity == null) {
-            return ActionResult.SUCCESS;
+            return ItemActionResult.SUCCESS;
         }
         // Let custom processing for fryer basket occur
         if (heldItem.getItem().equals(CookItItems.FRYER_BASKET)) {
-            return ActionResult.PASS;
+            return ItemActionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         }
         // If there is no item in the player's hand and there is more than one plate, give one plate
         // Otherwise give back whatever is on the plate (because there's only one sooo)
@@ -72,7 +73,7 @@ public class Plate extends Block implements BlockEntityProvider {
             ItemStack item = new ItemStack(this.asItem(), 1);
             if (player.isSneaking()) {
                 if (!blockEntity.getStack(0).isEmpty()) {
-                    blockEntity.setStackNbt(item);
+                    item.applyComponentsFrom(blockEntity.createComponentMap());
                     blockEntity.removeStack(0);
                 }
                 decreasePlates(state, world, pos, player, item);
@@ -81,25 +82,25 @@ public class Plate extends Block implements BlockEntityProvider {
             } else {
                 decreasePlates(state, world, pos, player, item);
             }
-                return ActionResult.SUCCESS;
+                return ItemActionResult.SUCCESS;
         } else {
             // Add another plate if the player is holding one of the same type and there aren't already 4 on there.
             if (heldItem.getItem() instanceof BlockItem blockItem && blockItem.getBlock().equals(this.asBlock()) && plateAmount < 4 && blockEntity.getStack(0).isEmpty()) {
-                if (heldItem.getSubNbt("BlockEntityTag") != null && heldItem.getSubNbt("BlockEntityTag").contains("Items")) {
-                    blockEntity.setStack(0, ItemStack.fromNbt(heldItem.getOrCreateSubNbt("BlockEntityTag").getList("Items", NbtElement.COMPOUND_TYPE).getCompound(0)));
+                if (heldItem.contains(CookItComponents.SINGLE_COOKING_COMPONENT)) {
+                    blockEntity.setStack(0, heldItem.get(CookItComponents.SINGLE_COOKING_COMPONENT));
                 }
                 heldItem.decrement(1);
                 world.playSound(null, pos, SoundEvents.BLOCK_COPPER_PLACE, SoundCategory.BLOCKS, 1, 1.75f);
                 world.setBlockState(pos, state.with(PLATES_AMOUNT, plateAmount + 1));
-                return ActionResult.SUCCESS;
+                return ItemActionResult.SUCCESS;
             // Add whatever is in the player's hand, as long as it's cooked food (sorry)
             } else if (blockEntity.getStack(0).isEmpty() && heldItem.getItem() instanceof CookItFood food && food.getFoodType().equals(CookItFoodTypes.DONE)) {
                 blockEntity.setStack(0, heldItem.split(1));
                 world.playSound(null, pos, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.BLOCKS, 1, 1.0f);
-                return ActionResult.SUCCESS;
+                return ItemActionResult.SUCCESS;
             }
         }
-        return ActionResult.FAIL;
+        return ItemActionResult.FAIL;
     }
     private void decreasePlates(BlockState state, World world, BlockPos pos, PlayerEntity player, ItemStack item) {
         int plateAmount = state.get(PLATES_AMOUNT);

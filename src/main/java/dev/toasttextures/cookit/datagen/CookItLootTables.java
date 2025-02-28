@@ -14,14 +14,16 @@ import net.minecraft.loot.entry.ItemEntry;
 import net.minecraft.loot.function.SetCountLootFunction;
 import net.minecraft.loot.provider.number.ConstantLootNumberProvider;
 import net.minecraft.predicate.StatePredicate;
+import net.minecraft.registry.RegistryWrapper;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public class CookItLootTables extends FabricBlockLootTableProvider {
     List<Block> blocks = CookItBlocks.BLOCKS;
 
-    public CookItLootTables(FabricDataOutput dataOutput) {
-        super(dataOutput);
+    public CookItLootTables(FabricDataOutput dataOutput, CompletableFuture<RegistryWrapper.WrapperLookup> registryLookup) {
+        super(dataOutput, registryLookup);
     }
 
     @Override

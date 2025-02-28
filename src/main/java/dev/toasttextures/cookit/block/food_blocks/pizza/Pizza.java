@@ -2,13 +2,12 @@ package dev.toasttextures.cookit.block.food_blocks.pizza;
 
 import com.mojang.serialization.MapCodec;
 import dev.toasttextures.cookit.block.entity.PizzaEntity;
+import dev.toasttextures.cookit.registries.CookItComponents;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.client.item.TooltipContext;
+import net.minecraft.client.item.TooltipType;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NbtList;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -19,6 +18,7 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.WorldView;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -47,7 +47,7 @@ public class Pizza extends BlockWithEntity implements BlockEntityProvider {
     public ItemStack getPickStack(WorldView world, BlockPos pos, BlockState state) {
         ItemStack stack = super.getPickStack(world, pos, state);
         if (world.getBlockEntity(pos) instanceof PizzaEntity pizzaEntity) {
-            pizzaEntity.setStackNbt(stack);
+           stack.applyComponentsFrom(pizzaEntity.createComponentMap());
         }
         return stack;
     }
@@ -56,18 +56,17 @@ public class Pizza extends BlockWithEntity implements BlockEntityProvider {
     public @Nullable BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
         return new PizzaEntity(pos, state, false);
     }
+
     @Override
-    public void appendTooltip(ItemStack stack, BlockView world, List<Text> tooltip, TooltipContext context) {
-        NbtCompound nbt = stack.getOrCreateSubNbt("BlockEntityTag");
-        if (nbt == null || !nbt.contains("toppings")) return;
+    public void appendTooltip(ItemStack stack, Item.TooltipContext context, List<Text> tooltip, TooltipType options) {
 
-        NbtList toppings = nbt.getList("toppings", NbtElement.STRING_TYPE);
-
+        ArrayList<String> toppings = stack.getOrDefault(CookItComponents.TOPPING_COMPONENT, new ArrayList<>());
+        if (!toppings.isEmpty()) return;
         tooltip.add((Text.literal("Toppings:").formatted(Formatting.GRAY)));
 
-        for (int i = 0; i < toppings.size(); i++) {
-            MutableText topping = Objects.requireNonNull(PizzaToppings.fromName(toppings.getString(i))).getTranslationKey();
-                tooltip.add(topping.formatted(Formatting.BLUE));
+        for (String s : toppings) {
+            MutableText topping = Objects.requireNonNull(PizzaToppings.fromName(s)).getTranslationKey();
+            tooltip.add(topping.formatted(Formatting.BLUE));
         }
     }
 }

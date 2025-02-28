@@ -2,6 +2,7 @@ package dev.toasttextures.cookit.block.food_blocks.pizza;
 
 import dev.toasttextures.cookit.block.entity.PizzaEntity;
 import dev.toasttextures.cookit.registries.CookItBlocks;
+import dev.toasttextures.cookit.registries.CookItComponents;
 import dev.toasttextures.cookit.registries.CookItItems;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -9,11 +10,10 @@ import net.minecraft.block.ShapeContext;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtList;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.ItemActionResult;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.shape.VoxelShape;
@@ -21,6 +21,8 @@ import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
 
 public class CookedPizza extends Pizza{
     public CookedPizza(Settings settings) {
@@ -51,22 +53,23 @@ public class CookedPizza extends Pizza{
         }
     }
 
-    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        super.onUse(state, world, pos, player, hand, hit);
+    @Override
+    public ItemActionResult onUseWithItem(ItemStack stack, BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+        super.onUseWithItem(stack, state, world, pos, player, hand, hit);
         world.updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
         ItemStack heldItem = player.getStackInHand(hand);
         PizzaEntity entity = (PizzaEntity) world.getBlockEntity(pos);
         if (entity == null || world.isClient) {
-            return ActionResult.SUCCESS;
+            return ItemActionResult.SUCCESS;
         } else {
             int pizzaAmount = entity.getSliceCount();
             if (world.getBlockState(pos).getBlock() == CookItBlocks.PIZZA && heldItem.isEmpty()) {
 
-                NbtList toppings = entity.getToppings();
+                ArrayList<String> toppings = entity.getToppings();
 
                 ItemStack itemStack = new ItemStack(CookItItems.PIZZA_SLICE, 1);
                 if (!toppings.isEmpty()) {
-                    itemStack.getOrCreateNbt().put("toppings", toppings);
+                    itemStack.set(CookItComponents.TOPPING_COMPONENT, toppings);
                 }
 
                 player.getInventory().offerOrDrop(itemStack);
@@ -78,7 +81,7 @@ public class CookedPizza extends Pizza{
                 }
             }
         }
-        return ActionResult.PASS;
+        return ItemActionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
 
     @Override
@@ -93,7 +96,7 @@ public class CookedPizza extends Pizza{
             if (pizzaAmount > 0) {
                 ItemStack itemStack = new ItemStack(CookItItems.PIZZA_SLICE, pizzaAmount);
                 if (!pizzaEntity.getToppings().isEmpty()) {
-                    itemStack.getOrCreateNbt().put("toppings", pizzaEntity.getToppings());
+                    itemStack.set(CookItComponents.TOPPING_COMPONENT, pizzaEntity.getToppings());
                 }
                 dropStack(world, pos, itemStack);
             }

@@ -1,14 +1,14 @@
 package dev.toasttextures.cookit.item;
 
+import dev.toasttextures.cookit.registries.CookItComponents;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.client.item.TooltipContext;
+import net.minecraft.client.item.TooltipType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.StackReference;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.Text;
@@ -16,8 +16,6 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.ClickType;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import org.jetbrains.annotations.Nullable;
 import dev.toasttextures.cookit.block.entity.CookingBlockEntity;
 import dev.toasttextures.cookit.block.entity.CuttingBoardEntity;
 import dev.toasttextures.cookit.block.entity.PlateEntity;
@@ -72,27 +70,18 @@ public class FryerBasket extends Item {
     }
 
     public static void setItem(ItemStack input, ItemStack item) {
-        NbtList nbtList = new NbtList();
-        NbtCompound nbtCompound = new NbtCompound();
-        nbtCompound.putByte("Slot", (byte) 0);
-
-        item.writeNbt(nbtCompound);
-        nbtList.add(nbtCompound);
-        input.getOrCreateNbt().put("Items", nbtList);
+        input.set(CookItComponents.SINGLE_COOKING_COMPONENT, item);
         if (item.isEmpty()) {
-            input.removeSubNbt("Items");
+            input.remove(CookItComponents.SINGLE_COOKING_COMPONENT);
         }
     }
 
     public static ItemStack getItem(ItemStack input) {
-        NbtCompound itemsTag = input.getNbt();
-        if (itemsTag != null) {
-            NbtList list = itemsTag.getList("Items", NbtElement.COMPOUND_TYPE);
-            return ItemStack.fromNbt(list.getCompound(0));
-        } else { return ItemStack.EMPTY; }
+        return input.contains(CookItComponents.SINGLE_COOKING_COMPONENT) ? input.get(CookItComponents.SINGLE_COOKING_COMPONENT) : ItemStack.EMPTY;
     }
 
-    public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
+    @Override
+    public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type) {
         Text text = Text.literal("Item: ").formatted(Formatting.GRAY).append(Text.literal(getItem(stack).getName().getString()).formatted(Formatting.BLUE));
         if (!getItem(stack).isEmpty()) {
             tooltip.add(text);

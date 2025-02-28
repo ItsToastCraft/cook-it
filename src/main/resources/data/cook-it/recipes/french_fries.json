@@ -1,10 +1,8 @@
 {
   "type": "cook-it:frying",
-  "ingredients": [
-    {
+  "ingredient": {
       "item": "cook-it:uncooked_french_fries"
-    }
-  ],
+  },
   "output": {
     "item": "cook-it:french_fries"
   },

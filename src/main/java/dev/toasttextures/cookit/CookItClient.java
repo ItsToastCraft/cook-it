@@ -73,9 +73,6 @@ public class CookItClient implements ClientModInitializer {
             return 0xF8D478;
         }, CookItBlocks.MIXING_BOWL);
 
-        ColorProviderRegistry.ITEM.register((stack, tintIndex) -> {
-            assert stack.getNbt() != null;
-            return stack.getNbt().getInt("color");
-        }, CookItItems.GOOP);
+        ColorProviderRegistry.ITEM.register((stack, tintIndex) -> stack.getOrDefault(CookItComponents.COLOR_COMPONENT, 0xF8D478), CookItItems.GOOP);
     }
 }

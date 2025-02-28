@@ -16,8 +16,8 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.IntProperty;
 import net.minecraft.state.property.Properties;
-import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.ItemActionResult;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -62,10 +62,10 @@ public class Toaster extends HorizontalFacingBlock {
         };
 
     }
-    
+
     // I know this allows you to just put a piece of bread at the last second but like I don't care :cat_plushie:
     @Override
-    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+    public ItemActionResult onUseWithItem(ItemStack stack, BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         ItemStack heldItem = player.getStackInHand(hand);
         int toastState = state.get(TOASTER_STATE);
         // Check if the player is holding bread
@@ -78,7 +78,7 @@ public class Toaster extends HorizontalFacingBlock {
                 this.scheduleTick(world, pos);
             }
 
-            return ActionResult.SUCCESS;
+            return ItemActionResult.SUCCESS;
         }
         if (heldItem.getItem() == Items.AIR) {
 
@@ -89,9 +89,9 @@ public class Toaster extends HorizontalFacingBlock {
                     world.setBlockState(pos, state.with(TOASTER_STATE, 0));
                 }
             }
-            return ActionResult.SUCCESS;
+            return ItemActionResult.SUCCESS;
         }
-        return ActionResult.PASS; // If not holding bread, do nothing
+        return ItemActionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION; // If not holding bread, do nothing
     }
 
     @Override

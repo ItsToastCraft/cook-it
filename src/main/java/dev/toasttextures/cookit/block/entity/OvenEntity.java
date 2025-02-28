@@ -1,6 +1,7 @@
 package dev.toasttextures.cookit.block.entity;
 
 import dev.toasttextures.cookit.registries.CookItBlocks;
+import dev.toasttextures.cookit.registries.CookItComponents;
 import dev.toasttextures.cookit.registries.CookItItems;
 import dev.toasttextures.cookit.util.BlockEntityUtils;
 import net.minecraft.block.BlockState;
@@ -8,8 +9,8 @@ import net.minecraft.inventory.Inventories;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtList;
 import net.minecraft.recipe.RecipeEntry;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
@@ -20,6 +21,7 @@ import dev.toasttextures.cookit.recipes.OvenRecipe;
 import dev.toasttextures.cookit.registries.CookItBlockEntities;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -38,20 +40,20 @@ public class OvenEntity extends CookingBlockEntity implements ImplementedInvento
     }
 
     @Override
-    public void readNbt(NbtCompound nbt) {
+    public void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
         items.clear();
-        super.readNbt(nbt);
+        super.readNbt(nbt,registryLookup);
 
-        Inventories.readNbt(nbt, items);
+        Inventories.readNbt(nbt, items, registryLookup);
 
         this.progress = nbt.getIntArray("oven.progress");
     }
 
     @Override
-    public void writeNbt(NbtCompound nbt) {
-        Inventories.writeNbt(nbt, this.items);
+    public void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
+        Inventories.writeNbt(nbt, this.items, registryLookup);
         nbt.putIntArray("oven.progress", progress);
-        super.writeNbt(nbt);
+        super.writeNbt(nbt, registryLookup);
     }
 
     public void tick(World world, BlockPos pos, BlockState state) {
@@ -87,28 +89,24 @@ public class OvenEntity extends CookingBlockEntity implements ImplementedInvento
 
     private void processMuffinRecipe(World world, BlockPos pos, BlockState state, int slot) {
         if (this.done) return;
-        ItemStack muffinTin = this.getStack(slot);
 
-        NbtList nbtList = new NbtList();
-        ArrayList<ItemStack> containerItems = BlockEntityUtils.getContainerItems(muffinTin);
 
         if (400 >= this.progress[slot]) {
             this.progress[slot]++;
-            this.done = false;
         } else {
-            for (int i = 0; i < containerItems.size(); i++) {
-                NbtCompound nbtCompound = new NbtCompound(); // Create a new compound for each iteration
-                nbtCompound.putByte("Slot", (byte) i);
-                ItemStack stack = containerItems.get(i);
-                if (stack.isOf(CookItItems.GOOP)) {
-                    ItemStack muffin = ItemStack.fromNbt(stack.getSubNbt("output"));
-                    muffin.writeNbt(nbtCompound);
+            ItemStack muffinTin = this.getStack(slot);
+
+            ArrayList<ItemStack> containerItems = BlockEntityUtils.getContainerItems(muffinTin);
+            List<ItemStack> outputs = new ArrayList<>();
+            for (ItemStack item : containerItems) {
+                if (item.isOf(CookItItems.GOOP)) {
+                    ItemStack muffin = item.get(CookItComponents.SINGLE_COOKING_COMPONENT);
+                    outputs.add(muffin);
                 } else {
-                    containerItems.get(i).writeNbt(nbtCompound);
+                    outputs.add(item);
                 }
-                nbtList.add(nbtCompound);
             }
-            muffinTin.getOrCreateSubNbt("BlockEntityTag").put("Items", nbtList);
+            muffinTin.getOrDefault(CookItComponents.COOKING_COMPONENT, outputs);
             this.markDirty();
             this.done = true;
             world.setBlockState(pos, state.with(DONE, true));
@@ -119,36 +117,32 @@ public class OvenEntity extends CookingBlockEntity implements ImplementedInvento
         }
     }
     private void craftRecipe(int index) {
-        ItemStack item = this.getStack(index);
-        if (BlockEntityUtils.isContainer(item)) {
-            ArrayList<ItemStack> containerItems = BlockEntityUtils.getContainerItems(item);
-            NbtList nbtList = new NbtList();
+        ItemStack stack = this.getStack(index);
+        if (BlockEntityUtils.isContainer(stack)) {
+            ArrayList<ItemStack> containerItems = BlockEntityUtils.getContainerItems(stack);
+            List<ItemStack> outputs = new ArrayList<>();
+            for (ItemStack item : containerItems) {
 
-            for (int i = 0; i < containerItems.size(); i++) {
-                NbtCompound nbtCompound = new NbtCompound(); // Create a new compound for each iteration
-                nbtCompound.putByte("Slot", (byte) i);
 
-                Optional<RecipeEntry<OvenRecipe>> recipe = getCurrentRecipe(containerItems.get(i));
+                Optional<RecipeEntry<OvenRecipe>> recipe = getCurrentRecipe(item);
                 if (recipe.isPresent()) {
-                    if (!containerItems.get(i).isEmpty() && recipe.get().value().getMaxProgress() <= this.progress[index]) {
-                        ItemStack output = recipe.get().value().craft(new SimpleInventory(item), this.world.getRegistryManager());
-                        if (containerItems.get(i).getNbt() != null) {
-                            output.setNbt(containerItems.get(i).getNbt());
+                    if (item.isEmpty() && recipe.get().value().getMaxProgress() <= this.progress[index]) {
+                        ItemStack output = recipe.get().value().craft(new SimpleInventory(stack), this.world.getRegistryManager());
+                        if (item.getComponents() != null) {
+                            output.applyComponentsFrom(item.getComponents());
                         }
-                        output.writeNbt(nbtCompound);
+
+                        outputs.add(output);
                     }
                 } else {
-                    containerItems.get(i).writeNbt(nbtCompound);
+                    outputs.add(item);
                 }
-                nbtList.add(nbtCompound);
             }
-            item.getOrCreateSubNbt("BlockEntityTag").put("Items", nbtList);
+            stack.set(CookItComponents.COOKING_COMPONENT, outputs);
         } else {
-            Optional<RecipeEntry<OvenRecipe>> recipe = getCurrentRecipe(item);
-            NbtCompound nbtCompound = item.getOrCreateNbt();
-            this.removeStack(index, 1);
-            ItemStack result = recipe.get().value().craft(new SimpleInventory(item), this.world.getRegistryManager());
-            result.setNbt(nbtCompound);
+            Optional<RecipeEntry<OvenRecipe>> recipe = getCurrentRecipe(stack);
+            ItemStack result = recipe.get().value().craft(new SimpleInventory(stack), this.world.getRegistryManager());
+            result.applyComponentsFrom(stack.getComponents());
             this.setStack(index, result);
         }
         assert world != null;

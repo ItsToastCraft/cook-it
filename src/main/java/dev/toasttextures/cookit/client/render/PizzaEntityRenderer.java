@@ -13,10 +13,10 @@ import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.nbt.NbtList;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.RotationAxis;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -96,11 +96,10 @@ public class PizzaEntityRenderer implements BlockEntityRenderer<PizzaEntity> {
 
         VertexConsumer baseConsumer = vertexConsumers.getBuffer(RenderLayer.getEntityCutout(baseTexture));
         pizzaBaseParts.get(sliceCount).render(matrices, baseConsumer, light, overlay);
-        NbtList toppings = entity.getToppings();
+        ArrayList<String> toppings = entity.getToppings();
         if (!toppings.isEmpty()) {
             // loop over all the toppings
-            for (int i = 0; i < toppings.size(); i++) {
-                String string = toppings.getString(i);
+            for (String string : toppings) {
                 // check for a valid topping and a valid topping texture
                 if (string != null && PizzaToppings.fromName(string) != null) {
                     PizzaToppings topping = PizzaToppings.fromName(string);

@@ -2,17 +2,16 @@ package dev.toasttextures.cookit.block.entity;
 
 import dev.toasttextures.cookit.block.food_blocks.pizza.PizzaToppings;
 import dev.toasttextures.cookit.registries.CookItBlocks;
+import dev.toasttextures.cookit.registries.CookItComponents;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NbtList;
-import net.minecraft.nbt.NbtString;
 import net.minecraft.particle.ItemStackParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.recipe.RecipeEntry;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
@@ -21,6 +20,7 @@ import dev.toasttextures.cookit.block.ImplementedInventory;
 import dev.toasttextures.cookit.recipes.CuttingBoardRecipe;
 import dev.toasttextures.cookit.registries.CookItBlockEntities;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -31,16 +31,16 @@ public class CuttingBoardEntity extends CookingBlockEntity implements Implemente
         super(CookItBlockEntities.CUTTING_BOARD_ENTITY, pos, state, 1);
     }
     @Override
-    public void readNbt(NbtCompound nbt) {
-        super.readNbt(nbt);
+    public void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
+        super.readNbt(nbt, registryLookup);
 
         this.clicks = nbt.getInt("clicks");
     }
 
     @Override
-    public void writeNbt(NbtCompound nbt) {
+    public void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
         nbt.putInt("clicks", clicks);
-        super.writeNbt(nbt);
+        super.writeNbt(nbt, registryLookup);
     }
 
     public void setClicks(int clicks) {
@@ -59,14 +59,14 @@ public class CuttingBoardEntity extends CookingBlockEntity implements Implemente
         if (!recipes.isEmpty()) {
             for(RecipeEntry<CuttingBoardRecipe> recipeEntry : recipes) {
                 if (tryReset) {
-                    if (recipeEntry.value().isResetable() && tool.isEmpty()) {
+                    if (recipeEntry.value().isResettable() && tool.isEmpty()) {
                         complete(recipeEntry);
 
                         return true;
                     }
                 } else {
                     for (ItemStack otherTool : recipeEntry.value().getTool()) {
-                        if (tool.getItem().asItem().equals(otherTool.getItem()) && !recipeEntry.value().isResetable()) {
+                        if (tool.getItem().asItem().equals(otherTool.getItem()) && !recipeEntry.value().isResettable()) {
                             this.clicks++;
                             Objects.requireNonNull(world).playSound(null, pos.getX(), pos.getY(), pos.getZ(), SoundEvents.ENTITY_ITEM_FRAME_REMOVE_ITEM, SoundCategory.BLOCKS, 0.5f, 0.25f);
                             ((ServerWorld) Objects.requireNonNull(world)).spawnParticles(new ItemStackParticleEffect(ParticleTypes.ITEM, recipeEntry.value().getResult(null)), pos.getX() + 0.5f, pos.getY(), pos.getZ() + 0.5f, 10, 0f,0.025f,0.0f,0.125f);
@@ -84,7 +84,7 @@ public class CuttingBoardEntity extends CookingBlockEntity implements Implemente
 
     public boolean processPizza(ItemStack tool) {
 
-        NbtList toppings = this.getStack(0).getOrCreateSubNbt("BlockEntityTag").getList("toppings", NbtElement.STRING_TYPE);
+        ArrayList<String> toppings = this.getStack(0).getOrDefault(CookItComponents.TOPPING_COMPONENT, new ArrayList<>());
 
         // The pizza has maxed out toppings, so no change happened
         if (toppings.size() == 3) {
@@ -96,10 +96,10 @@ public class CuttingBoardEntity extends CookingBlockEntity implements Implemente
         if (topping != null) {
 
             // no need to loop, at this point we're already sure there's a topping slot available.
-            toppings.add(NbtString.of(topping.asString()));
+            toppings.add(topping.asString());
             tool.decrement(1);
             // set the topping to whatever it is
-            this.getStack(0).getOrCreateSubNbt("BlockEntityTag").put("toppings", toppings);
+            this.getStack(0).getOrDefault(CookItComponents.TOPPING_COMPONENT, new ArrayList<String>()).add(topping.asString());
             this.markDirty();
             Objects.requireNonNull(world).updateListeners(pos, this.getCachedState(), this.getCachedState(), Block.NOTIFY_LISTENERS);
             return true;

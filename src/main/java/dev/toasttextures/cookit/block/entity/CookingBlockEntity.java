@@ -10,6 +10,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
@@ -31,25 +32,17 @@ public abstract class CookingBlockEntity extends BlockEntity implements Implemen
     public void setItems(DefaultedList<ItemStack> items) { this.items = items;}
 
     @Override
-    protected void readComponents(ComponentsAccess components) {
+    public void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
         this.items.clear();
-        super.readComponents(components);
-        Inventories.
+        super.readNbt(nbt, registryLookup);
+
+        Inventories.readNbt(nbt, this.items, registryLookup);
     }
 
     @Override
-    public void readNbt(NbtCompound nbt) {
-        this.items.clear();
-        super.readNbt(nbt);
-
-        Inventories.readNbt(nbt, this.items);
-    }
-
-    @Override
-    public void writeNbt(NbtCompound nbt) {
-        Inventories.writeNbt(nbt, this.items);
-
-        super.writeNbt(nbt);
+    public void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
+        Inventories.writeNbt(nbt, this.items, registryLookup);
+        super.writeNbt(nbt, registryLookup);
     }
 
     @Nullable
@@ -59,7 +52,7 @@ public abstract class CookingBlockEntity extends BlockEntity implements Implemen
     }
 
     @Override
-    public NbtCompound toInitialChunkDataNbt() {
-        return createNbt();
+    public NbtCompound toInitialChunkDataNbt(RegistryWrapper.WrapperLookup registryLookup) {
+        return createNbt(registryLookup);
     }
 }

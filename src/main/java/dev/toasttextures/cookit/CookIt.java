@@ -7,7 +7,6 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
 import net.minecraft.particle.ParticleType;
-import net.minecraft.particle.SimpleParticleType;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
@@ -23,7 +22,7 @@ public class CookIt implements ModInitializer {
     public static final String MOD_ID = "cook-it";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
-    public static final ParticleType<SimpleParticleType> OIL_PARTICLE = FabricParticleTypes.simple();
+    public static final ParticleType<OilParticleEffect> OIL_PARTICLE = FabricParticleTypes.complex(OilParticleEffect.CODEC, OilParticleEffect.PACKET_CODEC);
 
     public static final List<String> SUPPORTED_WOOD_TYPES = List.of(new String[]{"acacia", "birch", "cherry", "crimson", "dark_oak", "jungle",  "oak", "mangrove", "spruce", "warped"});
     @Override
@@ -37,6 +36,7 @@ public class CookIt implements ModInitializer {
         CookItRecipes.registerRecipes();
         CookItSounds.registerSounds();
         CookItBlockEntities.registerEntities();
+        CookItComponents.registerComponents();
         Registry.register(Registries.PARTICLE_TYPE, new Identifier(MOD_ID, "oil"), OIL_PARTICLE);
 
         Registry.register(Registries.ITEM_GROUP, new Identifier(CookIt.MOD_ID, "items"), CookItItems.COOK_IT_GROUP);

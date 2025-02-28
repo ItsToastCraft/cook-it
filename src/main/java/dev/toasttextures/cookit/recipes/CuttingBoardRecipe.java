@@ -1,33 +1,30 @@
 package dev.toasttextures.cookit.recipes;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.recipe.Ingredient;
-import net.minecraft.recipe.Recipe;
-import net.minecraft.recipe.RecipeSerializer;
-import net.minecraft.recipe.RecipeType;
-import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.network.RegistryByteBuf;
+import net.minecraft.network.codec.PacketCodec;
+import net.minecraft.recipe.*;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.world.World;
 
 public class CuttingBoardRecipe implements Recipe<SimpleInventory> {
     private final ItemStack output;
     private final Ingredient ingredient;
-    private final int count;
     private final Ingredient tool;
     private final boolean usesItem;
-    private final boolean resetable;
+    private final boolean resettable;
     private final int clicks;
 
-    public CuttingBoardRecipe(Ingredient ingredient, ItemStack itemStack, Ingredient tool, int count, int clicks, boolean usesItem, boolean  resetable) {
+    public CuttingBoardRecipe(Ingredient ingredient, ItemStack itemStack, Ingredient tool, int clicks, boolean usesItem, boolean resettable) {
         this.output = itemStack;
         this.ingredient = ingredient;
         this.tool = tool;
-        this.count = count;
         this.usesItem = usesItem;
-        this.resetable = resetable;
+        this.resettable = resettable;
         this.clicks = clicks;
     }
 
@@ -41,9 +38,8 @@ public class CuttingBoardRecipe implements Recipe<SimpleInventory> {
 
     @Override
     public boolean isIgnoredInRecipeBook() { return true; }
-
     @Override
-    public ItemStack craft(SimpleInventory inventory, DynamicRegistryManager registryManager) {
+    public ItemStack craft(SimpleInventory inventory, RegistryWrapper.WrapperLookup lookup) {
         return output.copy();
     }
 
@@ -51,14 +47,14 @@ public class CuttingBoardRecipe implements Recipe<SimpleInventory> {
         if (tool.isEmpty()) {return new ItemStack[]{ ItemStack.EMPTY}; }
         return tool.getMatchingStacks();
     }
-    public boolean isResetable() { return resetable; }
+    public boolean isResettable() { return this.resettable; }
 
-    public boolean usesItem() { return usesItem; }
+    public boolean usesItem() { return this.usesItem; }
 
-    public int getClicks() { return clicks; }
+    public int getClicks() { return this.clicks; }
 
     public int getOutputCount() {
-        return count;
+        return this.output.getCount();
     }
 
     @Override
@@ -67,8 +63,8 @@ public class CuttingBoardRecipe implements Recipe<SimpleInventory> {
     }
 
     @Override
-    public ItemStack getResult(DynamicRegistryManager registryManager) {
-        return output;
+    public ItemStack getResult(RegistryWrapper.WrapperLookup registriesLookup) {
+        return this.output;
     }
 
     @Override
@@ -88,45 +84,47 @@ public class CuttingBoardRecipe implements Recipe<SimpleInventory> {
     public static class Serializer implements RecipeSerializer<CuttingBoardRecipe> {
 
         public static final Serializer INSTANCE = new Serializer();
-        public static final Codec<CuttingBoardRecipe> CODEC = RecordCodecBuilder.create(in -> in.group(
-                Ingredient.DISALLOW_EMPTY_CODEC.fieldOf("input").forGetter(r -> r.ingredient),
-                ItemStack.RECIPE_RESULT_CODEC.fieldOf("output").forGetter(r -> r.output),
+
+        private static final MapCodec<CuttingBoardRecipe> CODEC = RecordCodecBuilder.mapCodec(in -> in.group(
+                Ingredient.DISALLOW_EMPTY_CODEC.fieldOf("ingredient").forGetter(r -> r.ingredient),
+                ItemStack.VALIDATED_CODEC.fieldOf("output").forGetter(r -> r.output),
                 Ingredient.ALLOW_EMPTY_CODEC.optionalFieldOf("tool", Ingredient.EMPTY).forGetter(r -> r.tool),
-                Codec.INT.optionalFieldOf("count", 1).forGetter(r -> r.count),
                 Codec.INT.optionalFieldOf("clicks", 1).forGetter(r -> r.clicks),
                 Codec.BOOL.optionalFieldOf("usesItem", false).forGetter(r -> r.usesItem),
-                Codec.BOOL.optionalFieldOf("resetable", false).forGetter(r -> r.resetable)
+                Codec.BOOL.optionalFieldOf("resettable", false).forGetter(r -> r.resettable)
 
 
         ).apply(in, CuttingBoardRecipe::new));
 
+        private static final PacketCodec<RegistryByteBuf, CuttingBoardRecipe> PACKET_CODEC = PacketCodec.ofStatic(CuttingBoardRecipe.Serializer::write, CuttingBoardRecipe.Serializer::read);
+
         @Override
-        public Codec<CuttingBoardRecipe> codec() {
+        public MapCodec<CuttingBoardRecipe> codec() {
             return CODEC;
         }
 
         @Override
-        public CuttingBoardRecipe read(PacketByteBuf buf) {
-
-            Ingredient ingredient = Ingredient.fromPacket(buf);
-            ItemStack output = buf.readItemStack();
-            Ingredient tool = Ingredient.fromPacket(buf);
-            int count = buf.readInt();
-            int clicks = buf.readInt();
-            boolean usesItem = buf.readBoolean();
-            boolean resetable = buf.readBoolean();
-            return new CuttingBoardRecipe(ingredient, output, tool, count, clicks, usesItem, resetable);
+        public PacketCodec<RegistryByteBuf, CuttingBoardRecipe> packetCodec() {
+            return PACKET_CODEC;
         }
 
-        @Override
-        public void write(PacketByteBuf buf, CuttingBoardRecipe recipe) {
-            recipe.ingredient.write(buf);
-            buf.writeItemStack(recipe.getResult(null));
-            recipe.tool.write(buf);
-            buf.writeInt(recipe.count);
+        public static CuttingBoardRecipe read(RegistryByteBuf buf) {
+            Ingredient ingredient = Ingredient.PACKET_CODEC.decode(buf);
+            ItemStack output = ItemStack.PACKET_CODEC.decode(buf);
+            Ingredient tool = Ingredient.PACKET_CODEC.decode(buf);
+            int clicks = buf.readInt();
+            boolean usesItem = buf.readBoolean();
+            boolean resettable = buf.readBoolean();
+            return new CuttingBoardRecipe(ingredient, output, tool, clicks, usesItem, resettable);
+        }
+
+        public static void write(RegistryByteBuf buf, CuttingBoardRecipe recipe) {
+            Ingredient.PACKET_CODEC.encode(buf, recipe.ingredient);
+            ItemStack.PACKET_CODEC.encode(buf, recipe.output);
+            Ingredient.PACKET_CODEC.encode(buf, recipe.tool);
             buf.writeInt(recipe.clicks);
             buf.writeBoolean(recipe.usesItem());
-            buf.writeBoolean(recipe.isResetable());
+            buf.writeBoolean(recipe.isResettable());
         }
     }
 }

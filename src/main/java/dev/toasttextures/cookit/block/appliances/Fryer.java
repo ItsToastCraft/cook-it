@@ -15,8 +15,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.Properties;
-import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.ItemActionResult;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.shape.VoxelShape;
@@ -54,11 +54,11 @@ public class Fryer extends BlockWithEntity implements BlockEntityProvider {
     }
 
     @Override
-    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+    public ItemActionResult onUseWithItem(ItemStack stack, BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         world.updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
         FryerEntity blockEntity = (FryerEntity) world.getBlockEntity(pos);
         if (blockEntity == null) {
-            return ActionResult.FAIL;
+            return ItemActionResult.FAIL;
         }
 
         ItemStack heldItem = player.getStackInHand(hand);
@@ -67,15 +67,15 @@ public class Fryer extends BlockWithEntity implements BlockEntityProvider {
                 blockEntity.setStack(0, heldItem.copyAndEmpty());
             }
         } else if (heldItem.getItem() instanceof CookItFood food && food.getFoodType().equals(CookItFoodTypes.FRYING)) {
-            ItemStack stack = blockEntity.getStack(0);
-            FryerBasket.setItem(stack, heldItem.split(1));
-            blockEntity.setStack(0, stack);
+            ItemStack entityStack = blockEntity.getStack(0);
+            FryerBasket.setItem(entityStack, heldItem.split(1));
+            blockEntity.setStack(0, entityStack);
             blockEntity.markDirty();
 
         } else {
             player.getInventory().insertStack(blockEntity.getStack(0));
         }
-        return ActionResult.SUCCESS;
+        return ItemActionResult.SUCCESS;
     }
 
     public BlockState getPlacementState(ItemPlacementContext ctx) {

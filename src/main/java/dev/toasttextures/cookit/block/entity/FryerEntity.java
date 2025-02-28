@@ -1,15 +1,16 @@
 package dev.toasttextures.cookit.block.entity;
 
 
-import dev.toasttextures.cookit.CookIt;
+import dev.toasttextures.cookit.registries.CookItComponents;
+import dev.toasttextures.cookit.registries.OilParticleEffect;
 import net.minecraft.block.BlockState;
+import net.minecraft.component.ComponentMap;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NbtList;
 import net.minecraft.recipe.RecipeEntry;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
@@ -20,9 +21,7 @@ import dev.toasttextures.cookit.item.FryerBasket;
 import dev.toasttextures.cookit.recipes.FryerRecipe;
 import dev.toasttextures.cookit.registries.CookItBlockEntities;
 
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 
 import static dev.toasttextures.cookit.block.appliances.Fryer.ON;
 
@@ -37,19 +36,19 @@ public class FryerEntity extends CookingBlockEntity implements ImplementedInvent
     }
 
     @Override
-    public void readNbt(NbtCompound nbt) {
+    public void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
         items.clear();
-        super.readNbt(nbt);
+        super.readNbt(nbt, registryLookup);
 
-        Inventories.readNbt(nbt, items);
+        Inventories.readNbt(nbt, items, registryLookup);
         progress = nbt.getInt("fryer.progress");
     }
 
     @Override
-    public void writeNbt(NbtCompound nbt) {
-        Inventories.writeNbt(nbt, this.items);
+    public void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
+        Inventories.writeNbt(nbt, this.items, registryLookup);
         nbt.putInt("fryer.progress", progress);
-        super.writeNbt(nbt);
+        super.writeNbt(nbt, registryLookup);
     }
 
     public void tick(World world, BlockPos pos, BlockState state) {
@@ -106,7 +105,6 @@ public class FryerEntity extends CookingBlockEntity implements ImplementedInvent
                 this.markDirty();
             }
         }
-
     }
 
     private void addParticles() {
@@ -118,8 +116,7 @@ public class FryerEntity extends CookingBlockEntity implements ImplementedInvent
             double particleZ = Math.round(((double)this.pos.getZ() + 0.5 + random.nextFloat(-0.1875f,0.1875f)) * 100d) / 100d;
             assert world != null;
 
-            ((ServerWorld) world).spawnParticles(CookIt.OIL_PARTICLE, particleX, particleY, particleZ, 2, 0f,0.0f,0.0f,0f);
-
+            ((ServerWorld) world).spawnParticles(new OilParticleEffect(), particleX, particleY, particleZ, 2, 0.0,0.0f,0.0f,0f);
             }
         }
 
@@ -136,7 +133,8 @@ public class FryerEntity extends CookingBlockEntity implements ImplementedInvent
     }
 
     private boolean hasRecipe() {
-        return getCurrentRecipe().isPresent();
+        Optional<RecipeEntry<FryerRecipe>> recipe = getCurrentRecipe();
+        return recipe.isPresent();
     }
 
     private Optional<RecipeEntry<FryerRecipe>> getCurrentRecipe() {
@@ -152,14 +150,11 @@ public class FryerEntity extends CookingBlockEntity implements ImplementedInvent
 
     public static ItemStack getContainerItem(ItemStack container) {
 
-        ItemStack itemStack = ItemStack.EMPTY;
-        NbtCompound nbt = container.getNbt();
-        if (nbt != null && nbt.contains("Items")) {
-            NbtList itemsTag = nbt.getList("Items", NbtElement.COMPOUND_TYPE);
-            NbtCompound itemTag = itemsTag.getCompound(0);
-            itemStack = ItemStack.fromNbt(itemTag);
+        ComponentMap components = container.getComponents();
+        if (components != null && components.contains(CookItComponents.SINGLE_COOKING_COMPONENT)) {
+            return components.get(CookItComponents.SINGLE_COOKING_COMPONENT);
         }
-        return itemStack;
+        return ItemStack.EMPTY;
     }
 
 //    private void playFryerSound(World world, BlockPos pos, BlockState state, boolean on) {

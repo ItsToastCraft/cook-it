@@ -10,6 +10,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ArmorMaterial;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,19 +20,8 @@ public class ChefOutfitItem extends ArmorItem {
     @Environment(EnvType.CLIENT)
     private BipedEntityModel<LivingEntity> model;
 
-    public ChefOutfitItem(ArmorMaterial material, Type type, Settings settings) {
+    public ChefOutfitItem(RegistryEntry<ArmorMaterial> material, Type type, Settings settings) {
         super(material, type, settings);
-    }
-
-
-    @Override
-    public ItemStack getDefaultStack() {
-        return new ItemStack(this);
-    }
-
-    @Override
-    public boolean isDamageable() {
-        return false;
     }
 
     @Override

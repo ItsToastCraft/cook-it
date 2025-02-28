@@ -8,8 +8,8 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.ItemActionResult;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.shape.VoxelShape;
@@ -42,12 +42,11 @@ public class PizzaPan extends BlockWithEntity implements BlockEntityProvider {
     }
 
     @Override
-    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-
-        if (world.isClient) { return ActionResult.SUCCESS; }
+    protected ItemActionResult onUseWithItem(ItemStack stack, BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+        if (world.isClient) { return ItemActionResult.SUCCESS; }
         world.updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
         PizzaPanEntity blockEntity = (PizzaPanEntity) world.getBlockEntity(pos);
-        if (blockEntity == null) { return ActionResult.FAIL; }
+        if (blockEntity == null) { return ItemActionResult.FAIL; }
         if (player.isSneaking()) {
             return BlockEntityUtils.dropOnUse(this, blockEntity, player, world, pos);
         }
@@ -60,9 +59,9 @@ public class PizzaPan extends BlockWithEntity implements BlockEntityProvider {
         } else if (heldItem.isEmpty() && hasPizza) {
             player.getInventory().offerOrDrop(blockEntity.getStack(0).split(1));
         } else {
-            return ActionResult.PASS;
+            return ItemActionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         }
-        return ActionResult.SUCCESS;
+        return ItemActionResult.SUCCESS;
     }
 
     @Override

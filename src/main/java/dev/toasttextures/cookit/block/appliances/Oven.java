@@ -16,8 +16,8 @@ import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.Properties;
 import net.minecraft.state.property.Property;
-import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.ItemActionResult;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -52,12 +52,12 @@ public class Oven extends BlockWithEntity implements BlockEntityProvider {
     }
 
     @Override
-    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+    public ItemActionResult onUseWithItem(ItemStack stack, BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         world.updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
         OvenEntity blockEntity = (OvenEntity) world.getBlockEntity(pos);
 
         if (world.isClient || blockEntity == null) {
-            return ActionResult.SUCCESS;
+            return ItemActionResult.SUCCESS;
         }
 
         boolean open = state.get(OPEN);
@@ -74,27 +74,28 @@ public class Oven extends BlockWithEntity implements BlockEntityProvider {
                     for (int i = blockEntity.getItems().size() - 1; i >= 0; i--) {
                         if (!blockEntity.getStack(i).isEmpty()) {
                             player.getInventory().insertStack(blockEntity.getStack(i));
-                            return ActionResult.SUCCESS;
+                            return ItemActionResult.SUCCESS;
                         }
                     }
 
                 } else {
                     openOven(world, pos, state, false);
-                    return ActionResult.SUCCESS;
+                    return ItemActionResult.SUCCESS;
                 }
             } else if (CONTAINERS.contains(Block.getBlockFromItem(heldItem.getItem()))) {
                 // If the oven is open and the player is holding something, try to put the held item into the oven
                 for (int i = 0; i < blockEntity.getItems().size(); i++) {
                     if (blockEntity.getStack(i).isEmpty()) {
                         blockEntity.setStack(i, heldItem.split(1));
-                        return ActionResult.SUCCESS;
+                        return ItemActionResult.SUCCESS;
                     }
                 }
             }
         }
 
-        return ActionResult.FAIL;
+        return ItemActionResult.FAIL;
     }
+
     public BlockState getPlacementState(ItemPlacementContext ctx) {
         return this.getDefaultState().with(FACING, ctx.getHorizontalPlayerFacing().getOpposite());
     }

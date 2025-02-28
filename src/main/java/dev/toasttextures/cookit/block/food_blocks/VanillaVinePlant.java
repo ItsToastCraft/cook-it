@@ -1,7 +1,6 @@
 package dev.toasttextures.cookit.block.food_blocks;
 
 import com.mojang.serialization.MapCodec;
-import dev.toasttextures.cookit.CookIt;
 import dev.toasttextures.cookit.registries.CookItBlocks;
 import dev.toasttextures.cookit.registries.CookItItems;
 import net.minecraft.block.*;
@@ -11,7 +10,6 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -50,7 +48,7 @@ public class VanillaVinePlant extends AbstractPlantBlock implements Fertilizable
     }
 
     @Override
-    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+    protected ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
         return VanillaVines.removeVanilla(player, state, world, pos);
     }
 

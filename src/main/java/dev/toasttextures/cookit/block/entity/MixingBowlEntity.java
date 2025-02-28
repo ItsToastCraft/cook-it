@@ -3,6 +3,7 @@ package dev.toasttextures.cookit.block.entity;
 import dev.toasttextures.cookit.block.ImplementedInventory;
 import dev.toasttextures.cookit.recipes.MixingBowlRecipe;
 import dev.toasttextures.cookit.registries.CookItBlockEntities;
+import dev.toasttextures.cookit.registries.CookItComponents;
 import dev.toasttextures.cookit.registries.CookItItems;
 import net.minecraft.block.BlockState;
 import net.minecraft.inventory.SimpleInventory;
@@ -12,6 +13,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.ItemStackParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.recipe.RecipeEntry;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
@@ -30,19 +32,19 @@ public class MixingBowlEntity extends CookingBlockEntity implements ImplementedI
         super(CookItBlockEntities.MIXING_BOWL_ENTITY, pos, state, 7);
     }
     @Override
-    public void readNbt(NbtCompound nbt) {
-        super.readNbt(nbt);
+    public void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
+        super.readNbt(nbt, registryLookup);
         this.clicks = nbt.getInt("clicks");
         this.uses = nbt.getInt("uses");
         this.color = nbt.getInt("color");
     }
 
     @Override
-    public void writeNbt(NbtCompound nbt) {
+    public void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
         nbt.putInt("clicks", clicks);
         nbt.putInt("uses", uses);
         nbt.putInt("color", color);
-        super.writeNbt(nbt);
+        super.writeNbt(nbt, registryLookup);
     }
     public Item getLiquid() {
         return this.getStack(this.size() - 1).getItem();
@@ -73,8 +75,8 @@ public class MixingBowlEntity extends CookingBlockEntity implements ImplementedI
 
                     ItemStack goop = new ItemStack(CookItItems.GOOP, output.getCount());
                     output.setCount(1);
-                    output.writeNbt(goop.getOrCreateSubNbt("output"));
-                    Objects.requireNonNull(goop.getNbt()).putInt("color", this.getGoopColor());
+                    output.set(CookItComponents.SINGLE_COOKING_COMPONENT, goop);
+                    goop.set(CookItComponents.COLOR_COMPONENT, this.getGoopColor());
 
                     output = goop;
                 }

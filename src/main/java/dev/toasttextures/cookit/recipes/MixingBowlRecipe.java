@@ -2,15 +2,16 @@ package dev.toasttextures.cookit.recipes;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.RegistryByteBuf;
+import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.recipe.*;
-import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.util.collection.DefaultedList;
-import net.minecraft.util.dynamic.Codecs;
 import net.minecraft.world.World;
 
 import java.util.List;
@@ -55,7 +56,7 @@ public class MixingBowlRecipe implements Recipe<SimpleInventory> {
     public boolean isIgnoredInRecipeBook() { return true; }
 
     @Override
-    public ItemStack craft(SimpleInventory inventory, DynamicRegistryManager registryManager) {
+    public ItemStack craft(SimpleInventory inventory, RegistryWrapper.WrapperLookup registriesLookup) {
         return output.copy();
     }
 
@@ -66,15 +67,15 @@ public class MixingBowlRecipe implements Recipe<SimpleInventory> {
         return list;
     }
 
-    public ItemStack getLiquid() { return liquidPresent() ? liquid : ItemStack.EMPTY; }
+    public ItemStack getLiquid() { return liquidPresent() ? this.liquid : ItemStack.EMPTY; }
 
     public int getMixes() {
-        return mixAmount;
+        return this.mixAmount;
     }
-    public int getUses() {return output.getCount();}
-    public boolean liquidPresent() { return !liquid.isOf(Items.BUCKET); }
+    public int getUses() {return this.output.getCount();}
+    public boolean liquidPresent() { return !this.liquid.isOf(Items.BUCKET); }
 
-    public boolean hasGoop() { return goop; }
+    public boolean hasGoop() { return this.goop; }
 
     @Override
     public boolean fits(int width, int height) {
@@ -82,8 +83,8 @@ public class MixingBowlRecipe implements Recipe<SimpleInventory> {
     }
 
     @Override
-    public ItemStack getResult(DynamicRegistryManager registryManager) {
-        return output;
+    public ItemStack getResult(RegistryWrapper.WrapperLookup registriesLookup) {
+        return this.output;
     }
 
     @Override
@@ -97,7 +98,7 @@ public class MixingBowlRecipe implements Recipe<SimpleInventory> {
     }
 
     public int goopColor() {
-        return goopColor;
+        return this.goopColor;
     }
 
     public static class Type implements RecipeType<MixingBowlRecipe> {
@@ -106,52 +107,50 @@ public class MixingBowlRecipe implements Recipe<SimpleInventory> {
 
     public static class Serializer implements RecipeSerializer<MixingBowlRecipe> {
         public static final Serializer INSTANCE = new Serializer();
-        public static final Codec<MixingBowlRecipe> CODEC = RecordCodecBuilder.create(in -> in.group(
-                validateAmount().fieldOf("ingredients").forGetter(MixingBowlRecipe::getIngredients),
-                ItemStack.RECIPE_RESULT_CODEC.fieldOf("output").forGetter(r -> r.output),
+        private static final MapCodec<MixingBowlRecipe> CODEC = RecordCodecBuilder.mapCodec(in -> in.group(
+                Ingredient.DISALLOW_EMPTY_CODEC.listOf().fieldOf("ingredients")
+                        .validate((list) -> (list.size() > 9 || list.isEmpty()) ? DataResult.error(() -> "Recipe doesn't have the right amount of ingredients (6)!") : DataResult.success(list)).forGetter(r -> r.ingredients),
+                ItemStack.VALIDATED_CODEC.fieldOf("output").forGetter(r -> r.output),
                 Codec.INT.fieldOf("clicks").forGetter(MixingBowlRecipe::getMixes),
-                ItemStack.RECIPE_RESULT_CODEC.optionalFieldOf("liquid", new ItemStack(Items.BUCKET, 1)).forGetter(r -> r.liquid),
+                ItemStack.VALIDATED_CODEC.optionalFieldOf("liquid", new ItemStack(Items.BUCKET, 1)).forGetter(r -> r.liquid),
                 Codec.BOOL.optionalFieldOf("outputs_goop", false).forGetter(r -> r.goop),
                 Codec.INT.optionalFieldOf("goop_color", 0).forGetter(r -> r.goopColor)
         ).apply(in, MixingBowlRecipe::new));
-
-        private static Codec<List<Ingredient>> validateAmount() {
-            return Codecs.validate(Codecs.validate(
-                    Ingredient.DISALLOW_EMPTY_CODEC.listOf(), list -> list.size() > 9 ? DataResult.error(() -> "Recipe has too many ingredients!") : DataResult.success(list)),
-                    list -> list.isEmpty() ? DataResult.error(() -> "Recipe has no ingredients!") : DataResult.success(list));
-        }
+        private static final PacketCodec<RegistryByteBuf, MixingBowlRecipe> PACKET_CODEC = PacketCodec.ofStatic(MixingBowlRecipe.Serializer::write, MixingBowlRecipe.Serializer::read);
 
         @Override
-        public Codec<MixingBowlRecipe> codec() {
+        public MapCodec<MixingBowlRecipe> codec() {
             return CODEC;
         }
 
         @Override
-        public MixingBowlRecipe read(PacketByteBuf buf) {
+        public PacketCodec<RegistryByteBuf, MixingBowlRecipe> packetCodec() {
+            return PACKET_CODEC;
+        }
+
+        public static MixingBowlRecipe read(RegistryByteBuf buf) {
             DefaultedList<Ingredient> inputs = DefaultedList.ofSize(buf.readInt(), Ingredient.EMPTY);
 
-            inputs.replaceAll(ignored -> Ingredient.fromPacket(buf));
-            ItemStack output = buf.readItemStack();
+            inputs.replaceAll(ingredient -> Ingredient.PACKET_CODEC.decode(buf));
+            ItemStack output = ItemStack.PACKET_CODEC.decode(buf);
             int clicks = buf.readInt();
-            ItemStack liquid = buf.readItemStack();
+            ItemStack liquid = ItemStack.OPTIONAL_PACKET_CODEC.decode(buf);
             boolean goop = buf.readBoolean();
             int goopColor = buf.readInt();
             return new MixingBowlRecipe(inputs, output, clicks, liquid, goop, goopColor);
         }
 
-        @Override
-        public void write(PacketByteBuf buf, MixingBowlRecipe recipe) {
+        public static void write(RegistryByteBuf buf, MixingBowlRecipe recipe) {
             buf.writeInt(recipe.getIngredients().size());
 
             for (Ingredient ingredient : recipe.getIngredients()) {
-                ingredient.write(buf);
+                Ingredient.PACKET_CODEC.encode(buf, ingredient);
             }
-
-            buf.writeItemStack(recipe.getResult(null));
-            buf.writeInt(recipe.getMixes());
-            buf.writeItemStack(recipe.getLiquid());
-            buf.writeBoolean(recipe.hasGoop());
-            buf.writeInt(recipe.goopColor());
+            ItemStack.PACKET_CODEC.encode(buf, recipe.output);
+            buf.writeInt(recipe.mixAmount);
+            ItemStack.PACKET_CODEC.encode(buf, recipe.liquid);
+            buf.writeBoolean(recipe.goop);
+            buf.writeInt(recipe.goopColor);
         }
     }
 }

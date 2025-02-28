@@ -3,6 +3,7 @@ package dev.toasttextures.cookit.block.containers;
 import com.mojang.serialization.MapCodec;
 import dev.toasttextures.cookit.block.entity.CookingBlockEntity;
 import dev.toasttextures.cookit.block.entity.MixingBowlEntity;
+import dev.toasttextures.cookit.registries.CookItComponents;
 import dev.toasttextures.cookit.registries.CookItItems;
 import dev.toasttextures.cookit.util.BlockEntityUtils;
 import net.minecraft.block.*;
@@ -11,15 +12,13 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
-import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.ItemActionResult;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.random.Random;
@@ -53,54 +52,54 @@ public class MixingBowl extends BlockWithEntity implements BlockEntityProvider {
         builder.add(MixingBowl.HAS_GOOP);
     }
 
+
     @Override
-    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+    public ItemActionResult onUseWithItem(ItemStack stack, BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         world.updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
         ItemStack item = player.getStackInHand(hand);
         MixingBowlEntity entity = (MixingBowlEntity) world.getBlockEntity(pos);
         if (world.isClient() || entity == null) {
-            return ActionResult.FAIL;
+            return ItemActionResult.FAIL;
         }
         if (player.isSneaking()) {
             return BlockEntityUtils.dropOnUse(this, entity, player, world, pos);
         }
-        if (entity.getStack(0).isOf(CookItItems.GOOP)) { return ActionResult.CONSUME; }
+        if (entity.getStack(0).isOf(CookItItems.GOOP)) { return ItemActionResult.CONSUME; }
         if (item.isOf(CookItItems.WHISK)) {
             boolean hasGoop = entity.processRecipe();
             if (hasGoop) {
                 world.setBlockState(pos, state.with(HAS_GOOP, true));
                 world.updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
             }
-            return ActionResult.SUCCESS;
+            return ItemActionResult.SUCCESS;
         }
         if ((item.isOf(Items.MILK_BUCKET) || item.isOf(Items.WATER_BUCKET)) && entity.getLiquid().equals(Items.AIR)) {
             world.playSound(null, pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BLOCK_WATER_AMBIENT, SoundCategory.BLOCKS, 0.5f, 1.25f);
             entity.setStack(entity.size() - 1, item.split(1));
             player.setStackInHand(hand, new ItemStack(Items.BUCKET, 1));
-            return ActionResult.SUCCESS;
+            return ItemActionResult.SUCCESS;
         }
 
         if (!item.isEmpty()) {
             for(int i = 0; i < entity.size() - 1; i++) {
-                ItemStack stack = entity.getStack(i);
-                if (stack.isEmpty()) {
+                ItemStack entityStack = entity.getStack(i);
+                if (entityStack.isEmpty()) {
                     entity.setStack(i, item.split(1));
-                    return ActionResult.FAIL;
+                    return ItemActionResult.FAIL;
                 }
             }
         }
-        return ActionResult.FAIL;
+        return ItemActionResult.FAIL;
     }
 
     // Meant for transferring outputs to other containers, so it only uses the first slot
     public static void transferTo(ItemStack bowl, CookingBlockEntity to, int stack) {
-        NbtCompound nbt = bowl.getSubNbt("BlockEntityTag");
-        if (nbt == null || !nbt.contains("Items", NbtElement.LIST_TYPE)) return;
-        ItemStack item = ItemStack.fromNbt(nbt.getList("Items", NbtElement.COMPOUND_TYPE).getCompound(0));
+        ItemStack item = bowl.getOrDefault(CookItComponents.SINGLE_COOKING_COMPONENT, ItemStack.EMPTY);
 
         if (item.isOf(CookItItems.GOOP)) {
             to.setStack(stack, item);
-            nbt.getList("Items", NbtElement.COMPOUND_TYPE).getCompound(0).putInt("Count", item.getCount() - 1);
+            item.decrement(1);
+            bowl.set(CookItComponents.SINGLE_COOKING_COMPONENT, item);
         }
     }
 
@@ -109,16 +108,15 @@ public class MixingBowl extends BlockWithEntity implements BlockEntityProvider {
         super.onPlaced(world, pos, state, placer, itemStack);
         MixingBowlEntity entity = (MixingBowlEntity) world.getBlockEntity(pos);
 
-        NbtCompound nbt = itemStack.getSubNbt("BlockEntityTag");
-        if (nbt == null) return;
+
         if (entity != null && !world.isClient) {
-            entity.setGoopColor(nbt.getInt("color"));
+            entity.setGoopColor(itemStack.getOrDefault(CookItComponents.COLOR_COMPONENT,0));
         }
-        if (nbt.contains("Items", NbtElement.LIST_TYPE)) {
-            if (ItemStack.fromNbt(nbt.getList("Items", NbtElement.COMPOUND_TYPE).getCompound(0)).isOf(CookItItems.GOOP)) {
-                world.scheduleBlockTick(pos, state.getBlock(), 1);
-            }
+
+        if (itemStack.getOrDefault(CookItComponents.SINGLE_COOKING_COMPONENT, ItemStack.EMPTY).isOf(CookItItems.GOOP)) {
+            world.scheduleBlockTick(pos, state.getBlock(), 1);
         }
+
     }
 
     @Override

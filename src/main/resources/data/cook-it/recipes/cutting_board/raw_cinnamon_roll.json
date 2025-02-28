@@ -1,12 +1,13 @@
 {
   "type": "cook-it:cutting",
-  "input": {
+  "ingredient": {
     "item": "cook-it:raw_donut"
   },
   "output": {
-    "item": "cook-it:raw_cinnamon_roll"
+    "item": "cook-it:raw_cinnamon_roll",
+    "count": 4
   },
-  "count": 4,
+
   "tool": {
     "item": "minecraft:air"
   },

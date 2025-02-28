@@ -1,6 +1,6 @@
 {
   "type": "cook-it:cutting",
-  "input": {
+  "ingredient": {
     "item": "cook-it:plain_donut"
   },
   "output": {

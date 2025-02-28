@@ -1,6 +1,6 @@
 {
   "type": "cook-it:cutting",
-  "input": {
+  "ingredient": {
     "item": "cook-it:sweet_berry_donut"
   },
   "output": {

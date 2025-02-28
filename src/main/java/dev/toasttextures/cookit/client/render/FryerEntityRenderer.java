@@ -13,7 +13,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.RotationAxis;
-import dev.toasttextures.cookit.CookIt;
 
 @Environment(EnvType.CLIENT)
 public class FryerEntityRenderer implements BlockEntityRenderer<FryerEntity> {
@@ -27,7 +26,7 @@ public class FryerEntityRenderer implements BlockEntityRenderer<FryerEntity> {
         final MinecraftClient client = MinecraftClient.getInstance();
         ItemStack fryerBasket = entity.getStack(0);
         ItemStack item = FryerEntity.getContainerItem(fryerBasket);
-        Direction facing = entity.getCachedState().get(Properties.FACING);
+        Direction facing = entity.getCachedState().get(Properties.HORIZONTAL_FACING);
         int dir = 0;
         float x = 0, y = 0, z = 0;
         switch (facing) {
@@ -55,7 +54,6 @@ public class FryerEntityRenderer implements BlockEntityRenderer<FryerEntity> {
                 z = -0.4375f;
                 dir = 3;
             }
-            default -> CookIt.LOGGER.error("Fryer fried its braincells > {}", facing);
         }
         matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(90 * dir));
         matrices.translate(x, y, z);

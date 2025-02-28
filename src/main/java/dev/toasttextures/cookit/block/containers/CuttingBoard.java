@@ -10,8 +10,8 @@ import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.Properties;
-import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.ItemActionResult;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -41,23 +41,25 @@ public class CuttingBoard extends HorizontalFacingBlock implements BlockEntityPr
         builder.add(Properties.HORIZONTAL_FACING);
 
     }
+
+
     @Override
-    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+    public ItemActionResult onUseWithItem(ItemStack stack, BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         world.updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
         CuttingBoardEntity blockEntity = (CuttingBoardEntity) world.getBlockEntity(pos);
         if (blockEntity == null) {
-            return ActionResult.FAIL;
+            return ItemActionResult.FAIL;
         }
-        if (world.isClient) { return ActionResult.SUCCESS; }
+        if (world.isClient) { return ItemActionResult.SUCCESS; }
 
         ItemStack heldItem = player.getStackInHand(hand);
-        if (heldItem.getItem() instanceof FryerBasket) { return ActionResult.FAIL; }
+        if (heldItem.getItem() instanceof FryerBasket) { return ItemActionResult.FAIL; }
 
         if (blockEntity.isEmpty()) {
             if (!heldItem.isEmpty()) {
                 blockEntity.setStack(0, heldItem.split(1));
             } else {
-                return ActionResult.FAIL;
+                return ItemActionResult.FAIL;
             }
         } else if (!heldItem.isEmpty()) {
             blockEntity.processRecipe(heldItem, false);
@@ -65,7 +67,7 @@ public class CuttingBoard extends HorizontalFacingBlock implements BlockEntityPr
             if (!blockEntity.processRecipe(heldItem, false))
                 pickUpCookingBoardItems(state, world, pos, player);
         }
-        return ActionResult.SUCCESS;
+        return ItemActionResult.SUCCESS;
     }
 
     // pickups items, boolean used to cancel the block break if the block wasn't empty

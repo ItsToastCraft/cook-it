@@ -2,6 +2,7 @@ package dev.toasttextures.cookit.block.entity;
 
 import dev.toasttextures.cookit.registries.CookItBlockEntities;
 import dev.toasttextures.cookit.registries.CookItBlocks;
+import dev.toasttextures.cookit.registries.CookItComponents;
 import dev.toasttextures.cookit.registries.CookItItems;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
@@ -9,11 +10,16 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.nbt.NbtString;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 public class PizzaEntity extends BlockEntity{
 
@@ -33,22 +39,19 @@ public class PizzaEntity extends BlockEntity{
     public void readFromItemStack(ItemStack stack) {
         int slices = 4;
         this.toppings.clear();
-        if (!stack.isEmpty() && stack.getNbt() != null && stack.getNbt().contains("BlockEntityTag")) {
-            NbtCompound tag = stack.getNbt().getCompound("BlockEntityTag");
-            if (tag.contains("toppings", NbtElement.LIST_TYPE)) {
-                this.toppings = tag.getList("toppings", NbtElement.STRING_TYPE).copy();
+        if (!stack.isEmpty() && stack.getComponents() != null && stack.getComponents().contains(CookItComponents.TOPPING_COMPONENT)) {
+            ArrayList<String> toppings = stack.getComponents().getOrDefault(CookItComponents.TOPPING_COMPONENT, new ArrayList<>());
+            NbtList toppingsNbt = new NbtList();
+            for (String topping : toppings) {
+                toppingsNbt.add(NbtString.of(topping)); // Convert each string into NbtString
             }
-            if (tag.contains("sliceCount", NbtElement.INT_TYPE)) {
-                slices = tag.getInt("sliceCount");
+            if (stack.getItem() == CookItItems.PIZZA_SLICE) {
+                slices = 1;
             }
-        }
-
-        if (stack.getItem() == CookItItems.PIZZA_SLICE) {
-            slices = 1;
-            NbtCompound tag = stack.getNbt();
-            if (tag != null && tag.contains("toppings", NbtElement.LIST_TYPE)) {
-                this.toppings = tag.getList("toppings", NbtElement.STRING_TYPE).copy();
+            else if ( stack.getComponents().contains(CookItComponents.SLICE_COUNT_COMPONENT)) {
+                slices = stack.getComponents().getOrDefault(CookItComponents.SLICE_COUNT_COMPONENT, 4);
             }
+            this.toppings = toppingsNbt;
         }
 
         this.isCooked = stack.getItem() != CookItBlocks.UNCOOKED_PIZZA.asItem();
@@ -56,23 +59,26 @@ public class PizzaEntity extends BlockEntity{
     }
 
     @Override
-    public void readNbt(NbtCompound nbt) {
-        super.readNbt(nbt);
+    public void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
+        super.readNbt(nbt, registryLookup);
         this.toppings = nbt.getList("toppings", NbtElement.STRING_TYPE);
         this.isCooked = nbt.getBoolean("isCooked");
         this.sliceCount = nbt.getInt("sliceCount");
     }
 
     @Override
-    public void writeNbt(NbtCompound nbt) {
+    public void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
         nbt.put("toppings", toppings);
         nbt.putBoolean("isCooked", isCooked);
         nbt.putInt("sliceCount", sliceCount);
-        super.writeNbt(nbt);
+        super.writeNbt(nbt, registryLookup);
     }
 
-    public NbtList getToppings() {
-        return toppings;
+    public ArrayList<String> getToppings() {
+        return toppings.stream()
+                .filter(NbtString.class::isInstance) // Ensure elements are NbtString
+                .map(NbtElement::asString) // Convert to String
+                .collect(Collectors.toCollection(ArrayList::new)); // Collect into ArrayList
     }
 
     public boolean isCooked() {
@@ -94,8 +100,8 @@ public class PizzaEntity extends BlockEntity{
     }
 
     @Override
-    public NbtCompound toInitialChunkDataNbt() {
-        return createNbt();
+    public NbtCompound toInitialChunkDataNbt(RegistryWrapper.WrapperLookup registryLookup) {
+        return createNbt(registryLookup);
     }
 }
 

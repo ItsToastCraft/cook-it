@@ -1,10 +1,8 @@
 {
   "type": "cook-it:baking",
-  "ingredients": [
-    {
+  "ingredient": {
       "item": "cook-it:raw_croissant"
-    }
-  ],
+  },
   "output": {
     "item": "cook-it:croissant"
   },

@@ -6,6 +6,7 @@ import net.minecraft.inventory.Inventories;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.recipe.RecipeEntry;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -29,19 +30,19 @@ public class MicrowaveEntity extends CookingBlockEntity implements ImplementedIn
     public MicrowaveEntity(BlockPos pos, BlockState state) { super(CookItBlockEntities.MICROWAVE_ENTITY, pos, state, 2); }
 
     @Override
-    public void readNbt(NbtCompound nbt) {
+    public void readNbt(NbtCompound nbt,RegistryWrapper.WrapperLookup registryLookup) {
         items.clear();
-        super.readNbt(nbt);
-
-        Inventories.readNbt(nbt, items);
+        super.readNbt(nbt, registryLookup);
+        Inventories.readNbt(nbt, items, registryLookup);
         progress = nbt.getInt("progress");
     }
 
     @Override
-    public void writeNbt(NbtCompound nbt) {
-        Inventories.writeNbt(nbt, this.items);
+    public void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
+
+        Inventories.writeNbt(nbt, this.items, registryLookup);
         nbt.putInt("progress", progress);
-        super.writeNbt(nbt);
+        super.writeNbt(nbt,registryLookup);
     }
     public int getProgress() { return this.progress; }
     public void tick(World world, BlockPos pos, BlockState state) {
