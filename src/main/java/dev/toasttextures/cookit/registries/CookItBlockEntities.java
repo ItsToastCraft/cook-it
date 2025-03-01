@@ -52,6 +52,6 @@ public class CookItBlockEntities {
     }
 
     public static <T extends BlockEntity> BlockEntityType<T> registerBlockEntities(String name, FabricBlockEntityTypeBuilder.Factory<T> factory, Block[] block) {
-        return Registry.register(Registries.BLOCK_ENTITY_TYPE, new Identifier(CookIt.MOD_ID, name), FabricBlockEntityTypeBuilder.create(factory, block).build());
+        return Registry.register(Registries.BLOCK_ENTITY_TYPE, Identifier.of(CookIt.MOD_ID, name), FabricBlockEntityTypeBuilder.create(factory, block).build());
     }
 }

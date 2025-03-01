@@ -1,11 +1,12 @@
 package dev.toasttextures.cookit.block.entity;
 
 
+import dev.toasttextures.cookit.recipes.RecipeInventory;
 import net.minecraft.block.BlockState;
 import net.minecraft.inventory.Inventories;
-import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.recipe.RecipeEntry;
+import net.minecraft.recipe.RecipeInputProvider;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.math.BlockPos;
@@ -88,7 +89,7 @@ public class MicrowaveEntity extends CookingBlockEntity implements ImplementedIn
     private void craftRecipe() {
         Optional<RecipeEntry<MicrowaveRecipe>> recipe = getCurrentRecipe();
 
-        this.setStack(INPUT_SLOT, recipe.get().value().craft(new SimpleInventory(this.getStack(0)), Objects.requireNonNull(this.world).getRegistryManager()));
+        this.setStack(INPUT_SLOT, recipe.get().value().craft(new RecipeInventory(this.getStack(0)), Objects.requireNonNull(this.world).getRegistryManager()));
     }
 
     private void resetProgress() { this.progress = 0; }
@@ -103,7 +104,7 @@ public class MicrowaveEntity extends CookingBlockEntity implements ImplementedIn
     }
 
     private Optional<RecipeEntry<MicrowaveRecipe>> getCurrentRecipe() {
-        SimpleInventory inv = new SimpleInventory(this.size());
+        RecipeInventory inv = new RecipeInventory(this.size());
 
         for (int i = 0; i < this.size(); i++) {
             inv.setStack(i, this.getStack(i));

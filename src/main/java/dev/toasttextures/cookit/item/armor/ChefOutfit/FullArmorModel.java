@@ -15,9 +15,9 @@ public class FullArmorModel extends BipedEntityModel<LivingEntity> {
     }
 
     @Override
-    public void render(MatrixStack ms, VertexConsumer buffer, int light, int overlay, float r, float g, float b, float a) {
+    public void render(MatrixStack matrices, VertexConsumer vertices, int light, int overlay, int color) {
         renderArmorSlot(slot);
-        super.render(ms, buffer, light, overlay, r, g, b, a);
+        super.render(matrices, vertices, light, overlay, color);
     }
 
     private void renderArmorSlot(EquipmentSlot slot) {

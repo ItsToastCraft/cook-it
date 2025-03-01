@@ -10,9 +10,9 @@ import net.minecraft.util.Identifier;
 import static dev.toasttextures.cookit.CookIt.MOD_ID;
 
 public class CookItEntityModelLayers {
-    public static final EntityModelLayer CHEF_OUTFIT = new EntityModelLayer(new Identifier(MOD_ID,"chef_outfit"), "main");
-    public static final EntityModelLayer PIZZA = new EntityModelLayer(new Identifier(MOD_ID,"pizza"), "main");
-    public static final EntityModelLayer PIZZA_TOPPING = new EntityModelLayer(new Identifier(MOD_ID,"pizza"), "topping");
+    public static final EntityModelLayer CHEF_OUTFIT = new EntityModelLayer(Identifier.of(MOD_ID,"chef_outfit"), "main");
+    public static final EntityModelLayer PIZZA = new EntityModelLayer(Identifier.of(MOD_ID,"pizza"), "main");
+    public static final EntityModelLayer PIZZA_TOPPING = new EntityModelLayer(Identifier.of(MOD_ID,"pizza"), "topping");
 
     public static void registerLayers() {
         EntityModelLayerRegistry.registerModelLayer(CHEF_OUTFIT, () -> TexturedModelData.of(ChefOutfitModel.getModelData(), 64, 64));

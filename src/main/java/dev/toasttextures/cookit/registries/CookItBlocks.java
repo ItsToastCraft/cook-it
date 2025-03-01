@@ -72,16 +72,16 @@ public class CookItBlocks {
         }
     }
     public static Block registerBlockNoItem(String name, Block block) {
-        return Registry.register(Registries.BLOCK, new Identifier(CookIt.MOD_ID, name), block);
+        return Registry.register(Registries.BLOCK, Identifier.of(CookIt.MOD_ID, name), block);
     }
     public static Block registerBlock(String name, Block block) {
         registerBlockItem(name, block);
         BLOCKS.add(block);
-        return Registry.register(Registries.BLOCK, new Identifier(CookIt.MOD_ID, name), block);
+        return Registry.register(Registries.BLOCK, Identifier.of(CookIt.MOD_ID, name), block);
     }
 
     public static Item registerBlockItem(String name, Block block) {
-        return Registry.register(Registries.ITEM, new Identifier(CookIt.MOD_ID, name), new BlockItem(block, new Item.Settings()));
+        return Registry.register(Registries.ITEM, Identifier.of(CookIt.MOD_ID, name), new BlockItem(block, new Item.Settings()));
     }
 
     public static void registerBlocks() {

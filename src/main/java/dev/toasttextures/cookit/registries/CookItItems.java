@@ -71,7 +71,7 @@ public class CookItItems {
     public static final Item CINNAMON_ROLL_GLAZED = registerItem("cinnamon_roll_glazed", new CookItFood(new Item.Settings().food(new FoodComponent.Builder().nutrition(4).build()), CookItFoodTypes.DONE));
 
     // -- Accessories --
-    public static final Item CHEF_HAT = registerItem("chef_hat", new Item(new Item.Settings().equipmentSlot(stack -> EquipmentSlot.HEAD)));
+    public static final Item CHEF_HAT = registerItem("chef_hat", new Item(new Item.Settings().equipmentSlot((livingEntity, itemStack) -> EquipmentSlot.HEAD)));
     public static final Item CHEF_UNIFORM = registerItem("chef_uniform", new ChefOutfitItem(ArmorMaterials.LEATHER, ArmorItem.Type.CHESTPLATE, new Item.Settings()));
     public static final Item CHEF_PANTS = registerItem("chef_pants", new ChefOutfitItem(ArmorMaterials.LEATHER, ArmorItem.Type.LEGGINGS, new Item.Settings()));
 
@@ -90,7 +90,7 @@ public class CookItItems {
     }
     private static Item registerItem(String name, Item item) {
         CookItItems.ITEMS.add(item);
-        return Registry.register(Registries.ITEM, new Identifier(CookIt.MOD_ID, name), item);
+        return Registry.register(Registries.ITEM, Identifier.of(CookIt.MOD_ID, name), item);
     }
     public static void registerItems() {
         CookItItems.ITEMS.remove(GOOP);

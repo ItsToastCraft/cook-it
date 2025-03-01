@@ -4,7 +4,6 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
@@ -15,7 +14,7 @@ import net.minecraft.recipe.RecipeType;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.world.World;
 
-public class MicrowaveRecipe implements Recipe<SimpleInventory> {
+public class MicrowaveRecipe implements Recipe<RecipeInventory> {
     private final ItemStack output;
     private final Ingredient ingredient;
     private final int maxProgress;
@@ -31,7 +30,7 @@ public class MicrowaveRecipe implements Recipe<SimpleInventory> {
     }
 
     @Override
-    public boolean matches(SimpleInventory inventory, World world) {
+    public boolean matches(RecipeInventory inventory, World world) {
         if(world.isClient()) {
             return false;
         }
@@ -42,7 +41,7 @@ public class MicrowaveRecipe implements Recipe<SimpleInventory> {
     public boolean isIgnoredInRecipeBook() { return true; }
 
     @Override
-    public ItemStack craft(SimpleInventory inventory, RegistryWrapper.WrapperLookup registriesLookup) {
+    public ItemStack craft(RecipeInventory inventory, RegistryWrapper.WrapperLookup registriesLookup) {
         return output.copy();
     }
 

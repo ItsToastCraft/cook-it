@@ -37,9 +37,9 @@ public class CookIt implements ModInitializer {
         CookItSounds.registerSounds();
         CookItBlockEntities.registerEntities();
         CookItComponents.registerComponents();
-        Registry.register(Registries.PARTICLE_TYPE, new Identifier(MOD_ID, "oil"), OIL_PARTICLE);
+        Registry.register(Registries.PARTICLE_TYPE, Identifier.of(MOD_ID, "oil"), OIL_PARTICLE);
 
-        Registry.register(Registries.ITEM_GROUP, new Identifier(CookIt.MOD_ID, "items"), CookItItems.COOK_IT_GROUP);
+        Registry.register(Registries.ITEM_GROUP, Identifier.of(CookIt.MOD_ID, "items"), CookItItems.COOK_IT_GROUP);
         PlayerBlockBreakEvents.BEFORE.register((world, player, pos, state, blockEntity) -> {
             if (state.getBlock() instanceof CuttingBoard cuttingBoard) {
                 return cuttingBoard.resetRecipe((CuttingBoardEntity) blockEntity);

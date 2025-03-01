@@ -1,12 +1,12 @@
 package dev.toasttextures.cookit.block.entity;
 
+import dev.toasttextures.cookit.recipes.RecipeInventory;
 import dev.toasttextures.cookit.registries.CookItBlocks;
 import dev.toasttextures.cookit.registries.CookItComponents;
 import dev.toasttextures.cookit.registries.CookItItems;
 import dev.toasttextures.cookit.util.BlockEntityUtils;
 import net.minecraft.block.BlockState;
 import net.minecraft.inventory.Inventories;
-import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.recipe.RecipeEntry;
@@ -111,9 +111,9 @@ public class OvenEntity extends CookingBlockEntity implements ImplementedInvento
             this.done = true;
             world.setBlockState(pos, state.with(DONE, true));
             this.progress[slot] = 0;
-            world.playSound(null, this.getPos(), SoundEvent.of(new Identifier("block.note_block.xylophone")), SoundCategory.BLOCKS, 3.0f, 1.5f);
-            world.playSound(null, this.getPos(), SoundEvent.of(new Identifier("block.note_block.xylophone")), SoundCategory.BLOCKS, 3.0f, 2f);
-            world.playSound(null, this.getPos(), SoundEvent.of(new Identifier("block.note_block.xylophone")), SoundCategory.BLOCKS, 3.0f, 2.5f);
+            world.playSound(null, this.getPos(), SoundEvent.of(Identifier.of("block.note_block.xylophone")), SoundCategory.BLOCKS, 3.0f, 1.5f);
+            world.playSound(null, this.getPos(), SoundEvent.of(Identifier.of("block.note_block.xylophone")), SoundCategory.BLOCKS, 3.0f, 2f);
+            world.playSound(null, this.getPos(), SoundEvent.of(Identifier.of("block.note_block.xylophone")), SoundCategory.BLOCKS, 3.0f, 2.5f);
         }
     }
     private void craftRecipe(int index) {
@@ -127,7 +127,7 @@ public class OvenEntity extends CookingBlockEntity implements ImplementedInvento
                 Optional<RecipeEntry<OvenRecipe>> recipe = getCurrentRecipe(item);
                 if (recipe.isPresent()) {
                     if (item.isEmpty() && recipe.get().value().getMaxProgress() <= this.progress[index]) {
-                        ItemStack output = recipe.get().value().craft(new SimpleInventory(stack), this.world.getRegistryManager());
+                        ItemStack output = recipe.get().value().craft(new RecipeInventory(stack), this.world.getRegistryManager());
                         if (item.getComponents() != null) {
                             output.applyComponentsFrom(item.getComponents());
                         }
@@ -141,12 +141,12 @@ public class OvenEntity extends CookingBlockEntity implements ImplementedInvento
             stack.set(CookItComponents.COOKING_COMPONENT, outputs);
         } else {
             Optional<RecipeEntry<OvenRecipe>> recipe = getCurrentRecipe(stack);
-            ItemStack result = recipe.get().value().craft(new SimpleInventory(stack), this.world.getRegistryManager());
+            ItemStack result = recipe.get().value().craft(new RecipeInventory(stack), this.world.getRegistryManager());
             result.applyComponentsFrom(stack.getComponents());
             this.setStack(index, result);
         }
         assert world != null;
-        world.playSound(null, this.getPos(), SoundEvent.of(new Identifier("block.note_block.xylophone")), SoundCategory.BLOCKS, 3.0f, 1.5f);
+        world.playSound(null, this.getPos(), SoundEvent.of(Identifier.of("block.note_block.xylophone")), SoundCategory.BLOCKS, 3.0f, 1.5f);
     }
 
     private Optional<RecipeEntry<OvenRecipe>> getCurrentRecipe(ItemStack itemStack) {
@@ -160,7 +160,7 @@ public class OvenEntity extends CookingBlockEntity implements ImplementedInvento
             items.add(itemStack);
         }
 
-        SimpleInventory inv = new SimpleInventory(items.size());
+        RecipeInventory inv = new RecipeInventory(items.size());
 
         for (int i = 0; i < items.size(); i++) {
             inv.setStack(i, items.get(i));

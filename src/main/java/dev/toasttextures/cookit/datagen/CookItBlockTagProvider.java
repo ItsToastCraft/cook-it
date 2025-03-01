@@ -18,8 +18,8 @@ public class CookItBlockTagProvider extends FabricTagProvider<Block> {
     public CookItBlockTagProvider(FabricDataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> completableFuture) {
         super(output, RegistryKeys.BLOCK,  completableFuture);
     }
-    public static final TagKey<Block> CONTAINERS = TagKey.of(RegistryKeys.BLOCK, new Identifier(MOD_ID, "containers"));
-    public static final TagKey<Block> APPLIANCES = TagKey.of(RegistryKeys.BLOCK, new Identifier(MOD_ID, "appliances"));
+    public static final TagKey<Block> CONTAINERS = TagKey.of(RegistryKeys.BLOCK, Identifier.of(MOD_ID, "containers"));
+    public static final TagKey<Block> APPLIANCES = TagKey.of(RegistryKeys.BLOCK, Identifier.of(MOD_ID, "appliances"));
     @Override
     protected void configure(RegistryWrapper.WrapperLookup arg) {
         getOrCreateTagBuilder(BlockTags.AXE_MINEABLE)

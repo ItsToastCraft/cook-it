@@ -52,19 +52,18 @@ public class CuttingBoard extends HorizontalFacingBlock implements BlockEntityPr
         }
         if (world.isClient) { return ItemActionResult.SUCCESS; }
 
-        ItemStack heldItem = player.getStackInHand(hand);
-        if (heldItem.getItem() instanceof FryerBasket) { return ItemActionResult.FAIL; }
+        if (stack.getItem() instanceof FryerBasket) { return ItemActionResult.FAIL; }
 
         if (blockEntity.isEmpty()) {
-            if (!heldItem.isEmpty()) {
-                blockEntity.setStack(0, heldItem.split(1));
+            if (!stack.isEmpty()) {
+                blockEntity.setStack(0, stack.split(1));
             } else {
                 return ItemActionResult.FAIL;
             }
-        } else if (!heldItem.isEmpty()) {
-            blockEntity.processRecipe(heldItem, false);
+        } else if (!stack.isEmpty()) {
+            blockEntity.processRecipe(stack, false);
         } else {
-            if (!blockEntity.processRecipe(heldItem, false))
+            if (!blockEntity.processRecipe(stack, false))
                 pickUpCookingBoardItems(state, world, pos, player);
         }
         return ItemActionResult.SUCCESS;

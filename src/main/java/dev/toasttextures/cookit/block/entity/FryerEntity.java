@@ -1,12 +1,12 @@
 package dev.toasttextures.cookit.block.entity;
 
 
+import dev.toasttextures.cookit.recipes.RecipeInventory;
 import dev.toasttextures.cookit.registries.CookItComponents;
 import dev.toasttextures.cookit.registries.OilParticleEffect;
 import net.minecraft.block.BlockState;
 import net.minecraft.component.ComponentMap;
 import net.minecraft.inventory.Inventories;
-import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.recipe.RecipeEntry;
@@ -101,7 +101,7 @@ public class FryerEntity extends CookingBlockEntity implements ImplementedInvent
         Optional<RecipeEntry<FryerRecipe>> recipe = getCurrentRecipe();
         if (recipe.isPresent()) {
             if (!container.isEmpty() && recipe.get().value().getMaxProgress() <= this.progress) {
-                FryerBasket.setItem(container, recipe.get().value().craft(new SimpleInventory(this.getStack(0)), Objects.requireNonNull(this.world).getRegistryManager()));
+                FryerBasket.setItem(container, recipe.get().value().craft(new RecipeInventory(this.getStack(0)), Objects.requireNonNull(this.world).getRegistryManager()));
                 this.markDirty();
             }
         }
@@ -138,7 +138,7 @@ public class FryerEntity extends CookingBlockEntity implements ImplementedInvent
     }
 
     private Optional<RecipeEntry<FryerRecipe>> getCurrentRecipe() {
-        SimpleInventory inv = new SimpleInventory(this.size());
+        RecipeInventory inv = new RecipeInventory(this.size());
         ItemStack item = getContainerItem(this.getStack(0));
         if (item.isEmpty()) {
             return Optional.empty();

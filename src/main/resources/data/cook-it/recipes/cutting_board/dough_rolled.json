@@ -1,8 +1,9 @@
 {
   "type": "cook-it:cutting",
-  "ingredient": {
+  "ingredient": [{
     "item": "cook-it:dough"
-  },
+  }
+    ],
   "output": {
     "item": "cook-it:dough_rolled"
   },

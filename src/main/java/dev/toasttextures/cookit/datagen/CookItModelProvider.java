@@ -98,7 +98,7 @@ public class CookItModelProvider extends FabricModelProvider {
                     .register(Direction.EAST, BlockStateVariant.create().put(VariantSettings.Y, VariantSettings.Rotation.R90).put(VariantSettings.MODEL, identifier).put(VariantSettings.UVLOCK, false))
                     .register(Direction.SOUTH, BlockStateVariant.create().put(VariantSettings.Y, VariantSettings.Rotation.R180).put(VariantSettings.MODEL, identifier).put(VariantSettings.UVLOCK, false))
                     .register(Direction.WEST, BlockStateVariant.create().put(VariantSettings.Y, VariantSettings.Rotation.R270).put(VariantSettings.MODEL, identifier).put(VariantSettings.UVLOCK, false))));
-            Models.GENERATED.upload(ModelIds.getItemModelId(block.asItem()), TextureMap.of(TextureKey.LAYER0, new Identifier(CookIt.MOD_ID, "item/temp/vanilla_bean")), blockStateModelGenerator.modelCollector);
+            Models.GENERATED.upload(ModelIds.getItemModelId(block.asItem()), TextureMap.of(TextureKey.LAYER0, Identifier.of(CookIt.MOD_ID, "item/temp/vanilla_bean")), blockStateModelGenerator.modelCollector);
         }
     }
 
@@ -111,7 +111,7 @@ public class CookItModelProvider extends FabricModelProvider {
     @Override
     public void generateItemModels(ItemModelGenerator itemModelGenerator) {
         for (Item rollingPin : CookItItems.ROLLING_PINS) {
-            TEMPLATE_ROLLING_PIN.upload(ModelIds.getItemModelId(rollingPin), TextureMap.of(ROLLING_PIN, new Identifier(CookIt.MOD_ID, "item/" + Registries.ITEM.getId(rollingPin).getPath())), itemModelGenerator.writer);
+            TEMPLATE_ROLLING_PIN.upload(ModelIds.getItemModelId(rollingPin), TextureMap.of(ROLLING_PIN, Identifier.of(CookIt.MOD_ID, "item/" + Registries.ITEM.getId(rollingPin).getPath())), itemModelGenerator.writer);
         }
     }
 }

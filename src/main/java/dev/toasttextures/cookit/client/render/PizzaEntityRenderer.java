@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 
 @Environment(EnvType.CLIENT)
 public class PizzaEntityRenderer implements BlockEntityRenderer<PizzaEntity> {
-    Map<PizzaToppings, Identifier> toppingToIdentifier = Arrays.stream(PizzaToppings.values()).collect(Collectors.toMap(Function.identity(), topping -> new Identifier(CookIt.MOD_ID, "textures/entity/pizza/topping/"+topping.asString() + ".png")));
+    Map<PizzaToppings, Identifier> toppingToIdentifier = Arrays.stream(PizzaToppings.values()).collect(Collectors.toMap(Function.identity(), topping -> Identifier.of(CookIt.MOD_ID, "textures/entity/pizza/topping/"+topping.asString() + ".png")));
     private final List<ModelPart> pizzaBaseParts;
     private final List<ModelPart> toppingLayerParts;
 

@@ -31,7 +31,7 @@ public class CookItModels {
     public static final Model TEMPLATE_ROLLING_PIN = newParent("item/rolling_pin", ROLLING_PIN);
 
     static Model newParent(String parent, TextureKey... requiredTextureKeys) {
-        return new Model(Optional.of(new Identifier(CookIt.MOD_ID, parent)), Optional.empty(), requiredTextureKeys);
+        return new Model(Optional.of(Identifier.of(CookIt.MOD_ID, parent)), Optional.empty(), requiredTextureKeys);
     }
 
     public static TextureMap coloredTextureMap(TextureKey type, Block block, String folder) {
@@ -43,10 +43,10 @@ public class CookItModels {
         return identifier.withPath("block/" + path);
     }
     public static Identifier setModelOutput(String path, Block block) {
-        return new Identifier(CookIt.MOD_ID, path + Registries.BLOCK.getId(block).getPath());
+        return Identifier.of(CookIt.MOD_ID, path + Registries.BLOCK.getId(block).getPath());
     }
 
     public static Identifier setModelOutput(String path, Block block, String suffix) {
-        return new Identifier(CookIt.MOD_ID, path + Registries.BLOCK.getId(block).getPath() + suffix);
+        return Identifier.of(CookIt.MOD_ID, path + Registries.BLOCK.getId(block).getPath() + suffix);
     }
 }

@@ -11,7 +11,7 @@
 		"homepage": "https://cook-it.toasttextures.dev/",
 		"sources": "https://github.com/ItsToastCraft/cook-it"
 	},
-	"license": "GPL-3.0",
+	"license": "LGPL-3.0",
 	"icon": "assets/cook-it/icon.png",
 	"environment": "*",
 	"entrypoints": {
@@ -31,8 +31,8 @@
 	],
 	"depends": {
 		"fabricloader": ">=0.15.5",
-		"minecraft": "~1.20.4",
-		"java": ">=17",
+		"minecraft": "~1.21.1",
+		"java": ">=21",
 		"fabric-api": "*"
 	},
 	"suggests": {

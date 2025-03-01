@@ -1,22 +1,25 @@
 package dev.toasttextures.cookit.block.entity;
 
+import dev.toasttextures.cookit.CookIt;
 import dev.toasttextures.cookit.block.ImplementedInventory;
 import dev.toasttextures.cookit.recipes.MixingBowlRecipe;
+import dev.toasttextures.cookit.recipes.RecipeInventory;
 import dev.toasttextures.cookit.registries.CookItBlockEntities;
 import dev.toasttextures.cookit.registries.CookItComponents;
 import dev.toasttextures.cookit.registries.CookItItems;
 import net.minecraft.block.BlockState;
-import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.ItemStackParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.recipe.RecipeEntry;
+import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 
@@ -70,7 +73,7 @@ public class MixingBowlEntity extends CookingBlockEntity implements ImplementedI
 
             if (this.getClicks() >= mixes) {
                 this.setItems(DefaultedList.ofSize(this.size(), ItemStack.EMPTY));
-                ItemStack output = recipe.get().value().craft(new SimpleInventory(), world.getRegistryManager());
+                ItemStack output = recipe.get().value().craft(new RecipeInventory(), world.getRegistryManager());
                 if (hasGoop){
 
                     ItemStack goop = new ItemStack(CookItItems.GOOP, output.getCount());
@@ -96,7 +99,7 @@ public class MixingBowlEntity extends CookingBlockEntity implements ImplementedI
     }
 
     private Optional<RecipeEntry<MixingBowlRecipe>> getCurrentRecipe() {
-        SimpleInventory inv = new SimpleInventory(this.size() - 1);
+        RecipeInventory inv = new RecipeInventory(this.size() - 1);
         for (int i = 0; i < this.size() - 1; i++) {
             inv.setStack(i, this.getStack(i));
         }

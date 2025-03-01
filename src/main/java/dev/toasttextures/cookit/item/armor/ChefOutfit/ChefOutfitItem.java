@@ -52,7 +52,7 @@ public class ChefOutfitItem extends ArmorItem {
     @NotNull
     public Identifier getArmorTexture() {
 
-        return new Identifier(MOD_ID, "textures/armor/chef_outfit.png");
+        return Identifier.of(MOD_ID, "textures/armor/chef_outfit.png");
     }
 
     @Override

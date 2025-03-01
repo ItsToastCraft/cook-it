@@ -39,7 +39,7 @@ public class CookItRecipeGenerator extends FabricRecipeProvider {
         for (Plate plate : CookItBlocks.PLATES) {
             String color = getColor(plate);
             ShapedRecipeJsonBuilder.create(RecipeCategory.DECORATIONS, plate).pattern("ccc")
-                    .input('c', Registries.BLOCK.get(new Identifier("minecraft", color + "_concrete")))
+                    .input('c', Registries.BLOCK.get(Identifier.of("minecraft", color + "_concrete")))
                     .criterion(FabricRecipeProvider.hasItem(plate),
                             FabricRecipeProvider.conditionsFromItem(plate))
                     .offerTo(exporter);
@@ -47,7 +47,7 @@ public class CookItRecipeGenerator extends FabricRecipeProvider {
         for (Bowl bowl : CookItBlocks.BOWLS) {
             String color = getColor(bowl);
             ShapedRecipeJsonBuilder.create(RecipeCategory.DECORATIONS, bowl).pattern("ccc").pattern("ccc")
-                    .input('c', Registries.BLOCK.get(new Identifier("minecraft", color + "_concrete")))
+                    .input('c', Registries.BLOCK.get(Identifier.of("minecraft", color + "_concrete")))
                     .criterion(FabricRecipeProvider.hasItem(bowl),
                             FabricRecipeProvider.conditionsFromItem(bowl))
                     .offerTo(exporter);
@@ -55,7 +55,7 @@ public class CookItRecipeGenerator extends FabricRecipeProvider {
 
         for (Block cuttingBoard : CookItBlocks.CUTTING_BOARDS) {
             String woodType = CookIt.SUPPORTED_WOOD_TYPES.get(CookItBlocks.CUTTING_BOARDS.indexOf(cuttingBoard));
-            Block slab = Registries.BLOCK.get(new Identifier("minecraft", woodType + "_slab"));
+            Block slab = Registries.BLOCK.get(Identifier.of("minecraft", woodType + "_slab"));
             ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, cuttingBoard).pattern("sss")
                     .input('s', slab)
                     .criterion(FabricRecipeProvider.hasItem(slab),
@@ -66,9 +66,9 @@ public class CookItRecipeGenerator extends FabricRecipeProvider {
 
         for (Item rollingPin : ROLLING_PINS) {
             String woodType = CookIt.SUPPORTED_WOOD_TYPES.get(ROLLING_PINS.indexOf(rollingPin));
-            Block planks = Registries.BLOCK.get(new Identifier("minecraft", woodType + "_planks"));
+            Block planks = Registries.BLOCK.get(Identifier.of("minecraft", woodType + "_planks"));
             ShapedRecipeJsonBuilder.create(RecipeCategory.TOOLS, rollingPin).pattern("b").pattern("p").pattern("b")
-                    .input('b', Registries.BLOCK.get(new Identifier("minecraft", woodType + "_button")))
+                    .input('b', Registries.BLOCK.get(Identifier.of("minecraft", woodType + "_button")))
                     .input('p', planks)
                     .criterion(FabricRecipeProvider.hasItem(planks),
                             FabricRecipeProvider.conditionsFromItem(planks))

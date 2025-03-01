@@ -1,16 +1,18 @@
 package dev.toasttextures.cookit.block.entity;
 
+import dev.toasttextures.cookit.CookIt;
 import dev.toasttextures.cookit.block.food_blocks.pizza.PizzaToppings;
+import dev.toasttextures.cookit.recipes.RecipeInventory;
 import dev.toasttextures.cookit.registries.CookItBlocks;
 import dev.toasttextures.cookit.registries.CookItComponents;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.ItemStackParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.recipe.RecipeEntry;
+import net.minecraft.recipe.RecipeType;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
@@ -109,7 +111,7 @@ public class CuttingBoardEntity extends CookingBlockEntity implements Implemente
 
     private void complete(RecipeEntry<CuttingBoardRecipe> recipeEntry) {
 
-        ItemStack output = recipeEntry.value().craft(new SimpleInventory(this.getStack(0)), this.world.getRegistryManager());
+        ItemStack output = recipeEntry.value().craft(new RecipeInventory(this.getStack(0)), this.world.getRegistryManager());
         output.setCount(recipeEntry.value().getOutputCount());
         this.setStack(0, output);
         this.setClicks(0);
@@ -118,10 +120,10 @@ public class CuttingBoardEntity extends CookingBlockEntity implements Implemente
     }
 
     private List<RecipeEntry<CuttingBoardRecipe>> getCurrentRecipe() {
-        SimpleInventory inv = new SimpleInventory(this.size());
-        for (int i = 0; i < this.size(); i++) {
-            inv.setStack(i, this.getStack(i));
-        }
+        RecipeInventory inv = new RecipeInventory(this.size());
+        inv.setStack(0, this.getStack(0));
+        CookIt.LOGGER.info(String.valueOf(Objects.requireNonNull(world).getRecipeManager().sortedValues()));
+        CookIt.LOGGER.info(String.valueOf(Objects.requireNonNull(world).getRecipeManager().getAllMatches(CuttingBoardRecipe.Type.INSTANCE, inv, world)));
         return Objects.requireNonNull(world).getRecipeManager().getAllMatches(CuttingBoardRecipe.Type.INSTANCE, inv, world);
     }
 }

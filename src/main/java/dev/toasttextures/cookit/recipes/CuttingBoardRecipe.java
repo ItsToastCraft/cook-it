@@ -3,7 +3,7 @@ package dev.toasttextures.cookit.recipes;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.inventory.SimpleInventory;
+import dev.toasttextures.cookit.CookIt;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
@@ -11,7 +11,9 @@ import net.minecraft.recipe.*;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.world.World;
 
-public class CuttingBoardRecipe implements Recipe<SimpleInventory> {
+import java.util.Arrays;
+
+public class CuttingBoardRecipe implements Recipe<RecipeInventory> {
     private final ItemStack output;
     private final Ingredient ingredient;
     private final Ingredient tool;
@@ -29,18 +31,19 @@ public class CuttingBoardRecipe implements Recipe<SimpleInventory> {
     }
 
     @Override
-    public boolean matches(SimpleInventory inventory, World world) {
+    public boolean matches(RecipeInventory inventory, World world) {
         if(world.isClient()) {
             return false;
         }
-        return ingredient.test(inventory.getStack(0));
+        CookIt.LOGGER.info(Arrays.toString(ingredient.getMatchingStacks()));
+        return ingredient.test(inventory.getStackInSlot(0));
     }
 
     @Override
     public boolean isIgnoredInRecipeBook() { return true; }
     @Override
-    public ItemStack craft(SimpleInventory inventory, RegistryWrapper.WrapperLookup lookup) {
-        return output.copy();
+    public ItemStack craft(RecipeInventory inventory, RegistryWrapper.WrapperLookup lookup) {
+        return this.output.copy();
     }
 
     public ItemStack[] getTool() {
@@ -115,6 +118,7 @@ public class CuttingBoardRecipe implements Recipe<SimpleInventory> {
             int clicks = buf.readInt();
             boolean usesItem = buf.readBoolean();
             boolean resettable = buf.readBoolean();
+
             return new CuttingBoardRecipe(ingredient, output, tool, clicks, usesItem, resettable);
         }
 

@@ -54,7 +54,7 @@ public class CookItClient implements ClientModInitializer {
         BuiltinItemRendererRegistry.INSTANCE.register(CookItItems.PIZZA_SLICE, new PizzaItemRenderer());
 
 
-        ModelPredicateProviderRegistry.register(CookItItems.FIRE_EXTINGUISHER, new Identifier("extinguisher_fuel"), (stack, world, entity, seed) -> (float) Math.round(((float) stack.getMaxDamage() - stack.getDamage()) / 100) / 10);
+        ModelPredicateProviderRegistry.register(CookItItems.FIRE_EXTINGUISHER, Identifier.of("extinguisher_fuel"), (stack, world, entity, seed) -> (float) Math.round(((float) stack.getMaxDamage() - stack.getDamage()) / 100) / 10);
         ParticleFactoryRegistry.getInstance().register(CookIt.OIL_PARTICLE, OilParticle.Factory::new);
 
         ColorProviderRegistry.BLOCK.register((state, view, pos, tintIndex) -> {
