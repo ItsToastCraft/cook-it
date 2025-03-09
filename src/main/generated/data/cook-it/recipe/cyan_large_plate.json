@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "c": {
+      "item": "minecraft:cyan_concrete"
+    }
+  },
+  "pattern": [
+    "ccc"
+  ],
+  "result": {
+    "count": 1,
+    "id": "cook-it:cyan_large_plate"
+  }
+}

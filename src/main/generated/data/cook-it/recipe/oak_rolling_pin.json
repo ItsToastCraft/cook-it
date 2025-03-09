@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "b": {
+      "item": "minecraft:oak_button"
+    },
+    "p": {
+      "item": "minecraft:oak_planks"
+    }
+  },
+  "pattern": [
+    "b",
+    "p",
+    "b"
+  ],
+  "result": {
+    "count": 1,
+    "id": "cook-it:oak_rolling_pin"
+  }
+}

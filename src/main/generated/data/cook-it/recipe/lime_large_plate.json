@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "c": {
+      "item": "minecraft:lime_concrete"
+    }
+  },
+  "pattern": [
+    "ccc"
+  ],
+  "result": {
+    "count": 1,
+    "id": "cook-it:lime_large_plate"
+  }
+}

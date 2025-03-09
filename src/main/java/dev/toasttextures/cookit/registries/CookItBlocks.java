@@ -15,7 +15,6 @@ import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
 import dev.toasttextures.cookit.CookIt;
-import dev.toasttextures.cookit.block.Bench;
 import dev.toasttextures.cookit.block.food_blocks.pizza.Pizza;
 
 import java.util.ArrayList;
@@ -50,7 +49,6 @@ public class CookItBlocks {
     public static final Block MIXING_BOWL = registerBlock("mixing_bowl", new MixingBowl(AbstractBlock.Settings.copy(MUFFIN_TIN)));
 
     // -- Miscellaneous --
-    public static final Block BENCH = registerBlock("bench", new Bench(AbstractBlock.Settings.create()));
     public static final Block VANILLA_VINE_STEM = registerBlockNoItem("vanilla_vine_stem", new VanillaVineStem(AbstractBlock.Settings.copy(Blocks.VINE)));
     public static final Block VANILLA_VINE = registerBlockNoItem("vanilla_vine", new VanillaVinePlant(AbstractBlock.Settings.copy(Blocks.VINE)));
 

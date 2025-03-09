@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_green_large_plate": {
+      "conditions": {
+        "items": [
+          {
+            "items": "cook-it:green_large_plate"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "cook-it:green_large_plate"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_green_large_plate"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "cook-it:green_large_plate"
+    ]
+  }
+}

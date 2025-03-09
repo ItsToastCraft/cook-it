@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "c": {
+      "item": "minecraft:blue_concrete"
+    }
+  },
+  "pattern": [
+    "ccc"
+  ],
+  "result": {
+    "count": 1,
+    "id": "cook-it:blue_large_plate"
+  }
+}

@@ -1,9 +1,0 @@
-{
-  "replace": false,
-  "values": [
-    "cook-it:fryer",
-    "cook-it:toaster",
-    "cook-it:oven",
-    "cook-it:microwave"
-  ]
-}

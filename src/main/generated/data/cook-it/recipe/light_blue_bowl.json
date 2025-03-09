@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "c": {
+      "item": "minecraft:light_blue_concrete"
+    }
+  },
+  "pattern": [
+    "ccc",
+    "ccc"
+  ],
+  "result": {
+    "count": 1,
+    "id": "cook-it:light_blue_bowl"
+  }
+}

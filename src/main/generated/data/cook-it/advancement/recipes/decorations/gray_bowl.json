@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_gray_bowl": {
+      "conditions": {
+        "items": [
+          {
+            "items": "cook-it:gray_bowl"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "cook-it:gray_bowl"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_gray_bowl"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "cook-it:gray_bowl"
+    ]
+  }
+}

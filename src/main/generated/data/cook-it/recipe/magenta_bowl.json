@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "c": {
+      "item": "minecraft:magenta_concrete"
+    }
+  },
+  "pattern": [
+    "ccc",
+    "ccc"
+  ],
+  "result": {
+    "count": 1,
+    "id": "cook-it:magenta_bowl"
+  }
+}
