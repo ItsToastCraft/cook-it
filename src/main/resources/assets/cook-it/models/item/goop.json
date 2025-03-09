@@ -1,7 +1,7 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"1": "cook-it:item/temp/goop"
+		"goop": "cook-it:item/temp/goop"
 	},
 	"elements": [
 		{
@@ -9,7 +9,7 @@
 			"to": [12, 3, 12],
 			"rotation": {"angle": 0, "axis": "y", "origin": [0, -2, 11]},
 			"faces": {
-				"up": {"uv": [0, 0, 8, 8], "texture": "#1", "tintindex": 0}
+				"up": {"uv": [0, 0, 8, 8], "texture": "#goop", "tintindex": 0}
 			}
 		}
 	],

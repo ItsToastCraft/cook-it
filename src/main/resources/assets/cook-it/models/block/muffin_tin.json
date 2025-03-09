@@ -1,5 +1,6 @@
 {
 	"credit": "Made by ToastTextures using Blockbench",
+	"texture_size": [64, 64],
 	"textures": {
 		"muffin_tin": "cook-it:block/muffin_tin",
 		"particle": "#muffin_tin"
@@ -20,11 +21,11 @@
 			"from": [9, 0.025, 2],
 			"to": [12, 2.025, 5],
 			"faces": {
-				"north": {"uv": [13, 13, 16, 15], "texture": "#muffin_tin"},
+				"north": {"uv": [13, 10, 16, 12], "texture": "#muffin_tin"},
 				"east": {"uv": [10, 11, 13, 13], "texture": "#muffin_tin"},
-				"south": {"uv": [13, 11, 16, 13], "texture": "#muffin_tin"},
-				"west": {"uv": [10, 13, 13, 15], "texture": "#muffin_tin"},
-				"down": {"uv": [0, 13, 3, 16], "texture": "#muffin_tin"}
+				"south": {"uv": [13, 8, 16, 10], "texture": "#muffin_tin"},
+				"west": {"uv": [13, 12, 16, 14], "texture": "#muffin_tin"},
+				"down": {"uv": [13, 3, 10, 6], "texture": "#muffin_tin"}
 			}
 		},
 		{
@@ -33,9 +34,9 @@
 			"faces": {
 				"north": {"uv": [10, 7, 13, 9], "texture": "#muffin_tin"},
 				"east": {"uv": [10, 9, 13, 11], "texture": "#muffin_tin"},
-				"south": {"uv": [13, 9, 16, 11], "texture": "#muffin_tin"},
-				"west": {"uv": [13, 7, 16, 9], "texture": "#muffin_tin"},
-				"down": {"uv": [13, 4, 16, 7], "texture": "#muffin_tin"}
+				"south": {"uv": [13, 6, 16, 8], "texture": "#muffin_tin"},
+				"west": {"uv": [13, 4, 16, 6], "texture": "#muffin_tin"},
+				"down": {"uv": [13, 3, 10, 6], "texture": "#muffin_tin"}
 			}
 		},
 		{
@@ -46,18 +47,18 @@
 				"east": {"uv": [10, 2, 13, 4], "texture": "#muffin_tin"},
 				"south": {"uv": [13, 0, 16, 2], "texture": "#muffin_tin"},
 				"west": {"uv": [10, 0, 13, 2], "texture": "#muffin_tin"},
-				"down": {"uv": [10, 4, 13, 7], "texture": "#muffin_tin"}
+				"down": {"uv": [13, 3, 10, 6], "texture": "#muffin_tin"}
 			}
 		},
 		{
 			"from": [4, 0.025, 2],
 			"to": [7, 2.025, 5],
 			"faces": {
-				"north": {"uv": [13, 13, 16, 15], "texture": "#muffin_tin"},
+				"north": {"uv": [13, 10, 16, 12], "texture": "#muffin_tin"},
 				"east": {"uv": [10, 11, 13, 13], "texture": "#muffin_tin"},
-				"south": {"uv": [13, 11, 16, 13], "texture": "#muffin_tin"},
-				"west": {"uv": [10, 13, 13, 15], "texture": "#muffin_tin"},
-				"down": {"uv": [0, 13, 3, 16], "texture": "#muffin_tin"}
+				"south": {"uv": [13, 8, 16, 10], "texture": "#muffin_tin"},
+				"west": {"uv": [13, 12, 16, 14], "texture": "#muffin_tin"},
+				"down": {"uv": [13, 3, 10, 6], "texture": "#muffin_tin"}
 			}
 		},
 		{
@@ -66,9 +67,9 @@
 			"faces": {
 				"north": {"uv": [10, 7, 13, 9], "texture": "#muffin_tin"},
 				"east": {"uv": [10, 9, 13, 11], "texture": "#muffin_tin"},
-				"south": {"uv": [13, 9, 16, 11], "texture": "#muffin_tin"},
-				"west": {"uv": [13, 7, 16, 9], "texture": "#muffin_tin"},
-				"down": {"uv": [13, 4, 16, 7], "texture": "#muffin_tin"}
+				"south": {"uv": [13, 6, 16, 8], "texture": "#muffin_tin"},
+				"west": {"uv": [13, 4, 16, 6], "texture": "#muffin_tin"},
+				"down": {"uv": [13, 3, 10, 6], "texture": "#muffin_tin"}
 			}
 		},
 		{
@@ -79,18 +80,18 @@
 				"east": {"uv": [10, 2, 13, 4], "texture": "#muffin_tin"},
 				"south": {"uv": [13, 0, 16, 2], "texture": "#muffin_tin"},
 				"west": {"uv": [10, 0, 13, 2], "texture": "#muffin_tin"},
-				"down": {"uv": [10, 4, 13, 7], "texture": "#muffin_tin"}
+				"down": {"uv": [13, 3, 10, 6], "texture": "#muffin_tin"}
 			}
 		},
 		{
 			"from": [7, 2.025, 5],
 			"to": [4, 0.025, 2],
 			"faces": {
-				"north": {"uv": [13, 13, 16, 15], "texture": "#muffin_tin"},
+				"north": {"uv": [13, 10, 16, 12], "texture": "#muffin_tin"},
 				"east": {"uv": [10, 11, 13, 13], "texture": "#muffin_tin"},
-				"south": {"uv": [13, 11, 16, 13], "texture": "#muffin_tin"},
-				"west": {"uv": [10, 13, 13, 15], "texture": "#muffin_tin"},
-				"up": {"uv": [0, 13, 3, 16], "texture": "#muffin_tin"}
+				"south": {"uv": [13, 8, 16, 10], "texture": "#muffin_tin"},
+				"west": {"uv": [13, 12, 16, 14], "texture": "#muffin_tin"},
+				"up": {"uv": [10, 4, 13, 7], "texture": "#muffin_tin"}
 			}
 		},
 		{
@@ -99,9 +100,9 @@
 			"faces": {
 				"north": {"uv": [10, 7, 13, 9], "texture": "#muffin_tin"},
 				"east": {"uv": [10, 9, 13, 11], "texture": "#muffin_tin"},
-				"south": {"uv": [13, 9, 16, 11], "texture": "#muffin_tin"},
-				"west": {"uv": [13, 7, 16, 9], "texture": "#muffin_tin"},
-				"up": {"uv": [0, 13, 3, 16], "texture": "#muffin_tin"}
+				"south": {"uv": [13, 6, 16, 8], "texture": "#muffin_tin"},
+				"west": {"uv": [13, 4, 16, 6], "texture": "#muffin_tin"},
+				"up": {"uv": [10, 4, 13, 7], "texture": "#muffin_tin"}
 			}
 		},
 		{
@@ -112,7 +113,7 @@
 				"east": {"uv": [10, 2, 13, 4], "texture": "#muffin_tin"},
 				"south": {"uv": [13, 0, 16, 2], "texture": "#muffin_tin"},
 				"west": {"uv": [10, 0, 13, 2], "texture": "#muffin_tin"},
-				"up": {"uv": [0, 13, 3, 16], "texture": "#muffin_tin"}
+				"up": {"uv": [10, 4, 13, 7], "texture": "#muffin_tin"}
 			}
 		},
 		{
@@ -123,7 +124,7 @@
 				"east": {"uv": [10, 2, 13, 4], "texture": "#muffin_tin"},
 				"south": {"uv": [13, 0, 16, 2], "texture": "#muffin_tin"},
 				"west": {"uv": [10, 0, 13, 2], "texture": "#muffin_tin"},
-				"up": {"uv": [0, 13, 3, 16], "texture": "#muffin_tin"}
+				"up": {"uv": [10, 4, 13, 7], "texture": "#muffin_tin"}
 			}
 		},
 		{
@@ -132,20 +133,20 @@
 			"faces": {
 				"north": {"uv": [10, 7, 13, 9], "texture": "#muffin_tin"},
 				"east": {"uv": [10, 9, 13, 11], "texture": "#muffin_tin"},
-				"south": {"uv": [13, 9, 16, 11], "texture": "#muffin_tin"},
-				"west": {"uv": [13, 7, 16, 9], "texture": "#muffin_tin"},
-				"up": {"uv": [0, 13, 3, 16], "texture": "#muffin_tin"}
+				"south": {"uv": [13, 6, 16, 8], "texture": "#muffin_tin"},
+				"west": {"uv": [13, 4, 16, 6], "texture": "#muffin_tin"},
+				"up": {"uv": [10, 4, 13, 7], "texture": "#muffin_tin"}
 			}
 		},
 		{
 			"from": [12, 2.025, 5],
 			"to": [9, 0.025, 2],
 			"faces": {
-				"north": {"uv": [13, 13, 16, 15], "texture": "#muffin_tin"},
+				"north": {"uv": [13, 10, 16, 12], "texture": "#muffin_tin"},
 				"east": {"uv": [10, 11, 13, 13], "texture": "#muffin_tin"},
-				"south": {"uv": [13, 11, 16, 13], "texture": "#muffin_tin"},
-				"west": {"uv": [10, 13, 13, 15], "texture": "#muffin_tin"},
-				"up": {"uv": [0, 13, 3, 16], "texture": "#muffin_tin"}
+				"south": {"uv": [13, 8, 16, 10], "texture": "#muffin_tin"},
+				"west": {"uv": [13, 12, 16, 14], "texture": "#muffin_tin"},
+				"up": {"uv": [10, 4, 13, 7], "texture": "#muffin_tin"}
 			}
 		}
 	],

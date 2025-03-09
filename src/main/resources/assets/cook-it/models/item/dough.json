@@ -1,20 +1,20 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"0": "cook-it:item/dough",
-		"particle": "cook-it:item/dough"
+		"dough": "cook-it:item/dough",
+		"particle": "#dough"
 	},
 	"elements": [
 		{
 			"from": [4, 0, 4],
 			"to": [12, 4, 12],
 			"faces": {
-				"north": {"uv": [8, 0, 16, 4], "texture": "#0"},
-				"east": {"uv": [8, 4, 16, 8], "texture": "#0"},
-				"south": {"uv": [8, 8, 16, 12], "texture": "#0"},
-				"west": {"uv": [8, 12, 16, 16], "texture": "#0"},
-				"up": {"uv": [8, 8, 0, 0], "texture": "#0"},
-				"down": {"uv": [8, 8, 0, 16], "texture": "#0"}
+				"north": {"uv": [8, 0, 16, 4], "texture": "#dough"},
+				"east": {"uv": [8, 4, 16, 8], "texture": "#dough"},
+				"south": {"uv": [8, 8, 16, 12], "texture": "#dough"},
+				"west": {"uv": [8, 12, 16, 16], "texture": "#dough"},
+				"up": {"uv": [8, 8, 0, 0], "texture": "#dough"},
+				"down": {"uv": [8, 8, 0, 16], "texture": "#dough"}
 			}
 		}
 	],

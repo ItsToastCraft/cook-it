@@ -1,8 +1,8 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"particle": "cook-it:item/french_fries_cooked",
-		"fries": "cook-it:item/french_fries_cooked"
+		"fries": "cook-it:item/french_fries_cooked",
+		"particle": "#fries"
 	},
 	"elements": [
 		{

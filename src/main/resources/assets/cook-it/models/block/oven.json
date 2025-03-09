@@ -4,9 +4,9 @@
 	"textures": {
 		"oven_inside": "cook-it:block/oven_inside",
 		"oven_front": "cook-it:block/oven_front",
-		"particle": "cook-it:block/oven_side",
 		"oven_side": "cook-it:block/oven_side",
-		"oven_accessories": "cook-it:block/oven_accessories"
+		"oven_accessories": "cook-it:block/oven_accessories",
+		"particle": "#oven_side"
 	},
 	"elements": [
 		{

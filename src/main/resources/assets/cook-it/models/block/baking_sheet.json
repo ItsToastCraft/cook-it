@@ -1,8 +1,8 @@
 {
 	"credit": "Made by ToastTextures using Blockbench",
 	"textures": {
-		"particle": "cook-it:block/baking_sheet",
-		"baking_sheet": "cook-it:block/baking_sheet"
+		"baking_sheet": "cook-it:block/baking_sheet",
+		"particle": "#baking_sheet"
 	},
 	"elements": [
 		{

@@ -2,9 +2,9 @@
 	"parent": "minecraft:builtin/entity",
 	"credit": "Made with Blockbench",
 	"textures": {
-		"particle": "cook-it:block/pizza_pan",
 		"pizza_pan": "cook-it:block/pizza_pan",
-		"pizza": "cook-it:block/pizza"
+		"pizza": "cook-it:block/pizza",
+		"particle": "#pizza_pan"
 	},
 	"elements": [
 		{

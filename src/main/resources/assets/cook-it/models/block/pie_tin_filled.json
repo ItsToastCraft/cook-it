@@ -2,32 +2,10 @@
 	"credit": "Made with Blockbench",
 	"texture_size": [32, 32],
 	"textures": {
-		"pie_tin": "cook-it:item/sweet_berry_pie"
+		"pie_tin": "cook-it:item/sweet_berry_pie",
+		"particle": "#pie_tin"
 	},
 	"elements": [
-		{
-			"from": [4, 0, 4],
-			"to": [12, 2, 12],
-			"faces": {
-				"north": {"uv": [0, 5, 4, 6], "texture": "#pie_tin"},
-				"east": {"uv": [4, 5, 8, 6], "texture": "#pie_tin"},
-				"south": {"uv": [4, 6, 8, 7], "texture": "#pie_tin"},
-				"west": {"uv": [0, 6, 4, 7], "texture": "#pie_tin"},
-				"down": {"uv": [9, 0, 5, 4], "texture": "#pie_tin", "cullface": "down"}
-			}
-		},
-		{
-			"from": [12, 2, 12],
-			"to": [4, 0, 4],
-			"rotation": {"angle": 0, "axis": "y", "origin": [8, 2, 8]},
-			"faces": {
-				"north": {"uv": [4, 6, 8, 7], "texture": "#pie_tin"},
-				"east": {"uv": [0, 6, 4, 7], "texture": "#pie_tin"},
-				"south": {"uv": [0, 5, 4, 6], "texture": "#pie_tin"},
-				"west": {"uv": [4, 5, 8, 6], "texture": "#pie_tin"},
-				"up": {"uv": [5, 0, 9, 4], "texture": "#pie_tin"}
-			}
-		},
 		{
 			"from": [3, 2, 3],
 			"to": [13, 2, 13],
@@ -40,7 +18,19 @@
 			"from": [3.675, 1.425, 3.675],
 			"to": [12.325, 2.075, 12.325],
 			"faces": {
-				"up": {"uv": [4, 11, 0, 7], "texture": "#pie_tin"}
+				"up": {"uv": [16, 4, 12, 0], "texture": "#pie_tin"}
+			}
+		},
+		{
+			"from": [4, 0, 4],
+			"to": [12, 2, 12],
+			"rotation": {"angle": 0, "axis": "y", "origin": [8, 2, 8]},
+			"faces": {
+				"north": {"uv": [5, 4, 9, 5], "texture": "#pie_tin"},
+				"east": {"uv": [11.5, 0, 10.5, 4], "rotation": 270, "texture": "#pie_tin"},
+				"south": {"uv": [5, 4, 9, 5], "rotation": 180, "texture": "#pie_tin"},
+				"west": {"uv": [11.5, 0, 10.5, 4], "rotation": 270, "texture": "#pie_tin"},
+				"down": {"uv": [5, 0, 9, 4], "rotation": 180, "texture": "#pie_tin"}
 			}
 		}
 	]
