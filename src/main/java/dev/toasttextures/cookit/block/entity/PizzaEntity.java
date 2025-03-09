@@ -1,9 +1,9 @@
 package dev.toasttextures.cookit.block.entity;
 
-import dev.toasttextures.cookit.registries.CookItBlockEntities;
-import dev.toasttextures.cookit.registries.CookItBlocks;
-import dev.toasttextures.cookit.registries.CookItComponents;
-import dev.toasttextures.cookit.registries.CookItItems;
+import dev.toasttextures.cookit.registry.CookItBlockEntities;
+import dev.toasttextures.cookit.registry.CookItBlocks;
+import dev.toasttextures.cookit.registry.CookItComponents;
+import dev.toasttextures.cookit.registry.CookItItems;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.item.ItemStack;
@@ -19,6 +19,7 @@ import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class PizzaEntity extends BlockEntity{
@@ -40,7 +41,7 @@ public class PizzaEntity extends BlockEntity{
         int slices = 4;
         this.toppings.clear();
         if (!stack.isEmpty() && stack.getComponents() != null && stack.getComponents().contains(CookItComponents.TOPPING_COMPONENT)) {
-            ArrayList<String> toppings = stack.getComponents().getOrDefault(CookItComponents.TOPPING_COMPONENT, new ArrayList<>());
+            List<String> toppings = stack.getComponents().getOrDefault(CookItComponents.TOPPING_COMPONENT, new ArrayList<>());
             NbtList toppingsNbt = new NbtList();
             for (String topping : toppings) {
                 toppingsNbt.add(NbtString.of(topping)); // Convert each string into NbtString

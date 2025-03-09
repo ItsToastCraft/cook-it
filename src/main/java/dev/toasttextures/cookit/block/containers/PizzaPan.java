@@ -5,6 +5,7 @@ import dev.toasttextures.cookit.block.entity.PizzaPanEntity;
 import dev.toasttextures.cookit.util.BlockEntityUtils;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
@@ -34,11 +35,9 @@ public class PizzaPan extends BlockWithEntity implements BlockEntityProvider {
         return BlockRenderType.MODEL;
     }
 
-    private final VoxelShape OUTLINE = VoxelShapes.cuboid(0.0f, 0.0f, 0.0f, 1.0f, 0.0625f, 1.0f);
-
     @Override
     public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext ctx) {
-        return OUTLINE;
+        return VoxelShapes.cuboid(0.0f, 0.0f, 0.0f, 1.0f, 0.0625f, 1.0f);
     }
 
     @Override
@@ -54,7 +53,7 @@ public class PizzaPan extends BlockWithEntity implements BlockEntityProvider {
         boolean hasPizza = !blockEntity.isEmpty();
         if (heldItem.getItem() instanceof BlockItem blockItem) {
             if (blockItem.getBlock() instanceof Pizza && !hasPizza) {
-                blockEntity.setStack(0, heldItem.split(1));
+                blockEntity.setStack(0, heldItem.splitUnlessCreative(1, player));
             }
         } else if (heldItem.isEmpty() && hasPizza) {
             player.getInventory().offerOrDrop(blockEntity.getStack(0).split(1));
@@ -65,9 +64,14 @@ public class PizzaPan extends BlockWithEntity implements BlockEntityProvider {
     }
 
     @Override
+    public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
+        super.onPlaced(world, pos, state, placer, itemStack);
+        PizzaPanEntity entity = (PizzaPanEntity) world.getBlockEntity(pos);
+        BlockEntityUtils.convertSingleCookingComponent(world, entity, itemStack);
+    }
+
+    @Override
     public @Nullable BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
-
         return new PizzaPanEntity(pos, state);
-
     }
 }

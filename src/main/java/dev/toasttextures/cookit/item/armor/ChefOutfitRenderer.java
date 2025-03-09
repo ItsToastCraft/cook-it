@@ -3,7 +3,7 @@ package dev.toasttextures.cookit.item.armor;
 import dev.toasttextures.cookit.CookItClient;
 import dev.toasttextures.cookit.compat.FiguraCompat;
 import dev.toasttextures.cookit.item.armor.ChefOutfit.ChefOutfitItem;
-import dev.toasttextures.cookit.registries.CookItItems;
+import dev.toasttextures.cookit.registry.CookItItems;
 import net.fabricmc.fabric.api.client.rendering.v1.ArmorRenderer;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.render.OverlayTexture;

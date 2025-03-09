@@ -1,7 +1,7 @@
 package dev.toasttextures.cookit.item;
 
-import dev.toasttextures.cookit.registries.CookItFoodTypes;
-import dev.toasttextures.cookit.registries.CookItItems;
+import dev.toasttextures.cookit.registry.CookItFoodTypes;
+import dev.toasttextures.cookit.registry.CookItItems;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.text.Text;

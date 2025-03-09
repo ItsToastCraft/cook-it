@@ -1,4 +1,4 @@
-package dev.toasttextures.cookit.registries;
+package dev.toasttextures.cookit.registry;
 
 import dev.toasttextures.cookit.recipes.*;
 import net.minecraft.registry.Registries;

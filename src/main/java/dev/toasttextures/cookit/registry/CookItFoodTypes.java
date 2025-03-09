@@ -1,4 +1,4 @@
-package dev.toasttextures.cookit.registries;
+package dev.toasttextures.cookit.registry;
 
 public enum CookItFoodTypes {
     BAKING,

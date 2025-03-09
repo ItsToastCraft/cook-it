@@ -15,7 +15,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.math.RotationAxis;
 
-
 @Environment(EnvType.CLIENT)
 public class MixingBowlEntityRenderer implements BlockEntityRenderer<MixingBowlEntity> {
 

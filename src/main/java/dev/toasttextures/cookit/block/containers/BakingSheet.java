@@ -2,26 +2,29 @@ package dev.toasttextures.cookit.block.containers;
 
 import dev.toasttextures.cookit.block.entity.BakingSheetEntity;
 import dev.toasttextures.cookit.item.CookItFood;
-import dev.toasttextures.cookit.registries.CookItFoodTypes;
+import dev.toasttextures.cookit.registry.CookItFoodTypes;
+import dev.toasttextures.cookit.registry.CookItItems;
 import dev.toasttextures.cookit.util.BlockEntityUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockEntityProvider;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ShapeContext;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.ItemActionResult;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -36,47 +39,29 @@ public class BakingSheet extends Block implements BlockEntityProvider {
         return new BakingSheetEntity(pos, state);
     }
 
-    public ActionResult onUse(BlockState state, World world, BlockPos blockPos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        world.updateListeners(blockPos, state, state, Block.NOTIFY_LISTENERS);
-        BakingSheetEntity blockEntity = (BakingSheetEntity) world.getBlockEntity(blockPos);
+    @Override
+    protected ItemActionResult onUseWithItem(ItemStack stack, BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+        world.updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
+        BakingSheetEntity blockEntity = (BakingSheetEntity) world.getBlockEntity(pos);
         if (world.isClient || blockEntity == null) {
-            return ActionResult.SUCCESS;
-        } else {
-            if (player.isSneaking()) {
-                ItemStack sheet = this.asItem().getDefaultStack();
-                if (!blockEntity.isEmpty()) {
-                    sheet.applyComponentsFrom(blockEntity.createComponentMap());
-                }
-                player.getInventory().insertStack(sheet);
-                world.breakBlock(blockPos,false);
-                return ActionResult.SUCCESS;
-            }
-            ItemStack item = player.getStackInHand(hand);
-            if (!item.isEmpty()) {
-                // Check what is the first open slot and put an item from the player's hand there
-                for (int i = 0; i < blockEntity.getItems().size(); i++) {
-                    if (blockEntity.getStack(i).isEmpty() && item.getItem() instanceof CookItFood && ((CookItFood)item.getItem()).getFoodType().equals(CookItFoodTypes.BAKING)) {
-                        // Put the stack the player is holding into the inventory
-                        blockEntity.setStack(i, new ItemStack(item.getItem(), 1));
-                        item.decrement(1);
-                        break;
-                    }
-                }
-            } else {
-                // If the player is not holding anything, give them the items in the block entity one by one
-                for (int i = blockEntity.getItems().size() - 1; i >= 0; i--) {
-                    // Find the first slot that has an item and give it to the player
-                    if (!blockEntity.getStack(i).isEmpty()) {
-                        // Give the player the stack in the inventory
-                        player.getInventory().offerOrDrop(blockEntity.getStack(i));
-                        // Remove the stack from the inventory
-                        blockEntity.removeStack(i);
-                        break;
-                    }
-                }
-            }
+            return ItemActionResult.SUCCESS;
         }
-        return ActionResult.SUCCESS;
+        if (player.isSneaking()) {
+            return BlockEntityUtils.dropOnUse(this, blockEntity, player, world, pos);
+        }
+        if (!stack.isEmpty()) {
+            // Check what is the first open slot and put an item from the player's hand there
+            for (int i = 0; i < blockEntity.getItems().size(); i++) {
+                if (blockEntity.getStack(i).isEmpty() && (stack.getItem() instanceof CookItFood food && food.getFoodType().equals(CookItFoodTypes.BAKING)) || stack.isIn(CookItItems.BAKING)) {
+                    // Put the stack the player is holding into the inventory
+                    blockEntity.setStack(i, stack.splitUnlessCreative(1, player));
+                    break;
+                }
+            }
+        } else {
+            return BlockEntityUtils.returnItem(blockEntity, player, world, pos);
+        }
+        return ItemActionResult.SUCCESS;
     }
 
     @Override
@@ -84,6 +69,12 @@ public class BakingSheet extends Block implements BlockEntityProvider {
         return VoxelShapes.cuboid(0.1875, 0f, 0.0625f, 0.8125f, 0.125f, 0.9375f);
     }
 
+    @Override
+    public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
+        super.onPlaced(world, pos, state, placer, itemStack);
+        BakingSheetEntity entity = (BakingSheetEntity) world.getBlockEntity(pos);
+        BlockEntityUtils.convertCookingComponent(world, entity, itemStack);
+    }
 
     @Override
     public void appendTooltip(ItemStack stack, Item.TooltipContext context, List<Text> tooltip, TooltipType options) {

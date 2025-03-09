@@ -2,7 +2,7 @@ package dev.toasttextures.cookit.block.food_blocks.pizza;
 
 import com.mojang.serialization.MapCodec;
 import dev.toasttextures.cookit.block.entity.PizzaEntity;
-import dev.toasttextures.cookit.registries.CookItComponents;
+import dev.toasttextures.cookit.registry.CookItComponents;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.item.Item;
@@ -56,11 +56,8 @@ public class Pizza extends BlockWithEntity implements BlockEntityProvider {
     public @Nullable BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
         return new PizzaEntity(pos, state, false);
     }
-
-    @Override
-    public void appendTooltip(ItemStack stack, Item.TooltipContext context, List<Text> tooltip, TooltipType options) {
-
-        ArrayList<String> toppings = stack.getOrDefault(CookItComponents.TOPPING_COMPONENT, new ArrayList<>());
+    public static void createTooltip(ItemStack stack, Item.TooltipContext context, List<Text> tooltip, TooltipType options) {
+        List<String> toppings = stack.getOrDefault(CookItComponents.TOPPING_COMPONENT, new ArrayList<>());
         if (!toppings.isEmpty()) return;
         tooltip.add((Text.literal("Toppings:").formatted(Formatting.GRAY)));
 
@@ -69,4 +66,5 @@ public class Pizza extends BlockWithEntity implements BlockEntityProvider {
             tooltip.add(topping.formatted(Formatting.BLUE));
         }
     }
+
 }

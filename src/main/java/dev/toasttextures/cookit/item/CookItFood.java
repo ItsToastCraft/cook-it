@@ -1,6 +1,6 @@
 package dev.toasttextures.cookit.item;
 
-import dev.toasttextures.cookit.registries.CookItFoodTypes;
+import dev.toasttextures.cookit.registry.CookItFoodTypes;
 import net.minecraft.item.Item;
 
 public class CookItFood extends Item {

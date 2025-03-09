@@ -1,4 +1,4 @@
-package dev.toasttextures.cookit.registries;
+package dev.toasttextures.cookit.registry;
 
 import com.mojang.serialization.MapCodec;
 import dev.toasttextures.cookit.CookIt;

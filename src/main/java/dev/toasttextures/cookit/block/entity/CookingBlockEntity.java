@@ -15,6 +15,8 @@ import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 public abstract class CookingBlockEntity extends BlockEntity implements ImplementedInventory {
     protected DefaultedList<ItemStack> items;
 
@@ -29,21 +31,30 @@ public abstract class CookingBlockEntity extends BlockEntity implements Implemen
         return this.items;
     }
 
+    public void setItems(List<ItemStack> items) {
+        this.items.clear();
+        for (int i = 0; i < items.size(); i++) {
+            this.items.set(i, items.get(i));
+        }
+    }
+
     public void setItems(DefaultedList<ItemStack> items) { this.items = items;}
 
     @Override
     public void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
         this.items.clear();
-        super.readNbt(nbt, registryLookup);
 
+        super.readNbt(nbt, registryLookup);
         Inventories.readNbt(nbt, this.items, registryLookup);
     }
 
     @Override
     public void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
         Inventories.writeNbt(nbt, this.items, registryLookup);
+
         super.writeNbt(nbt, registryLookup);
     }
+
 
     @Nullable
     @Override

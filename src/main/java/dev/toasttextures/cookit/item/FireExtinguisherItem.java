@@ -1,7 +1,6 @@
 package dev.toasttextures.cookit.item;
 
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.block.CampfireBlock;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
@@ -43,7 +42,6 @@ public class FireExtinguisherItem extends Item {
             // Summons particles and removes fire wherever they land
             for (int i = 0; i < 200; i++) {
                 double offsetDistance = 4;
-
                 double offsetX = -MathHelper.sin((float) playerYaw) * MathHelper.cos((float) playerPitch) * offsetDistance;
                 double offsetY = -MathHelper.sin((float) playerPitch) * offsetDistance;
                 double offsetZ = MathHelper.cos((float) playerYaw) * MathHelper.cos((float) playerPitch) * offsetDistance;
@@ -56,7 +54,6 @@ public class FireExtinguisherItem extends Item {
                 ((ServerWorld) world).spawnParticles(ParticleTypes.SPIT, particleX, particleY, particleZ, 1, 0.0f,0.125f,0.0f,0f);
             }
         }
-
         // Damage the item
         context.getStack().damage(1, user, EquipmentSlot.valueOf(context.getHand().name()));
 

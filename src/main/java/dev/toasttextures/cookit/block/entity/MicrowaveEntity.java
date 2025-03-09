@@ -3,18 +3,16 @@ package dev.toasttextures.cookit.block.entity;
 
 import dev.toasttextures.cookit.recipes.RecipeInventory;
 import net.minecraft.block.BlockState;
-import net.minecraft.inventory.Inventories;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.recipe.RecipeEntry;
-import net.minecraft.recipe.RecipeInputProvider;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import dev.toasttextures.cookit.block.ImplementedInventory;
 import dev.toasttextures.cookit.recipes.MicrowaveRecipe;
-import dev.toasttextures.cookit.registries.CookItBlockEntities;
-import dev.toasttextures.cookit.registries.CookItSounds;
+import dev.toasttextures.cookit.registry.CookItBlockEntities;
+import dev.toasttextures.cookit.registry.CookItSounds;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -28,20 +26,18 @@ public class MicrowaveEntity extends CookingBlockEntity implements ImplementedIn
     private int progress = 0;
     private int maxProgress = 0;
 
-    public MicrowaveEntity(BlockPos pos, BlockState state) { super(CookItBlockEntities.MICROWAVE_ENTITY, pos, state, 2); }
+    public MicrowaveEntity(BlockPos pos, BlockState state) {
+        super(CookItBlockEntities.MICROWAVE_ENTITY, pos, state, 2);
+    }
 
     @Override
     public void readNbt(NbtCompound nbt,RegistryWrapper.WrapperLookup registryLookup) {
-        items.clear();
         super.readNbt(nbt, registryLookup);
-        Inventories.readNbt(nbt, items, registryLookup);
-        progress = nbt.getInt("progress");
+        this.progress = nbt.getInt("progress");
     }
 
     @Override
     public void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
-
-        Inventories.writeNbt(nbt, this.items, registryLookup);
         nbt.putInt("progress", progress);
         super.writeNbt(nbt,registryLookup);
     }

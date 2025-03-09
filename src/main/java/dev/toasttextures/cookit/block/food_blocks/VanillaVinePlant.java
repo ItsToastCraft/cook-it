@@ -1,8 +1,8 @@
 package dev.toasttextures.cookit.block.food_blocks;
 
 import com.mojang.serialization.MapCodec;
-import dev.toasttextures.cookit.registries.CookItBlocks;
-import dev.toasttextures.cookit.registries.CookItItems;
+import dev.toasttextures.cookit.registry.CookItBlocks;
+import dev.toasttextures.cookit.registry.CookItItems;
 import net.minecraft.block.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -83,13 +83,11 @@ public class VanillaVinePlant extends AbstractPlantBlock implements Fertilizable
     }
     @Override
     public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        Direction dir = state.get(Properties.HORIZONTAL_FACING);
-        switch (dir) {
-            case NORTH -> { return NORTH; }
-            case WEST -> { return WEST; }
-            case SOUTH -> { return SOUTH; }
-            default -> { return EAST; }
-        }
+        return switch (state.get(Properties.HORIZONTAL_FACING)) {
+            case NORTH -> NORTH;
+            case WEST -> WEST;
+            case SOUTH -> SOUTH;
+            default -> EAST;
+        };
     }
-
 }

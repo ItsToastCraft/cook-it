@@ -1,9 +1,9 @@
 package dev.toasttextures.cookit.block.entity;
 
 import dev.toasttextures.cookit.recipes.RecipeInventory;
-import dev.toasttextures.cookit.registries.CookItBlocks;
-import dev.toasttextures.cookit.registries.CookItComponents;
-import dev.toasttextures.cookit.registries.CookItItems;
+import dev.toasttextures.cookit.registry.*;
+import dev.toasttextures.cookit.registry.component.CookingComponent;
+import dev.toasttextures.cookit.registry.component.SingleCookingComponent;
 import dev.toasttextures.cookit.util.BlockEntityUtils;
 import net.minecraft.block.BlockState;
 import net.minecraft.inventory.Inventories;
@@ -18,10 +18,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import dev.toasttextures.cookit.block.ImplementedInventory;
 import dev.toasttextures.cookit.recipes.OvenRecipe;
-import dev.toasttextures.cookit.registries.CookItBlockEntities;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -97,16 +95,18 @@ public class OvenEntity extends CookingBlockEntity implements ImplementedInvento
             ItemStack muffinTin = this.getStack(slot);
 
             ArrayList<ItemStack> containerItems = BlockEntityUtils.getContainerItems(muffinTin);
-            List<ItemStack> outputs = new ArrayList<>();
+            ArrayList<ItemStack> outputs = new ArrayList<>();
             for (ItemStack item : containerItems) {
                 if (item.isOf(CookItItems.GOOP)) {
-                    ItemStack muffin = item.get(CookItComponents.SINGLE_COOKING_COMPONENT);
-                    outputs.add(muffin);
+                    ItemStack muffin = item.getOrDefault(CookItComponents.SINGLE_COOKING_COMPONENT, SingleCookingComponent.DEFAULT).getItem();
+                    if (!muffin.isEmpty()) {
+                        outputs.add(muffin);
+                    }
                 } else {
                     outputs.add(item);
                 }
             }
-            muffinTin.getOrDefault(CookItComponents.COOKING_COMPONENT, outputs);
+            muffinTin.set(CookItComponents.COOKING_COMPONENT, new CookingComponent(outputs));
             this.markDirty();
             this.done = true;
             world.setBlockState(pos, state.with(DONE, true));
@@ -120,7 +120,7 @@ public class OvenEntity extends CookingBlockEntity implements ImplementedInvento
         ItemStack stack = this.getStack(index);
         if (BlockEntityUtils.isContainer(stack)) {
             ArrayList<ItemStack> containerItems = BlockEntityUtils.getContainerItems(stack);
-            List<ItemStack> outputs = new ArrayList<>();
+            ArrayList <ItemStack> outputs = new ArrayList<>();
             for (ItemStack item : containerItems) {
 
 
@@ -138,7 +138,7 @@ public class OvenEntity extends CookingBlockEntity implements ImplementedInvento
                     outputs.add(item);
                 }
             }
-            stack.set(CookItComponents.COOKING_COMPONENT, outputs);
+            stack.set(CookItComponents.COOKING_COMPONENT, new CookingComponent(outputs));
         } else {
             Optional<RecipeEntry<OvenRecipe>> recipe = getCurrentRecipe(stack);
             ItemStack result = recipe.get().value().craft(new RecipeInventory(stack), this.world.getRegistryManager());

@@ -1,12 +1,10 @@
 package dev.toasttextures.cookit.block.food_blocks;
 
 import com.mojang.serialization.MapCodec;
-import dev.toasttextures.cookit.CookIt;
-import dev.toasttextures.cookit.registries.CookItBlocks;
+import dev.toasttextures.cookit.registry.CookItBlocks;
 import net.minecraft.block.*;
 
 import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.BlockPos;

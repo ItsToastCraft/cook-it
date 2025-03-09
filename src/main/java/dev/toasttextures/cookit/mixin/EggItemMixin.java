@@ -1,6 +1,6 @@
 package dev.toasttextures.cookit.mixin;
 
-import dev.toasttextures.cookit.registries.CookItBlocks;
+import dev.toasttextures.cookit.registry.CookItBlocks;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.EggItem;
 import net.minecraft.item.Item;

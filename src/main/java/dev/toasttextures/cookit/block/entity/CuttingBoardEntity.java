@@ -3,8 +3,8 @@ package dev.toasttextures.cookit.block.entity;
 import dev.toasttextures.cookit.CookIt;
 import dev.toasttextures.cookit.block.food_blocks.pizza.PizzaToppings;
 import dev.toasttextures.cookit.recipes.RecipeInventory;
-import dev.toasttextures.cookit.registries.CookItBlocks;
-import dev.toasttextures.cookit.registries.CookItComponents;
+import dev.toasttextures.cookit.registry.CookItBlocks;
+import dev.toasttextures.cookit.registry.CookItComponents;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
@@ -12,7 +12,6 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.ItemStackParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.recipe.RecipeEntry;
-import net.minecraft.recipe.RecipeType;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
@@ -20,7 +19,7 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import dev.toasttextures.cookit.block.ImplementedInventory;
 import dev.toasttextures.cookit.recipes.CuttingBoardRecipe;
-import dev.toasttextures.cookit.registries.CookItBlockEntities;
+import dev.toasttextures.cookit.registry.CookItBlockEntities;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,10 +34,8 @@ public class CuttingBoardEntity extends CookingBlockEntity implements Implemente
     @Override
     public void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
         super.readNbt(nbt, registryLookup);
-
         this.clicks = nbt.getInt("clicks");
     }
-
     @Override
     public void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
         nbt.putInt("clicks", clicks);
@@ -58,16 +55,17 @@ public class CuttingBoardEntity extends CookingBlockEntity implements Implemente
         }
 
         List<RecipeEntry<CuttingBoardRecipe>> recipes = getCurrentRecipe();
+
         if (!recipes.isEmpty()) {
             for(RecipeEntry<CuttingBoardRecipe> recipeEntry : recipes) {
                 if (tryReset) {
                     if (recipeEntry.value().isResettable() && tool.isEmpty()) {
                         complete(recipeEntry);
-
                         return true;
                     }
                 } else {
                     for (ItemStack otherTool : recipeEntry.value().getTool()) {
+                        CookIt.LOGGER.info(otherTool.toString());
                         if (tool.getItem().asItem().equals(otherTool.getItem()) && !recipeEntry.value().isResettable()) {
                             this.clicks++;
                             Objects.requireNonNull(world).playSound(null, pos.getX(), pos.getY(), pos.getZ(), SoundEvents.ENTITY_ITEM_FRAME_REMOVE_ITEM, SoundCategory.BLOCKS, 0.5f, 0.25f);
@@ -86,7 +84,7 @@ public class CuttingBoardEntity extends CookingBlockEntity implements Implemente
 
     public boolean processPizza(ItemStack tool) {
 
-        ArrayList<String> toppings = this.getStack(0).getOrDefault(CookItComponents.TOPPING_COMPONENT, new ArrayList<>());
+        List<String> toppings = this.getStack(0).getOrDefault(CookItComponents.TOPPING_COMPONENT, List.of());
 
         // The pizza has maxed out toppings, so no change happened
         if (toppings.size() == 3) {
@@ -110,7 +108,6 @@ public class CuttingBoardEntity extends CookingBlockEntity implements Implemente
     }
 
     private void complete(RecipeEntry<CuttingBoardRecipe> recipeEntry) {
-
         ItemStack output = recipeEntry.value().craft(new RecipeInventory(this.getStack(0)), this.world.getRegistryManager());
         output.setCount(recipeEntry.value().getOutputCount());
         this.setStack(0, output);
@@ -122,8 +119,7 @@ public class CuttingBoardEntity extends CookingBlockEntity implements Implemente
     private List<RecipeEntry<CuttingBoardRecipe>> getCurrentRecipe() {
         RecipeInventory inv = new RecipeInventory(this.size());
         inv.setStack(0, this.getStack(0));
-        CookIt.LOGGER.info(String.valueOf(Objects.requireNonNull(world).getRecipeManager().sortedValues()));
-        CookIt.LOGGER.info(String.valueOf(Objects.requireNonNull(world).getRecipeManager().getAllMatches(CuttingBoardRecipe.Type.INSTANCE, inv, world)));
+        CookIt.LOGGER.info(String.valueOf(Objects.requireNonNull(world).getRecipeManager().getFirstMatch(CuttingBoardRecipe.Type.INSTANCE, inv, world)));
         return Objects.requireNonNull(world).getRecipeManager().getAllMatches(CuttingBoardRecipe.Type.INSTANCE, inv, world);
     }
 }

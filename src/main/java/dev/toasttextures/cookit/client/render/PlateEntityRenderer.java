@@ -1,7 +1,7 @@
 package dev.toasttextures.cookit.client.render;
 
 import dev.toasttextures.cookit.block.entity.PlateEntity;
-import dev.toasttextures.cookit.registries.CookItItems;
+import dev.toasttextures.cookit.registry.CookItItems;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;

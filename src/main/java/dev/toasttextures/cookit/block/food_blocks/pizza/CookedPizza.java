@@ -1,9 +1,9 @@
 package dev.toasttextures.cookit.block.food_blocks.pizza;
 
 import dev.toasttextures.cookit.block.entity.PizzaEntity;
-import dev.toasttextures.cookit.registries.CookItBlocks;
-import dev.toasttextures.cookit.registries.CookItComponents;
-import dev.toasttextures.cookit.registries.CookItItems;
+import dev.toasttextures.cookit.registry.CookItBlocks;
+import dev.toasttextures.cookit.registry.CookItComponents;
+import dev.toasttextures.cookit.registry.CookItItems;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ShapeContext;
@@ -37,56 +37,41 @@ public class CookedPizza extends Pizza{
     public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext ctx) {
         int pizzaAmount = world.getBlockEntity(pos) instanceof PizzaEntity pizzaEntity ? pizzaEntity.getSliceCount() : 4;
 
-        switch (pizzaAmount) {
-            case (1) -> {
-                return SLICE_1;
-            }
-            case (2) -> {
-                return SLICE_2;
-            }
-            case (3) -> {
-                return SLICE_3;
-            }
-            default -> {
-                return Pizza.FULL;
-            }
-        }
+        return switch (pizzaAmount) {
+            case (1) -> SLICE_1;
+            case (2) -> SLICE_2;
+            case (3) -> SLICE_3;
+            default -> Pizza.FULL;
+        };
     }
 
     @Override
     public ItemActionResult onUseWithItem(ItemStack stack, BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         super.onUseWithItem(stack, state, world, pos, player, hand, hit);
         world.updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
-        ItemStack heldItem = player.getStackInHand(hand);
         PizzaEntity entity = (PizzaEntity) world.getBlockEntity(pos);
         if (entity == null || world.isClient) {
             return ItemActionResult.SUCCESS;
-        } else {
-            int pizzaAmount = entity.getSliceCount();
-            if (world.getBlockState(pos).getBlock() == CookItBlocks.PIZZA && heldItem.isEmpty()) {
+        }
+        int pizzaAmount = entity.getSliceCount();
+        if (world.getBlockState(pos).getBlock() == CookItBlocks.PIZZA && stack.isEmpty()) {
 
-                ArrayList<String> toppings = entity.getToppings();
+            ArrayList<String> toppings = entity.getToppings();
 
-                ItemStack itemStack = new ItemStack(CookItItems.PIZZA_SLICE, 1);
-                if (!toppings.isEmpty()) {
-                    itemStack.set(CookItComponents.TOPPING_COMPONENT, toppings);
-                }
+            ItemStack itemStack = new ItemStack(CookItItems.PIZZA_SLICE, 1);
+            if (!toppings.isEmpty()) {
+                itemStack.set(CookItComponents.TOPPING_COMPONENT, toppings);
+            }
 
-                player.getInventory().offerOrDrop(itemStack);
-                world.playSound(null, pos, SoundEvents.BLOCK_WOOL_BREAK, SoundCategory.BLOCKS);
-                if (pizzaAmount > 1) {
-                    entity.setSliceCount(entity.getSliceCount() - 1);
-                } else {
-                    world.breakBlock(pos, false);
-                }
+            player.getInventory().offerOrDrop(itemStack);
+            world.playSound(null, pos, SoundEvents.BLOCK_WOOL_BREAK, SoundCategory.BLOCKS);
+            if (pizzaAmount > 1) {
+                entity.setSliceCount(entity.getSliceCount() - 1);
+            } else {
+                world.breakBlock(pos, false);
             }
         }
         return ItemActionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-    }
-
-    @Override
-    public @Nullable BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
-        return new PizzaEntity(pos, state, true);
     }
 
     @Override
@@ -102,5 +87,10 @@ public class CookedPizza extends Pizza{
             }
         }
         return super.onBreak(world, pos, state, player);
+    }
+
+    @Override
+    public @Nullable BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+        return new PizzaEntity(pos, state, true);
     }
 }

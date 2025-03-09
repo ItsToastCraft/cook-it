@@ -11,13 +11,12 @@ import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.RotationAxis;
 import dev.toasttextures.cookit.CookIt;
 
 import java.util.Objects;
-
-import static dev.toasttextures.cookit.block.appliances.Microwave.FACING;
 
 @Environment(EnvType.CLIENT)
 public class MicrowaveEntityRenderer implements BlockEntityRenderer<MicrowaveEntity> {
@@ -30,8 +29,8 @@ public class MicrowaveEntityRenderer implements BlockEntityRenderer<MicrowaveEnt
         final MinecraftClient client = MinecraftClient.getInstance();
 
         ItemStack stack = blockEntity.getStack(0);
-
-        Direction facing = blockEntity.getCachedState().get(FACING);
+        if (stack.isEmpty()) return;
+        Direction facing = blockEntity.getCachedState().get(Properties.HORIZONTAL_FACING);
         float x, y, z, x2, y2, z2;
         int dir = 0;
         switch (facing) {
@@ -81,24 +80,21 @@ public class MicrowaveEntityRenderer implements BlockEntityRenderer<MicrowaveEnt
                 z2 = 0.0f;
             }
         }
-        if (!stack.isEmpty()) {
-            matrices.push();
-            if (stack.getItem() instanceof BlockItem) {
-                matrices.scale(0.25f, 0.25f, 0.25f);
-                matrices.translate(x2, y2, z2);
-            } else {
-                matrices.scale(0.5f, 0.5f, 0.5f);
-                matrices.translate(x, y, z);
-            }
-            matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(dir * 90));
-
-            // Rotate the item
-            if (blockEntity.getProgress() > 0) {
-                matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees((Objects.requireNonNull(blockEntity.getWorld()).getTime() + tickDelta) * 4));
-            }
-            client.getItemRenderer().renderItem(stack, ModelTransformationMode.NONE, light, overlay, matrices, vertexConsumers, blockEntity.getWorld(), 0);
-            matrices.pop();
+        matrices.push();
+        if (stack.getItem() instanceof BlockItem) {
+            matrices.scale(0.25f, 0.25f, 0.25f);
+            matrices.translate(x2, y2, z2);
+        } else {
+            matrices.scale(0.5f, 0.5f, 0.5f);
+            matrices.translate(x, y, z);
         }
-    }
+        matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(dir * 90));
 
+        // Rotate the item
+        if (blockEntity.getProgress() > 0) {
+            matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees((Objects.requireNonNull(blockEntity.getWorld()).getTime() + tickDelta) * 4));
+        }
+        client.getItemRenderer().renderItem(stack, ModelTransformationMode.NONE, light, overlay, matrices, vertexConsumers, blockEntity.getWorld(), 0);
+        matrices.pop();
+    }
 }

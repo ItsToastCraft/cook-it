@@ -1,4 +1,4 @@
-package dev.toasttextures.cookit.registries;
+package dev.toasttextures.cookit.registry;
 import dev.toasttextures.cookit.block.appliances.*;
 import dev.toasttextures.cookit.block.containers.*;
 import dev.toasttextures.cookit.block.food_blocks.VanillaVinePlant;
@@ -78,8 +78,8 @@ public class CookItBlocks {
         return Registry.register(Registries.BLOCK, Identifier.of(CookIt.MOD_ID, name), block);
     }
 
-    public static Item registerBlockItem(String name, Block block) {
-        return Registry.register(Registries.ITEM, Identifier.of(CookIt.MOD_ID, name), new BlockItem(block, new Item.Settings()));
+    public static void registerBlockItem(String name, Block block) {
+        Registry.register(Registries.ITEM, Identifier.of(CookIt.MOD_ID, name), new BlockItem(block, new Item.Settings()));
     }
 
     public static void registerBlocks() {

@@ -1,7 +1,7 @@
 package dev.toasttextures.cookit.datagen;
 
 import dev.toasttextures.cookit.CookIt;
-import dev.toasttextures.cookit.registries.CookItItems;
+import dev.toasttextures.cookit.registry.CookItItems;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
 import net.minecraft.item.Item;
@@ -13,8 +13,6 @@ import net.minecraft.util.Identifier;
 import java.util.concurrent.CompletableFuture;
 
 public class CookItItemTagProvider extends FabricTagProvider<Item> {
-
-
     public static final TagKey<Item> ROLLING_PINS = TagKey.of(RegistryKeys.ITEM, Identifier.of(CookIt.MOD_ID, "rolling_pins"));
 
     public CookItItemTagProvider(FabricDataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> registriesFuture) {

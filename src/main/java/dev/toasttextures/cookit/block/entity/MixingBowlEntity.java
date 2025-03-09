@@ -4,9 +4,10 @@ import dev.toasttextures.cookit.CookIt;
 import dev.toasttextures.cookit.block.ImplementedInventory;
 import dev.toasttextures.cookit.recipes.MixingBowlRecipe;
 import dev.toasttextures.cookit.recipes.RecipeInventory;
-import dev.toasttextures.cookit.registries.CookItBlockEntities;
-import dev.toasttextures.cookit.registries.CookItComponents;
-import dev.toasttextures.cookit.registries.CookItItems;
+import dev.toasttextures.cookit.registry.CookItBlockEntities;
+import dev.toasttextures.cookit.registry.CookItComponents;
+import dev.toasttextures.cookit.registry.CookItItems;
+import dev.toasttextures.cookit.registry.component.SingleCookingComponent;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -14,12 +15,10 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.ItemStackParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.recipe.RecipeEntry;
-import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 
@@ -28,7 +27,6 @@ import java.util.Optional;
 
 public class MixingBowlEntity extends CookingBlockEntity implements ImplementedInventory {
     private int clicks = 0;
-    private int uses = 0;
     private int color = 0;
 
     public MixingBowlEntity(BlockPos pos, BlockState state) {
@@ -38,14 +36,12 @@ public class MixingBowlEntity extends CookingBlockEntity implements ImplementedI
     public void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
         super.readNbt(nbt, registryLookup);
         this.clicks = nbt.getInt("clicks");
-        this.uses = nbt.getInt("uses");
         this.color = nbt.getInt("color");
     }
 
     @Override
     public void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
         nbt.putInt("clicks", clicks);
-        nbt.putInt("uses", uses);
         nbt.putInt("color", color);
         super.writeNbt(nbt, registryLookup);
     }
@@ -57,10 +53,10 @@ public class MixingBowlEntity extends CookingBlockEntity implements ImplementedI
     public void setClicks(int clicks) {
         this.clicks = clicks;
     }
-    public int getClicks() { return this.clicks; }
 
-    // Amount outputted by the recipe
-    public int getUses() { return this.uses; }
+    public int getClicks() {
+        return this.clicks;
+    }
 
     public boolean processRecipe() {
         Optional<RecipeEntry<MixingBowlRecipe>> recipe = getCurrentRecipe();
@@ -68,20 +64,19 @@ public class MixingBowlEntity extends CookingBlockEntity implements ImplementedI
             this.clicks++;
             boolean hasGoop = recipe.get().value().hasGoop();
             int mixes = recipe.get().value().getMixes();
-            Objects.requireNonNull(world).playSound(null, pos.getX(), pos.getY(), pos.getZ(), SoundEvents.ENTITY_ITEM_FRAME_REMOVE_ITEM, SoundCategory.BLOCKS, 0.5f, 0.25f);
+            Objects.requireNonNull(world).playSound(null, pos, SoundEvents.ENTITY_ITEM_FRAME_REMOVE_ITEM, SoundCategory.BLOCKS, 0.5f, 0.25f);
             ((ServerWorld) Objects.requireNonNull(world)).spawnParticles(new ItemStackParticleEffect(ParticleTypes.ITEM, recipe.get().value().getResult(null)), pos.getX() + 0.5f, pos.getY(), pos.getZ() + 0.5f, 10, 0f,0.025f,0.0f,0.125f);
 
             if (this.getClicks() >= mixes) {
                 this.setItems(DefaultedList.ofSize(this.size(), ItemStack.EMPTY));
                 ItemStack output = recipe.get().value().craft(new RecipeInventory(), world.getRegistryManager());
                 if (hasGoop){
-
                     ItemStack goop = new ItemStack(CookItItems.GOOP, output.getCount());
                     output.setCount(1);
-                    output.set(CookItComponents.SINGLE_COOKING_COMPONENT, goop);
+                    goop.set(CookItComponents.SINGLE_COOKING_COMPONENT, new SingleCookingComponent(output.getRegistryEntry()));
                     goop.set(CookItComponents.COLOR_COMPONENT, this.getGoopColor());
-
                     output = goop;
+                    CookIt.LOGGER.info(String.valueOf(goop.get(CookItComponents.SINGLE_COOKING_COMPONENT)));
                 }
                 this.setStack(0, output);
                 this.setClicks(0);
@@ -90,10 +85,9 @@ public class MixingBowlEntity extends CookingBlockEntity implements ImplementedI
                 // Set the color one click early
                 this.color = recipe.get().value().goopColor();
                 if (world != null && !world.isClient()) {
-                    markDirty();
+                    this.markDirty();
                 }
             }
-
         }
         return false;
     }

@@ -20,7 +20,7 @@ import net.minecraft.client.item.ModelPredicateProviderRegistry;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.util.Identifier;
 import dev.toasttextures.cookit.client.render.BakingSheetItemRenderer;
-import dev.toasttextures.cookit.registries.*;
+import dev.toasttextures.cookit.registry.*;
 
 @Environment(EnvType.CLIENT)
 public class CookItClient implements ClientModInitializer {

@@ -2,8 +2,8 @@ package dev.toasttextures.cookit.datagen;
 
 import dev.toasttextures.cookit.block.containers.Plate;
 import dev.toasttextures.cookit.block.food_blocks.VanillaVines;
-import dev.toasttextures.cookit.registries.CookItBlocks;
-import dev.toasttextures.cookit.registries.CookItItems;
+import dev.toasttextures.cookit.registry.CookItBlocks;
+import dev.toasttextures.cookit.registry.CookItItems;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricBlockLootTableProvider;
 import net.minecraft.block.Block;

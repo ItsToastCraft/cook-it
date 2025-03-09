@@ -1,15 +1,16 @@
 package dev.toasttextures.cookit.client.render;
 
-import dev.toasttextures.cookit.registries.CookItBlocks;
-import dev.toasttextures.cookit.registries.CookItComponents;
+import dev.toasttextures.cookit.registry.CookItBlocks;
+import dev.toasttextures.cookit.registry.CookItComponents;
+import dev.toasttextures.cookit.registry.component.CookingComponent;
 import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.collection.DefaultedList;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class MuffinTinItemRenderer implements BuiltinItemRendererRegistry.DynamicItemRenderer {
@@ -18,13 +19,16 @@ public class MuffinTinItemRenderer implements BuiltinItemRendererRegistry.Dynami
         final MinecraftClient client = MinecraftClient.getInstance();
         MinecraftClient.getInstance().getBlockRenderManager().renderBlockAsEntity(CookItBlocks.MUFFIN_TIN.getDefaultState(), matrices, vertexConsumers, light, overlay);
 
-        List<ItemStack> items = stack.getOrDefault(CookItComponents.COOKING_COMPONENT, new ArrayList<>());
-
+        List<ItemStack> items = stack.getOrDefault(CookItComponents.COOKING_COMPONENT, CookingComponent.DEFAULT).stacks();
+        DefaultedList<ItemStack> stacks = DefaultedList.ofSize(6, ItemStack.EMPTY);
+        for (int i = 0; i < items.size(); i++) {
+            stacks.set(i, items.get(i));
+        }
         if (items.isEmpty()) return;
 
         for (int i = 0; i < 2; i++) {
             for (int j = 0; j < 3; j++) {
-                ItemStack muffin = items.get(i * 3 + j);
+                ItemStack muffin = stacks.get(i * 3 + j);
 
                 if (!muffin.isEmpty()) {
                     matrices.push();

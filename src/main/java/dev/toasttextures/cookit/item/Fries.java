@@ -1,11 +1,11 @@
 package dev.toasttextures.cookit.item;
 
-import dev.toasttextures.cookit.registries.CookItFoodTypes;
+import dev.toasttextures.cookit.registry.CookItFoodTypes;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
-import dev.toasttextures.cookit.registries.CookItItems;
+import dev.toasttextures.cookit.registry.CookItItems;
 
 import java.util.List;
 
@@ -14,7 +14,6 @@ public class Fries extends CookItFood {
     public Fries(Settings settings, CookItFoodTypes foodType) {
         super(settings, foodType);
     }
-
 
     @Override
     public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type) {

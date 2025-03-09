@@ -2,7 +2,7 @@ package dev.toasttextures.cookit.datagen;
 
 import dev.toasttextures.cookit.CookIt;
 import dev.toasttextures.cookit.block.food_blocks.VanillaVines;
-import dev.toasttextures.cookit.registries.CookItItems;
+import dev.toasttextures.cookit.registry.CookItItems;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricModelProvider;
 import net.minecraft.block.Block;
@@ -13,7 +13,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.state.property.Properties;
 import dev.toasttextures.cookit.block.containers.Bowl;
 import dev.toasttextures.cookit.block.containers.Plate;
-import dev.toasttextures.cookit.registries.CookItBlocks;
+import dev.toasttextures.cookit.registry.CookItBlocks;
 import net.minecraft.util.math.Direction;
 
 import static dev.toasttextures.cookit.datagen.CookItModels.*;
@@ -23,7 +23,6 @@ public class CookItModelProvider extends FabricModelProvider {
     public CookItModelProvider(FabricDataOutput output) {
         super(output);
     }
-
 
     private static void generateColoredBlocks(BlockStateModelGenerator blockStateModelGenerator) {
         for (Plate plate : CookItBlocks.PLATES) {

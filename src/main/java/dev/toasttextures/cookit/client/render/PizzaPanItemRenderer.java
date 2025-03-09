@@ -1,7 +1,8 @@
 package dev.toasttextures.cookit.client.render;
 
-import dev.toasttextures.cookit.registries.CookItBlocks;
-import dev.toasttextures.cookit.registries.CookItComponents;
+import dev.toasttextures.cookit.registry.CookItBlocks;
+import dev.toasttextures.cookit.registry.CookItComponents;
+import dev.toasttextures.cookit.registry.component.SingleCookingComponent;
 import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -17,7 +18,7 @@ public class PizzaPanItemRenderer implements BuiltinItemRendererRegistry.Dynamic
         MinecraftClient.getInstance().getBlockRenderManager().renderBlockAsEntity(CookItBlocks.PIZZA_PAN.getDefaultState(), matrices, vertexConsumers, light, overlay);
 
         // Gets the NBT data of the item and checks if it is storing any other items
-        ItemStack item = stack.getOrDefault(CookItComponents.SINGLE_COOKING_COMPONENT, ItemStack.EMPTY);
+        ItemStack item = stack.getOrDefault(CookItComponents.SINGLE_COOKING_COMPONENT, SingleCookingComponent.DEFAULT).getItem();
 
         if (item.isEmpty()) return;
 

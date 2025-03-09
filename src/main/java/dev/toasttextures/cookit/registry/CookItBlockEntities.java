@@ -1,8 +1,7 @@
-package dev.toasttextures.cookit.registries;
+package dev.toasttextures.cookit.registry;
 
 import dev.toasttextures.cookit.block.entity.*;
 import dev.toasttextures.cookit.client.render.*;
-import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.minecraft.block.Block;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
@@ -51,7 +50,7 @@ public class CookItBlockEntities {
         BlockEntityRendererFactories.register(MIXING_BOWL_ENTITY, MixingBowlEntityRenderer::new);
     }
 
-    public static <T extends BlockEntity> BlockEntityType<T> registerBlockEntities(String name, FabricBlockEntityTypeBuilder.Factory<T> factory, Block[] block) {
-        return Registry.register(Registries.BLOCK_ENTITY_TYPE, Identifier.of(CookIt.MOD_ID, name), FabricBlockEntityTypeBuilder.create(factory, block).build());
+    public static <T extends BlockEntity> BlockEntityType<T> registerBlockEntities(String name, BlockEntityType.BlockEntityFactory<T> factory, Block[] block) {
+        return Registry.register(Registries.BLOCK_ENTITY_TYPE, Identifier.of(CookIt.MOD_ID, name), BlockEntityType.Builder.create(factory, block).build());
     }
 }

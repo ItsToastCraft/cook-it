@@ -13,11 +13,11 @@ import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.util.Identifier;
 import dev.toasttextures.cookit.block.containers.Bowl;
 import dev.toasttextures.cookit.block.containers.Plate;
-import dev.toasttextures.cookit.registries.CookItBlocks;
+import dev.toasttextures.cookit.registry.CookItBlocks;
 
 import java.util.concurrent.CompletableFuture;
 
-import static dev.toasttextures.cookit.registries.CookItItems.ROLLING_PINS;
+import static dev.toasttextures.cookit.registry.CookItItems.ROLLING_PINS;
 
 public class CookItRecipeGenerator extends FabricRecipeProvider {
 
@@ -61,7 +61,6 @@ public class CookItRecipeGenerator extends FabricRecipeProvider {
                     .criterion(FabricRecipeProvider.hasItem(slab),
                     FabricRecipeProvider.conditionsFromItem(slab))
                     .offerTo(exporter);
-
         }
 
         for (Item rollingPin : ROLLING_PINS) {

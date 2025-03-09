@@ -1,4 +1,4 @@
-package dev.toasttextures.cookit.registries;
+package dev.toasttextures.cookit.registry;
 
 import dev.toasttextures.cookit.item.*;
 import dev.toasttextures.cookit.item.armor.ChefOutfit.ChefOutfitItem;
@@ -10,6 +10,8 @@ import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.*;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import dev.toasttextures.cookit.CookIt;
@@ -18,12 +20,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static dev.toasttextures.cookit.CookIt.SUPPORTED_WOOD_TYPES;
-import static dev.toasttextures.cookit.registries.CookItBlocks.BLOCKS;
+import static dev.toasttextures.cookit.registry.CookItBlocks.BLOCKS;
 
 public class CookItItems {
     public static final List<Item> ITEMS = new ArrayList<>();
     public static final List<Item> ROLLING_PINS = new ArrayList<>();
     public static final List<Item> MUFFINS = new ArrayList<>();
+
+    // -- Tags --
+    public static final TagKey<Item> BAKING = TagKey.of(RegistryKeys.ITEM, Identifier.of(CookIt.MOD_ID, "baking"));
+    public static final TagKey<Item> FRYING = TagKey.of(RegistryKeys.ITEM, Identifier.of(CookIt.MOD_ID, "frying"));
     // -- Utensils --
 
     public static final Item KITCHEN_KNIFE = registerItem("knife", new SwordItem(ToolMaterials.IRON, new Item.Settings().maxCount(1).attributeModifiers(SwordItem.createAttributeModifiers(ToolMaterials.IRON, 2, -1))));

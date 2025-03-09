@@ -2,7 +2,7 @@ package dev.toasttextures.cookit;
 
 import dev.toasttextures.cookit.block.containers.CuttingBoard;
 import dev.toasttextures.cookit.block.entity.CuttingBoardEntity;
-import dev.toasttextures.cookit.registries.*;
+import dev.toasttextures.cookit.registry.*;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
@@ -24,7 +24,7 @@ public class CookIt implements ModInitializer {
 
     public static final ParticleType<OilParticleEffect> OIL_PARTICLE = FabricParticleTypes.complex(OilParticleEffect.CODEC, OilParticleEffect.PACKET_CODEC);
 
-    public static final List<String> SUPPORTED_WOOD_TYPES = List.of(new String[]{"acacia", "birch", "cherry", "crimson", "dark_oak", "jungle",  "oak", "mangrove", "spruce", "warped"});
+    public static final List<String> SUPPORTED_WOOD_TYPES = List.of("acacia", "birch", "cherry", "crimson", "dark_oak", "jungle",  "oak", "mangrove", "spruce", "warped");
     @Override
     public void onInitialize() {
         // This code runs as soon as Minecraft is in a mod-load-ready state.

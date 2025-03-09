@@ -2,15 +2,16 @@ package dev.toasttextures.cookit.block.containers;
 
 import dev.toasttextures.cookit.block.entity.PlateEntity;
 import dev.toasttextures.cookit.item.CookItFood;
-import dev.toasttextures.cookit.registries.CookItComponents;
-import dev.toasttextures.cookit.registries.CookItFoodTypes;
+import dev.toasttextures.cookit.registry.*;
+import dev.toasttextures.cookit.registry.component.SingleCookingComponent;
+import dev.toasttextures.cookit.util.BlockEntityUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockEntityProvider;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ShapeContext;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.sound.SoundCategory;
@@ -26,7 +27,6 @@ import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
-import dev.toasttextures.cookit.registries.CookItItems;
 
 public class Plate extends Block implements BlockEntityProvider {
 
@@ -45,13 +45,10 @@ public class Plate extends Block implements BlockEntityProvider {
     @Override
     public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext ctx) {
         int plateAmount = state.get(PLATES_AMOUNT);
-        if (isLargePlate((Plate) state.getBlock())) {
-            return VoxelShapes.cuboid(0.125f, 0f, 0.125f, 0.875f, 0.0625f * plateAmount, 0.875f);
-        } else {
-            return VoxelShapes.cuboid(0.25f, 0f, 0.25f, 0.75f, 0.0625f * plateAmount, 0.75f);
-        }
+        return isLargePlate((Plate) state.getBlock())
+                ? VoxelShapes.cuboid(0.125f, 0f, 0.125f, 0.875f, 0.0625f * plateAmount, 0.875f)
+                : VoxelShapes.cuboid(0.25f, 0f, 0.25f, 0.75f, 0.0625f * plateAmount, 0.75f);
     }
-
 
     @Override
     public ItemActionResult onUseWithItem(ItemStack heldItem, BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
@@ -59,9 +56,8 @@ public class Plate extends Block implements BlockEntityProvider {
         PlateEntity blockEntity = (PlateEntity) world.getBlockEntity(pos);
         int plateAmount = state.get(PLATES_AMOUNT);
 
-
         if (world.isClient || blockEntity == null) {
-            return ItemActionResult.SUCCESS;
+            return ItemActionResult.FAIL;
         }
         // Let custom processing for fryer basket occur
         if (heldItem.getItem().equals(CookItItems.FRYER_BASKET)) {
@@ -85,9 +81,9 @@ public class Plate extends Block implements BlockEntityProvider {
                 return ItemActionResult.SUCCESS;
         } else {
             // Add another plate if the player is holding one of the same type and there aren't already 4 on there.
-            if (heldItem.getItem() instanceof BlockItem blockItem && blockItem.getBlock().equals(this.asBlock()) && plateAmount < 4 && blockEntity.getStack(0).isEmpty()) {
+            if (heldItem.getItem().equals(this.asItem()) && plateAmount < 4 && blockEntity.getStack(0).isEmpty()) {
                 if (heldItem.contains(CookItComponents.SINGLE_COOKING_COMPONENT)) {
-                    blockEntity.setStack(0, heldItem.get(CookItComponents.SINGLE_COOKING_COMPONENT));
+                    blockEntity.setStack(0, heldItem.getOrDefault(CookItComponents.SINGLE_COOKING_COMPONENT, SingleCookingComponent.DEFAULT).getItem());
                 }
                 heldItem.decrement(1);
                 world.playSound(null, pos, SoundEvents.BLOCK_COPPER_PLACE, SoundCategory.BLOCKS, 1, 1.75f);
@@ -95,7 +91,7 @@ public class Plate extends Block implements BlockEntityProvider {
                 return ItemActionResult.SUCCESS;
             // Add whatever is in the player's hand, as long as it's cooked food (sorry)
             } else if (blockEntity.getStack(0).isEmpty() && heldItem.getItem() instanceof CookItFood food && food.getFoodType().equals(CookItFoodTypes.DONE)) {
-                blockEntity.setStack(0, heldItem.split(1));
+                blockEntity.setStack(0, heldItem.splitUnlessCreative(1, player));
                 world.playSound(null, pos, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.BLOCKS, 1, 1.0f);
                 return ItemActionResult.SUCCESS;
             }
@@ -124,7 +120,15 @@ public class Plate extends Block implements BlockEntityProvider {
         }
         return super.onBreak(world, pos, state, player);
     }
+    @Override
+    public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
+        super.onPlaced(world, pos, state, placer, itemStack);
+        PlateEntity entity = (PlateEntity) world.getBlockEntity(pos);
+        BlockEntityUtils.convertSingleCookingComponent(world, entity, itemStack);
+    }
 
     @Nullable
-    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) { return new PlateEntity(pos, state); }
+    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+        return new PlateEntity(pos, state);
+    }
 }

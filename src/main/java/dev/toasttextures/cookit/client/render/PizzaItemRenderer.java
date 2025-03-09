@@ -1,7 +1,7 @@
 package dev.toasttextures.cookit.client.render;
 
 import dev.toasttextures.cookit.block.entity.PizzaEntity;
-import dev.toasttextures.cookit.registries.CookItBlocks;
+import dev.toasttextures.cookit.registry.CookItBlocks;
 import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.VertexConsumerProvider;

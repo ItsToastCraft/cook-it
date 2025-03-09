@@ -18,6 +18,5 @@ public class CookItEntityModelLayers {
         EntityModelLayerRegistry.registerModelLayer(CHEF_OUTFIT, () -> TexturedModelData.of(ChefOutfitModel.getModelData(), 64, 64));
         EntityModelLayerRegistry.registerModelLayer(PIZZA, PizzaEntityRenderer::getBaseModelData);
         EntityModelLayerRegistry.registerModelLayer(PIZZA_TOPPING, PizzaEntityRenderer::getToppingModelData);
-
     }
 }

@@ -1,4 +1,4 @@
-package dev.toasttextures.cookit.registries;
+package dev.toasttextures.cookit.registry;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;

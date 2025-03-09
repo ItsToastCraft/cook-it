@@ -21,7 +21,6 @@ public class MuffinTinEntityRenderer implements BlockEntityRenderer<MuffinTinEnt
     public void render(MuffinTinEntity blockEntity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
         final MinecraftClient client = MinecraftClient.getInstance();
 
-
         for (int i = 0; i < 2; i++) {
             for (int j = 0; j < 3; j++) {
                 ItemStack stack = blockEntity.getStack(i * 3 + j);

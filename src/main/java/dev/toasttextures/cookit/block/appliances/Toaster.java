@@ -1,6 +1,5 @@
 package dev.toasttextures.cookit.block.appliances;
 
-
 import com.mojang.serialization.MapCodec;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -27,11 +26,11 @@ import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
-import dev.toasttextures.cookit.registries.CookItItems;
+import dev.toasttextures.cookit.registry.CookItItems;
 
 
 public class Toaster extends HorizontalFacingBlock {
-    // New blockstate (yippee) | 0 = no bread, 1 = 1 bread, 2 = 2 bread, 3 = 1 toasted, 4 = 2 toasted
+    // New blockstate (yippee) | 0 = no bread, 1 = 1 bread, 2 = 2 bread, 3 = 1 bread toasted, 4 = 2 bread toasted
 
     public static IntProperty TOASTER_STATE = IntProperty.of("toaster_state", 0, 4);
 
@@ -53,37 +52,29 @@ public class Toaster extends HorizontalFacingBlock {
 
     @Override
     public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext ctx) {
-
-        Direction dir = state.get(FACING);
-        return switch (dir) {
+        return switch (state.get(Properties.HORIZONTAL_FACING)) {
             case NORTH, SOUTH -> VoxelShapes.cuboid(0.25f, 0f, 0.125f, 0.75f, 0.4375f, 0.875f);
-            case EAST, WEST -> VoxelShapes.cuboid(0.125f, 0f, 0.25f, 0.875f, 0.4375f, 0.75f);
-            default -> VoxelShapes.fullCube();
+            default -> VoxelShapes.cuboid(0.125f, 0f, 0.25f, 0.875f, 0.4375f, 0.75f);
         };
-
     }
 
     // I know this allows you to just put a piece of bread at the last second but like I don't care :cat_plushie:
     @Override
     public ItemActionResult onUseWithItem(ItemStack stack, BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        ItemStack heldItem = player.getStackInHand(hand);
         int toastState = state.get(TOASTER_STATE);
         // Check if the player is holding bread
-        if (heldItem.getItem() == Items.BREAD) {
-
+        if (stack.isOf(Items.BREAD)) {
             // Increment TOASTER_STATE only if it is less than 2 ( if there's no toasted bread)
             if (toastState < 2) {
-                heldItem.decrement(1);
+                stack.decrementUnlessCreative(1, player);
                 world.setBlockState(pos, state.with(TOASTER_STATE, toastState + 1));
                 this.scheduleTick(world, pos);
             }
-
             return ItemActionResult.SUCCESS;
         }
-        if (heldItem.getItem() == Items.AIR) {
-
+        if (stack.isEmpty()) {
             if (toastState > 2) {
-                player.getInventory().insertStack(new ItemStack(CookItItems.TOAST));
+                player.getInventory().offerOrDrop(new ItemStack(CookItItems.TOAST));
                 world.setBlockState(pos, state.with(TOASTER_STATE, toastState - 1));
                 if (toastState == 3) {
                     world.setBlockState(pos, state.with(TOASTER_STATE, 0));
@@ -101,7 +92,6 @@ public class Toaster extends HorizontalFacingBlock {
 
     private void scheduleTick(WorldAccess world, BlockPos pos) {
         if (!world.isClient() && !world.getBlockTickScheduler().isQueued(pos, this)) {
-
             world.scheduleBlockTick(pos, this, 200);
         }
     }
@@ -110,7 +100,7 @@ public class Toaster extends HorizontalFacingBlock {
     public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
         int toastState = state.get(TOASTER_STATE);
         if (!world.isClient) {
-            world.playSound(null, pos.getX(), pos.getY(), pos.getZ(), SoundEvents.ENTITY_IRON_GOLEM_REPAIR, SoundCategory.MASTER, 1f, 1f);
+            world.playSound(null, pos.getX(), pos.getY(), pos.getZ(), SoundEvents.ENTITY_IRON_GOLEM_REPAIR, SoundCategory.BLOCKS, 1f, 1f);
         }
         if (toastState == 1) {
             world.setBlockState(pos, state.with(TOASTER_STATE, 3));
@@ -118,5 +108,4 @@ public class Toaster extends HorizontalFacingBlock {
             world.setBlockState(pos, state.with(TOASTER_STATE, 4));
         }
     }
-
 }

@@ -20,12 +20,12 @@ public class FryerEntityRenderer implements BlockEntityRenderer<FryerEntity> {
     public FryerEntityRenderer(BlockEntityRendererFactory.Context ctx) {
     }
 
-
     @Override
     public void render(FryerEntity entity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
         final MinecraftClient client = MinecraftClient.getInstance();
         ItemStack fryerBasket = entity.getStack(0);
         ItemStack item = FryerEntity.getContainerItem(fryerBasket);
+        if (fryerBasket.isEmpty()) return;
         Direction facing = entity.getCachedState().get(Properties.HORIZONTAL_FACING);
         int dir = 0;
         float x = 0, y = 0, z = 0;

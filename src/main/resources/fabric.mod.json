@@ -30,7 +30,7 @@
 		"cook-it.mixins.json"
 	],
 	"depends": {
-		"fabricloader": ">=0.15.5",
+		"fabricloader": ">=0.16.10",
 		"minecraft": "~1.21.1",
 		"java": ">=21",
 		"fabric-api": "*"

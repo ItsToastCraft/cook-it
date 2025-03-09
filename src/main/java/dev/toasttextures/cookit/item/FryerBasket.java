@@ -1,6 +1,7 @@
 package dev.toasttextures.cookit.item;
 
-import dev.toasttextures.cookit.registries.CookItComponents;
+import dev.toasttextures.cookit.registry.CookItComponents;
+import dev.toasttextures.cookit.registry.component.SingleCookingComponent;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.StackReference;
@@ -68,14 +69,14 @@ public class FryerBasket extends Item {
     }
 
     public static void setItem(ItemStack input, ItemStack item) {
-        input.set(CookItComponents.SINGLE_COOKING_COMPONENT, item);
+        input.set(CookItComponents.SINGLE_COOKING_COMPONENT, new SingleCookingComponent(item.getRegistryEntry()));
         if (item.isEmpty()) {
             input.remove(CookItComponents.SINGLE_COOKING_COMPONENT);
         }
     }
 
     public static ItemStack getItem(ItemStack input) {
-        return input.contains(CookItComponents.SINGLE_COOKING_COMPONENT) ? input.get(CookItComponents.SINGLE_COOKING_COMPONENT) : ItemStack.EMPTY;
+        return input.getOrDefault(CookItComponents.SINGLE_COOKING_COMPONENT, SingleCookingComponent.DEFAULT).getItem();
     }
 
     @Override
