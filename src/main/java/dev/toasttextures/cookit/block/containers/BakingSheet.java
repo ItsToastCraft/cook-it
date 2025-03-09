@@ -15,6 +15,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.tooltip.TooltipType;
+import net.minecraft.loot.context.LootContextParameterSet;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ItemActionResult;
@@ -74,6 +75,11 @@ public class BakingSheet extends Block implements BlockEntityProvider {
         super.onPlaced(world, pos, state, placer, itemStack);
         BakingSheetEntity entity = (BakingSheetEntity) world.getBlockEntity(pos);
         BlockEntityUtils.convertCookingComponent(world, entity, itemStack);
+    }
+
+    @Override
+    protected List<ItemStack> getDroppedStacks(BlockState state, LootContextParameterSet.Builder builder) {
+        return BlockEntityUtils.dropWithComponent(this, builder);
     }
 
     @Override

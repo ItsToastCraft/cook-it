@@ -13,6 +13,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.tooltip.TooltipType;
+import net.minecraft.loot.context.LootContextParameterSet;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ItemActionResult;
@@ -89,12 +90,14 @@ public class MuffinTin extends Block implements BlockEntityProvider {
         MuffinTinEntity entity = (MuffinTinEntity) world.getBlockEntity(pos);
         BlockEntityUtils.convertCookingComponent(world, entity, itemStack);
     }
-
+    @Override
+    protected List<ItemStack> getDroppedStacks(BlockState state, LootContextParameterSet.Builder builder) {
+        return BlockEntityUtils.dropWithComponent(this, builder);
+    }
     @Override
     public void appendTooltip(ItemStack stack, Item.TooltipContext context, List<Text> tooltip, TooltipType options) {
         ItemStack[] items = BlockEntityUtils.formatItems(stack, CookItItems.GOOP);
         for (int i = 0; i < items.length; i++) {
-
             if (items[i].contains(CookItComponents.SINGLE_COOKING_COMPONENT)) {
                 items[i] = items[i].getOrDefault(CookItComponents.SINGLE_COOKING_COMPONENT, SingleCookingComponent.DEFAULT).getItem();
             }

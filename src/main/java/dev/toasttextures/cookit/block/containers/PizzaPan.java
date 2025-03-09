@@ -9,6 +9,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.loot.context.LootContextParameterSet;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ItemActionResult;
 import net.minecraft.util.hit.BlockHitResult;
@@ -19,6 +20,8 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import dev.toasttextures.cookit.block.food_blocks.pizza.Pizza;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class PizzaPan extends BlockWithEntity implements BlockEntityProvider {
 
@@ -69,7 +72,10 @@ public class PizzaPan extends BlockWithEntity implements BlockEntityProvider {
         PizzaPanEntity entity = (PizzaPanEntity) world.getBlockEntity(pos);
         BlockEntityUtils.convertSingleCookingComponent(world, entity, itemStack);
     }
-
+    @Override
+    protected List<ItemStack> getDroppedStacks(BlockState state, LootContextParameterSet.Builder builder) {
+        return BlockEntityUtils.dropWithComponent(this, builder);
+    }
     @Override
     public @Nullable BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
         return new PizzaPanEntity(pos, state);

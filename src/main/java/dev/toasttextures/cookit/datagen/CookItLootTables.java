@@ -11,7 +11,10 @@ import net.minecraft.loot.LootPool;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.condition.BlockStatePropertyLootCondition;
 import net.minecraft.loot.entry.ItemEntry;
+import net.minecraft.loot.function.CopyComponentsLootFunction;
+import net.minecraft.loot.function.CopyNbtLootFunction;
 import net.minecraft.loot.function.SetCountLootFunction;
+import net.minecraft.loot.provider.nbt.ContextLootNbtProvider;
 import net.minecraft.loot.provider.number.ConstantLootNumberProvider;
 import net.minecraft.predicate.StatePredicate;
 import net.minecraft.registry.RegistryWrapper;
@@ -30,6 +33,7 @@ public class CookItLootTables extends FabricBlockLootTableProvider {
     public void generate() {
         blocks.remove(CookItBlocks.BAKING_SHEET);
         blocks.remove(CookItBlocks.PIZZA_PAN);
+        blocks.remove(CookItBlocks.MUFFIN_TIN);
         blocks.remove(CookItBlocks.PIZZA);
         blocks.remove(CookItBlocks.PLATES.toArray(new Block[0]));
         blocks.remove(CookItBlocks.VANILLA_VINE);
@@ -63,11 +67,6 @@ public class CookItLootTables extends FabricBlockLootTableProvider {
                             .exactMatch(Plate.PLATES_AMOUNT, 4))))
                     )));
             // Nvm I don't like this I'll just have the plate drop the content later
-//                    .pool(LootPool.builder().rolls(ConstantLootNumberProvider.create(1.0f)).with(ItemEntry.builder(plate.asItem())
-//                        .apply(SetCountLootFunction.builder(ConstantLootNumberProvider.create(1.0f))) // Always one plate
-//                        .apply(CopyNbtLootFunction.builder(ContextLootNbtProvider.BLOCK_ENTITY)
-//                        .withOperation("Items", "BlockEntityTag.Items", CopyNbtLootFunction.Operator.REPLACE)))
-//                    ));
         }
     }
 

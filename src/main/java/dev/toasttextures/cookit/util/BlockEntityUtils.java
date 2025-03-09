@@ -1,15 +1,20 @@
 package dev.toasttextures.cookit.util;
 
+import dev.toasttextures.cookit.block.entity.BakingSheetEntity;
 import dev.toasttextures.cookit.block.entity.CookingBlockEntity;
 import dev.toasttextures.cookit.block.entity.MixingBowlEntity;
 import dev.toasttextures.cookit.registry.CookItComponents;
 import dev.toasttextures.cookit.registry.component.CookingComponent;
 import dev.toasttextures.cookit.registry.component.SingleCookingComponent;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.loot.context.LootContextParameterSet;
+import net.minecraft.loot.context.LootContextParameters;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
@@ -131,5 +136,24 @@ public class BlockEntityUtils {
             }
         }
         return ItemActionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+    }
+
+    public static List<ItemStack> dropWithComponent(Block block, LootContextParameterSet.Builder builder) {
+        ItemStack stack = new ItemStack(block.asItem());
+        World world = builder.getWorld();
+
+        if (world instanceof ServerWorld && builder.getOptional(LootContextParameters.BLOCK_ENTITY) instanceof CookingBlockEntity entity) {
+            ArrayList<ItemStack> outputs = new ArrayList<>();
+
+            if (!entity.getItems().isEmpty()) {
+                for (ItemStack storedItem : entity.getItems()) {
+                    if (!storedItem.isEmpty()) {
+                        outputs.add(storedItem);
+                    }
+                }
+                stack.set(CookItComponents.COOKING_COMPONENT, new CookingComponent(outputs));
+            }
+        }
+        return List.of(stack);
     }
 }
