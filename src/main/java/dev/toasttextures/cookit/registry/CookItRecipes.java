@@ -9,7 +9,6 @@ import dev.toasttextures.cookit.CookIt;
 public class CookItRecipes {
 
     public static void registerRecipes() {
-        CookIt.LOGGER.info("Registering recipes...");
        Registry.register(Registries.RECIPE_SERIALIZER, Identifier.of(CookIt.MOD_ID, "microwaving"),
                MicrowaveRecipe.Serializer.INSTANCE);
        Registry.register(Registries.RECIPE_TYPE, Identifier.of(CookIt.MOD_ID, "microwaving"),

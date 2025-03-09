@@ -17,6 +17,7 @@ public record CookingComponent(List<ItemStack> stacks) {
 
 
     public ItemStack get(int index) {
+        if (index < 0 || index >= stacks.size()) return ItemStack.EMPTY;
         return this.stacks.get(index);
     }
 

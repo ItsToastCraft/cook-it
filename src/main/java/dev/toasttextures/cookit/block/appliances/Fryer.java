@@ -56,10 +56,9 @@ public class Fryer extends BlockWithEntity implements BlockEntityProvider {
     public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext ctx) {
         return switch (state.get(Properties.HORIZONTAL_FACING)) {
             case NORTH, SOUTH -> VoxelShapes.cuboid(0.1875f, 0f, 0.0625f, 0.8125f, 0.5f, 0.9375f);
-            default -> VoxelShapes.cuboid(0.0625f, 0f, 0.1875f, 0.9375f, 0.5f, 0.8125f);
+            default -> VoxelShapes.cuboid(0.0625f, 0f, 0.1875f, 0.9375f, 0.375f, 0.8125f);
         };
     }
-
 
     @Override
     protected ItemActionResult onUseWithItem(ItemStack stack, BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {

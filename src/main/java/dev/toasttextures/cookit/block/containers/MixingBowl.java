@@ -1,9 +1,9 @@
 package dev.toasttextures.cookit.block.containers;
 
 import com.mojang.serialization.MapCodec;
-import dev.toasttextures.cookit.CookIt;
 import dev.toasttextures.cookit.block.entity.CookingBlockEntity;
 import dev.toasttextures.cookit.block.entity.MixingBowlEntity;
+import dev.toasttextures.cookit.block.entity.MuffinTinEntity;
 import dev.toasttextures.cookit.registry.CookItComponents;
 import dev.toasttextures.cookit.registry.CookItItems;
 import dev.toasttextures.cookit.registry.component.CookingComponent;
@@ -29,6 +29,7 @@ import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldView;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -78,7 +79,6 @@ public class MixingBowl extends BlockWithEntity implements BlockEntityProvider {
                 world.setBlockState(pos, state.with(HAS_GOOP, true));
                 world.updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
             }
-            CookIt.LOGGER.info("Mixing...");
             return ItemActionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
         } else if ((stack.isOf(Items.MILK_BUCKET) || stack.isOf(Items.WATER_BUCKET)) && entity.getLiquid().equals(Items.AIR)) {
             world.playSound(null, pos, SoundEvents.BLOCK_WATER_AMBIENT, SoundCategory.BLOCKS, 0.5f, 1.25f);
@@ -94,7 +94,6 @@ public class MixingBowl extends BlockWithEntity implements BlockEntityProvider {
                     return ItemActionResult.FAIL;
                 }
             }
-            CookIt.LOGGER.info("Other...");
         }
         return ItemActionResult.SUCCESS;
     }
@@ -160,6 +159,10 @@ public class MixingBowl extends BlockWithEntity implements BlockEntityProvider {
     @Override
     protected List<ItemStack> getDroppedStacks(BlockState state, LootContextParameterSet.Builder builder) {
         return BlockEntityUtils.dropWithComponent(this, builder);
+    }
+    @Override
+    public ItemStack getPickStack(WorldView world, BlockPos pos, BlockState state) {
+        return BlockEntityUtils.getPickStack(this, (MixingBowlEntity) world.getBlockEntity(pos));
     }
 
     @Override

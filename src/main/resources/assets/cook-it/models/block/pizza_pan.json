@@ -1,8 +1,8 @@
 {
-	"credit": "Made with Blockbench",
+	"credit": "Made by ToastTextures using Blockbench",
 	"textures": {
 		"pizza_pan": "cook-it:block/pizza_pan",
-		"particle": "#pizza-pan"
+		"particle": "#pizza_pan"
 	},
 	"elements": [
 		{

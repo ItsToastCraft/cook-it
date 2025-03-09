@@ -1,7 +1,7 @@
 {
   "display": {
     "icon": {
-      "item": "cook-it:chef_hat"
+      "id": "cook-it:chef_hat"
     },
     "title": "Chef Status",
     "description": "Make an entire chef outfit",

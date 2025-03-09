@@ -3,7 +3,7 @@ package dev.toasttextures.cookit.block.entity;
 import dev.toasttextures.cookit.recipes.RecipeInventory;
 import dev.toasttextures.cookit.registry.CookItComponents;
 import dev.toasttextures.cookit.registry.OilParticleEffect;
-import dev.toasttextures.cookit.registry.component.SingleCookingComponent;
+import dev.toasttextures.cookit.registry.component.CookingComponent;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
@@ -132,7 +132,7 @@ public class FryerEntity extends CookingBlockEntity implements ImplementedInvent
     }
 
     public static ItemStack getContainerItem(ItemStack container) {
-        return container.getOrDefault(CookItComponents.SINGLE_COOKING_COMPONENT, SingleCookingComponent.DEFAULT).getItem();
+        return container.getOrDefault(CookItComponents.COOKING_COMPONENT, CookingComponent.DEFAULT).get(0);
     }
 }
 

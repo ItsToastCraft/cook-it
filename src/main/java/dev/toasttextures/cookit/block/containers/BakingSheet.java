@@ -25,6 +25,7 @@ import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldView;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -80,6 +81,11 @@ public class BakingSheet extends Block implements BlockEntityProvider {
     @Override
     protected List<ItemStack> getDroppedStacks(BlockState state, LootContextParameterSet.Builder builder) {
         return BlockEntityUtils.dropWithComponent(this, builder);
+    }
+
+    @Override
+    public ItemStack getPickStack(WorldView world, BlockPos pos, BlockState state) {
+        return BlockEntityUtils.getPickStack(this, (BakingSheetEntity) world.getBlockEntity(pos));
     }
 
     @Override

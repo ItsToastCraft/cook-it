@@ -3,7 +3,6 @@ package dev.toasttextures.cookit.registry;
 import com.mojang.serialization.Codec;
 import dev.toasttextures.cookit.CookIt;
 import dev.toasttextures.cookit.registry.component.CookingComponent;
-import dev.toasttextures.cookit.registry.component.SingleCookingComponent;
 import net.minecraft.component.ComponentType;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
@@ -16,15 +15,12 @@ public class CookItComponents {
     public static ComponentType<Integer> SLICE_COUNT_COMPONENT;
     public static ComponentType<Integer> COLOR_COMPONENT;
     public static ComponentType<Integer> CLICKS_COMPONENT;
-    public static final ComponentType<CookingComponent> COOKING_COMPONENT = Registry.register(
-            Registries.DATA_COMPONENT_TYPE,
-            Identifier.of(CookIt.MOD_ID, "items"),
-            ComponentType.<CookingComponent>builder().codec(CookingComponent.CODEC).packetCodec(CookingComponent.PACKET_CODEC).build()
-    );
-    public static final ComponentType<SingleCookingComponent> SINGLE_COOKING_COMPONENT = register(Identifier.of(CookIt.MOD_ID, "output"),
-            ComponentType.<SingleCookingComponent>builder().codec(SingleCookingComponent.CODEC).packetCodec(SingleCookingComponent.PACKET_CODEC).build());
-
+    public static ComponentType<CookingComponent> COOKING_COMPONENT;
     public static void registerComponents() {
+        COOKING_COMPONENT = register(
+                Identifier.of(CookIt.MOD_ID, "items"),
+                ComponentType.<CookingComponent>builder().codec(CookingComponent.CODEC).packetCodec(CookingComponent.PACKET_CODEC).build()
+        );
         TOPPING_COMPONENT = register(
                 Identifier.of(CookIt.MOD_ID, "toppings"),
                 ComponentType.<List<String>>builder().codec(Codec.STRING.listOf()).build()

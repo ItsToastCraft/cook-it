@@ -135,5 +135,9 @@
 
   "itemGroup.cook-it.items": "Cook It!",
   "subtitles.cook-it.microwave_hum": "Microwave Hums",
-  "subtitles.cook-it.microwave_beep": "Microwave Beeps"
+  "subtitles.cook-it.microwave_beep": "Microwave Beeps",
+
+  "tag.item.cook-it.baking": "Baking",
+  "tag.item.cook-it.frying": "Frying",
+  "tag.item.cook-it.rolling_pins": "Rolling Pins"
 }

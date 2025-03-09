@@ -1,13 +1,12 @@
 package dev.toasttextures.cookit.block.entity;
 
-import dev.toasttextures.cookit.CookIt;
 import dev.toasttextures.cookit.block.ImplementedInventory;
 import dev.toasttextures.cookit.recipes.MixingBowlRecipe;
 import dev.toasttextures.cookit.recipes.RecipeInventory;
 import dev.toasttextures.cookit.registry.CookItBlockEntities;
 import dev.toasttextures.cookit.registry.CookItComponents;
 import dev.toasttextures.cookit.registry.CookItItems;
-import dev.toasttextures.cookit.registry.component.SingleCookingComponent;
+import dev.toasttextures.cookit.registry.component.CookingComponent;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -22,6 +21,7 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -73,10 +73,9 @@ public class MixingBowlEntity extends CookingBlockEntity implements ImplementedI
                 if (hasGoop){
                     ItemStack goop = new ItemStack(CookItItems.GOOP, output.getCount());
                     output.setCount(1);
-                    goop.set(CookItComponents.SINGLE_COOKING_COMPONENT, new SingleCookingComponent(output.getRegistryEntry()));
+                    goop.set(CookItComponents.COOKING_COMPONENT, new CookingComponent(List.of(output)));
                     goop.set(CookItComponents.COLOR_COMPONENT, this.getGoopColor());
                     output = goop;
-                    CookIt.LOGGER.info(String.valueOf(goop.get(CookItComponents.SINGLE_COOKING_COMPONENT)));
                 }
                 this.setStack(0, output);
                 this.setClicks(0);

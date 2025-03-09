@@ -1,9 +1,10 @@
 package dev.toasttextures.cookit.block.containers;
 
+import dev.toasttextures.cookit.block.entity.BakingSheetEntity;
 import dev.toasttextures.cookit.block.entity.PlateEntity;
 import dev.toasttextures.cookit.item.CookItFood;
 import dev.toasttextures.cookit.registry.*;
-import dev.toasttextures.cookit.registry.component.SingleCookingComponent;
+import dev.toasttextures.cookit.registry.component.CookingComponent;
 import dev.toasttextures.cookit.util.BlockEntityUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockEntityProvider;
@@ -26,6 +27,7 @@ import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldView;
 import org.jetbrains.annotations.Nullable;
 
 public class Plate extends Block implements BlockEntityProvider {
@@ -82,9 +84,7 @@ public class Plate extends Block implements BlockEntityProvider {
         } else {
             // Add another plate if the player is holding one of the same type and there aren't already 4 on there.
             if (heldItem.getItem().equals(this.asItem()) && plateAmount < 4 && blockEntity.getStack(0).isEmpty()) {
-                if (heldItem.contains(CookItComponents.SINGLE_COOKING_COMPONENT)) {
-                    blockEntity.setStack(0, heldItem.getOrDefault(CookItComponents.SINGLE_COOKING_COMPONENT, SingleCookingComponent.DEFAULT).getItem());
-                }
+                blockEntity.setStack(0, heldItem.getOrDefault(CookItComponents.COOKING_COMPONENT, CookingComponent.DEFAULT).get(0));
                 heldItem.decrement(1);
                 world.playSound(null, pos, SoundEvents.BLOCK_COPPER_PLACE, SoundCategory.BLOCKS, 1, 1.75f);
                 world.setBlockState(pos, state.with(PLATES_AMOUNT, plateAmount + 1));
@@ -124,9 +124,12 @@ public class Plate extends Block implements BlockEntityProvider {
     public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
         super.onPlaced(world, pos, state, placer, itemStack);
         PlateEntity entity = (PlateEntity) world.getBlockEntity(pos);
-        BlockEntityUtils.convertSingleCookingComponent(world, entity, itemStack);
+        BlockEntityUtils.convertCookingComponent(world, entity, itemStack);
     }
-
+    @Override
+    public ItemStack getPickStack(WorldView world, BlockPos pos, BlockState state) {
+        return BlockEntityUtils.getPickStack(this, (PlateEntity) world.getBlockEntity(pos));
+    }
     @Nullable
     public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
         return new PlateEntity(pos, state);

@@ -65,7 +65,6 @@ public class CuttingBoardEntity extends CookingBlockEntity implements Implemente
                     }
                 } else {
                     for (ItemStack otherTool : recipeEntry.value().getTool()) {
-                        CookIt.LOGGER.info(otherTool.toString());
                         if (tool.getItem().asItem().equals(otherTool.getItem()) && !recipeEntry.value().isResettable()) {
                             this.clicks++;
                             Objects.requireNonNull(world).playSound(null, pos.getX(), pos.getY(), pos.getZ(), SoundEvents.ENTITY_ITEM_FRAME_REMOVE_ITEM, SoundCategory.BLOCKS, 0.5f, 0.25f);
@@ -85,21 +84,20 @@ public class CuttingBoardEntity extends CookingBlockEntity implements Implemente
     public boolean processPizza(ItemStack tool) {
 
         List<String> toppings = this.getStack(0).getOrDefault(CookItComponents.TOPPING_COMPONENT, List.of());
-
+        ArrayList<String> newToppings = new ArrayList<>(toppings);
         // The pizza has maxed out toppings, so no change happened
         if (toppings.size() == 3) {
             return false;
         }
-
         // Try and get the topping from the held item, so the pizza has changed
         PizzaToppings topping = PizzaToppings.fromItem(tool.getItem());
-        if (topping != null) {
 
+        if (topping != null) {
             // no need to loop, at this point we're already sure there's a topping slot available.
-            toppings.add(topping.asString());
             tool.decrement(1);
             // set the topping to whatever it is
-            this.getStack(0).getOrDefault(CookItComponents.TOPPING_COMPONENT, new ArrayList<String>()).add(topping.asString());
+            newToppings.add(topping.asString());
+            this.getStack(0).set(CookItComponents.TOPPING_COMPONENT,newToppings);
             this.markDirty();
             Objects.requireNonNull(world).updateListeners(pos, this.getCachedState(), this.getCachedState(), Block.NOTIFY_LISTENERS);
             return true;
@@ -119,7 +117,6 @@ public class CuttingBoardEntity extends CookingBlockEntity implements Implemente
     private List<RecipeEntry<CuttingBoardRecipe>> getCurrentRecipe() {
         RecipeInventory inv = new RecipeInventory(this.size());
         inv.setStack(0, this.getStack(0));
-        CookIt.LOGGER.info(String.valueOf(Objects.requireNonNull(world).getRecipeManager().getFirstMatch(CuttingBoardRecipe.Type.INSTANCE, inv, world)));
         return Objects.requireNonNull(world).getRecipeManager().getAllMatches(CuttingBoardRecipe.Type.INSTANCE, inv, world);
     }
 }

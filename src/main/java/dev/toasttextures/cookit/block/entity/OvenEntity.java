@@ -3,7 +3,6 @@ package dev.toasttextures.cookit.block.entity;
 import dev.toasttextures.cookit.recipes.RecipeInventory;
 import dev.toasttextures.cookit.registry.*;
 import dev.toasttextures.cookit.registry.component.CookingComponent;
-import dev.toasttextures.cookit.registry.component.SingleCookingComponent;
 import dev.toasttextures.cookit.util.BlockEntityUtils;
 import net.minecraft.block.BlockState;
 import net.minecraft.inventory.Inventories;
@@ -87,8 +86,6 @@ public class OvenEntity extends CookingBlockEntity implements ImplementedInvento
 
     private void processMuffinRecipe(World world, BlockPos pos, BlockState state, int slot) {
         if (this.done) return;
-
-
         if (400 >= this.progress[slot]) {
             this.progress[slot]++;
         } else {
@@ -98,7 +95,7 @@ public class OvenEntity extends CookingBlockEntity implements ImplementedInvento
             ArrayList<ItemStack> outputs = new ArrayList<>();
             for (ItemStack item : containerItems) {
                 if (item.isOf(CookItItems.GOOP)) {
-                    ItemStack muffin = item.getOrDefault(CookItComponents.SINGLE_COOKING_COMPONENT, SingleCookingComponent.DEFAULT).getItem();
+                    ItemStack muffin = item.getOrDefault(CookItComponents.COOKING_COMPONENT, CookingComponent.DEFAULT).get(0);
                     if (!muffin.isEmpty()) {
                         outputs.add(muffin);
                     }
@@ -122,11 +119,9 @@ public class OvenEntity extends CookingBlockEntity implements ImplementedInvento
             ArrayList<ItemStack> containerItems = BlockEntityUtils.getContainerItems(stack);
             ArrayList <ItemStack> outputs = new ArrayList<>();
             for (ItemStack item : containerItems) {
-
-
                 Optional<RecipeEntry<OvenRecipe>> recipe = getCurrentRecipe(item);
                 if (recipe.isPresent()) {
-                    if (item.isEmpty() && recipe.get().value().getMaxProgress() <= this.progress[index]) {
+                    if (!item.isEmpty() && recipe.get().value().getMaxProgress() <= this.progress[index]) {
                         ItemStack output = recipe.get().value().craft(new RecipeInventory(stack), this.world.getRegistryManager());
                         if (item.getComponents() != null) {
                             output.applyComponentsFrom(item.getComponents());

@@ -1,5 +1,5 @@
 {
-	"credit": "Made with Blockbench",
+	"credit": "Made by ToastTextures using Blockbench",
 	"textures": {
 		"donut": "cook-it:item/plain_donut",
 		"particle": "#donut"

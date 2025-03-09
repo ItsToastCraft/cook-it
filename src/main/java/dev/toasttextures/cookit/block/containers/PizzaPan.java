@@ -1,6 +1,7 @@
 package dev.toasttextures.cookit.block.containers;
 
 import com.mojang.serialization.MapCodec;
+import dev.toasttextures.cookit.block.entity.BakingSheetEntity;
 import dev.toasttextures.cookit.block.entity.PizzaPanEntity;
 import dev.toasttextures.cookit.util.BlockEntityUtils;
 import net.minecraft.block.*;
@@ -19,6 +20,7 @@ import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import dev.toasttextures.cookit.block.food_blocks.pizza.Pizza;
+import net.minecraft.world.WorldView;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -59,7 +61,7 @@ public class PizzaPan extends BlockWithEntity implements BlockEntityProvider {
                 blockEntity.setStack(0, heldItem.splitUnlessCreative(1, player));
             }
         } else if (heldItem.isEmpty() && hasPizza) {
-            player.getInventory().offerOrDrop(blockEntity.getStack(0).split(1));
+            player.getInventory().offerOrDrop(blockEntity.getStack(0));
         } else {
             return ItemActionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         }
@@ -70,11 +72,15 @@ public class PizzaPan extends BlockWithEntity implements BlockEntityProvider {
     public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
         super.onPlaced(world, pos, state, placer, itemStack);
         PizzaPanEntity entity = (PizzaPanEntity) world.getBlockEntity(pos);
-        BlockEntityUtils.convertSingleCookingComponent(world, entity, itemStack);
+        BlockEntityUtils.convertCookingComponent(world, entity, itemStack);
     }
     @Override
     protected List<ItemStack> getDroppedStacks(BlockState state, LootContextParameterSet.Builder builder) {
         return BlockEntityUtils.dropWithComponent(this, builder);
+    }
+    @Override
+    public ItemStack getPickStack(WorldView world, BlockPos pos, BlockState state) {
+        return BlockEntityUtils.getPickStack(this, (PizzaPanEntity) world.getBlockEntity(pos));
     }
     @Override
     public @Nullable BlockEntity createBlockEntity(BlockPos pos, BlockState state) {

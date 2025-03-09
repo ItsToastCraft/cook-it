@@ -1,10 +1,11 @@
 package dev.toasttextures.cookit.block.containers;
 
+import dev.toasttextures.cookit.block.entity.BakingSheetEntity;
 import dev.toasttextures.cookit.block.entity.MuffinTinEntity;
 import dev.toasttextures.cookit.registry.CookItBlocks;
 import dev.toasttextures.cookit.registry.CookItComponents;
 import dev.toasttextures.cookit.registry.CookItItems;
-import dev.toasttextures.cookit.registry.component.SingleCookingComponent;
+import dev.toasttextures.cookit.registry.component.CookingComponent;
 import dev.toasttextures.cookit.util.BlockEntityUtils;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
@@ -23,6 +24,7 @@ import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldView;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -95,11 +97,15 @@ public class MuffinTin extends Block implements BlockEntityProvider {
         return BlockEntityUtils.dropWithComponent(this, builder);
     }
     @Override
+    public ItemStack getPickStack(WorldView world, BlockPos pos, BlockState state) {
+        return BlockEntityUtils.getPickStack(this, (MuffinTinEntity) world.getBlockEntity(pos));
+    }
+    @Override
     public void appendTooltip(ItemStack stack, Item.TooltipContext context, List<Text> tooltip, TooltipType options) {
         ItemStack[] items = BlockEntityUtils.formatItems(stack, CookItItems.GOOP);
         for (int i = 0; i < items.length; i++) {
-            if (items[i].contains(CookItComponents.SINGLE_COOKING_COMPONENT)) {
-                items[i] = items[i].getOrDefault(CookItComponents.SINGLE_COOKING_COMPONENT, SingleCookingComponent.DEFAULT).getItem();
+            if (items[i].contains(CookItComponents.COOKING_COMPONENT)) {
+                items[i] = items[i].getOrDefault(CookItComponents.COOKING_COMPONENT, CookingComponent.DEFAULT).get(0);
             }
         }
         BlockEntityUtils.appendTooltip(items, tooltip);

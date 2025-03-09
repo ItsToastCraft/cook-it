@@ -1,13 +1,10 @@
 package dev.toasttextures.cookit.util;
 
-import dev.toasttextures.cookit.block.entity.BakingSheetEntity;
 import dev.toasttextures.cookit.block.entity.CookingBlockEntity;
 import dev.toasttextures.cookit.block.entity.MixingBowlEntity;
 import dev.toasttextures.cookit.registry.CookItComponents;
 import dev.toasttextures.cookit.registry.component.CookingComponent;
-import dev.toasttextures.cookit.registry.component.SingleCookingComponent;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -35,13 +32,10 @@ public class BlockEntityUtils {
     // Checks if the item is a container that stores more items in its NBT
     // Many items in this mod do this, like baking sheets, pizza pans, and muffin tins
     public static boolean isContainer(ItemStack item) {
-
         return !Objects.requireNonNull(item.getComponents().get(CookItComponents.COOKING_COMPONENT)).isEmpty();
     }
 
-
     public static ArrayList<ItemStack> getContainerItems(ItemStack container) {
-
         ArrayList<ItemStack> itemStackList = new ArrayList<>();
         CookingComponent items = container.getComponents().get(CookItComponents.COOKING_COMPONENT);
         if (items != null && !items.isEmpty()) {
@@ -50,17 +44,14 @@ public class BlockEntityUtils {
         return itemStackList;
     }
 
-
     public static ItemStack[] formatItems(ItemStack stack, Item... exclusions) {
         if (!stack.getComponents().contains(CookItComponents.COOKING_COMPONENT)) return new ItemStack[]{ItemStack.EMPTY};
 
         List<ItemStack> items = stack.getComponents().getOrDefault(CookItComponents.COOKING_COMPONENT, CookingComponent.DEFAULT).stacks();
         if (items == null || items.isEmpty()) return new ItemStack[]{ItemStack.EMPTY};
 
-
         ItemStack[] itemStacks = new ItemStack[items.size()];
         for (int i = 0; i < items.size(); i++) {
-
             if (!items.get(i).isEmpty() && !Arrays.asList(exclusions).contains(stack.getItem())) {
                 itemStacks[i] = items.get(i);
             }
@@ -78,15 +69,15 @@ public class BlockEntityUtils {
        tooltip.add(Text.literal(items.length > 1 ? "Items:" : "Item:"));
 
        for (ItemStack itemStack : items) {
-
            Text name = Text.literal(itemStack.getName().getString()).formatted(Formatting.BLUE);
            tooltip.add(name);
        }
     }
-    public static ItemActionResult dropOnUse(Block block, CookingBlockEntity entity, PlayerEntity player, World world, BlockPos pos) {
+    public static ItemStack getPickStack(Block block, CookingBlockEntity entity) {
         ItemStack item = block.asItem().getDefaultStack();
-        ArrayList<ItemStack> items = new ArrayList<>();
+        if (entity == null) return item;
         if (!entity.isEmpty()) {
+            ArrayList<ItemStack> items = new ArrayList<>();
             if (entity instanceof MixingBowlEntity mixingBowlEntity) {
                 if (mixingBowlEntity.getGoopColor() != 0) {
                     item.set(CookItComponents.COLOR_COMPONENT, mixingBowlEntity.getGoopColor());
@@ -94,17 +85,18 @@ public class BlockEntityUtils {
                     item.set(CookItComponents.CLICKS_COMPONENT, mixingBowlEntity.getClicks());
                 }
             }
-            if (entity.getItems().size() == 1) {
-                item.set(CookItComponents.SINGLE_COOKING_COMPONENT, new SingleCookingComponent(entity.getStack(0).getRegistryEntry()));
-            } else {
-                for (ItemStack itemStack : entity.getItems()) {
-                    if (!itemStack.isEmpty()) {
-                        items.add(itemStack);
-                    }
+            for (ItemStack itemStack : entity.getItems()) {
+                if (!itemStack.isEmpty()) {
+                    items.add(itemStack);
                 }
             }
             item.set(CookItComponents.COOKING_COMPONENT, new CookingComponent(items));
         }
+
+        return item;
+    }
+    public static ItemActionResult dropOnUse(Block block, CookingBlockEntity entity, PlayerEntity player, World world, BlockPos pos) {
+        ItemStack item = getPickStack(block, entity);
         player.getInventory().offerOrDrop(item);
         world.breakBlock(pos, false);
         return ItemActionResult.SUCCESS;
@@ -119,14 +111,6 @@ public class BlockEntityUtils {
         }
     }
 
-    public static void convertSingleCookingComponent(World world, CookingBlockEntity entity, ItemStack stack) {
-        if (entity != null && !world.isClient) {
-            entity.setItems(List.of(stack.getOrDefault(CookItComponents.SINGLE_COOKING_COMPONENT, SingleCookingComponent.DEFAULT).getItem()));
-            ItemStack newItem = stack.copy();
-            newItem.remove(CookItComponents.SINGLE_COOKING_COMPONENT);
-            entity.readComponents(newItem);
-        }
-    }
     public static ItemActionResult returnItem(CookingBlockEntity entity, PlayerEntity player, World world, BlockPos pos) {
         for (int i = entity.getItems().size() - 1; i >= 0; i--) {
             if (!entity.getStack(i).isEmpty()) {

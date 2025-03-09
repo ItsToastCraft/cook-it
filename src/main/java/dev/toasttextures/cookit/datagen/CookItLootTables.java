@@ -11,10 +11,7 @@ import net.minecraft.loot.LootPool;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.condition.BlockStatePropertyLootCondition;
 import net.minecraft.loot.entry.ItemEntry;
-import net.minecraft.loot.function.CopyComponentsLootFunction;
-import net.minecraft.loot.function.CopyNbtLootFunction;
 import net.minecraft.loot.function.SetCountLootFunction;
-import net.minecraft.loot.provider.nbt.ContextLootNbtProvider;
 import net.minecraft.loot.provider.number.ConstantLootNumberProvider;
 import net.minecraft.predicate.StatePredicate;
 import net.minecraft.registry.RegistryWrapper;
@@ -66,8 +63,6 @@ public class CookItLootTables extends FabricBlockLootTableProvider {
                             .properties(StatePredicate.Builder.create()
                             .exactMatch(Plate.PLATES_AMOUNT, 4))))
                     )));
-            // Nvm I don't like this I'll just have the plate drop the content later
-        }
+            }
     }
-
 }
