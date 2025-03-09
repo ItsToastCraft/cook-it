@@ -1,0 +1,13 @@
+{
+  "type": "cook-it:cutting",
+  "ingredient": {
+    "item": "cook-it:chocolate_donut"
+  },
+  "output": {
+    "id": "cook-it:chocolate_donut_striped"
+  },
+  "tool": {
+    "tag": "cook-it:vanilla_bean"
+  },
+  "usesItem": true
+}

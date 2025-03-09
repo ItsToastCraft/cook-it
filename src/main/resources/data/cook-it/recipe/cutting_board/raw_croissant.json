@@ -1,0 +1,11 @@
+{
+  "type": "cook-it:cutting",
+  "ingredient": {
+    "item": "cook-it:dough_sliced"
+  },
+  "output": {
+    "id": "cook-it:raw_croissant",
+    "count": 4
+  },
+  "clicks": 4
+}

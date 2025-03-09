@@ -3,15 +3,12 @@ package dev.toasttextures.cookit.recipes;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import dev.toasttextures.cookit.CookIt;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.recipe.*;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.world.World;
-
-import java.util.Arrays;
 
 public class CuttingBoardRecipe implements Recipe<RecipeInventory> {
     private final ItemStack output;
@@ -35,7 +32,6 @@ public class CuttingBoardRecipe implements Recipe<RecipeInventory> {
         if(world.isClient()) {
             return false;
         }
-        CookIt.LOGGER.info(Arrays.toString(ingredient.getMatchingStacks()));
         return ingredient.test(inventory.getStackInSlot(0));
     }
 
@@ -47,14 +43,22 @@ public class CuttingBoardRecipe implements Recipe<RecipeInventory> {
     }
 
     public ItemStack[] getTool() {
-        if (tool.isEmpty()) {return new ItemStack[]{ ItemStack.EMPTY}; }
+        if (tool.isEmpty()) {
+            return new ItemStack[]{ ItemStack.EMPTY};
+        }
         return tool.getMatchingStacks();
     }
-    public boolean isResettable() { return this.resettable; }
+    public boolean isResettable() {
+        return this.resettable;
+    }
 
-    public boolean usesItem() { return this.usesItem; }
+    public boolean usesItem() {
+        return this.usesItem;
+    }
 
-    public int getClicks() { return this.clicks; }
+    public int getClicks() {
+        return this.clicks;
+    }
 
     public int getOutputCount() {
         return this.output.getCount();

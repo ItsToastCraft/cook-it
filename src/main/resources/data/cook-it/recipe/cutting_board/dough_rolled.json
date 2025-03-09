@@ -1,0 +1,13 @@
+{
+  "type": "cook-it:cutting",
+  "ingredient": {
+    "item": "cook-it:dough"
+  },
+  "output": {
+    "id": "cook-it:dough_rolled"
+  },
+  "tool": {
+    "tag": "cook-it:rolling_pins"
+  },
+  "clicks": 2
+}

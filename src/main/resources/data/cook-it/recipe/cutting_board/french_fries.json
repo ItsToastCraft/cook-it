@@ -1,0 +1,12 @@
+{
+  "type": "cook-it:cutting",
+  "ingredient": {
+    "item": "minecraft:potato"
+  },
+  "output": {
+    "id": "cook-it:uncooked_french_fries"
+  },
+  "tool": {
+    "item": "cook-it:knife"
+  }
+}

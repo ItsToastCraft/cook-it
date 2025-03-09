@@ -1,0 +1,31 @@
+{
+  "type": "cook-it:mixing",
+  "ingredients": [
+    {
+      "item": "minecraft:egg"
+    },
+    {
+      "item": "minecraft:wheat"
+    },
+    {
+      "item": "minecraft:wheat"
+    },
+    {
+      "item": "minecraft:sugar"
+    },
+    {
+      "item": "minecraft:sweet_berries"
+    }
+  ],
+
+  "output": {
+    "id": "cook-it:sweet_berry_muffin",
+    "count": 6
+  },
+  "clicks": 4,
+  "liquid": {
+    "id": "minecraft:milk_bucket"
+  },
+  "outputs_goop": true,
+  "goop_color": -4233668
+}

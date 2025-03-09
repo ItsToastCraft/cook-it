@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "IBI"
+  ],
+  "key": {
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "B": {
+      "item": "cook-it:baking_sheet"
+    }
+  },
+  "result": {
+    "id": "cook-it:muffin_tin",
+    "count": 1
+  }
+}
+

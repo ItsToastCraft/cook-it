@@ -1,0 +1,11 @@
+{
+  "type": "cook-it:cutting",
+  "ingredient": {
+    "item": "cook-it:pizza_crust"
+  },
+  "output": {
+    "id": "cook-it:dough"
+  },
+  "usesItem": false,
+  "resettable": true
+}

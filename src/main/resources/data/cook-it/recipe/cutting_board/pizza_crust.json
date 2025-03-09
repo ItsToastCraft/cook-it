@@ -1,0 +1,10 @@
+{
+  "type": "cook-it:cutting",
+  "ingredient": {
+    "item": "cook-it:dough"
+  },
+  "output": {
+    "id": "cook-it:pizza_crust"
+  },
+  "clicks": 3
+}

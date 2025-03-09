@@ -1,0 +1,10 @@
+{
+  "type": "cook-it:baking",
+  "ingredient": {
+      "item": "cook-it:raw_cinnamon_roll"
+  },
+  "output": {
+    "id": "cook-it:cinnamon_roll"
+  },
+  "time": 150
+}

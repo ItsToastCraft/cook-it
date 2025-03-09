@@ -1,0 +1,13 @@
+{
+  "type": "cook-it:cutting",
+  "ingredient": {
+    "item": "cook-it:plain_donut"
+  },
+  "output": {
+    "id": "cook-it:chocolate_donut"
+  },
+  "tool": {
+    "item": "minecraft:cocoa_beans"
+  },
+  "usesItem": true
+}

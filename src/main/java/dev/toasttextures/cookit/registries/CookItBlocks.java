@@ -94,6 +94,4 @@ public class CookItBlocks {
         CONTAINERS.add(MIXING_BOWL);
         CONTAINERS.add(PIZZA_PAN);
     }
-
-
 }

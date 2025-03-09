@@ -27,7 +27,6 @@ public class CookItClient implements ClientModInitializer {
 
     public static boolean isFiguraLoaded;
 
-
     public void onInitializeClient() {
         isFiguraLoaded = (FabricLoader.getInstance().isModLoaded("figura"));
 
@@ -62,7 +61,7 @@ public class CookItClient implements ClientModInitializer {
                 // Use the biome's grass color
                 return BiomeColors.getFoliageColor(view, pos);
             }
-            return 0xFFFFFF;
+            return 0xFFFFFFFF;
         }, CookItBlocks.VANILLA_VINE, CookItBlocks.VANILLA_VINE_STEM);
 
         ColorProviderRegistry.BLOCK.register((state, view, pos, tintIndex) -> {
@@ -70,9 +69,9 @@ public class CookItClient implements ClientModInitializer {
             if (view != null && view.getBlockEntity(pos) instanceof MixingBowlEntity entity && state.get(MixingBowl.HAS_GOOP)) {
                 return entity.getGoopColor();
             }
-            return 0xF8D478;
+            return 0xF8D478FF;
         }, CookItBlocks.MIXING_BOWL);
 
-        ColorProviderRegistry.ITEM.register((stack, tintIndex) -> stack.getOrDefault(CookItComponents.COLOR_COMPONENT, 0xF8D478), CookItItems.GOOP);
+        ColorProviderRegistry.ITEM.register((stack, tintIndex) -> stack.getOrDefault(CookItComponents.COLOR_COMPONENT, 0xF8D478FF), CookItItems.GOOP);
     }
 }

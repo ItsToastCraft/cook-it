@@ -1,0 +1,14 @@
+{
+  "type": "cook-it:cutting",
+  "ingredient": {
+    "item": "cook-it:pizza_crust"
+  },
+  "output": {
+    "id": "cook-it:uncooked_pizza"
+  },
+
+  "tool": {
+    "item": "cook-it:cheese"
+  },
+  "usesItem": true
+}

@@ -1,0 +1,10 @@
+{
+  "type": "cook-it:frying",
+  "ingredient": {
+      "item": "cook-it:uncooked_french_fries"
+  },
+  "output": {
+    "id": "cook-it:french_fries"
+  },
+  "time": 250
+}

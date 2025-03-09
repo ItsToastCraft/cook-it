@@ -1,7 +1,6 @@
 package dev.toasttextures.cookit.registries;
 
 import dev.toasttextures.cookit.recipes.*;
-import net.minecraft.recipe.RecipeType;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
@@ -11,10 +10,8 @@ public class CookItRecipes {
 
     public static void registerRecipes() {
         CookIt.LOGGER.info("Registering recipes...");
-
-    MicrowaveRecipe.Serializer serializer =  Registry.register(Registries.RECIPE_SERIALIZER, Identifier.of(CookIt.MOD_ID, "microwaving"),
+       Registry.register(Registries.RECIPE_SERIALIZER, Identifier.of(CookIt.MOD_ID, "microwaving"),
                MicrowaveRecipe.Serializer.INSTANCE);
-        CookIt.LOGGER.info(serializer.toString());
        Registry.register(Registries.RECIPE_TYPE, Identifier.of(CookIt.MOD_ID, "microwaving"),
                MicrowaveRecipe.Type.INSTANCE);
 

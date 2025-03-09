@@ -1,0 +1,10 @@
+{
+  "type": "cook-it:baking",
+  "ingredient": {
+      "item": "cook-it:raw_croissant"
+  },
+  "output": {
+    "id": "cook-it:croissant"
+  },
+  "time": 200
+}
