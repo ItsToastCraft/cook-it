@@ -4,9 +4,11 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.particle.*;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.particle.SimpleParticleType;
 
 @Environment(EnvType.CLIENT)
 public class OilParticle extends SpriteBillboardParticle {
+
     private final SpriteProvider spriteSet;
 
     protected OilParticle(ClientWorld level, double x, double y, double z, SpriteProvider spriteSet) {
@@ -36,14 +38,14 @@ public class OilParticle extends SpriteBillboardParticle {
     }
 
     @Environment(EnvType.CLIENT)
-    public static class Factory implements ParticleFactory<OilParticleEffect> {
+    public static class Factory implements ParticleFactory<SimpleParticleType> {
         private final SpriteProvider sprites;
 
         public Factory(SpriteProvider spriteSet) {
             this.sprites = spriteSet;
         }
 
-        public Particle createParticle(OilParticleEffect effect, ClientWorld level, double x, double y, double z,
+        public Particle createParticle(SimpleParticleType effect, ClientWorld level, double x, double y, double z,
                                        double dx, double dy, double dz) {
             return new OilParticle(level, x, y, z, this.sprites);
         }

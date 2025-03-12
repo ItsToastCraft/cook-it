@@ -1,8 +1,8 @@
 package dev.toasttextures.cookit.block.entity;
 
+import dev.toasttextures.cookit.CookIt;
 import dev.toasttextures.cookit.recipes.RecipeInventory;
 import dev.toasttextures.cookit.registry.CookItComponents;
-import dev.toasttextures.cookit.registry.OilParticleEffect;
 import dev.toasttextures.cookit.registry.component.CookingComponent;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
@@ -99,7 +99,7 @@ public class FryerEntity extends CookingBlockEntity implements ImplementedInvent
             double particleY = ((double)this.pos.getY() + 0.25);
             double particleZ = Math.round(((double)this.pos.getZ() + 0.5 + random.nextFloat(-0.1875f,0.1875f)) * 100d) / 100d;
 
-            ((ServerWorld) Objects.requireNonNull(world)).spawnParticles(new OilParticleEffect(), particleX, particleY, particleZ, 2, 0,0,0,0);
+            ((ServerWorld) Objects.requireNonNull(world)).spawnParticles(CookIt.OIL_PARTICLE, particleX, particleY, particleZ, 2, 0,0,0,0);
         }
     }
 
