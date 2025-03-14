@@ -9,6 +9,4 @@ public class BakingSheetEntity extends CookingBlockEntity implements Implemented
     public BakingSheetEntity(BlockPos pos, BlockState state) {
         super(CookItBlockEntities.BAKING_SHEET_ENTITY, pos, state, 8);
     }
-
-
 }

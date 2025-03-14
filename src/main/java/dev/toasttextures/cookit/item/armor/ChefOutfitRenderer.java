@@ -30,7 +30,7 @@ public class ChefOutfitRenderer {
 
     static void renderPart(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, ItemStack stack, Model model, Identifier texture) {
         VertexConsumer vertexConsumer = ItemRenderer.getArmorGlintConsumer(vertexConsumers, RenderLayer.getEntityTranslucent(texture), stack.hasGlint());
-        model.render(matrices, vertexConsumer, light, OverlayTexture.DEFAULT_UV, 0xFFFFFF);
+        model.render(matrices, vertexConsumer, light, OverlayTexture.DEFAULT_UV, 0xFFFFFFFF);
     }
 
     public static void register() {
@@ -50,5 +50,4 @@ public class ChefOutfitRenderer {
         };
         ArmorRenderer.register(renderer, CHEF_OUTFIT.toArray(new Item[0]));
     }
-
 }

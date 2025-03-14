@@ -9,6 +9,4 @@ public class MuffinTinEntity extends CookingBlockEntity implements ImplementedIn
     public MuffinTinEntity(BlockPos pos, BlockState state) {
         super(CookItBlockEntities.MUFFIN_TIN_ENTITY, pos, state, 6);
     }
-
-
 }

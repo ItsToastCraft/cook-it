@@ -44,22 +44,22 @@ public class CuttingBoard extends HorizontalFacingBlock implements BlockEntityPr
     @Override
     public ItemActionResult onUseWithItem(ItemStack stack, BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         world.updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
-        CuttingBoardEntity blockEntity = (CuttingBoardEntity) world.getBlockEntity(pos);
-        if (world.isClient || blockEntity == null) {
-            return ItemActionResult.FAIL;
+        CuttingBoardEntity entity = (CuttingBoardEntity) world.getBlockEntity(pos);
+        if (world.isClient || entity == null) {
+            return ItemActionResult.SUCCESS;
         }
         // Logic wil be handled by the fryer basket itself
         if (stack.getItem() instanceof FryerBasket) {
             return ItemActionResult.CONSUME;
         }
         if (!stack.isEmpty()) {
-            if (blockEntity.isEmpty()) {
-                blockEntity.setStack(0, stack.splitUnlessCreative(1, player));
+            if (entity.isEmpty()) {
+                entity.setStack(0, stack.splitUnlessCreative(1, player));
             } else {
-                blockEntity.processRecipe(stack, false);
+                entity.processRecipe(stack, false);
             }
-        } else if (!blockEntity.processRecipe(stack, false)) {
-            pickUpCookingBoardItems(state, world, pos, player, blockEntity);
+        } else if (!entity.processRecipe(stack, false)) {
+            pickUpCookingBoardItems(state, world, pos, player, entity);
         }
         return ItemActionResult.SUCCESS;
     }

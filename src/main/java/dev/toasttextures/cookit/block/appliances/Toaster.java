@@ -28,6 +28,8 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import dev.toasttextures.cookit.registry.CookItItems;
 
+import java.util.Objects;
+
 
 public class Toaster extends HorizontalFacingBlock {
     // New blockstate (yippee) | 0 = no bread, 1 = 1 bread, 2 = 2 bread, 3 = 1 bread toasted, 4 = 2 bread toasted
@@ -46,8 +48,7 @@ public class Toaster extends HorizontalFacingBlock {
 
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        builder.add(Properties.HORIZONTAL_FACING);
-        builder.add(Toaster.TOASTER_STATE);
+        builder.add(Properties.HORIZONTAL_FACING).add(Toaster.TOASTER_STATE);
     }
 
     @Override
@@ -87,7 +88,7 @@ public class Toaster extends HorizontalFacingBlock {
 
     @Override
     public BlockState getPlacementState(ItemPlacementContext ctx) {
-        return super.getPlacementState(ctx).with(Properties.HORIZONTAL_FACING, ctx.getHorizontalPlayerFacing().getOpposite());
+        return Objects.requireNonNull(super.getPlacementState(ctx)).with(Properties.HORIZONTAL_FACING, ctx.getHorizontalPlayerFacing().getOpposite());
     }
 
     private void scheduleTick(WorldAccess world, BlockPos pos) {

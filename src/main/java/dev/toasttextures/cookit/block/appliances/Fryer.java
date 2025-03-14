@@ -63,22 +63,22 @@ public class Fryer extends BlockWithEntity implements BlockEntityProvider {
     @Override
     protected ItemActionResult onUseWithItem(ItemStack stack, BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         world.updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
-        FryerEntity blockEntity = (FryerEntity) world.getBlockEntity(pos);
-        if (world.isClient || blockEntity == null) {
+        FryerEntity entity = (FryerEntity) world.getBlockEntity(pos);
+        if (world.isClient || entity == null) {
             return ItemActionResult.SUCCESS;
         }
-        if (blockEntity.isEmpty()) {
+        if (entity.isEmpty()) {
             if (stack.isOf(CookItItems.FRYER_BASKET)) {
-                blockEntity.setStack(0, stack.copyAndEmpty());
+                entity.setStack(0, stack.copyAndEmpty());
             }
         } else if ((stack.getItem() instanceof CookItFood food && food.getFoodType().equals(CookItFoodTypes.FRYING)) || stack.isIn(CookItItems.FRYING)) {
-            ItemStack entityStack = blockEntity.getStack(0);
+            ItemStack entityStack = entity.getStack(0);
             FryerBasket.setItem(entityStack, stack.splitUnlessCreative(1, player));
-            blockEntity.setStack(0, entityStack);
-            blockEntity.markDirty();
+            entity.setStack(0, entityStack);
+            entity.markDirty();
 
         } else {
-            player.getInventory().offerOrDrop(blockEntity.getStack(0));
+            player.getInventory().offerOrDrop(entity.getStack(0));
         }
         return ItemActionResult.SUCCESS;
     }

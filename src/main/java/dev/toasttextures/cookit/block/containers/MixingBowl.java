@@ -3,7 +3,6 @@ package dev.toasttextures.cookit.block.containers;
 import com.mojang.serialization.MapCodec;
 import dev.toasttextures.cookit.block.entity.CookingBlockEntity;
 import dev.toasttextures.cookit.block.entity.MixingBowlEntity;
-import dev.toasttextures.cookit.block.entity.MuffinTinEntity;
 import dev.toasttextures.cookit.registry.CookItComponents;
 import dev.toasttextures.cookit.registry.CookItItems;
 import dev.toasttextures.cookit.registry.component.CookingComponent;
@@ -62,7 +61,6 @@ public class MixingBowl extends BlockWithEntity implements BlockEntityProvider {
     @Override
     public ItemActionResult onUseWithItem(ItemStack stack, BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         world.updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
-
         MixingBowlEntity entity = (MixingBowlEntity) world.getBlockEntity(pos);
         if (world.isClient || entity == null) {
             return ItemActionResult.SUCCESS;

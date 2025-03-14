@@ -1,7 +1,6 @@
 package dev.toasttextures.cookit.block.containers;
 
 import com.mojang.serialization.MapCodec;
-import dev.toasttextures.cookit.block.entity.BakingSheetEntity;
 import dev.toasttextures.cookit.block.entity.PizzaPanEntity;
 import dev.toasttextures.cookit.util.BlockEntityUtils;
 import net.minecraft.block.*;
@@ -47,21 +46,22 @@ public class PizzaPan extends BlockWithEntity implements BlockEntityProvider {
 
     @Override
     protected ItemActionResult onUseWithItem(ItemStack stack, BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        if (world.isClient) { return ItemActionResult.SUCCESS; }
         world.updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
-        PizzaPanEntity blockEntity = (PizzaPanEntity) world.getBlockEntity(pos);
-        if (blockEntity == null) { return ItemActionResult.FAIL; }
-        if (player.isSneaking()) {
-            return BlockEntityUtils.dropOnUse(this, blockEntity, player, world, pos);
+        PizzaPanEntity entity = (PizzaPanEntity) world.getBlockEntity(pos);
+        if (world.isClient || entity == null) {
+            return ItemActionResult.SUCCESS;
         }
-        ItemStack heldItem = player.getStackInHand(hand);
-        boolean hasPizza = !blockEntity.isEmpty();
-        if (heldItem.getItem() instanceof BlockItem blockItem) {
+
+        if (player.isSneaking()) {
+            return BlockEntityUtils.dropOnUse(this, entity, player, world, pos);
+        }
+        boolean hasPizza = !entity.isEmpty();
+        if (stack.getItem() instanceof BlockItem blockItem) {
             if (blockItem.getBlock() instanceof Pizza && !hasPizza) {
-                blockEntity.setStack(0, heldItem.splitUnlessCreative(1, player));
+                entity.setStack(0, stack.splitUnlessCreative(1, player));
             }
-        } else if (heldItem.isEmpty() && hasPizza) {
-            player.getInventory().offerOrDrop(blockEntity.getStack(0));
+        } else if (stack.isEmpty() && hasPizza) {
+            player.getInventory().offerOrDrop(entity.getStack(0));
         } else {
             return ItemActionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         }

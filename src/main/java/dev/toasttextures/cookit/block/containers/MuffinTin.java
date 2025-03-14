@@ -1,6 +1,5 @@
 package dev.toasttextures.cookit.block.containers;
 
-import dev.toasttextures.cookit.block.entity.BakingSheetEntity;
 import dev.toasttextures.cookit.block.entity.MuffinTinEntity;
 import dev.toasttextures.cookit.registry.CookItBlocks;
 import dev.toasttextures.cookit.registry.CookItComponents;
@@ -47,37 +46,32 @@ public class MuffinTin extends Block implements BlockEntityProvider {
     @Override
     public ItemActionResult onUseWithItem(ItemStack stack, BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         world.updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
-        MuffinTinEntity blockEntity = (MuffinTinEntity) world.getBlockEntity(pos);
-        if (world.isClient || blockEntity == null) {
-            return ItemActionResult.FAIL;
+        MuffinTinEntity entity = (MuffinTinEntity) world.getBlockEntity(pos);
+        if (world.isClient || entity == null) {
+            return ItemActionResult.SUCCESS;
         }
         if (player.isSneaking()) {
-            return BlockEntityUtils.dropOnUse(this, blockEntity, player, world, pos);
+            return BlockEntityUtils.dropOnUse(this, entity, player, world, pos);
         }
         if (!stack.isEmpty()) {
             // Check if there's goop that can be transferred to the muffin tin
             if (stack.isOf(CookItBlocks.MIXING_BOWL.asItem()) && stack.contains(CookItComponents.COOKING_COMPONENT)) {
-                for (int i = 0; i < blockEntity.size(); i++) {
-                    if (blockEntity.getStack(i).isEmpty()) {
-                        MixingBowl.transferTo(stack, blockEntity, world, i);
+                for (int i = 0; i < entity.size(); i++) {
+                    if (entity.getStack(i).isEmpty()) {
+                        MixingBowl.transferTo(stack, entity, world, i);
                         return ItemActionResult.SUCCESS;
                     }
                 }
             } else if (CookItItems.MUFFINS.contains(stack.getItem())) {
-                for (int i = 0; i < blockEntity.size(); i++) {
-                    if (blockEntity.getStack(i).isEmpty()) {
-                        blockEntity.setStack(i, stack.splitUnlessCreative(1, player));
+                for (int i = 0; i < entity.size(); i++) {
+                    if (entity.getStack(i).isEmpty()) {
+                        entity.setStack(i, stack.splitUnlessCreative(1, player));
                         return ItemActionResult.SUCCESS;
                     }
                 }
             }
         } else {
-            for (int i = blockEntity.size() - 1; i >= 0; i--) {
-                if (!blockEntity.getStack(i).isEmpty() && !blockEntity.getStack(i).isOf(CookItItems.GOOP)) {
-                    player.getInventory().offerOrDrop(blockEntity.getStack(i).split(1));
-                    return ItemActionResult.SUCCESS;
-                }
-            }
+            return BlockEntityUtils.returnItem(entity, player, world, pos, CookItItems.GOOP);
         }
         return ItemActionResult.SUCCESS;
     }

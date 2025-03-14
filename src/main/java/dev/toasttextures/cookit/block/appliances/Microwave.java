@@ -63,9 +63,9 @@ public class Microwave extends BlockWithEntity implements BlockEntityProvider {
     protected ItemActionResult onUseWithItem(ItemStack stack, BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         world.updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
         boolean open = state.get(OPEN);
-        MicrowaveEntity blockEntity = (MicrowaveEntity) world.getBlockEntity(pos);
+        MicrowaveEntity entity = (MicrowaveEntity) world.getBlockEntity(pos);
 
-        if (world.isClient || blockEntity == null) {
+        if (world.isClient || entity == null) {
             return ItemActionResult.SUCCESS;
         }
         if (!open && stack.isEmpty()) {
@@ -75,10 +75,10 @@ public class Microwave extends BlockWithEntity implements BlockEntityProvider {
         } else if (!stack.isEmpty() && open) {
             world.playSound(null, pos, SoundEvents.BLOCK_IRON_TRAPDOOR_CLOSE, SoundCategory.BLOCKS);
             world.setBlockState(pos, state.with(OPEN, false));
-            blockEntity.setStack(0, stack.splitUnlessCreative(1, player));
-        } else if (!blockEntity.getStack(0).isEmpty()){
+            entity.setStack(0, stack.splitUnlessCreative(1, player));
+        } else if (!entity.getStack(0).isEmpty()){
             world.setBlockState(pos, state.with(OPEN, false).with(ON, false));
-            player.getInventory().insertStack(blockEntity.getStack(0));
+            player.getInventory().insertStack(entity.getStack(0));
         } else {
             world.setBlockState(pos, state.with(OPEN, false).with(ON, false));
         }

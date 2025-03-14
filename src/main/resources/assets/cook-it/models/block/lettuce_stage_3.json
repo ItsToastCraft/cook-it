@@ -1,0 +1,76 @@
+{
+	"credit": "Made with Blockbench",
+	"texture_size": [32, 32],
+	"textures": {
+		"lettuce": "cook-it:block/lettuce_3",
+		"particle": "#lettuce"
+	},
+	"elements": [
+		{
+			"from": [3, 0, 3],
+			"to": [13, 6, 13],
+			"rotation": {"angle": 0, "axis": "y", "origin": [7, 0, 7.25]},
+			"faces": {
+				"north": {"uv": [10, 0, 15, 3], "texture": "#lettuce"},
+				"east": {"uv": [10, 3, 15, 6], "texture": "#lettuce"},
+				"south": {"uv": [10, 6, 15, 9], "texture": "#lettuce"},
+				"west": {"uv": [10, 9, 15, 12], "texture": "#lettuce"},
+				"up": {"uv": [5, 5, 0, 0], "texture": "#lettuce"},
+				"down": {"uv": [5, 5, 0, 10], "texture": "#lettuce"}
+			}
+		},
+		{
+			"from": [3, 3.0045, 1.7545],
+			"to": [13, 8.0045, 1.7545],
+			"rotation": {"angle": -45, "axis": "x", "origin": [7, 3.0045, 6.0045]},
+			"faces": {
+				"north": {"uv": [5, 4.5, 10, 7], "texture": "#lettuce"},
+				"south": {"uv": [10, 4.5, 5, 7], "texture": "#lettuce"}
+			}
+		},
+		{
+			"from": [3, 1.62602, 2.67556],
+			"to": [13, 10.62602, 2.67556],
+			"rotation": {"angle": -22.5, "axis": "x", "origin": [7, 1.62602, 6.92556]},
+			"faces": {
+				"north": {"uv": [5, 0, 10, 4.5], "texture": "#lettuce"},
+				"south": {"uv": [10, 0, 5, 4.5], "texture": "#lettuce"}
+			}
+		},
+		{
+			"from": [3, 1.6264, 13.32351],
+			"to": [13, 9.6264, 13.32351],
+			"rotation": {"angle": 22.5, "axis": "x", "origin": [7, 1.6264, 9.07351]},
+			"faces": {
+				"north": {"uv": [10, 7, 5, 11], "texture": "#lettuce"},
+				"south": {"uv": [5, 7, 10, 11], "texture": "#lettuce"}
+			}
+		},
+		{
+			"from": [1.7552, 3, 3],
+			"to": [1.7552, 8, 13],
+			"rotation": {"angle": 45, "axis": "z", "origin": [6.0052, 3.0052, 7]},
+			"faces": {
+				"east": {"uv": [10, 4.5, 5, 7], "texture": "#lettuce"},
+				"west": {"uv": [5, 4.5, 10, 7], "texture": "#lettuce"}
+			}
+		},
+		{
+			"from": [13.32351, 1.62602, 3],
+			"to": [13.32351, 7.62602, 13],
+			"rotation": {"angle": -22.5, "axis": "z", "origin": [9.07351, 1.62602, 6.99908]},
+			"faces": {
+				"east": {"uv": [0, 10, 5, 13], "texture": "#lettuce"},
+				"west": {"uv": [5, 10, 0, 13], "texture": "#lettuce"}
+			}
+		}
+	],
+	"groups": [
+		{
+			"name": "group",
+			"origin": [8, 8, 8],
+			"color": 0,
+			"children": [0, 1, 2, 3, 4, 5]
+		}
+	]
+}

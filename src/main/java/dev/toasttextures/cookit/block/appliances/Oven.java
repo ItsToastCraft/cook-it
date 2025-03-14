@@ -52,9 +52,9 @@ public class Oven extends BlockWithEntity implements BlockEntityProvider {
     @Override
     public ItemActionResult onUseWithItem(ItemStack stack, BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         world.updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
-        OvenEntity blockEntity = (OvenEntity) world.getBlockEntity(pos);
+        OvenEntity entity = (OvenEntity) world.getBlockEntity(pos);
 
-        if (world.isClient || blockEntity == null) {
+        if (world.isClient || entity == null) {
             return ItemActionResult.SUCCESS;
         }
         boolean open = state.get(OPEN);
@@ -64,16 +64,16 @@ public class Oven extends BlockWithEntity implements BlockEntityProvider {
                 moveOvenDoor(world, pos, state, true);
                 return ItemActionResult.SUCCESS;
             } else if (state.get(DONE)) {
-                return BlockEntityUtils.returnItem(blockEntity, player, world, pos);
+                return BlockEntityUtils.returnItem(entity, player, world, pos);
             } else {
                 moveOvenDoor(world, pos, state, false);
                 return ItemActionResult.SUCCESS;
             }
         } else if (CONTAINERS.contains(Block.getBlockFromItem(stack.getItem())) && open) {
             // If the oven is open and the player is holding something, try to put the held item into the oven
-            for (int i = 0; i < blockEntity.getItems().size(); i++) {
-                if (blockEntity.getStack(i).isEmpty()) {
-                    blockEntity.setStack(i, stack.splitUnlessCreative(1, player));
+            for (int i = 0; i < entity.getItems().size(); i++) {
+                if (entity.getStack(i).isEmpty()) {
+                    entity.setStack(i, stack.splitUnlessCreative(1, player));
                     break;
                 }
             }

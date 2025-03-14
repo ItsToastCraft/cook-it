@@ -1,6 +1,5 @@
 package dev.toasttextures.cookit.block.containers;
 
-import dev.toasttextures.cookit.block.entity.BakingSheetEntity;
 import dev.toasttextures.cookit.block.entity.PlateEntity;
 import dev.toasttextures.cookit.item.CookItFood;
 import dev.toasttextures.cookit.registry.*;
@@ -53,45 +52,45 @@ public class Plate extends Block implements BlockEntityProvider {
     }
 
     @Override
-    public ItemActionResult onUseWithItem(ItemStack heldItem, BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+    public ItemActionResult onUseWithItem(ItemStack stack, BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         world.updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
-        PlateEntity blockEntity = (PlateEntity) world.getBlockEntity(pos);
+        PlateEntity entity = (PlateEntity) world.getBlockEntity(pos);
         int plateAmount = state.get(PLATES_AMOUNT);
 
-        if (world.isClient || blockEntity == null) {
-            return ItemActionResult.FAIL;
+        if (world.isClient || entity == null) {
+            return ItemActionResult.SUCCESS;
         }
         // Let custom processing for fryer basket occur
-        if (heldItem.getItem().equals(CookItItems.FRYER_BASKET)) {
+        if (stack.getItem().equals(CookItItems.FRYER_BASKET)) {
             return ItemActionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         }
         // If there is no item in the player's hand and there is more than one plate, give one plate
         // Otherwise give back whatever is on the plate (because there's only one sooo)
-        if (heldItem.isEmpty()) {
+        if (stack.isEmpty()) {
             ItemStack item = new ItemStack(this.asItem(), 1);
             if (player.isSneaking()) {
-                if (!blockEntity.getStack(0).isEmpty()) {
-                    item.applyComponentsFrom(blockEntity.createComponentMap());
-                    blockEntity.removeStack(0);
+                if (!entity.getStack(0).isEmpty()) {
+                    item.applyComponentsFrom(entity.createComponentMap());
+                    entity.removeStack(0);
                 }
                 decreasePlates(state, world, pos, player, item);
-            } else if (!blockEntity.getStack(0).isEmpty()) {
-                player.getInventory().offerOrDrop(blockEntity.getStack(0));
+            } else if (!entity.getStack(0).isEmpty()) {
+                player.getInventory().offerOrDrop(entity.getStack(0));
             } else {
                 decreasePlates(state, world, pos, player, item);
             }
                 return ItemActionResult.SUCCESS;
         } else {
             // Add another plate if the player is holding one of the same type and there aren't already 4 on there.
-            if (heldItem.getItem().equals(this.asItem()) && plateAmount < 4 && blockEntity.getStack(0).isEmpty()) {
-                blockEntity.setStack(0, heldItem.getOrDefault(CookItComponents.COOKING_COMPONENT, CookingComponent.DEFAULT).get(0));
-                heldItem.decrement(1);
+            if (stack.getItem().equals(this.asItem()) && plateAmount < 4 && entity.getStack(0).isEmpty()) {
+                entity.setStack(0, stack.getOrDefault(CookItComponents.COOKING_COMPONENT, CookingComponent.DEFAULT).get(0));
+                stack.decrement(1);
                 world.playSound(null, pos, SoundEvents.BLOCK_COPPER_PLACE, SoundCategory.BLOCKS, 1, 1.75f);
                 world.setBlockState(pos, state.with(PLATES_AMOUNT, plateAmount + 1));
                 return ItemActionResult.SUCCESS;
             // Add whatever is in the player's hand, as long as it's cooked food (sorry)
-            } else if (blockEntity.getStack(0).isEmpty() && heldItem.getItem() instanceof CookItFood food && food.getFoodType().equals(CookItFoodTypes.DONE)) {
-                blockEntity.setStack(0, heldItem.splitUnlessCreative(1, player));
+            } else if (entity.getStack(0).isEmpty() && stack.getItem() instanceof CookItFood food && food.getFoodType().equals(CookItFoodTypes.DONE)) {
+                entity.setStack(0, stack.splitUnlessCreative(1, player));
                 world.playSound(null, pos, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.BLOCKS, 1, 1.0f);
                 return ItemActionResult.SUCCESS;
             }

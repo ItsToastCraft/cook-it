@@ -34,7 +34,8 @@ public class CookItClient implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putBlocks(RenderLayer.getTranslucent(),
                 CookItBlocks.OVEN,
                 CookItBlocks.MICROWAVE,
-                CookItBlocks.FRYER);
+                CookItBlocks.FRYER,
+                CookItBlocks.LETTUCE);
 
         BlockRenderLayerMap.INSTANCE.putBlocks(RenderLayer.getCutout(),
                 CookItBlocks.MUFFIN_TIN,

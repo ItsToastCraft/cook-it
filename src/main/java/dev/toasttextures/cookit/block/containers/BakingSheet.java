@@ -44,24 +44,24 @@ public class BakingSheet extends Block implements BlockEntityProvider {
     @Override
     protected ItemActionResult onUseWithItem(ItemStack stack, BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         world.updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
-        BakingSheetEntity blockEntity = (BakingSheetEntity) world.getBlockEntity(pos);
-        if (world.isClient || blockEntity == null) {
+        BakingSheetEntity entity = (BakingSheetEntity) world.getBlockEntity(pos);
+        if (world.isClient || entity == null) {
             return ItemActionResult.SUCCESS;
         }
         if (player.isSneaking()) {
-            return BlockEntityUtils.dropOnUse(this, blockEntity, player, world, pos);
+            return BlockEntityUtils.dropOnUse(this, entity, player, world, pos);
         }
         if (!stack.isEmpty()) {
             // Check what is the first open slot and put an item from the player's hand there
-            for (int i = 0; i < blockEntity.getItems().size(); i++) {
-                if (blockEntity.getStack(i).isEmpty() && (stack.getItem() instanceof CookItFood food && food.getFoodType().equals(CookItFoodTypes.BAKING)) || stack.isIn(CookItItems.BAKING)) {
+            for (int i = 0; i < entity.getItems().size(); i++) {
+                if (entity.getStack(i).isEmpty() && (stack.getItem() instanceof CookItFood food && food.getFoodType().equals(CookItFoodTypes.BAKING)) || stack.isIn(CookItItems.BAKING)) {
                     // Put the stack the player is holding into the inventory
-                    blockEntity.setStack(i, stack.splitUnlessCreative(1, player));
+                    entity.setStack(i, stack.splitUnlessCreative(1, player));
                     break;
                 }
             }
         } else {
-            return BlockEntityUtils.returnItem(blockEntity, player, world, pos);
+            return BlockEntityUtils.returnItem(entity, player, world, pos);
         }
         return ItemActionResult.SUCCESS;
     }

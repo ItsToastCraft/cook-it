@@ -1,6 +1,7 @@
 package dev.toasttextures.cookit.registry;
 import dev.toasttextures.cookit.block.appliances.*;
 import dev.toasttextures.cookit.block.containers.*;
+import dev.toasttextures.cookit.block.food_blocks.LettucePlant;
 import dev.toasttextures.cookit.block.food_blocks.VanillaVinePlant;
 import dev.toasttextures.cookit.block.food_blocks.VanillaVineStem;
 import dev.toasttextures.cookit.block.food_blocks.pizza.CookedPizza;
@@ -42,6 +43,9 @@ public class CookItBlocks {
     public static final Block UNCOOKED_PIZZA = registerBlock("uncooked_pizza", new Pizza(AbstractBlock.Settings.create()));
     public static final Block PIZZA_CRUST = registerBlock("pizza_crust", new Pizza(AbstractBlock.Settings.create()));
 
+    // -- Crops --
+    public static final Block LETTUCE = registerBlock("lettuce", new LettucePlant(AbstractBlock.Settings.copy(Blocks.WHEAT)));
+
     // -- Containers --
     public static final Block MUFFIN_TIN = registerBlock("muffin_tin", new MuffinTin(AbstractBlock.Settings.create().strength(0.2f)));
     public static final Block BAKING_SHEET = registerBlock("baking_sheet", new BakingSheet(AbstractBlock.Settings.copy(MUFFIN_TIN)));
@@ -63,7 +67,6 @@ public class CookItBlocks {
         }
     }
     public static void registerWoodenBlocks() {
-
         for (String woodType : SUPPORTED_WOOD_TYPES) {
             Block CUTTING_BOARD = registerBlock(woodType + "_cutting_board", new CuttingBoard(AbstractBlock.Settings.copy(Blocks.SPRUCE_PLANKS)));
             CUTTING_BOARDS.add(CUTTING_BOARD);

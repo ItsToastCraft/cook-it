@@ -20,7 +20,6 @@ import java.util.List;
 public abstract class CookingBlockEntity extends BlockEntity implements ImplementedInventory {
     protected DefaultedList<ItemStack> items;
 
-
     public CookingBlockEntity(BlockEntityType<?> blockEntity, BlockPos pos, BlockState state, int invSize) {
         super(blockEntity, pos, state);
         this.items = DefaultedList.ofSize(invSize, ItemStack.EMPTY);
@@ -43,7 +42,6 @@ public abstract class CookingBlockEntity extends BlockEntity implements Implemen
     @Override
     public void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
         this.items.clear();
-
         super.readNbt(nbt, registryLookup);
         Inventories.readNbt(nbt, this.items, registryLookup);
     }
