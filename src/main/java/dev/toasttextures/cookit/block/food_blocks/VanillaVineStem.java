@@ -21,8 +21,6 @@ public class VanillaVineStem extends AbstractPlantStemBlock implements Fertiliza
 
     public static final MapCodec<VanillaVineStem> CODEC = createCodec(VanillaVineStem::new);
 
-
-
     public VanillaVineStem(Settings settings) {
         super(settings, Direction.DOWN, EAST, false, GROW_CHANCE);
         setDefaultState(getDefaultState().with(AGE, 0).with(PLANT_STATE, 0).with(Properties.HORIZONTAL_FACING, Direction.EAST));

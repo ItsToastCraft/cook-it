@@ -38,7 +38,7 @@ public class PizzaEntity extends BlockEntity{
     }
 
     public void readFromItemStack(ItemStack stack) {
-        int slices = 4;
+        int slices;
         this.toppings.clear();
         if (!stack.isEmpty() && stack.getComponents() != null && stack.getComponents().contains(CookItComponents.TOPPING_COMPONENT)) {
             List<String> toppings = stack.getComponents().getOrDefault(CookItComponents.TOPPING_COMPONENT, new ArrayList<>());
@@ -46,14 +46,15 @@ public class PizzaEntity extends BlockEntity{
             for (String topping : toppings) {
                 toppingsNbt.add(NbtString.of(topping)); // Convert each string into NbtString
             }
+            this.toppings = toppingsNbt;
+        }
+
             if (stack.getItem() == CookItItems.PIZZA_SLICE) {
                 slices = 1;
             }
-            else if ( stack.getComponents().contains(CookItComponents.SLICE_COUNT_COMPONENT)) {
-                slices = stack.getComponents().getOrDefault(CookItComponents.SLICE_COUNT_COMPONENT, 4);
+            else {
+                slices = stack.getOrDefault(CookItComponents.SLICE_COUNT_COMPONENT, 4);
             }
-            this.toppings = toppingsNbt;
-        }
 
         this.isCooked = stack.getItem() != CookItBlocks.UNCOOKED_PIZZA.asItem();
         this.sliceCount = slices;

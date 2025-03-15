@@ -55,7 +55,6 @@ public class CookedPizza extends Pizza{
         }
         int pizzaAmount = entity.getSliceCount();
         if (world.getBlockState(pos).getBlock() == CookItBlocks.PIZZA && stack.isEmpty()) {
-
             ArrayList<String> toppings = entity.getToppings();
 
             ItemStack itemStack = new ItemStack(CookItItems.PIZZA_SLICE, 1);

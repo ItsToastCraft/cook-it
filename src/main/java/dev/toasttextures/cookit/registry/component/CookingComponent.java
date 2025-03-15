@@ -37,10 +37,6 @@ public record CookingComponent(List<ItemStack> stacks) {
         }
     }
 
-    public int hashCode() {
-        return ItemStack.listHashCode(this.stacks);
-    }
-
     public String toString() {
         return "Contains: " + this.stacks;
     }
