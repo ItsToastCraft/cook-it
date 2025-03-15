@@ -55,7 +55,7 @@ public class FireExtinguisherItem extends Item {
             }
         }
         // Damage the item
-        context.getStack().damage(1, user, EquipmentSlot.valueOf(context.getHand().name()));
+        context.getStack().damage(1, user, EquipmentSlot.MAINHAND);
 
         return ActionResult.PASS;
     }
