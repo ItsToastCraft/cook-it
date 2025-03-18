@@ -1,5 +1,5 @@
 {
-	"credit": "Made with Blockbench",
+	"credit": "Made by ToastTextures using Blockbench",
 	"texture_size": [32, 32],
 	"textures": {
 		"lettuce": "cook-it:block/lettuce_2",
@@ -15,7 +15,7 @@
 				"east": {"uv": [0, 8, 4, 10], "texture": "#lettuce"},
 				"south": {"uv": [8, 7.5, 12, 9.5], "texture": "#lettuce"},
 				"west": {"uv": [8, 5.5, 12, 7.5], "texture": "#lettuce"},
-				"up": {"uv": [4, 4, 0, 0], "texture": "#lettuce"},
+				"up": {"uv": [0, 0, 4, 4], "rotation": 270, "texture": "#lettuce"},
 				"down": {"uv": [4, 4, 0, 8], "texture": "#lettuce"}
 			}
 		},

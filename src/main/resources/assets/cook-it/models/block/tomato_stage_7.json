@@ -1,0 +1,6 @@
+{
+	"parent": "cook-it:block/tomato_stage_6",
+	"textures": {
+		"tomato": "cook-it:block/tomato_ready"
+	}
+}

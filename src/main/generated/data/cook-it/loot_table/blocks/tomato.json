@@ -16,18 +16,18 @@
               "type": "minecraft:item",
               "conditions": [
                 {
-                  "block": "cook-it:lettuce",
+                  "block": "cook-it:tomato",
                   "condition": "minecraft:block_state_property",
                   "properties": {
                     "age": "7"
                   }
                 }
               ],
-              "name": "cook-it:lettuce"
+              "name": "cook-it:tomato"
             },
             {
               "type": "minecraft:item",
-              "name": "cook-it:lettuce_leaf"
+              "name": "cook-it:tomato_seeds"
             }
           ]
         }
@@ -38,7 +38,7 @@
       "bonus_rolls": 0.0,
       "conditions": [
         {
-          "block": "cook-it:lettuce",
+          "block": "cook-it:tomato",
           "condition": "minecraft:block_state_property",
           "properties": {
             "age": "7"
@@ -59,7 +59,7 @@
               }
             }
           ],
-          "name": "cook-it:lettuce_leaf"
+          "name": "cook-it:tomato_seeds"
         }
       ],
       "rolls": 1.0
