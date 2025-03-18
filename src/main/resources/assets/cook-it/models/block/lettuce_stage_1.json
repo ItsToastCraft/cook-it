@@ -1,5 +1,5 @@
 {
-	"credit": "Made with Blockbench",
+	"credit": "Made by ToastTextures using Blockbench",
 	"textures": {
 		"lettuce": "cook-it:block/lettuce_1",
 		"particle": "#lettuce"
@@ -37,6 +37,15 @@
 			}
 		},
 		{
+			"from": [5, 3.00591, 12.24409],
+			"to": [11, 8.00591, 12.24409],
+			"rotation": {"angle": 45, "axis": "x", "origin": [7, 3.00591, 7.99409]},
+			"faces": {
+				"north": {"uv": [12, 6, 6, 11], "texture": "#lettuce"},
+				"south": {"uv": [6, 6, 12, 11], "texture": "#lettuce"}
+			}
+		},
+		{
 			"from": [3.75082, 3.00297, 5],
 			"to": [3.75082, 8.00297, 11],
 			"rotation": {"angle": 45, "axis": "z", "origin": [8.00082, 3.00817, 7]},
@@ -60,7 +69,7 @@
 			"name": "group",
 			"origin": [8, 8, 8],
 			"color": 0,
-			"children": [0, 1, 2, 3, 4]
+			"children": [0, 1, 2, 3, 4, 5]
 		}
 	]
 }

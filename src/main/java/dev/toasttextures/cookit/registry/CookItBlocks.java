@@ -2,6 +2,7 @@ package dev.toasttextures.cookit.registry;
 import dev.toasttextures.cookit.block.appliances.*;
 import dev.toasttextures.cookit.block.containers.*;
 import dev.toasttextures.cookit.block.food_blocks.LettucePlant;
+import dev.toasttextures.cookit.block.food_blocks.TomatoPlant;
 import dev.toasttextures.cookit.block.food_blocks.VanillaVinePlant;
 import dev.toasttextures.cookit.block.food_blocks.VanillaVineStem;
 import dev.toasttextures.cookit.block.food_blocks.pizza.CookedPizza;
@@ -45,7 +46,7 @@ public class CookItBlocks {
 
     // -- Crops --
     public static final Block LETTUCE = registerBlock("lettuce", new LettucePlant(AbstractBlock.Settings.copy(Blocks.WHEAT)));
-
+    public static final Block TOMATO = registerBlockNoItem("tomato", new TomatoPlant(AbstractBlock.Settings.copy(Blocks.WHEAT)));
     // -- Containers --
     public static final Block MUFFIN_TIN = registerBlock("muffin_tin", new MuffinTin(AbstractBlock.Settings.create().strength(0.2f)));
     public static final Block BAKING_SHEET = registerBlock("baking_sheet", new BakingSheet(AbstractBlock.Settings.copy(MUFFIN_TIN)));

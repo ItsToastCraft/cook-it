@@ -7,6 +7,7 @@ import dev.toasttextures.cookit.registry.CookItItems;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricBlockLootTableProvider;
 import net.minecraft.block.Block;
+import net.minecraft.block.CropBlock;
 import net.minecraft.loot.LootPool;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.condition.BlockStatePropertyLootCondition;
@@ -33,6 +34,7 @@ public class CookItLootTables extends FabricBlockLootTableProvider {
         blocks.remove(CookItBlocks.MUFFIN_TIN);
         blocks.remove(CookItBlocks.PIZZA);
         blocks.remove(CookItBlocks.PLATES.toArray(new Block[0]));
+        blocks.remove(CookItBlocks.LETTUCE);
         blocks.remove(CookItBlocks.VANILLA_VINE);
         blocks.remove(CookItBlocks.VANILLA_VINE_STEM);
         addDrop(CookItBlocks.VANILLA_VINE, (Block block) -> LootTable.builder()
@@ -63,6 +65,11 @@ public class CookItLootTables extends FabricBlockLootTableProvider {
                             .properties(StatePredicate.Builder.create()
                             .exactMatch(Plate.PLATES_AMOUNT, 4))))
                     )));
-            }
+        }
+        addDrop(CookItBlocks.LETTUCE, (Block block) -> cropDrops(CookItBlocks.LETTUCE, CookItBlocks.LETTUCE.asItem(), CookItItems.LETTUCE_LEAF,
+                BlockStatePropertyLootCondition.builder(CookItBlocks.LETTUCE).properties(StatePredicate.Builder.create().exactMatch(CropBlock.AGE, 7))));
+        addDrop(CookItBlocks.TOMATO, (Block block) -> cropDrops(CookItBlocks.TOMATO, CookItItems.TOMATO, CookItItems.TOMATO_SEEDS,
+                BlockStatePropertyLootCondition.builder(CookItBlocks.TOMATO).properties(StatePredicate.Builder.create().exactMatch(CropBlock.AGE, 7))));
+
     }
 }

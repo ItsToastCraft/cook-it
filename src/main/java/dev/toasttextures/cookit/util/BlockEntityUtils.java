@@ -91,7 +91,9 @@ public class BlockEntityUtils {
                 }
             }
             item.set(CookItComponents.COOKING_COMPONENT, new CookingComponent(items));
+
         }
+        item.applyComponentsFrom(entity.getComponents());
 
         return item;
     }

@@ -45,9 +45,13 @@ public class CookItItems {
     public static final Item DOUGH_SLICED = registerItem("dough_sliced", new Item(new Item.Settings()));
     public static final Item UNCOOKED_FRENCH_FRIES = registerItem("uncooked_french_fries", new Fries(new Item.Settings(), CookItFoodTypes.FRYING));
 
-    // -- Food --
+    public static final Item LETTUCE_LEAF = registerItem("lettuce_leaf", new Item(new Item.Settings().food(new FoodComponent.Builder().nutrition(2).alwaysEdible().build())));
+    public static final Item TOMATO = registerItem("tomato", new Item(new Item.Settings().food(new FoodComponent.Builder().nutrition(3).build())));
+    public static final Item TOMATO_SEEDS = registerItem("tomato_seeds", new AliasedBlockItem(CookItBlocks.TOMATO, new Item.Settings()));
     public static final Item VANILLA_BEAN = registerItem("vanilla_bean", new AliasedBlockItem(CookItBlocks.VANILLA_VINE_STEM, new Item.Settings()));
     public static final Item CHEESE = registerItem("cheese", new Item(new Item.Settings().food(new FoodComponent.Builder().nutrition(3).build())));
+
+    // -- Food --
     public static final Item TOAST = registerItem("toast", new CookItFood(new Item.Settings().food(new FoodComponent.Builder().nutrition(4).build()), CookItFoodTypes.DONE));
     public static final Item RAW_CROISSANT = registerItem("raw_croissant", new CookItFood(new Item.Settings(), CookItFoodTypes.BAKING));
     public static final Item CROISSANT = registerItem("croissant", new CookItFood(new Item.Settings().food(new FoodComponent.Builder().nutrition(3).build()), CookItFoodTypes.DONE));

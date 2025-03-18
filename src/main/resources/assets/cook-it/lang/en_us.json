@@ -20,6 +20,9 @@
   "item.cook-it.dough_sliced": "Sliced Dough",
   "item.cook-it.cheese": "Cheese",
   "item.cook-it.vanilla_bean": "Vanilla Beans",
+  "item.cook-it.tomato": "Tomato",
+  "item.cook-it.tomato_seeds": "Tomato Seeds",
+  "block.cook-it.lettuce_leaf": "Lettuce Leaf",
 
   "item.cook-it.raw_donut": "Raw Donut",
   "item.cook-it.plain_donut": "Donut",
@@ -68,6 +71,9 @@
   "block.cook-it.uncooked_pizza": "Uncooked Pizza",
   "block.cook-it.pizza_pan": "Pizza Pan",
   "block.cook-it.mixing_bowl": "Mixing Bowl",
+
+  "block.cook-it.tomato": "Tomato Plant",
+  "block.cook-it.lettuce": "Lettuce",
 
   "block.cook-it.red_plate": "Red Plate",
   "block.cook-it.red_large_plate": "Red Large Plate",

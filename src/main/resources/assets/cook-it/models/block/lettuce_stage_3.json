@@ -1,5 +1,5 @@
 {
-	"credit": "Made with Blockbench",
+	"credit": "Made by ToastTextures using Blockbench",
 	"texture_size": [32, 32],
 	"textures": {
 		"lettuce": "cook-it:block/lettuce_3",
@@ -11,21 +11,21 @@
 			"to": [13, 6, 13],
 			"rotation": {"angle": 0, "axis": "y", "origin": [7, 0, 7.25]},
 			"faces": {
-				"north": {"uv": [10, 0, 15, 3], "texture": "#lettuce"},
-				"east": {"uv": [10, 3, 15, 6], "texture": "#lettuce"},
-				"south": {"uv": [10, 6, 15, 9], "texture": "#lettuce"},
-				"west": {"uv": [10, 9, 15, 12], "texture": "#lettuce"},
-				"up": {"uv": [5, 5, 0, 0], "texture": "#lettuce"},
-				"down": {"uv": [5, 5, 0, 10], "texture": "#lettuce"}
+				"north": {"uv": [15, 0, 10, 3], "texture": "#lettuce"},
+				"east": {"uv": [15, 9, 10, 12], "texture": "#lettuce"},
+				"south": {"uv": [15, 6, 10, 9], "texture": "#lettuce"},
+				"west": {"uv": [15, 3, 10, 6], "texture": "#lettuce"},
+				"up": {"uv": [0, 5, 5, 0], "texture": "#lettuce"},
+				"down": {"uv": [0, 5, 5, 10], "texture": "#lettuce"}
 			}
 		},
 		{
-			"from": [3, 3.0045, 1.7545],
-			"to": [13, 8.0045, 1.7545],
-			"rotation": {"angle": -45, "axis": "x", "origin": [7, 3.0045, 6.0045]},
+			"from": [3.00367, -0.32812, -0.37398],
+			"to": [13.00367, -0.32812, 4.62602],
+			"rotation": {"angle": 22.5, "axis": "x", "origin": [7.00367, 3.92188, 4.62602]},
 			"faces": {
-				"north": {"uv": [5, 4.5, 10, 7], "texture": "#lettuce"},
-				"south": {"uv": [10, 4.5, 5, 7], "texture": "#lettuce"}
+				"up": {"uv": [10, 4.5, 5, 7], "texture": "#lettuce"},
+				"down": {"uv": [5, 4.5, 10, 7], "rotation": 180, "texture": "#lettuce"}
 			}
 		},
 		{
@@ -47,12 +47,30 @@
 			}
 		},
 		{
+			"from": [3, 9.6264, 13.32351],
+			"to": [13, 9.6264, 15.32351],
+			"rotation": {"angle": 22.5, "axis": "x", "origin": [7, 1.6264, 9.07351]},
+			"faces": {
+				"up": {"uv": [5, 11, 10, 12], "texture": "#lettuce"},
+				"down": {"uv": [5, 12, 10, 11], "texture": "#lettuce"}
+			}
+		},
+		{
 			"from": [1.7552, 3, 3],
 			"to": [1.7552, 8, 13],
 			"rotation": {"angle": 45, "axis": "z", "origin": [6.0052, 3.0052, 7]},
 			"faces": {
 				"east": {"uv": [10, 4.5, 5, 7], "texture": "#lettuce"},
 				"west": {"uv": [5, 4.5, 10, 7], "texture": "#lettuce"}
+			}
+		},
+		{
+			"from": [-0.2448, 8, 3],
+			"to": [1.7552, 8, 13],
+			"rotation": {"angle": 45, "axis": "z", "origin": [6.0052, 3.0052, 7]},
+			"faces": {
+				"up": {"uv": [5, 12, 10, 13], "rotation": 90, "texture": "#lettuce"},
+				"down": {"uv": [10, 12, 5, 13], "rotation": 90, "texture": "#lettuce"}
 			}
 		},
 		{
