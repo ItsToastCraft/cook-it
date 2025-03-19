@@ -47,7 +47,7 @@ public class CookItItems {
 
     public static final Item LETTUCE_LEAF = registerItem("lettuce_leaf", new Item(new Item.Settings().food(new FoodComponent.Builder().nutrition(2).alwaysEdible().build())));
     public static final Item TOMATO = registerItem("tomato", new Item(new Item.Settings().food(new FoodComponent.Builder().nutrition(3).build())));
-    public static final Item TOMATO_SEEDS = registerItem("tomato_seeds", new AliasedBlockItem(CookItBlocks.TOMATO, new Item.Settings()));
+    public static final Item TOMATO_SEEDS = registerItem("tomato_seeds", new BlockItem(CookItBlocks.TOMATO, new Item.Settings()));
     public static final Item VANILLA_BEAN = registerItem("vanilla_bean", new AliasedBlockItem(CookItBlocks.VANILLA_VINE_STEM, new Item.Settings()));
     public static final Item CHEESE = registerItem("cheese", new Item(new Item.Settings().food(new FoodComponent.Builder().nutrition(3).build())));
 
