@@ -37,6 +37,7 @@ public class CookItLootTables extends FabricBlockLootTableProvider {
         blocks.remove(CookItBlocks.LETTUCE);
         blocks.remove(CookItBlocks.VANILLA_VINE);
         blocks.remove(CookItBlocks.VANILLA_VINE_STEM);
+        blocks.remove(CookItBlocks.TOMATO);
         addDrop(CookItBlocks.VANILLA_VINE, (Block block) -> LootTable.builder()
                 .pool(LootPool.builder().rolls(ConstantLootNumberProvider.create(1.0f)).with(ItemEntry.builder(CookItItems.VANILLA_BEAN))
                         .conditionally(BlockStatePropertyLootCondition.builder(block)

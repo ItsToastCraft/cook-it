@@ -83,6 +83,13 @@ public class PizzaEntity extends BlockEntity{
                 .collect(Collectors.toCollection(ArrayList::new)); // Collect into ArrayList
     }
 
+    public void setToppings(List<String> toppings) {
+        this.toppings.clear();
+        for (String topping : toppings) {
+            this.toppings.add(NbtString.of(topping));
+        }
+    }
+
     public boolean isCooked() {
         return isCooked;
     }

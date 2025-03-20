@@ -128,9 +128,12 @@ public class MixingBowl extends BlockWithEntity implements BlockEntityProvider {
             List<ItemStack> items = itemStack.getOrDefault(CookItComponents.COOKING_COMPONENT, CookingComponent.DEFAULT).stacks();
             if (!items.isEmpty()){
                 ArrayList<ItemStack> otherItems = new ArrayList<>(items);
-                otherItems.removeLast();
+                if (items.size() == 7) {
+                    entity.setStack(entity.size() - 1, items.get(6));
+                    otherItems.removeLast();
+                }
                 entity.setItems(otherItems);
-                entity.setStack(entity.size() - 1, items.getLast());
+
             }
             entity.setGoopColor(itemStack.getOrDefault(CookItComponents.COLOR_COMPONENT,0));
             ItemStack newStack = itemStack.copy();

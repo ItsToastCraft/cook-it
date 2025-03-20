@@ -6,9 +6,7 @@ import dev.toasttextures.cookit.block.ImplementedInventory;
 import dev.toasttextures.cookit.registry.CookItBlockEntities;
 
 public class PlateEntity extends CookingBlockEntity implements ImplementedInventory {
-
     public PlateEntity(BlockPos pos, BlockState state) {
         super(CookItBlockEntities.PLATE_ENTITY, pos, state, 1);
     }
-
 }

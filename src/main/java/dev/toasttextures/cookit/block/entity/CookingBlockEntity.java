@@ -41,18 +41,16 @@ public abstract class CookingBlockEntity extends BlockEntity implements Implemen
 
     @Override
     public void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
-        this.items.clear();
         super.readNbt(nbt, registryLookup);
+        this.items.clear();
         Inventories.readNbt(nbt, this.items, registryLookup);
     }
 
     @Override
     public void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
-        Inventories.writeNbt(nbt, this.items, registryLookup);
-
         super.writeNbt(nbt, registryLookup);
+        Inventories.writeNbt(nbt, this.items, registryLookup);
     }
-
 
     @Nullable
     @Override

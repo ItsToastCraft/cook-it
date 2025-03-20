@@ -5,6 +5,7 @@ import dev.toasttextures.cookit.block.entity.PizzaEntity;
 import dev.toasttextures.cookit.registry.CookItComponents;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.tooltip.TooltipType;
@@ -15,6 +16,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
+import net.minecraft.world.World;
 import net.minecraft.world.WorldView;
 import org.jetbrains.annotations.Nullable;
 
@@ -43,6 +45,14 @@ public class Pizza extends BlockWithEntity implements BlockEntityProvider {
         return FULL;
     }
 
+    @Override
+    public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
+        super.onPlaced(world, pos, state, placer, itemStack);
+        PizzaEntity entity = (PizzaEntity) world.getBlockEntity(pos);
+        if (entity != null) {
+            entity.setToppings(itemStack.getOrDefault(CookItComponents.TOPPING_COMPONENT, List.of()));
+        }
+    }
     @Override
     public ItemStack getPickStack(WorldView world, BlockPos pos, BlockState state) {
         ItemStack stack = super.getPickStack(world, pos, state);

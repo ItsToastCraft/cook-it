@@ -70,7 +70,7 @@ public class MuffinTin extends Block implements BlockEntityProvider {
                     }
                 }
             }
-        } else {
+        } else if (!entity.isEmpty()){
             return BlockEntityUtils.returnItem(entity, player, world, pos, CookItItems.GOOP);
         }
         return ItemActionResult.SUCCESS;

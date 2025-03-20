@@ -1,6 +1,5 @@
 package dev.toasttextures.cookit.block.entity;
 
-import dev.toasttextures.cookit.CookIt;
 import dev.toasttextures.cookit.block.food_blocks.pizza.PizzaToppings;
 import dev.toasttextures.cookit.recipes.RecipeInventory;
 import dev.toasttextures.cookit.registry.CookItBlocks;
@@ -50,8 +49,7 @@ public class CuttingBoardEntity extends CookingBlockEntity implements Implemente
     // This function returns whether it was successful
     public boolean processRecipe(ItemStack tool, boolean tryReset) {
         if (this.getStack(0).isOf(CookItBlocks.UNCOOKED_PIZZA.asItem())) {
-            if (processPizza(tool))
-                return true;
+            return processPizza(tool);
         }
 
         List<RecipeEntry<CuttingBoardRecipe>> recipes = getCurrentRecipe();
@@ -82,7 +80,6 @@ public class CuttingBoardEntity extends CookingBlockEntity implements Implemente
     }
 
     public boolean processPizza(ItemStack tool) {
-
         List<String> toppings = this.getStack(0).getOrDefault(CookItComponents.TOPPING_COMPONENT, List.of());
         ArrayList<String> newToppings = new ArrayList<>(toppings);
         // The pizza has maxed out toppings, so no change happened

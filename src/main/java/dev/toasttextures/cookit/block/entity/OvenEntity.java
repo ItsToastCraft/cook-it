@@ -5,7 +5,6 @@ import dev.toasttextures.cookit.registry.*;
 import dev.toasttextures.cookit.registry.component.CookingComponent;
 import dev.toasttextures.cookit.util.BlockEntityUtils;
 import net.minecraft.block.BlockState;
-import net.minecraft.inventory.Inventories;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.recipe.RecipeEntry;
@@ -38,17 +37,12 @@ public class OvenEntity extends CookingBlockEntity implements ImplementedInvento
 
     @Override
     public void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
-        items.clear();
         super.readNbt(nbt,registryLookup);
-
-        Inventories.readNbt(nbt, items, registryLookup);
-
         this.progress = nbt.getIntArray("oven.progress");
     }
 
     @Override
     public void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
-        Inventories.writeNbt(nbt, this.items, registryLookup);
         nbt.putIntArray("oven.progress", progress);
         super.writeNbt(nbt, registryLookup);
     }

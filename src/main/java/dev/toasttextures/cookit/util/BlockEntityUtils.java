@@ -113,12 +113,14 @@ public class BlockEntityUtils {
         }
     }
     public static ItemActionResult returnItem(CookingBlockEntity entity, PlayerEntity player, World world, BlockPos pos) {
-        return returnItem(entity,player,world,pos, Items.AIR);
+        return returnItem(entity, player, world, pos, Items.AIR);
     }
     public static ItemActionResult returnItem(CookingBlockEntity entity, PlayerEntity player, World world, BlockPos pos, Item... exclusions) {
         for (int i = entity.getItems().size() - 1; i >= 0; i--) {
             if (!entity.getStack(i).isEmpty() && !Arrays.asList(exclusions).contains(entity.getItems().get(i).getItem())) {
-                player.getInventory().offerOrDrop(entity.getStack(i).copyAndEmpty());
+                player.getInventory().offerOrDrop(entity.getStack(i).copyWithCount(1));
+                entity.setStack(i, ItemStack.EMPTY);
+                entity.markDirty();
                 world.playSound(null, pos, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.BLOCKS, 1, 1.0f);
                 return ItemActionResult.SUCCESS;
             }
