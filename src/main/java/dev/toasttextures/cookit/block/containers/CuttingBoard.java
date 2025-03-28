@@ -52,6 +52,10 @@ public class CuttingBoard extends HorizontalFacingBlock implements BlockEntityPr
         if (stack.getItem() instanceof FryerBasket) {
             return ItemActionResult.CONSUME;
         }
+        if (player.isSneaking()) {
+            pickUpCookingBoardItems(state,world,pos,player,entity);
+            return ItemActionResult.SUCCESS;
+        }
         if (!stack.isEmpty()) {
             if (entity.isEmpty()) {
                 entity.setStack(0, stack.splitUnlessCreative(1, player));
@@ -66,7 +70,7 @@ public class CuttingBoard extends HorizontalFacingBlock implements BlockEntityPr
 
     // pickup items, boolean used to cancel the block break if the block wasn't empty
     public void pickUpCookingBoardItems(BlockState state, World world, BlockPos pos, PlayerEntity player, CuttingBoardEntity blockEntity) {
-        if (blockEntity != null && !blockEntity.isEmpty() && player.isSneaking()) {
+        if (blockEntity != null && !blockEntity.isEmpty()) {
             player.getInventory().insertStack(blockEntity.getStack(0).copyAndEmpty());
             blockEntity.setClicks(0);
             world.updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
