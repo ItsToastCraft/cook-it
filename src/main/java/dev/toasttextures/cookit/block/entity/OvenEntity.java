@@ -18,6 +18,7 @@ import dev.toasttextures.cookit.block.ImplementedInventory;
 import dev.toasttextures.cookit.recipes.OvenRecipe;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -37,7 +38,7 @@ public class OvenEntity extends CookingBlockEntity implements ImplementedInvento
 
     @Override
     public void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
-        super.readNbt(nbt,registryLookup);
+        super.readNbt(nbt, registryLookup);
         this.progress = nbt.getIntArray("oven.progress");
     }
 
@@ -52,30 +53,48 @@ public class OvenEntity extends CookingBlockEntity implements ImplementedInvento
             return;
         }
         world.setBlockState(pos, state.with(DONE, !this.getItems().isEmpty() && this.done));
-        if (this.isEmpty()) { this.done = false; return;}
-        if (state.get(OPEN)) { return; }
+        if (this.isEmpty()) {
+            this.done = false;
+            return;
+        }
+        if (state.get(OPEN)) {
+            return;
+        }
 
         for (int i = 0; i < this.size(); i++) {
             ItemStack item = this.getStack(i);
-            if(item.isEmpty()) { break; }
+            if (item.isEmpty()) {
+                break;
+            }
 
-            Optional<RecipeEntry<OvenRecipe>> recipe = getCurrentRecipe(item);
+            List<Optional<RecipeEntry<OvenRecipe>>> recipes = getCurrentRecipe(item);
+
             if (item.isOf(CookItBlocks.MUFFIN_TIN.asItem())) {
                 this.processMuffinRecipe(world, pos, state, i);
-            } else if (recipe.isPresent()) {
-                if (recipe.get().value().getMaxProgress() >= this.progress[i]) {
-                    this.progress[i]++;
-                    this.done = false;
+            } else if (!recipes.isEmpty()) {
+                Optional<RecipeEntry<OvenRecipe>> recipe = recipes.getFirst();
+                if (recipe.isPresent()) {
+                    if (recipe.get().value().getMaxProgress() >= this.progress[i]) {
+                        this.progress[i]++;
+                        this.done = false;
+                    } else {
+                        boolean markAsDone = craftRecipe(i);
+                        this.markDirty();
+                        this.done = markAsDone;
+                        world.setBlockState(pos, state.with(DONE, true));
+                        if (markAsDone) {
+                            this.progress[i] = 0;
+                        }
+                    }
                 } else {
-                    craftRecipe(i);
-                    this.markDirty();
                     this.done = true;
-                    world.setBlockState(pos, state.with(DONE, true));
-                    this.progress[i] = 0;
+                    break;
                 }
-            } else { this.done = true; break; }
+            } else {
+                this.done = true;
+                break;
+            }
         }
-
     }
 
     private void processMuffinRecipe(World world, BlockPos pos, BlockState state, int slot) {
@@ -103,57 +122,58 @@ public class OvenEntity extends CookingBlockEntity implements ImplementedInvento
             world.setBlockState(pos, state.with(DONE, true));
             this.progress[slot] = 0;
             world.playSound(null, this.getPos(), SoundEvent.of(Identifier.of("block.note_block.xylophone")), SoundCategory.BLOCKS, 3.0f, 1.5f);
-            world.playSound(null, this.getPos(), SoundEvent.of(Identifier.of("block.note_block.xylophone")), SoundCategory.BLOCKS, 3.0f, 2f);
-            world.playSound(null, this.getPos(), SoundEvent.of(Identifier.of("block.note_block.xylophone")), SoundCategory.BLOCKS, 3.0f, 2.5f);
         }
     }
-    private void craftRecipe(int index) {
+
+    private boolean craftRecipe(int index) {
         ItemStack stack = this.getStack(index);
+        boolean done = true;
         if (BlockEntityUtils.isContainer(stack)) {
             ArrayList<ItemStack> containerItems = BlockEntityUtils.getContainerItems(stack);
-            ArrayList <ItemStack> outputs = new ArrayList<>();
+            ArrayList<ItemStack> outputs = new ArrayList<>();
             for (ItemStack item : containerItems) {
-                Optional<RecipeEntry<OvenRecipe>> recipe = getCurrentRecipe(item);
+
+                Optional<RecipeEntry<OvenRecipe>> recipe = getRecipeForItem(item);
                 if (recipe.isPresent()) {
                     if (!item.isEmpty() && recipe.get().value().getMaxProgress() <= this.progress[index]) {
                         ItemStack output = recipe.get().value().craft(new RecipeInventory(stack), this.world.getRegistryManager());
                         if (item.getComponents() != null) {
                             output.applyComponentsFrom(item.getComponents());
                         }
-
                         outputs.add(output);
+                    } else {
+                        outputs.add(item);
+                        done = false;
                     }
                 } else {
                     outputs.add(item);
+                    done = false;
                 }
             }
             stack.set(CookItComponents.COOKING_COMPONENT, new CookingComponent(outputs));
         } else {
-            Optional<RecipeEntry<OvenRecipe>> recipe = getCurrentRecipe(stack);
-            ItemStack result = recipe.get().value().craft(new RecipeInventory(stack), this.world.getRegistryManager());
-            result.applyComponentsFrom(stack.getComponents());
-            this.setStack(index, result);
+            Optional<RecipeEntry<OvenRecipe>> recipe = getRecipeForItem(stack);
+            if (recipe.isPresent()) {
+                ItemStack result = recipe.get().value().craft(new RecipeInventory(stack), this.world.getRegistryManager());
+                result.applyComponentsFrom(stack.getComponents());
+                this.setStack(index, result);
+            }
         }
         assert world != null;
+
         world.playSound(null, this.getPos(), SoundEvent.of(Identifier.of("block.note_block.xylophone")), SoundCategory.BLOCKS, 3.0f, 1.5f);
+
+        return done;
     }
 
-    private Optional<RecipeEntry<OvenRecipe>> getCurrentRecipe(ItemStack itemStack) {
-        ArrayList<ItemStack> items = new ArrayList<>();
+    private List<Optional<RecipeEntry<OvenRecipe>>> getCurrentRecipe(ItemStack itemStack) {
+        List<ItemStack> containerItems = BlockEntityUtils.getContainerItems(itemStack);
+        return (containerItems.isEmpty() ? List.of(itemStack) : containerItems).stream().map(this::getRecipeForItem).filter(Optional::isPresent).toList();
+    }
 
-        ArrayList<ItemStack> containerItems = BlockEntityUtils.getContainerItems(itemStack);
-
-        if (!containerItems.isEmpty()) {
-            items.addAll(containerItems);
-        } else {
-            items.add(itemStack);
-        }
-
-        RecipeInventory inv = new RecipeInventory(items.size());
-
-        for (int i = 0; i < items.size(); i++) {
-            inv.setStack(i, items.get(i));
-        }
-        return Objects.requireNonNull(getWorld()).getRecipeManager().getFirstMatch(OvenRecipe.Type.INSTANCE, inv, getWorld());
+    private Optional<RecipeEntry<OvenRecipe>> getRecipeForItem(ItemStack item) {
+        RecipeInventory inv = new RecipeInventory(1);
+        inv.setStack(0, item);
+        return Objects.requireNonNull(world).getRecipeManager().getFirstMatch(OvenRecipe.Type.INSTANCE, inv, world);
     }
 }
