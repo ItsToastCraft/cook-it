@@ -22,7 +22,7 @@ public class CookIt implements ModInitializer {
     public static final String MOD_ID = "cook-it";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
-    public static final SimpleParticleType OIL_PARTICLE = Registry.register(Registries.PARTICLE_TYPE, "oil", FabricParticleTypes.simple());
+    public static SimpleParticleType OIL_PARTICLE;
 
     public static final List<String> SUPPORTED_WOOD_TYPES = List.of("acacia", "birch", "cherry", "crimson", "dark_oak", "jungle",  "oak", "mangrove", "spruce", "warped");
     @Override
@@ -37,7 +37,7 @@ public class CookIt implements ModInitializer {
         CookItSounds.registerSounds();
         CookItBlockEntities.registerEntities();
         CookItComponents.registerComponents();
-        Registry.register(Registries.PARTICLE_TYPE, Identifier.of(MOD_ID, "oil"), OIL_PARTICLE);
+        OIL_PARTICLE = Registry.register(Registries.PARTICLE_TYPE, Identifier.of(MOD_ID, "oil"), FabricParticleTypes.simple());
 
         Registry.register(Registries.ITEM_GROUP, Identifier.of(CookIt.MOD_ID, "items"), CookItItems.COOK_IT_GROUP);
         PlayerBlockBreakEvents.BEFORE.register((world, player, pos, state, blockEntity) -> {
