@@ -22,63 +22,57 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-public class CookedPizza extends Pizza{
+public class CookedPizza extends Pizza {
     public CookedPizza(Settings settings) {
         super(settings);
     }
 
-    private final VoxelShape SLICE_1 = VoxelShapes.cuboid(0.0625f, 0.0f, 0.0625f, 0.5f, 0.125f, 0.5f);
-    private final VoxelShape SLICE_2 = VoxelShapes.cuboid(0.0625f, 0.0f, 0.0625f, 0.9375f, 0.125f, 0.5f);
-    private final VoxelShape SLICE_3 = VoxelShapes.union(SLICE_2, createCuboidShape(8, 0.0f, 8, 15, 2, 15));
+    private static final VoxelShape SLICE_1 = VoxelShapes.cuboid(0.0625f, 0.0f, 0.0625f, 0.5f, 0.125f, 0.5f);
+    private static final VoxelShape SLICE_2 = VoxelShapes.cuboid(0.0625f, 0.0f, 0.0625f, 0.9375f, 0.125f, 0.5f);
+    private static final VoxelShape SLICE_3 = VoxelShapes.union(SLICE_2, createCuboidShape(8, 0.0f, 8, 15, 2, 15));
 
     @Override
     public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext ctx) {
         int pizzaAmount = world.getBlockEntity(pos) instanceof PizzaEntity pizzaEntity ? pizzaEntity.getSliceCount() : 4;
 
-        switch (pizzaAmount) {
-            case (1) -> {
-                return SLICE_1;
-            }
-            case (2) -> {
-                return SLICE_2;
-            }
-            case (3) -> {
-                return SLICE_3;
-            }
-            default -> {
-                return Pizza.FULL;
-            }
-        }
+        return switch (pizzaAmount) {
+            case (1) -> SLICE_1;
+            case (2) -> SLICE_2;
+            case (3) -> SLICE_3;
+            default -> Pizza.FULL;
+        };
     }
 
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        super.onUse(state, world, pos, player, hand, hit);
         world.updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
         ItemStack heldItem = player.getStackInHand(hand);
         PizzaEntity entity = (PizzaEntity) world.getBlockEntity(pos);
         if (entity == null || world.isClient) {
             return ActionResult.SUCCESS;
         } else {
-            int pizzaAmount = entity.getSliceCount();
             if (world.getBlockState(pos).getBlock() == CookItBlocks.PIZZA && heldItem.isEmpty()) {
-
-                NbtList toppings = entity.getToppings();
-
-                ItemStack itemStack = new ItemStack(CookItItems.PIZZA_SLICE, 1);
-                if (!toppings.isEmpty()) {
-                    itemStack.getOrCreateNbt().put("toppings", toppings);
-                }
-
-                player.getInventory().offerOrDrop(itemStack);
-                world.playSound(null, pos, SoundEvents.BLOCK_WOOL_BREAK, SoundCategory.BLOCKS);
-                if (pizzaAmount > 1) {
-                    entity.setSliceCount(entity.getSliceCount() - 1);
-                } else {
-                    world.breakBlock(pos, false);
-                }
+                givePizzaSlice(world, pos, player, entity);
             }
         }
         return ActionResult.PASS;
+    }
+
+    public void givePizzaSlice(World world, BlockPos pos, PlayerEntity player, PizzaEntity entity) {
+        NbtList toppings = entity.getToppingsNbt();
+        ItemStack itemStack = new ItemStack(CookItItems.PIZZA_SLICE, 1);
+
+        if (!toppings.isEmpty()) {
+            itemStack.getOrCreateNbt().put("toppings", toppings);
+        }
+
+        if (entity.getSliceCount() > 1) {
+            entity.setSliceCount(entity.getSliceCount() - 1);
+        } else {
+            world.breakBlock(pos, false);
+        }
+
+        player.getInventory().offerOrDrop(itemStack);
+        world.playSound(null, pos, SoundEvents.BLOCK_WOOL_BREAK, SoundCategory.BLOCKS);
     }
 
     @Override
@@ -92,8 +86,9 @@ public class CookedPizza extends Pizza{
             int pizzaAmount = pizzaEntity.getSliceCount();
             if (pizzaAmount > 0) {
                 ItemStack itemStack = new ItemStack(CookItItems.PIZZA_SLICE, pizzaAmount);
-                if (!pizzaEntity.getToppings().isEmpty()) {
-                    itemStack.getOrCreateNbt().put("toppings", pizzaEntity.getToppings());
+                NbtList pizzaToppings = pizzaEntity.getToppingsNbt();
+                if (!pizzaToppings.isEmpty()) {
+                    itemStack.getOrCreateNbt().put("toppings", pizzaToppings);
                 }
                 dropStack(world, pos, itemStack);
             }

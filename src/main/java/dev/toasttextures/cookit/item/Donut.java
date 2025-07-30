@@ -1,8 +1,9 @@
 package dev.toasttextures.cookit.item;
 
-import dev.toasttextures.cookit.registries.CookItFoodTypes;
-import dev.toasttextures.cookit.registries.CookItItems;
+import dev.toasttextures.cookit.enums.DonutType;
+import dev.toasttextures.cookit.enums.FoodTypes;
 import net.minecraft.client.item.TooltipContext;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -12,16 +13,30 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class Donut extends CookItFood {
+
+    private final DonutType type;
     public Donut(Settings settings) {
-        super(settings, CookItFoodTypes.DONE);
+        super(settings, FoodTypes.DONE);
+        this.type = DonutType.PLAIN;
     }
 
+    public Donut(Settings settings, DonutType type) {
+        super(settings, FoodTypes.DONE);
+        this.type = type;
+    }
+
+    public DonutType getType() {
+        return type;
+    }
 
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
-        if (stack.getItem().equals(CookItItems.SWEET_BERRY_DONUT_SPRINKLES) || stack.getItem().equals(CookItItems.CHOCOLATE_DONUT_SPRINKLES) || stack.getItem().equals(CookItItems.VANILLA_DONUT_SPRINKLES)) {
-            tooltip.add(1, Text.literal("With Sprinkles").formatted(Formatting.ITALIC, Formatting.YELLOW));
-        } else if (stack.getItem().equals(CookItItems.CHOCOLATE_DONUT_STRIPED) || stack.getItem().equals(CookItItems.VANILLA_DONUT_STRIPED)) {
-            tooltip.add(1, Text.literal("Striped").formatted(Formatting.ITALIC, Formatting.YELLOW));
+        Item item =  stack.getItem();
+
+        if (item instanceof Donut donut) {
+            DonutType donutType = donut.getType();
+            if  (donutType == DonutType.PLAIN) {
+                tooltip.add(Text.literal(donutType.getTooltip()).formatted(Formatting.ITALIC, Formatting.YELLOW));
+            }
         }
     }
 }

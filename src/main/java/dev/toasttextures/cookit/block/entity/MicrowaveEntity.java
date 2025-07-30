@@ -1,6 +1,7 @@
 package dev.toasttextures.cookit.block.entity;
 
 
+import dev.toasttextures.cookit.registries.CookItProperties;
 import net.minecraft.block.BlockState;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.inventory.SimpleInventory;
@@ -9,7 +10,6 @@ import net.minecraft.recipe.RecipeEntry;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import dev.toasttextures.cookit.block.ImplementedInventory;
 import dev.toasttextures.cookit.recipes.MicrowaveRecipe;
 import dev.toasttextures.cookit.registries.CookItBlockEntities;
 import dev.toasttextures.cookit.registries.CookItSounds;
@@ -17,10 +17,7 @@ import dev.toasttextures.cookit.registries.CookItSounds;
 import java.util.Objects;
 import java.util.Optional;
 
-import static dev.toasttextures.cookit.block.appliances.Microwave.ON;
-import static dev.toasttextures.cookit.block.appliances.Microwave.OPEN;
-
-public class MicrowaveEntity extends CookingBlockEntity implements ImplementedInventory {
+public class MicrowaveEntity extends CookingBlockEntity {
     private static final int INPUT_SLOT = 0;
     private static final int MICROWAVE_SOUND_INTERVAL = 111;
     private int progress = 0;
@@ -51,7 +48,7 @@ public class MicrowaveEntity extends CookingBlockEntity implements ImplementedIn
             if (this.getProgress() == 0 || world.getTime() % MICROWAVE_SOUND_INTERVAL == 0) {
                 playMicrowaveSound(world, pos, state, true);
             }
-            if (state.get(OPEN)) playMicrowaveSound(world, pos, state, false);
+            if (state.get(CookItProperties.OPEN)) playMicrowaveSound(world, pos, state, false);
 
             this.updateMaxProgress();
             this.addProgress();
@@ -96,12 +93,12 @@ public class MicrowaveEntity extends CookingBlockEntity implements ImplementedIn
 
     private void addProgress() { progress++; }
 
-    private boolean hasRecipe() {
+    protected boolean hasRecipe() {
         Optional<RecipeEntry<MicrowaveRecipe>> recipe = getCurrentRecipe();
         return recipe.isPresent();
     }
 
-    private Optional<RecipeEntry<MicrowaveRecipe>> getCurrentRecipe() {
+    protected Optional<RecipeEntry<MicrowaveRecipe>> getCurrentRecipe() {
         SimpleInventory inv = new SimpleInventory(this.size());
 
         for (int i = 0; i < this.size(); i++) {
@@ -111,12 +108,12 @@ public class MicrowaveEntity extends CookingBlockEntity implements ImplementedIn
     }
 
     private void playMicrowaveSound(World world, BlockPos pos, BlockState state, boolean on) {
-        if (on && !state.get(OPEN)) {
+        if (on && !state.get(CookItProperties.OPEN)) {
             world.playSound(null, pos, CookItSounds.MICROWAVE_SOUND_EVENT, SoundCategory.BLOCKS, 0.3f, 1.0f);
-            world.setBlockState(pos, state.with(ON, true));
+            world.setBlockState(pos, state.with(CookItProperties.ON, true));
         } else {
-            world.setBlockState(pos, state.with(ON, false));
-            if (state.get(OPEN)) return;
+            world.setBlockState(pos, state.with(CookItProperties.ON, false));
+            if (state.get(CookItProperties.OPEN)) return;
             world.playSound(null, pos, CookItSounds.MICROWAVE_BEEP_EVENT, SoundCategory.BLOCKS, 1.0f, 1.0f);
         }
     }

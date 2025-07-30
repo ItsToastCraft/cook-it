@@ -1,6 +1,5 @@
 package dev.toasttextures.cookit.block.entity;
 
-import dev.toasttextures.cookit.block.ImplementedInventory;
 import dev.toasttextures.cookit.recipes.MixingBowlRecipe;
 import dev.toasttextures.cookit.registries.CookItBlockEntities;
 import dev.toasttextures.cookit.registries.CookItItems;
@@ -11,17 +10,19 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.ItemStackParticleEffect;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeEntry;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 import java.util.Optional;
 
-public class MixingBowlEntity extends CookingBlockEntity implements ImplementedInventory {
+public class MixingBowlEntity extends CookingBlockEntity {
     private int clicks = 0;
     private int uses = 0;
     private int color = 0;
@@ -44,6 +45,11 @@ public class MixingBowlEntity extends CookingBlockEntity implements ImplementedI
         nbt.putInt("color", color);
         super.writeNbt(nbt);
     }
+
+    public boolean hasRecipe() {
+        return getCurrentRecipe().isPresent();
+    }
+
     public Item getLiquid() {
         return this.getStack(this.size() - 1).getItem();
     }
@@ -61,26 +67,15 @@ public class MixingBowlEntity extends CookingBlockEntity implements ImplementedI
         Optional<RecipeEntry<MixingBowlRecipe>> recipe = getCurrentRecipe();
         if (recipe.isPresent() && recipe.get().value().getLiquid().isOf(this.getLiquid())) {
             this.clicks++;
-            boolean hasGoop = recipe.get().value().hasGoop();
+
             int mixes = recipe.get().value().getMixes();
-            Objects.requireNonNull(world).playSound(null, pos.getX(), pos.getY(), pos.getZ(), SoundEvents.ENTITY_ITEM_FRAME_REMOVE_ITEM, SoundCategory.BLOCKS, 0.5f, 0.25f);
-            ((ServerWorld) Objects.requireNonNull(world)).spawnParticles(new ItemStackParticleEffect(ParticleTypes.ITEM, recipe.get().value().getResult(null)), pos.getX() + 0.5f, pos.getY(), pos.getZ() + 0.5f, 10, 0f,0.025f,0.0f,0.125f);
+            if (world != null && world instanceof ServerWorld serverWorld) {
+                world.playSound(null, pos.getX(), pos.getY(), pos.getZ(), SoundEvents.ENTITY_ITEM_FRAME_REMOVE_ITEM, SoundCategory.BLOCKS, 0.5f, 0.25f);
+                serverWorld.spawnParticles(new ItemStackParticleEffect(ParticleTypes.ITEM, recipe.get().value().getResult(null)), pos.getX() + 0.5f, pos.getY(), pos.getZ() + 0.5f, 10, 0f,0.025f,0.0f,0.125f);
+            }
 
             if (this.getClicks() >= mixes) {
-                this.setItems(DefaultedList.ofSize(this.size(), ItemStack.EMPTY));
-                ItemStack output = recipe.get().value().craft(new SimpleInventory(), world.getRegistryManager());
-                if (hasGoop){
-
-                    ItemStack goop = new ItemStack(CookItItems.GOOP, output.getCount());
-                    output.setCount(1);
-                    output.writeNbt(goop.getOrCreateSubNbt("output"));
-                    Objects.requireNonNull(goop.getNbt()).putInt("color", this.getGoopColor());
-
-                    output = goop;
-                }
-                this.setStack(0, output);
-                this.setClicks(0);
-                return hasGoop;
+                complete(recipe.get());
             } else if (this.getClicks() == mixes - 1 && hasGoop) {
                 // Set the color one click early
                 this.color = recipe.get().value().goopColor();
@@ -91,6 +86,24 @@ public class MixingBowlEntity extends CookingBlockEntity implements ImplementedI
 
         }
         return false;
+    }
+
+    public void complete(@NotNull RecipeEntry<? extends Recipe<SimpleInventory>> entry) {
+        MixingBowlRecipe recipe = (MixingBowlRecipe) entry.value();
+        boolean hasGoop = recipe.hasGoop();
+        this.setItems(DefaultedList.ofSize(this.size(), ItemStack.EMPTY));
+        ItemStack output = recipe.craft(new SimpleInventory(), world.getRegistryManager());
+        if (hasGoop){
+
+            ItemStack goop = new ItemStack(CookItItems.GOOP, output.getCount());
+            output.setCount(1);
+            output.writeNbt(goop.getOrCreateSubNbt("output"));
+            Objects.requireNonNull(goop.getNbt()).putInt("color", this.getGoopColor());
+
+            output = goop;
+        }
+        this.setStack(0, output);
+        this.setClicks(0);
     }
 
     private Optional<RecipeEntry<MixingBowlRecipe>> getCurrentRecipe() {

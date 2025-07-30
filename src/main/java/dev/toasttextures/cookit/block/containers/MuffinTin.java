@@ -1,7 +1,9 @@
 package dev.toasttextures.cookit.block.containers;
 
+import dev.toasttextures.cookit.block.entity.CookingBlockEntity;
 import dev.toasttextures.cookit.block.entity.MuffinTinEntity;
 import dev.toasttextures.cookit.registries.CookItBlocks;
+import dev.toasttextures.cookit.enums.FoodTypes;
 import dev.toasttextures.cookit.registries.CookItItems;
 import dev.toasttextures.cookit.util.BlockEntityUtils;
 import net.minecraft.block.*;
@@ -19,17 +21,14 @@ import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class MuffinTin extends Block implements BlockEntityProvider {
+public class MuffinTin extends CookingContainer {
 
     public MuffinTin(Settings settings) {
         super(settings);
-    }
-
-    public BlockRenderType getRenderType(BlockState state) {
-        return BlockRenderType.MODEL;
     }
 
     @Override
@@ -49,32 +48,29 @@ public class MuffinTin extends Block implements BlockEntityProvider {
                 return BlockEntityUtils.dropOnUse(this, blockEntity, player, world, blockPos);
             }
             if (!item.isEmpty()) {
-                // Check if there's goop that can be transferred to the muffin tin
-                if (item.isOf(CookItBlocks.MIXING_BOWL.asItem()) && item.getSubNbt("BlockEntityTag") != null) {
-                    for (int i = 0; i < blockEntity.size(); i++) {
-                        if (blockEntity.getStack(i).isEmpty()) {
-                            MixingBowl.transferTo(item, blockEntity, i);
-                            return ActionResult.SUCCESS;
-                        }
-                    }
-                } else if (CookItItems.MUFFINS.contains(item.getItem())) {
-                    for (int i = 0; i < blockEntity.size(); i++) {
-                        if (blockEntity.getStack(i).isEmpty()) {
-                            blockEntity.setStack(i, item.split(1));
-                            return ActionResult.SUCCESS;
-                        }
-                    }
-                }
+                this.addStack(item, blockEntity, null);
             } else {
-                for (int i = blockEntity.size() - 1; i >= 0; i--) {
-                    if (!blockEntity.getStack(i).isEmpty() && !blockEntity.getStack(i).isOf(CookItItems.GOOP)) {
-                        player.getInventory().offerOrDrop(blockEntity.getStack(i).split(1));
-                        return ActionResult.SUCCESS;
-                    }
-                }
+                retrieveStack(player, blockEntity, List.of(CookItItems.GOOP));
             }
         }
         return ActionResult.SUCCESS;
+    }
+
+    @Override
+    public void addStack(ItemStack stack, CookingBlockEntity entity, @Nullable FoodTypes foodType) {
+        if (stack.isEmpty()) {
+            return;
+        }
+        for (int i = 0; i < entity.getItems().size(); i++) {
+            if (entity.getStack(i).isEmpty()) {
+                if (stack.isOf(CookItBlocks.MIXING_BOWL.asItem()) && stack.getSubNbt("BlockEntityTag") != null) {
+                    MixingBowl.transferTo(stack, entity, i);
+                } else if (CookItItems.MUFFINS.contains(stack.getItem())) {
+                    entity.setStack(i, stack.split(1));
+                }
+                break;
+            }
+        }
     }
 
     @Override
@@ -91,6 +87,6 @@ public class MuffinTin extends Block implements BlockEntityProvider {
                 items[i] = ItemStack.fromNbt(tag.getCompound("output"));
             }
         }
-        BlockEntityUtils.appendTooltip(stack, tooltip);
+        BlockEntityUtils.appendTooltip(items, tooltip);
     }
 }

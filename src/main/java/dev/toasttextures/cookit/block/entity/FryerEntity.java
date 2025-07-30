@@ -2,6 +2,9 @@ package dev.toasttextures.cookit.block.entity;
 
 
 import dev.toasttextures.cookit.CookIt;
+import dev.toasttextures.cookit.enums.FoodProcessingStatus;
+import dev.toasttextures.cookit.registries.CookItItems;
+import dev.toasttextures.cookit.registries.CookItProperties;
 import net.minecraft.block.BlockState;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.inventory.SimpleInventory;
@@ -9,28 +12,27 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeEntry;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import dev.toasttextures.cookit.block.ImplementedInventory;
 import dev.toasttextures.cookit.item.FryerBasket;
 import dev.toasttextures.cookit.recipes.FryerRecipe;
 import dev.toasttextures.cookit.registries.CookItBlockEntities;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
-import static dev.toasttextures.cookit.block.appliances.Fryer.ON;
-
-
-public class FryerEntity extends CookingBlockEntity implements ImplementedInventory {
-    private static final int Fryer_SOUND_INTERVAL = 111;
-    int progress = 0;
+public class FryerEntity extends CookingBlockEntity implements Appliance {
+    private int progress = 0;
     private int maxProgress = 0;
+    private ItemStack prevItem = ItemStack.EMPTY;
+    private static final Random RANDOM = new Random();
 
     public FryerEntity(BlockPos pos, BlockState state) {
         super(CookItBlockEntities.FRYER_ENTITY, pos, state, 1);
@@ -38,139 +40,107 @@ public class FryerEntity extends CookingBlockEntity implements ImplementedInvent
 
     @Override
     public void readNbt(NbtCompound nbt) {
-        items.clear();
         super.readNbt(nbt);
 
         Inventories.readNbt(nbt, items);
-        progress = nbt.getInt("fryer.progress");
+        progress = nbt.getInt("Progress");
     }
 
     @Override
     public void writeNbt(NbtCompound nbt) {
         Inventories.writeNbt(nbt, this.items);
-        nbt.putInt("fryer.progress", progress);
+        nbt.putInt("Progress", progress);
         super.writeNbt(nbt);
     }
 
     public void tick(World world, BlockPos pos, BlockState state) {
 
-        if (world.isClient()) {
+        if (world == null || world.isClient()) {
             return;
         }
-        if (this.hasRecipe()) {
-            if (this.progress % 8 == 1)
-                world.playSound(null, this.pos, SoundEvents.BLOCK_BUBBLE_COLUMN_UPWARDS_AMBIENT, SoundCategory.BLOCKS, 0.5f, 8.0f);
-            if (this.progress % 30 == 1)
-                world.playSound(null, this.pos, SoundEvents.BLOCK_FIRE_AMBIENT, SoundCategory.BLOCKS, 0.5f, 1.0f);
-            if (this.items.get(0).isEmpty()) {
-                this.resetProgress();
-                world.setBlockState(pos, state.with(ON, false));
-                return;
-            }
-            world.setBlockState(pos, state.with(ON, true));
+        world.setBlockState(pos, state.with(CookItProperties.ON, status == FoodProcessingStatus.PROCESSING));
+        ItemStack item = items.get(0);
+        if (item.isEmpty()) {
+            status = FoodProcessingStatus.IDLE;
+            return;
+        }
+        if (!item.isOf(CookItItems.FRYER_BASKET)) {
+            status = FoodProcessingStatus.INVALID_INPUT;
+            return;
+        }
 
-//            if (progress == 0 || world.getTime() % Fryer_SOUND_INTERVAL == 0) {
-//                //playFryerSound(world, pos, state, true);
-//            }
-            addParticles();
-
-            this.updateMaxProgress();
-            this.addProgress();
-            markDirty(world, pos, state);
-
-            if (craftingFinished()) {
-                //playFryerSound(world, pos, state, false);
-                world.setBlockState(pos, state.with(ON, false));
-                this.craftRecipe();
-                this.resetProgress();
-                this.markDirty();
-
+        RecipeEntry<FryerRecipe> recipe = getCurrentRecipe();
+        if (recipe == null) {
+            return;
+        }
+        if (item.equals(prevItem)) {
+            if (this.maxProgress <= this.progress) {
+                status = FoodProcessingStatus.DONE;
+                complete(recipe);
+            } else {
+                progress++;
+                addEffects();
             }
         } else {
-            this.resetProgress();
+            status = FoodProcessingStatus.PROCESSING;
+            this.maxProgress = recipe.value().getMaxProgress();
+            this.markDirty();
         }
+        prevItem = item;
     }
 
-    private void updateMaxProgress() {
-        Optional<RecipeEntry<FryerRecipe>> recipe = getCurrentRecipe();
-
-        maxProgress = recipe.get().value().getMaxProgress();
-    }
-
-    private void craftRecipe() {
+    public void complete(@NotNull RecipeEntry<? extends Recipe<SimpleInventory>> entry) {
         ItemStack container = this.getStack(0);
-        Optional<RecipeEntry<FryerRecipe>> recipe = getCurrentRecipe();
-        if (recipe.isPresent()) {
-            if (!container.isEmpty() && recipe.get().value().getMaxProgress() <= this.progress) {
-                FryerBasket.setItem(container, recipe.get().value().craft(new SimpleInventory(this.getStack(0)), Objects.requireNonNull(this.world).getRegistryManager()));
+        if (world != null) {
+            if (!container.isEmpty() && isDone()) {
+                FryerBasket.setItem(container, entry.value().craft(new SimpleInventory(container), world.getRegistryManager()));
+                this.progress = 0;
                 this.markDirty();
+                prevItem = ItemStack.EMPTY;
             }
         }
-
     }
 
-    private void addParticles() {
+    private void addEffects() {
+        if (world == null) {
+            return;
+        }
 
-        for (int i = 0; i < 3; i++) {
-            Random random = new Random();
-            double particleX = Math.round(((double)this.pos.getX() + 0.5 + random.nextFloat(-0.1875f,0.1875f)) * 100d) / 100d;
-            double particleY = ((double)this.pos.getY() + 0.25);
-            double particleZ = Math.round(((double)this.pos.getZ() + 0.5 + random.nextFloat(-0.1875f,0.1875f)) * 100d) / 100d;
-            assert world != null;
+        if (this.progress % 8 == 1) {
+            world.playSound(null, this.pos, SoundEvents.BLOCK_BUBBLE_COLUMN_UPWARDS_AMBIENT, SoundCategory.BLOCKS, 0.5f, 8.0f);
+        } else if (this.progress % 30 == 1) {
+            world.playSound(null, this.pos, SoundEvents.BLOCK_FIRE_AMBIENT, SoundCategory.BLOCKS, 0.5f, 1.0f);
+        }
 
-            ((ServerWorld) world).spawnParticles(CookIt.OIL_PARTICLE, particleX, particleY, particleZ, 2, 0f,0.0f,0.0f,0f);
+        if (world instanceof ServerWorld serverWorld) {
+            for (int i = 0; i < 3; i++) {
+                double particleX = Math.round(((double) this.pos.getX() + 0.5 + RANDOM.nextFloat(-0.1875f, 0.1875f)) * 100) / 100d;
+                double particleY = this.pos.getY() + 0.25;
+                double particleZ = Math.round(((double) this.pos.getZ() + 0.5 + RANDOM.nextFloat(-0.1875f, 0.1875f)) * 100d) / 100d;
 
+                serverWorld.spawnParticles(CookIt.OIL_PARTICLE, particleX, particleY, particleZ, 2, 0f, 0.0f, 0.0f, 0f);
             }
         }
-
-    private void resetProgress() {
-        this.progress = 0;
     }
 
-    private boolean craftingFinished() {
-        return this.maxProgress == this.progress;
-    }
-
-    private void addProgress() {
-        progress++;
-    }
-
-    private boolean hasRecipe() {
-        return getCurrentRecipe().isPresent();
-    }
-
-    private Optional<RecipeEntry<FryerRecipe>> getCurrentRecipe() {
-        SimpleInventory inv = new SimpleInventory(this.size());
-        ItemStack item = getContainerItem(this.getStack(0));
-        if (item.isEmpty()) {
-            return Optional.empty();
+    private RecipeEntry<FryerRecipe> getCurrentRecipe() {
+        if (world != null) {
+            ItemStack item = getContainerItems(this.getStack(0)).get(0);
+            if (item.isEmpty()) {
+                return null;
+            }
+            return world.getRecipeManager().getFirstMatch(FryerRecipe.Type.INSTANCE, new SimpleInventory(item), world).orElse(null);
         }
-        inv.setStack(0, item);
-
-        return Objects.requireNonNull(getWorld()).getRecipeManager().getFirstMatch(FryerRecipe.Type.INSTANCE, inv, getWorld());
+        return null;
     }
 
-    public static ItemStack getContainerItem(ItemStack container) {
-
-        ItemStack itemStack = ItemStack.EMPTY;
-        NbtCompound nbt = container.getNbt();
-        if (nbt != null && nbt.contains("Items")) {
-            NbtList itemsTag = nbt.getList("Items", NbtElement.COMPOUND_TYPE);
-            NbtCompound itemTag = itemsTag.getCompound(0);
-            itemStack = ItemStack.fromNbt(itemTag);
+    @Override
+    public List<ItemStack> getContainerItems(ItemStack container) {
+        ItemStack item = ItemStack.EMPTY;
+        NbtCompound tag = container.getNbt();
+        if (tag != null && tag.contains("Items")) {
+            item = ItemStack.fromNbt(tag.getList("Items", NbtElement.COMPOUND_TYPE).getCompound(0));
         }
-        return itemStack;
+        return List.of(item);
     }
-
-//    private void playFryerSound(World world, BlockPos pos, BlockState state, boolean on) {
-//        if (on && !state.get(OPEN)) {
-//            world.playSound(null, pos, CookItSounds.Fryer_SOUND_EVENT, SoundCategory.BLOCKS, 0.3f, 1.0f);
-//            world.setBlockState(pos, state.with(Fryer.ON, true));
-//        } else {
-//            world.setBlockState(pos, state.with(ON, false));
-//            if (state.get(OPEN)) return;
-//            world.playSound(null, pos, CookItSounds.Fryer_BEEP_EVENT, SoundCategory.BLOCKS, 1.0f, 1.0f);
-//        }
-//    }
 }
-

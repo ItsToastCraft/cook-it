@@ -34,23 +34,6 @@ public class BlockEntityUtils {
         return !nbtList.isEmpty();
     }
 
-
-    public static ArrayList<ItemStack> getContainerItems(ItemStack container) {
-
-        ArrayList<ItemStack> itemStackList = new ArrayList<>();
-        NbtCompound nbt = container.getSubNbt("BlockEntityTag");
-        if (nbt != null && nbt.contains("Items")) {
-            NbtList itemsTag = nbt.getList("Items", NbtElement.COMPOUND_TYPE);
-            for (int j = 0; j < itemsTag.size(); j++) {
-                NbtCompound itemTag = itemsTag.getCompound(j);
-                ItemStack itemStack = ItemStack.fromNbt(itemTag);
-
-                itemStackList.add(itemStack);
-            }
-        }
-        return itemStackList;
-    }
-
     public static ItemStack[] formatItems(ItemStack stack, Item... exclusions) {
         NbtCompound nbt = stack.getSubNbt("BlockEntityTag");
         if (nbt == null || !nbt.contains("Items")) return new ItemStack[]{ItemStack.EMPTY};
@@ -79,7 +62,6 @@ public class BlockEntityUtils {
        tooltip.add(Text.literal(items.length > 1 ? "Items:" : "Item:"));
 
        for (ItemStack itemStack : items) {
-
            Text name = Text.literal(itemStack.getName().getString()).formatted(Formatting.BLUE);
            tooltip.add(name);
        }

@@ -72,8 +72,8 @@ public class FryerBasket extends Item {
     }
 
     public static void setItem(ItemStack input, ItemStack item) {
-        NbtList nbtList = new NbtList();
         NbtCompound nbtCompound = new NbtCompound();
+        NbtList nbtList = new NbtList();
         nbtCompound.putByte("Slot", (byte) 0);
 
         item.writeNbt(nbtCompound);

@@ -12,7 +12,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
-import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.Properties;
 import net.minecraft.state.property.Property;
 import net.minecraft.util.ActionResult;
@@ -27,11 +26,12 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import dev.toasttextures.cookit.registries.CookItBlockEntities;
 
-public class Microwave extends BlockWithEntity implements BlockEntityProvider {
-    public static final BooleanProperty OPEN = BooleanProperty.of("open");
-    public static final BooleanProperty ON = BooleanProperty.of("on");
-    public static final Property<Direction> FACING = Properties.HORIZONTAL_FACING;
+import static dev.toasttextures.cookit.registries.CookItProperties.ON;
+import static dev.toasttextures.cookit.registries.CookItProperties.OPEN;
 
+public class Microwave extends BlockWithEntity implements BlockEntityProvider {
+    public static final MapCodec<? extends BlockWithEntity> CODEC = createCodec(Microwave::new);
+    public static final Property<Direction> FACING = Properties.HORIZONTAL_FACING;
 
     public Microwave(Settings settings) {
         super(settings);
@@ -61,7 +61,6 @@ public class Microwave extends BlockWithEntity implements BlockEntityProvider {
             default -> {
                 return VoxelShapes.cuboid(0.0625f, 0f, 0.1875f, 0.9375f, 0.5f, 0.8125f);
             }
-
         }
     }
 

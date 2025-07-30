@@ -7,9 +7,6 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NbtList;
-import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
@@ -20,17 +17,15 @@ import net.minecraft.world.WorldView;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Objects;
 
 public class Pizza extends BlockWithEntity implements BlockEntityProvider {
-
     protected static final VoxelShape FULL = VoxelShapes.cuboid(0.0625f, 0.0f, 0.0625f, 0.9375f, 0.125f, 0.9375f);
 
     public Pizza(Settings settings) {
         super(settings);
     }
     public BlockRenderType getRenderType(BlockState state) {
-        return BlockRenderType.ENTITYBLOCK_ANIMATED;
+        return BlockRenderType.MODEL;
     }
 
     @Override
@@ -58,16 +53,19 @@ public class Pizza extends BlockWithEntity implements BlockEntityProvider {
     }
     @Override
     public void appendTooltip(ItemStack stack, BlockView world, List<Text> tooltip, TooltipContext context) {
-        NbtCompound nbt = stack.getOrCreateSubNbt("BlockEntityTag");
-        if (nbt == null || !nbt.contains("toppings")) return;
+        Pizza.addTooltip(stack.getSubNbt("BlockEntityTag"), tooltip);
+    }
 
-        NbtList toppings = nbt.getList("toppings", NbtElement.STRING_TYPE);
+    public static void addTooltip(NbtCompound nbt, List<Text> tooltip) {
+        if (nbt == null) {
+            return;
+        }
+        List<PizzaTopping> toppings = PizzaTopping.fromNbt(nbt);
 
         tooltip.add((Text.literal("Toppings:").formatted(Formatting.GRAY)));
 
-        for (int i = 0; i < toppings.size(); i++) {
-            MutableText topping = Objects.requireNonNull(PizzaToppings.fromName(toppings.getString(i))).getTranslationKey();
-                tooltip.add(topping.formatted(Formatting.BLUE));
+        for (PizzaTopping topping : toppings) {
+            tooltip.add(topping.getTranslationKey().formatted(Formatting.BLUE));
         }
     }
 }

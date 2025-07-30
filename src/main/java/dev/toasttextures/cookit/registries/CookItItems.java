@@ -1,5 +1,7 @@
 package dev.toasttextures.cookit.registries;
 
+import dev.toasttextures.cookit.enums.DonutType;
+import dev.toasttextures.cookit.enums.FoodTypes;
 import dev.toasttextures.cookit.item.*;
 import dev.toasttextures.cookit.item.armor.ChefOutfit.ChefOutfitItem;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
@@ -21,7 +23,7 @@ import static dev.toasttextures.cookit.registries.CookItBlocks.BLOCKS;
 
 public class CookItItems {
     public static final List<Item> ITEMS = new ArrayList<>();
-    public static final List<Item> ROLLING_PINS = new ArrayList<>();
+    public static final List<RollingPin> ROLLING_PINS = new ArrayList<>();
     public static final List<Item> MUFFINS = new ArrayList<>();
     // -- Utensils --
 
@@ -36,38 +38,39 @@ public class CookItItems {
     public static final Item DOUGH = registerItem("dough", new Item(new FabricItemSettings()));
     public static final Item DOUGH_ROLLED = registerItem("dough_rolled", new Item(new FabricItemSettings()));
     public static final Item DOUGH_SLICED = registerItem("dough_sliced", new Item(new FabricItemSettings()));
-    public static final Item UNCOOKED_FRENCH_FRIES = registerItem("uncooked_french_fries", new Fries(new FabricItemSettings(), CookItFoodTypes.FRYING));
+    public static final Item UNCOOKED_FRENCH_FRIES = registerItem("uncooked_french_fries", new Fries(new FabricItemSettings(), FoodTypes.FRYING));
 
     // -- Food --
     public static final Item VANILLA_BEAN = registerItem("vanilla_bean", new AliasedBlockItem(CookItBlocks.VANILLA_VINE_STEM, new FabricItemSettings()));
     public static final Item CHEESE = registerItem("cheese", new Item(new FabricItemSettings().food(new FoodComponent.Builder().hunger(3).build())));
-    public static final Item TOAST = registerItem("toast", new CookItFood(new FabricItemSettings().food(new FoodComponent.Builder().hunger(4).build()), CookItFoodTypes.DONE));
-    public static final Item RAW_CROISSANT = registerItem("raw_croissant", new CookItFood(new FabricItemSettings(), CookItFoodTypes.BAKING));
-    public static final Item CROISSANT = registerItem("croissant", new CookItFood(new FabricItemSettings().food(new FoodComponent.Builder().hunger(3).build()), CookItFoodTypes.DONE));
+    public static final Item TOAST = registerItem("toast", new CookItFood(new FabricItemSettings().food(new FoodComponent.Builder().hunger(4).build()), FoodTypes.DONE));
+    public static final Item RAW_CROISSANT = registerItem("raw_croissant", new CookItFood(new FabricItemSettings(), FoodTypes.BAKING));
+    public static final Item CROISSANT = registerItem("croissant", new CookItFood(new FabricItemSettings().food(new FoodComponent.Builder().hunger(3).build()), FoodTypes.DONE));
     public static final Item PIZZA_SLICE = registerItem("pizza_slice", new PizzaSlice(new FabricItemSettings().food(new FoodComponent.Builder().hunger(5).build())));
-    public static final Item FRENCH_FRIES = registerItem("french_fries", new Fries(new FabricItemSettings().food(new FoodComponent.Builder().hunger(4).build()), CookItFoodTypes.DONE));
-    public static final Item RAW_DONUT = registerItem("raw_donut", new CookItFood(new FabricItemSettings(), CookItFoodTypes.FRYING));
+    public static final Item FRENCH_FRIES = registerItem("french_fries", new Fries(new FabricItemSettings().food(new FoodComponent.Builder().hunger(4).build()), FoodTypes.DONE));
+    
+
+    public static final Item RAW_DONUT = registerItem("raw_donut", new CookItFood(new FabricItemSettings(), FoodTypes.FRYING));
     public static final Item DONUT = registerItem("plain_donut", new Donut(new FabricItemSettings().food(new FoodComponent.Builder().hunger(3).build())));
     public static final Item CHOCOLATE_DONUT = registerItem("chocolate_donut", new Donut(new FabricItemSettings().food(new FoodComponent.Builder().hunger(4).build())));
-    public static final Item CHOCOLATE_DONUT_SPRINKLES = registerItem("chocolate_donut_sprinkles", new Donut(new FabricItemSettings().food(new FoodComponent.Builder().hunger(4).build())));
-    public static final Item CHOCOLATE_DONUT_STRIPED = registerItem("chocolate_donut_striped", new Donut(new FabricItemSettings().food(new FoodComponent.Builder().hunger(4).build())));
-    public static final Item SWEET_BERRY_DONUT = registerItem("sweet_berry_donut", new Donut(new FabricItemSettings().food(new FoodComponent.Builder().hunger(4).build())));
-    public static final Item SWEET_BERRY_DONUT_SPRINKLES = registerItem("sweet_berry_donut_sprinkles", new Donut(new FabricItemSettings().food(new FoodComponent.Builder().hunger(4).build())));
-    public static final Item VANILLA_DONUT = registerItem("vanilla_donut", new Donut(new FabricItemSettings().food(new FoodComponent.Builder().hunger(4).build())));
-    public static final Item VANILLA_DONUT_SPRINKLES = registerItem("vanilla_donut_sprinkles", new Donut(new FabricItemSettings().food(new FoodComponent.Builder().hunger(4).build())));
-
-    public static final Item VANILLA_DONUT_STRIPED = registerItem("vanilla_donut_striped", new Donut(new FabricItemSettings().food(new FoodComponent.Builder().hunger(4).build())));
+    public static final Item CHOCOLATE_DONUT_SPRINKLES = registerItem("chocolate_donut_sprinkles", new Donut(new FabricItemSettings().food(new FoodComponent.Builder().hunger(4).build()), DonutType.SPRINKLES));
+    public static final Item CHOCOLATE_DONUT_STRIPED = registerItem("chocolate_donut_striped", new Donut(new FabricItemSettings().food(new FoodComponent.Builder().hunger(4).build()), DonutType.STRIPED));
+    public static final Item SWEET_BERRY_DONUT = registerItem("sweet_berry_donut", new Donut(new FabricItemSettings().food(new FoodComponent.Builder().hunger(5).build())));
+    public static final Item SWEET_BERRY_DONUT_SPRINKLES = registerItem("sweet_berry_donut_sprinkles", new Donut(new FabricItemSettings().food(new FoodComponent.Builder().hunger(5).build()), DonutType.SPRINKLES));
+    public static final Item VANILLA_DONUT = registerItem("vanilla_donut", new Donut(new FabricItemSettings().food(new FoodComponent.Builder().hunger(5).build())));
+    public static final Item VANILLA_DONUT_SPRINKLES = registerItem("vanilla_donut_sprinkles", new Donut(new FabricItemSettings().food(new FoodComponent.Builder().hunger(6).build()), DonutType.SPRINKLES));
+    public static final Item VANILLA_DONUT_STRIPED = registerItem("vanilla_donut_striped", new Donut(new FabricItemSettings().food(new FoodComponent.Builder().hunger(6).build()), DonutType.STRIPED));
     public static final Item DONUT_WITH_NUTS = registerItem("peanut_donut", new Donut(new FabricItemSettings().food(new FoodComponent.Builder().hunger(4).build())));
 
-    public static final Item MUFFIN = registerItem("plain_muffin", new CookItFood(new FabricItemSettings().food(new FoodComponent.Builder().hunger(5).build()), CookItFoodTypes.DONE));
-    public static final Item BLUEBERRY_MUFFIN = registerItem("blueberry_muffin", new CookItFood(new FabricItemSettings().food(new FoodComponent.Builder().hunger(7).build()), CookItFoodTypes.DONE));
-    public static final Item SWEET_BERRY_MUFFIN = registerItem("sweet_berry_muffin", new CookItFood(new FabricItemSettings().food(new FoodComponent.Builder().hunger(7).build()), CookItFoodTypes.DONE));
-    public static final Item CHOCOLATE_CHIP_MUFFIN = registerItem("chocolate_chip_muffin", new CookItFood(new FabricItemSettings().food(new FoodComponent.Builder().hunger(6).build()), CookItFoodTypes.DONE));
-    public static final Item CHOCOLATE_MUFFIN = registerItem("chocolate_muffin", new CookItFood(new FabricItemSettings().food(new FoodComponent.Builder().hunger(8).build()), CookItFoodTypes.DONE));
+    public static final Item MUFFIN = registerItem("plain_muffin", new CookItFood(new FabricItemSettings().food(new FoodComponent.Builder().hunger(5).build()), FoodTypes.DONE));
+    public static final Item BLUEBERRY_MUFFIN = registerItem("blueberry_muffin", new CookItFood(new FabricItemSettings().food(new FoodComponent.Builder().hunger(7).build()), FoodTypes.DONE));
+    public static final Item SWEET_BERRY_MUFFIN = registerItem("sweet_berry_muffin", new CookItFood(new FabricItemSettings().food(new FoodComponent.Builder().hunger(7).build()), FoodTypes.DONE));
+    public static final Item CHOCOLATE_CHIP_MUFFIN = registerItem("chocolate_chip_muffin", new CookItFood(new FabricItemSettings().food(new FoodComponent.Builder().hunger(6).build()), FoodTypes.DONE));
+    public static final Item CHOCOLATE_MUFFIN = registerItem("chocolate_muffin", new CookItFood(new FabricItemSettings().food(new FoodComponent.Builder().hunger(8).build()), FoodTypes.DONE));
 
-    public static final Item RAW_CINNAMON_ROLL = registerItem("raw_cinnamon_roll", new CookItFood(new FabricItemSettings(), CookItFoodTypes.BAKING));
-    public static final Item CINNAMON_ROLL = registerItem("cinnamon_roll", new CookItFood(new FabricItemSettings().food(new FoodComponent.Builder().hunger(3).build()), CookItFoodTypes.DONE));
-    public static final Item CINNAMON_ROLL_GLAZED = registerItem("cinnamon_roll_glazed", new CookItFood(new FabricItemSettings().food(new FoodComponent.Builder().hunger(4).build()), CookItFoodTypes.DONE));
+    public static final Item RAW_CINNAMON_ROLL = registerItem("raw_cinnamon_roll", new CookItFood(new FabricItemSettings(), FoodTypes.BAKING));
+    public static final Item CINNAMON_ROLL = registerItem("cinnamon_roll", new CookItFood(new FabricItemSettings().food(new FoodComponent.Builder().hunger(3).build()), FoodTypes.DONE));
+    public static final Item CINNAMON_ROLL_GLAZED = registerItem("cinnamon_roll_glazed", new CookItFood(new FabricItemSettings().food(new FoodComponent.Builder().hunger(4).build()), FoodTypes.DONE));
 
     // -- Accessories --
     public static final Item CHEF_HAT = registerItem("chef_hat", new Item(new FabricItemSettings().equipmentSlot(stack -> EquipmentSlot.HEAD)));
@@ -83,10 +86,11 @@ public class CookItItems {
 
     public static void registerWoodenItems() {
         for (String woodType : SUPPORTED_WOOD_TYPES) {
-            Item ROLLING_PIN = registerItem(woodType + "_rolling_pin", new Item(new FabricItemSettings()));
-            ROLLING_PINS.add(ROLLING_PIN);
+            Item ROLLING_PIN = registerItem(woodType + "_rolling_pin", new RollingPin(new FabricItemSettings(), woodType));
+            ROLLING_PINS.add((RollingPin) ROLLING_PIN);
         }
     }
+
     private static Item registerItem(String name, Item item) {
         CookItItems.ITEMS.add(item);
         return Registry.register(Registries.ITEM, new Identifier(CookIt.MOD_ID, name), item);

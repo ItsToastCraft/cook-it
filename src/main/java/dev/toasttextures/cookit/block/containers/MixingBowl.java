@@ -9,6 +9,7 @@ import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
@@ -29,19 +30,17 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-public class MixingBowl extends BlockWithEntity implements BlockEntityProvider {
+import java.util.List;
 
+public class MixingBowl extends CookingContainer {
+
+    public static final List<Item> MIXING_BOWL_LIQUIDS = List.of(Items.WATER_BUCKET, Items.MILK_BUCKET);
     public static BooleanProperty HAS_GOOP = BooleanProperty.of("has_goop");
 
-    public BlockRenderType getRenderType(BlockState state) {
-        return BlockRenderType.MODEL;
-    }
     public MixingBowl(Settings settings) {
         super(settings);
         setDefaultState(getDefaultState().with(HAS_GOOP, false));
     }
-
-    public static final MapCodec<MixingBowl> CODEC = createCodec(MixingBowl::new);
 
     @Override
     protected MapCodec<? extends BlockWithEntity> getCodec() {
@@ -55,25 +54,26 @@ public class MixingBowl extends BlockWithEntity implements BlockEntityProvider {
 
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        world.updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
-        ItemStack item = player.getStackInHand(hand);
         MixingBowlEntity entity = (MixingBowlEntity) world.getBlockEntity(pos);
         if (world.isClient() || entity == null) {
-            return ActionResult.FAIL;
+            return ActionResult.CONSUME;
         }
+        world.updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
+        ItemStack item = player.getStackInHand(hand);
         if (player.isSneaking()) {
             return BlockEntityUtils.dropOnUse(this, entity, player, world, pos);
         }
-        if (entity.getStack(0).isOf(CookItItems.GOOP)) { return ActionResult.CONSUME; }
+        if (entity.getStack(0).isOf(CookItItems.GOOP)) {
+            return ActionResult.SUCCESS;
+        }
         if (item.isOf(CookItItems.WHISK)) {
-            boolean hasGoop = entity.processRecipe();
-            if (hasGoop) {
+            if (entity.processRecipe()) {
                 world.setBlockState(pos, state.with(HAS_GOOP, true));
                 world.updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
             }
             return ActionResult.SUCCESS;
         }
-        if ((item.isOf(Items.MILK_BUCKET) || item.isOf(Items.WATER_BUCKET)) && entity.getLiquid().equals(Items.AIR)) {
+        if (MIXING_BOWL_LIQUIDS.contains(item.getItem()) && entity.getLiquid().equals(Items.AIR)) {
             world.playSound(null, pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BLOCK_WATER_AMBIENT, SoundCategory.BLOCKS, 0.5f, 1.25f);
             entity.setStack(entity.size() - 1, item.split(1));
             player.setStackInHand(hand, new ItemStack(Items.BUCKET, 1));
@@ -81,13 +81,7 @@ public class MixingBowl extends BlockWithEntity implements BlockEntityProvider {
         }
 
         if (!item.isEmpty()) {
-            for(int i = 0; i < entity.size() - 1; i++) {
-                ItemStack stack = entity.getStack(i);
-                if (stack.isEmpty()) {
-                    entity.setStack(i, item.split(1));
-                    return ActionResult.FAIL;
-                }
-            }
+            addStack(item, entity, null);
         }
         return ActionResult.FAIL;
     }
@@ -110,10 +104,12 @@ public class MixingBowl extends BlockWithEntity implements BlockEntityProvider {
         MixingBowlEntity entity = (MixingBowlEntity) world.getBlockEntity(pos);
 
         NbtCompound nbt = itemStack.getSubNbt("BlockEntityTag");
-        if (nbt == null) return;
-        if (entity != null && !world.isClient) {
-            entity.setGoopColor(nbt.getInt("color"));
+        if (nbt == null || entity == null || world.isClient()) {
+            return;
         }
+
+        entity.setGoopColor(nbt.getInt("color"));
+
         if (nbt.contains("Items", NbtElement.LIST_TYPE)) {
             if (ItemStack.fromNbt(nbt.getList("Items", NbtElement.COMPOUND_TYPE).getCompound(0)).isOf(CookItItems.GOOP)) {
                 world.scheduleBlockTick(pos, state.getBlock(), 1);
@@ -125,7 +121,6 @@ public class MixingBowl extends BlockWithEntity implements BlockEntityProvider {
     public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
         super.scheduledTick(state, world, pos, random);
         world.setBlockState(pos, state.with(HAS_GOOP, true));
-
     }
 
     @Override

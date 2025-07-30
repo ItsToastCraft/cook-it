@@ -1,10 +1,11 @@
 package dev.toasttextures.cookit.block.appliances;
 
 import com.mojang.serialization.MapCodec;
+import dev.toasttextures.cookit.block.containers.CookingContainer;
 import dev.toasttextures.cookit.block.entity.FryerEntity;
 import dev.toasttextures.cookit.item.CookItFood;
 import dev.toasttextures.cookit.item.FryerBasket;
-import dev.toasttextures.cookit.registries.CookItFoodTypes;
+import dev.toasttextures.cookit.enums.FoodTypes;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
@@ -13,7 +14,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.StateManager;
-import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
@@ -27,9 +27,10 @@ import org.jetbrains.annotations.Nullable;
 import dev.toasttextures.cookit.registries.CookItBlockEntities;
 import dev.toasttextures.cookit.registries.CookItItems;
 
-public class Fryer extends BlockWithEntity implements BlockEntityProvider {
-    public static final BooleanProperty ON = BooleanProperty.of("on");
-    public static final MapCodec<Fryer> CODEC = createCodec(Fryer::new);
+import static dev.toasttextures.cookit.registries.CookItProperties.ON;
+
+public class Fryer extends CookingContainer {
+    private static final MapCodec<? extends BlockWithEntity> CODEC = createCodec(Fryer::new);
 
     public Fryer(Settings settings) {
         super(settings);
@@ -43,14 +44,10 @@ public class Fryer extends BlockWithEntity implements BlockEntityProvider {
 
     @Override
     public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext ctx) {
-        switch (state.get(Properties.HORIZONTAL_FACING)) {
-            case NORTH, SOUTH -> {
-                return VoxelShapes.cuboid(0.1875f, 0f, 0.0625f, 0.8125f, 0.5f, 0.9375f);
-            }
-            default -> {
-                return VoxelShapes.cuboid(0.0625f, 0f, 0.1875f, 0.9375f, 0.5f, 0.8125f);
-            }
-        }
+        return switch (state.get(Properties.HORIZONTAL_FACING)) {
+            case NORTH, SOUTH -> VoxelShapes.cuboid(0.1875f, 0f, 0.0625f, 0.8125f, 0.5f, 0.9375f);
+            default -> VoxelShapes.cuboid(0.0625f, 0f, 0.1875f, 0.9375f, 0.5f, 0.8125f);
+        };
     }
 
     @Override
@@ -66,10 +63,10 @@ public class Fryer extends BlockWithEntity implements BlockEntityProvider {
             if (heldItem.getItem().equals(CookItItems.FRYER_BASKET)) {
                 blockEntity.setStack(0, heldItem.copyAndEmpty());
             }
-        } else if (heldItem.getItem() instanceof CookItFood food && food.getFoodType().equals(CookItFoodTypes.FRYING)) {
+        } else if (heldItem.getItem() instanceof CookItFood food && food.getFoodType().equals(FoodTypes.FRYING)) {
             ItemStack stack = blockEntity.getStack(0);
             FryerBasket.setItem(stack, heldItem.split(1));
-            blockEntity.setStack(0, stack);
+            blockEntity.setStack(0, ItemStack.EMPTY);
             blockEntity.markDirty();
 
         } else {

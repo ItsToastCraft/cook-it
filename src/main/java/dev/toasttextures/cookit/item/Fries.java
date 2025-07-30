@@ -1,6 +1,6 @@
 package dev.toasttextures.cookit.item;
 
-import dev.toasttextures.cookit.registries.CookItFoodTypes;
+import dev.toasttextures.cookit.enums.FoodTypes;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
@@ -13,11 +13,9 @@ import java.util.List;
 
 public class Fries extends CookItFood {
 
-    public Fries(Settings settings, CookItFoodTypes foodType) {
+    public Fries(Settings settings, FoodTypes foodType) {
         super(settings, foodType);
     }
-
-
 
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
         if (stack.getItem() == CookItItems.UNCOOKED_FRENCH_FRIES) {

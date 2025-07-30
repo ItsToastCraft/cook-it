@@ -1,6 +1,6 @@
 package dev.toasttextures.cookit.block.entity;
 
-import dev.toasttextures.cookit.block.food_blocks.pizza.PizzaToppings;
+import dev.toasttextures.cookit.block.food_blocks.pizza.PizzaTopping;
 import dev.toasttextures.cookit.registries.CookItBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -12,19 +12,20 @@ import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtString;
 import net.minecraft.particle.ItemStackParticleEffect;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeEntry;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.BlockPos;
-import dev.toasttextures.cookit.block.ImplementedInventory;
 import dev.toasttextures.cookit.recipes.CuttingBoardRecipe;
 import dev.toasttextures.cookit.registries.CookItBlockEntities;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Objects;
 
-public class CuttingBoardEntity extends CookingBlockEntity implements ImplementedInventory {
+public class CuttingBoardEntity extends CookingBlockEntity implements Appliance {
     private int clicks = 0;
 
     public CuttingBoardEntity(BlockPos pos, BlockState state) {
@@ -92,11 +93,10 @@ public class CuttingBoardEntity extends CookingBlockEntity implements Implemente
         }
 
         // Try and get the topping from the held item, so the pizza has changed
-        PizzaToppings topping = PizzaToppings.fromItem(tool.getItem());
+        PizzaTopping topping = PizzaTopping.fromItem(tool.getItem());
         if (topping != null) {
-
             // no need to loop, at this point we're already sure there's a topping slot available.
-            toppings.add(NbtString.of(topping.asString()));
+            toppings.add(NbtString.of(topping.name()));
             tool.decrement(1);
             // set the topping to whatever it is
             this.getStack(0).getOrCreateSubNbt("BlockEntityTag").put("toppings", toppings);
@@ -107,17 +107,21 @@ public class CuttingBoardEntity extends CookingBlockEntity implements Implemente
         return false;
     }
 
-    private void complete(RecipeEntry<CuttingBoardRecipe> recipeEntry) {
-
-        ItemStack output = recipeEntry.value().craft(new SimpleInventory(this.getStack(0)), this.world.getRegistryManager());
-        output.setCount(recipeEntry.value().getOutputCount());
+    @Override
+    public void complete(@NotNull RecipeEntry<? extends Recipe<SimpleInventory>> recipeEntry) {
+        if (world == null) {
+            return;
+        }
+        CuttingBoardRecipe recipe = (CuttingBoardRecipe) recipeEntry.value();
+        ItemStack output = recipe.craft(new SimpleInventory(this.getStack(0)), this.world.getRegistryManager());
+        output.setCount(recipe.getOutputCount());
         this.setStack(0, output);
         this.setClicks(0);
         this.markDirty();
         world.updateListeners(pos, this.getCachedState(), this.getCachedState(), Block.NOTIFY_LISTENERS);
     }
 
-    private List<RecipeEntry<CuttingBoardRecipe>> getCurrentRecipe() {
+    public List<RecipeEntry<CuttingBoardRecipe>> getCurrentRecipe() {
         SimpleInventory inv = new SimpleInventory(this.size());
         for (int i = 0; i < this.size(); i++) {
             inv.setStack(i, this.getStack(i));

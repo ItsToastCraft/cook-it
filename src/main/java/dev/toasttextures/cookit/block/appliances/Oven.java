@@ -1,7 +1,7 @@
 package dev.toasttextures.cookit.block.appliances;
 
 import com.mojang.serialization.MapCodec;
-import dev.toasttextures.cookit.block.entity.OvenEntity;
+import dev.toasttextures.cookit.block.entity.oven.OvenEntity;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
@@ -13,7 +13,6 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
-import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.Properties;
 import net.minecraft.state.property.Property;
 import net.minecraft.util.ActionResult;
@@ -25,16 +24,15 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import dev.toasttextures.cookit.registries.CookItBlockEntities;
 import static dev.toasttextures.cookit.registries.CookItBlocks.CONTAINERS;
+import static dev.toasttextures.cookit.registries.CookItProperties.OPEN;
 
 public class Oven extends BlockWithEntity implements BlockEntityProvider {
-    public static final BooleanProperty OPEN = BooleanProperty.of("open");
-    public static final BooleanProperty DONE = BooleanProperty.of("done");
 
     public static final Property<Direction> FACING = Properties.HORIZONTAL_FACING;
 
     public Oven(Settings settings) {
         super(settings);
-        setDefaultState(getDefaultState().with(OPEN, false).with(DONE, false).with(FACING, Direction.NORTH));
+        setDefaultState(getDefaultState().with(OPEN, false).with(FACING, Direction.NORTH));
     }
 
     @Override
@@ -48,7 +46,7 @@ public class Oven extends BlockWithEntity implements BlockEntityProvider {
 
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        builder.add(OPEN).add(DONE).add(FACING);
+        builder.add(OPEN).add(FACING);
     }
 
     @Override
@@ -69,7 +67,7 @@ public class Oven extends BlockWithEntity implements BlockEntityProvider {
             ItemStack heldItem = player.getStackInHand(hand);
 
             if (heldItem.isEmpty()) {
-                if (state.get(DONE)) {
+                if (blockEntity.isDone()) {
 
                     for (int i = blockEntity.getItems().size() - 1; i >= 0; i--) {
                         if (!blockEntity.getStack(i).isEmpty()) {
@@ -77,7 +75,6 @@ public class Oven extends BlockWithEntity implements BlockEntityProvider {
                             return ActionResult.SUCCESS;
                         }
                     }
-
                 } else {
                     openOven(world, pos, state, false);
                     return ActionResult.SUCCESS;

@@ -1,0 +1,19 @@
+{
+  "toppings": [
+    {
+      "name": "porkchop",
+      "item": "minecraft:porkchop",
+      "texture": "cook-it:textures/entity/pizza/topping/porkchop"
+    },
+    {
+      "name": "beef",
+      "item": "minecraft:beef",
+      "texture": "cook-it:textures/entity/pizza/topping/beef"
+    },
+    {
+      "name": "kelp",
+      "item": "minecraft:kelp",
+      "texture": "cook-it:textures/entity/pizza/topping/kelp"
+    }
+  ]
+}

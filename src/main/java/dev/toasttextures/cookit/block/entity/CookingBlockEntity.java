@@ -1,5 +1,6 @@
 package dev.toasttextures.cookit.block.entity;
 
+import dev.toasttextures.cookit.enums.FoodProcessingStatus;
 import dev.toasttextures.cookit.block.ImplementedInventory;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
@@ -16,8 +17,7 @@ import org.jetbrains.annotations.Nullable;
 
 public abstract class CookingBlockEntity extends BlockEntity implements ImplementedInventory {
     protected DefaultedList<ItemStack> items;
-
-
+    protected FoodProcessingStatus status = FoodProcessingStatus.IDLE;
     public CookingBlockEntity(BlockEntityType<?> blockEntity, BlockPos pos, BlockState state, int invSize) {
         super(blockEntity, pos, state);
         this.items = DefaultedList.ofSize(invSize, ItemStack.EMPTY);
@@ -28,7 +28,9 @@ public abstract class CookingBlockEntity extends BlockEntity implements Implemen
         return this.items;
     }
 
-    public void setItems(DefaultedList<ItemStack> items) { this.items = items;}
+    public void setItems(DefaultedList<ItemStack> items) {
+        this.items = items;
+    }
 
     @Override
     public void readNbt(NbtCompound nbt) {
@@ -45,6 +47,13 @@ public abstract class CookingBlockEntity extends BlockEntity implements Implemen
         super.writeNbt(nbt);
     }
 
+    public FoodProcessingStatus getStatus() {
+        return this.status;
+    }
+    public boolean isDone() {
+        return this.status == FoodProcessingStatus.DONE;
+    }
+
     @Nullable
     @Override
     public Packet<ClientPlayPacketListener> toUpdatePacket() {
@@ -55,4 +64,5 @@ public abstract class CookingBlockEntity extends BlockEntity implements Implemen
     public NbtCompound toInitialChunkDataNbt() {
         return createNbt();
     }
+
 }

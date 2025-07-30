@@ -2,7 +2,7 @@ package dev.toasttextures.cookit.client.render;
 
 import dev.toasttextures.cookit.CookIt;
 import dev.toasttextures.cookit.block.entity.PizzaEntity;
-import dev.toasttextures.cookit.block.food_blocks.pizza.PizzaToppings;
+import dev.toasttextures.cookit.block.food_blocks.pizza.PizzaTopping;
 import dev.toasttextures.cookit.client.CookItEntityModelLayers;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -25,9 +25,11 @@ import java.util.stream.Collectors;
 
 @Environment(EnvType.CLIENT)
 public class PizzaEntityRenderer implements BlockEntityRenderer<PizzaEntity> {
-    Map<PizzaToppings, Identifier> toppingToIdentifier = Arrays.stream(PizzaToppings.values()).collect(Collectors.toMap(Function.identity(), topping -> new Identifier(CookIt.MOD_ID, "textures/entity/pizza/topping/"+topping.asString() + ".png")));
     private final List<ModelPart> pizzaBaseParts;
     private final List<ModelPart> toppingLayerParts;
+
+    private static final Identifier UNCOOKED_TEXTURE = Identifier.of(CookIt.MOD_ID, "textures/entity/pizza/pizza_crust.png");
+    private static final Identifier CHEESE_TEXTURE = Identifier.of(CookIt.MOD_ID, "textures/entity/pizza/pizza_cheese.png");
 
     public PizzaEntityRenderer(BlockEntityRendererFactory.Context ctx) {
         ModelPart pizzaRoot = ctx.getLayerModelPart(CookItEntityModelLayers.PIZZA);
@@ -85,7 +87,7 @@ public class PizzaEntityRenderer implements BlockEntityRenderer<PizzaEntity> {
 
     @Override
     public void render(PizzaEntity entity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
-        Identifier baseTexture = entity.isCooked() ? Identifier.of(CookIt.MOD_ID, "textures/entity/pizza/pizza_cheese.png") : Identifier.of(CookIt.MOD_ID, "textures/entity/pizza/pizza_crust.png");
+        Identifier baseTexture = entity.isCooked() ? CHEESE_TEXTURE: UNCOOKED_TEXTURE;
 
         matrices.push();
         matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(180.0F));
@@ -96,21 +98,13 @@ public class PizzaEntityRenderer implements BlockEntityRenderer<PizzaEntity> {
 
         VertexConsumer baseConsumer = vertexConsumers.getBuffer(RenderLayer.getEntityCutout(baseTexture));
         pizzaBaseParts.get(sliceCount).render(matrices, baseConsumer, light, overlay);
-        NbtList toppings = entity.getToppings();
+
+        List<PizzaTopping> toppings = entity.getToppings();
         if (!toppings.isEmpty()) {
-            // loop over all the toppings
-            for (int i = 0; i < toppings.size(); i++) {
-                String string = toppings.getString(i);
-                // check for a valid topping and a valid topping texture
-                if (string != null && PizzaToppings.fromName(string) != null) {
-                    PizzaToppings topping = PizzaToppings.fromName(string);
-                    Identifier toppingTexture = toppingToIdentifier.get(topping);
-                    if (toppingTexture != null) {
-                        // render the topping layer with the current topping's texture
-                        VertexConsumer toppingConsumer = vertexConsumers.getBuffer(RenderLayer.getEntityNoOutline(toppingTexture));
-                        toppingLayerParts.get(sliceCount).render(matrices, toppingConsumer, light, overlay);
-                    }
-                }
+            for (PizzaTopping topping : toppings) {
+                // render the topping layer with the current topping's texture
+                VertexConsumer toppingConsumer = vertexConsumers.getBuffer(RenderLayer.getEntityNoOutline(topping.texture()));
+                toppingLayerParts.get(sliceCount).render(matrices, toppingConsumer, light, overlay);
             }
         }
         matrices.pop();
