@@ -31,10 +31,15 @@ import org.jetbrains.annotations.Nullable;
 import dev.toasttextures.cookit.registries.CookItItems;
 
 public class Plate extends CookingContainer {
+    protected static final MapCodec<Plate> CODEC = createCodec(Plate::new);
 
     public static final IntProperty PLATES_AMOUNT = IntProperty.of("plate_amount", 1, 4);
 
     private final DyeColor color;
+    public Plate(Settings settings) {
+        this(settings, DyeColor.WHITE);
+    }
+
     public Plate(Settings settings, DyeColor color) {
         super(settings);
         this.color = color;
@@ -43,11 +48,6 @@ public class Plate extends CookingContainer {
 
     public String getColor() {
         return color.getName();
-    }
-
-    @Override
-    protected MapCodec<? extends BlockWithEntity> getCodec() {
-        return null;
     }
 
     @Override
@@ -72,15 +72,14 @@ public class Plate extends CookingContainer {
         int plateAmount = state.get(PLATES_AMOUNT);
         ItemStack heldItem = player.getStackInHand(hand);
 
-        if (world.isClient || blockEntity == null) {
+        if (world.isClient() || blockEntity == null) {
             return ActionResult.SUCCESS;
         }
         // Let custom processing for fryer basket occur
-        if (heldItem.getItem().equals(CookItItems.FRYER_BASKET)) {
+        if (heldItem.isOf(CookItItems.FRYER_BASKET)) {
             return ActionResult.PASS;
         }
         if (heldItem.isEmpty()) {
-
             if (!blockEntity.getStack(0).isEmpty()) {
                 player.getInventory().offerOrDrop(blockEntity.getStack(0));
                 return ActionResult.SUCCESS;
@@ -134,20 +133,26 @@ public class Plate extends CookingContainer {
         }
         world.setBlockState(pos, state.with(PLATES_AMOUNT, plateAmount - 1));
     }
-    public static boolean isLargePlate(Plate plate) {
-        return Registries.BLOCK.getId(plate).getPath().contains("large_plate");
-    }
 
     @Override
     public BlockState onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player) {
-        if (world.getBlockEntity(pos) instanceof PlateEntity plateEntity) {
-            if (!plateEntity.getStack(0).isEmpty()) {
-                dropStack(world, pos, plateEntity.getStack(0).split(1));
-            }
+        if (world.getBlockEntity(pos) instanceof PlateEntity plateEntity && !plateEntity.getStack(0).isEmpty()) {
+            dropStack(world, pos, plateEntity.getStack(0).split(1));
         }
         return super.onBreak(world, pos, state, player);
     }
 
+    @Override
+    protected MapCodec<? extends BlockWithEntity> getCodec() {
+        return CODEC;
+    }
+
     @Nullable
-    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) { return new PlateEntity(pos, state); }
+    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+        return new PlateEntity(pos, state);
+    }
+
+    public static boolean isLargePlate(Plate plate) {
+        return Registries.BLOCK.getId(plate).getPath().contains("large_plate");
+    }
 }

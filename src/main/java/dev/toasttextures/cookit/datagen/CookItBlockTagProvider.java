@@ -22,14 +22,18 @@ public class CookItBlockTagProvider extends FabricTagProvider<Block> {
     public static final TagKey<Block> APPLIANCES = TagKey.of(RegistryKeys.BLOCK, new Identifier(MOD_ID, "appliances"));
     @Override
     protected void configure(RegistryWrapper.WrapperLookup arg) {
+        Block[] containerArray = CookItBlocks.CONTAINERS.toArray(new Block[0]);
+        Block[] applianceArray = CookItBlocks.CONTAINERS.toArray(new Block[0]);
+
         getOrCreateTagBuilder(BlockTags.AXE_MINEABLE)
                 .add(CookItBlocks.CUTTING_BOARDS.toArray(new Block[0]));
+
         getOrCreateTagBuilder(BlockTags.PICKAXE_MINEABLE)
                 .add(CookItBlocks.PLATES.toArray(new Block[0]))
-                .add(CookItBlocks.APPLIANCES.toArray(new Block[0]))
-                .add(CookItBlocks.CONTAINERS.toArray(new Block[0]));
-        getOrCreateTagBuilder(CONTAINERS).add(CookItBlocks.CONTAINERS.toArray(new Block[0]));
-        getOrCreateTagBuilder(APPLIANCES).add(CookItBlocks.APPLIANCES.toArray(new Block[0]));
+                .add(applianceArray)
+                .add(containerArray);
 
+        getOrCreateTagBuilder(CONTAINERS).add(containerArray);
+        getOrCreateTagBuilder(APPLIANCES).add(applianceArray);
     }
 }

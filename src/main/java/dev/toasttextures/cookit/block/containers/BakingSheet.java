@@ -27,38 +27,38 @@ public class BakingSheet extends CookingContainer {
     public BakingSheet(Settings settings) {
         super(settings);
     }
-
     @Override
-    protected MapCodec<? extends BlockWithEntity> getCodec() {
-        return null;
+    public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext ctx) {
+        return VoxelShapes.cuboid(0.1875, 0f, 0.0625f, 0.8125f, 0.125f, 0.9375f);
     }
 
     public ActionResult onUse(BlockState state, World world, BlockPos blockPos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         world.updateListeners(blockPos, state, state, Block.NOTIFY_LISTENERS);
         BakingSheetEntity blockEntity = (BakingSheetEntity) world.getBlockEntity(blockPos);
         if (world.isClient || blockEntity == null) {
-            return ActionResult.SUCCESS;
+            return ActionResult.PASS;
+        }
+
+        if (player.isSneaking()) {
+            return BlockEntityUtils.dropOnUse(this, blockEntity, player, world, blockPos);
+        }
+        ItemStack item = player.getStackInHand(hand);
+        if (!item.isEmpty()) {
+            addStack(item, blockEntity, FoodTypes.BAKING);
         } else {
-            if (player.isSneaking()) {
-                return BlockEntityUtils.dropOnUse(this, blockEntity, player, world, blockPos);
-            }
-            ItemStack item = player.getStackInHand(hand);
-            if (!item.isEmpty()) {
-                addStack(item, blockEntity, FoodTypes.BAKING);
-            } else {
-                retrieveStack(player, blockEntity);
-            }
+            retrieveStack(player, blockEntity);
         }
         return ActionResult.SUCCESS;
     }
 
     @Override
-    public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext ctx) {
-        return VoxelShapes.cuboid(0.1875, 0f, 0.0625f, 0.8125f, 0.125f, 0.9375f);
-    }
-    @Override
     public void appendTooltip(ItemStack stack, BlockView world, List<Text> tooltip, TooltipContext context) {
         BlockEntityUtils.appendTooltip(stack, tooltip);
+    }
+
+    @Override
+    protected MapCodec<? extends BlockWithEntity> getCodec() {
+        return CODEC;
     }
 
     @Override

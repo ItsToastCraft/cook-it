@@ -1,6 +1,5 @@
 package dev.toasttextures.cookit.block.entity;
 
-import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
@@ -13,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public interface Appliance {
-     void complete(@NotNull RecipeEntry<? extends Recipe<SimpleInventory>> entry);
+    <T extends Recipe<?>> void complete(@NotNull RecipeEntry<T> entry);
 
      default List<ItemStack> getContainerItems(ItemStack container) {
          ArrayList<ItemStack> itemStackList = new ArrayList<>();

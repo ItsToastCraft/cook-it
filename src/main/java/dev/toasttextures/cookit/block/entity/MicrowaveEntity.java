@@ -1,6 +1,5 @@
 package dev.toasttextures.cookit.block.entity;
 
-
 import dev.toasttextures.cookit.registries.CookItProperties;
 import net.minecraft.block.BlockState;
 import net.minecraft.inventory.Inventories;
@@ -8,6 +7,7 @@ import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.recipe.RecipeEntry;
 import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import dev.toasttextures.cookit.recipes.MicrowaveRecipe;
@@ -108,14 +108,10 @@ public class MicrowaveEntity extends CookingBlockEntity {
     }
 
     private void playMicrowaveSound(World world, BlockPos pos, BlockState state, boolean on) {
-        if (on && !state.get(CookItProperties.OPEN)) {
-            world.playSound(null, pos, CookItSounds.MICROWAVE_SOUND_EVENT, SoundCategory.BLOCKS, 0.3f, 1.0f);
-            world.setBlockState(pos, state.with(CookItProperties.ON, true));
-        } else {
-            world.setBlockState(pos, state.with(CookItProperties.ON, false));
-            if (state.get(CookItProperties.OPEN)) return;
-            world.playSound(null, pos, CookItSounds.MICROWAVE_BEEP_EVENT, SoundCategory.BLOCKS, 1.0f, 1.0f);
+        world.setBlockState(pos, state.with(CookItProperties.ON, on));
+        if (!state.get(CookItProperties.OPEN)) {
+            SoundEvent event = on ? CookItSounds.MICROWAVE_SOUND_EVENT : CookItSounds.MICROWAVE_BEEP_EVENT;
+            world.playSound(null, pos, event , SoundCategory.BLOCKS, 0.3f, 1.0f);
         }
     }
 }
-

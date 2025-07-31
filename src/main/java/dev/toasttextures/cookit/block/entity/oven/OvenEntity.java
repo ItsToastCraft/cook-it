@@ -23,7 +23,6 @@ import java.util.Objects;
 import java.util.Optional;
 
 public class OvenEntity extends CookingBlockEntity implements Appliance {
-
     private final List<OvenSlot> slots;
     private int[] progress;
     public OvenEntity(BlockPos pos, BlockState state) {
@@ -63,9 +62,9 @@ public class OvenEntity extends CookingBlockEntity implements Appliance {
         updateStatus();
     }
 
-//  Checks both slots and updates the status appropriately
-//  Will only be "done" / "idle" if both slots are done
-//  Will be "processing" / "invalid" if any slots report them
+    //  Checks both slots and updates the status appropriately
+    //  Will only be "done" / "idle" if both slots are done
+    //  Will be "processing" / "invalid" if any slots report them
     private void updateStatus() {
         FoodProcessingStatus firstSlotStatus = slots.get(0).getStatus();
         FoodProcessingStatus secondSlotStatus = slots.get(1).getStatus();
@@ -98,6 +97,6 @@ public class OvenEntity extends CookingBlockEntity implements Appliance {
 
     // It's defined by each slot so we don't need it here.
     @Override
-    public void complete(@NotNull RecipeEntry<? extends Recipe<SimpleInventory>> entry) { }
-
+    public <T extends Recipe<?>> void complete(@NotNull RecipeEntry<T> entry) {
+    }
 }

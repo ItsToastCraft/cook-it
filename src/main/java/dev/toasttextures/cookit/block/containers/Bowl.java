@@ -10,7 +10,6 @@ import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 
 public class Bowl extends Block {
-
     private final DyeColor color;
     public Bowl(Settings settings, DyeColor color) {
         super(settings);

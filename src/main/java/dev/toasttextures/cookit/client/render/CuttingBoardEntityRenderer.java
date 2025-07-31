@@ -12,12 +12,10 @@ import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
+import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.RotationAxis;
 import dev.toasttextures.cookit.CookIt;
-
-import static dev.toasttextures.cookit.block.appliances.Microwave.FACING;
-
 
 @Environment(EnvType.CLIENT)
 public class CuttingBoardEntityRenderer implements BlockEntityRenderer<CuttingBoardEntity> {
@@ -31,9 +29,8 @@ public class CuttingBoardEntityRenderer implements BlockEntityRenderer<CuttingBo
 
         ItemStack stack = blockEntity.getStack(0);
 
-
         if (!stack.isEmpty()) {
-            Direction facing = blockEntity.getCachedState().get(FACING);
+            Direction facing = blockEntity.getCachedState().get(Properties.FACING);
             float x, y;
             int dir = 0;
             switch (facing) {

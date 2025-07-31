@@ -1,5 +1,6 @@
 package dev.toasttextures.cookit.block.containers;
 
+import com.mojang.serialization.MapCodec;
 import dev.toasttextures.cookit.block.entity.CookingBlockEntity;
 import dev.toasttextures.cookit.block.entity.MuffinTinEntity;
 import dev.toasttextures.cookit.registries.CookItBlocks;
@@ -26,33 +27,34 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class MuffinTin extends CookingContainer {
+    protected static final MapCodec<MuffinTin> CODEC = createCodec(MuffinTin::new);
 
     public MuffinTin(Settings settings) {
         super(settings);
     }
 
     @Override
-    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
-        return new MuffinTinEntity(pos, state);
+    public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext ctx) {
+        return VoxelShapes.cuboid(0.1875, 0f, 0.0625f, 0.8125f, 0.125f, 0.9375f);
     }
 
     public ActionResult onUse(BlockState state, World world, BlockPos blockPos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         world.updateListeners(blockPos, state, state, Block.NOTIFY_LISTENERS);
-        if (world.isClient) {
-            return ActionResult.SUCCESS;
-        } else {
-            MuffinTinEntity blockEntity = (MuffinTinEntity) world.getBlockEntity(blockPos);
-            if (blockEntity == null) return ActionResult.FAIL;
-            ItemStack item = player.getStackInHand(hand);
-            if (player.isSneaking()) {
-                return BlockEntityUtils.dropOnUse(this, blockEntity, player, world, blockPos);
-            }
-            if (!item.isEmpty()) {
-                this.addStack(item, blockEntity, null);
-            } else {
-                retrieveStack(player, blockEntity, List.of(CookItItems.GOOP));
-            }
+        MuffinTinEntity blockEntity = (MuffinTinEntity) world.getBlockEntity(blockPos);
+        if (world.isClient() || blockEntity == null) {
+            return ActionResult.PASS;
         }
+
+        ItemStack heldItem = player.getStackInHand(hand);
+        if (player.isSneaking()) {
+            return BlockEntityUtils.dropOnUse(this, blockEntity, player, world, blockPos);
+        }
+        if (!heldItem.isEmpty()) {
+            this.addStack(heldItem, blockEntity, null);
+        } else {
+            retrieveStack(player, blockEntity, List.of(CookItItems.GOOP));
+        }
+
         return ActionResult.SUCCESS;
     }
 
@@ -74,19 +76,24 @@ public class MuffinTin extends CookingContainer {
     }
 
     @Override
-    public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext ctx) {
-        return VoxelShapes.cuboid(0.1875, 0f, 0.0625f, 0.8125f, 0.125f, 0.9375f);
-    }
-
-    @Override
     public void appendTooltip(ItemStack stack, BlockView world, List<Text> tooltip, TooltipContext context) {
         ItemStack[] items = BlockEntityUtils.formatItems(stack, CookItItems.GOOP);
-        for (int i = 0; i < items.length; i++) {
-            NbtCompound tag = items[i].getNbt();
+        for (ItemStack item : items) {
+            NbtCompound tag = item.getNbt();
             if (tag != null && tag.contains("output")) {
-                items[i] = ItemStack.fromNbt(tag.getCompound("output"));
+                item = ItemStack.fromNbt(tag.getCompound("output"));
             }
         }
         BlockEntityUtils.appendTooltip(items, tooltip);
+    }
+
+    @Override
+    protected MapCodec<? extends BlockWithEntity> getCodec() {
+        return CODEC;
+    }
+
+    @Override
+    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+        return new MuffinTinEntity(pos, state);
     }
 }

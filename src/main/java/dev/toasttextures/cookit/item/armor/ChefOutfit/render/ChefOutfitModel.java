@@ -18,7 +18,7 @@ public class ChefOutfitModel {
         this.right_leg = root.getChild("right_leg");
         this.left_leg = root.getChild("left_leg");
     }
-    public static ModelData getModelData() {
+    public static TexturedModelData getModelData() {
         ModelData modelData = new ModelData();
         ModelPartData modelPartData = modelData.getRoot();
         modelPartData.addChild("hat", ModelPartBuilder.create(), ModelTransform.NONE);
@@ -56,6 +56,6 @@ public class ChefOutfitModel {
                 .uv(0, 48)
                 .cuboid(-2.1F, 0.0F, -2.0F, 4.0F, 10.0F, 4.0F, new Dilation(0.625F)),
                 ModelTransform.pivot(2.0F, 12.0F, 0.0F));
-        return modelData;
+        return TexturedModelData.of(modelData, 64, 64);
     }
 }

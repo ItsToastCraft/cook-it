@@ -23,7 +23,6 @@ public class EggItemMixin extends Item {
     @Inject(method = "use(Lnet/minecraft/world/World;Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/util/Hand;)Lnet/minecraft/util/TypedActionResult;", at = @At("HEAD"), cancellable = true)
     private void injectMethod(World world, PlayerEntity user, Hand hand, CallbackInfoReturnable<TypedActionResult<ItemStack>> cir) {
         HitResult cast = user.raycast(3,1, false);
-
         if (cast.getType().equals(HitResult.Type.BLOCK) && world.getBlockState(BlockPos.ofFloored(cast.getPos())).getBlock().equals(CookItBlocks.MIXING_BOWL)) {
             cir.setReturnValue(TypedActionResult.fail(user.getStackInHand(hand)));
             cir.cancel();

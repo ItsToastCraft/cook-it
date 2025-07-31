@@ -50,6 +50,7 @@ public abstract class CookingBlockEntity extends BlockEntity implements Implemen
     public FoodProcessingStatus getStatus() {
         return this.status;
     }
+
     public boolean isDone() {
         return this.status == FoodProcessingStatus.DONE;
     }
@@ -64,5 +65,4 @@ public abstract class CookingBlockEntity extends BlockEntity implements Implemen
     public NbtCompound toInitialChunkDataNbt() {
         return createNbt();
     }
-
 }

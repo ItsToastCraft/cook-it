@@ -11,7 +11,6 @@ import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NbtList;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeEntry;
 import net.minecraft.server.world.ServerWorld;
@@ -24,7 +23,6 @@ import dev.toasttextures.cookit.recipes.FryerRecipe;
 import dev.toasttextures.cookit.registries.CookItBlockEntities;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -89,11 +87,11 @@ public class FryerEntity extends CookingBlockEntity implements Appliance {
         prevItem = item;
     }
 
-    public void complete(@NotNull RecipeEntry<? extends Recipe<SimpleInventory>> entry) {
+    public <T extends Recipe<?>> void complete(@NotNull RecipeEntry<T> entry) {
         ItemStack container = this.getStack(0);
         if (world != null) {
             if (!container.isEmpty() && isDone()) {
-                FryerBasket.setItem(container, entry.value().craft(new SimpleInventory(container), world.getRegistryManager()));
+                FryerBasket.setItem(container, ((FryerRecipe) entry.value()).craft(new SimpleInventory(container), world.getRegistryManager()));
                 this.progress = 0;
                 this.markDirty();
                 prevItem = ItemStack.EMPTY;

@@ -23,12 +23,6 @@ public class ChefOutfitItem extends ArmorItem {
         super(material, type, settings);
     }
 
-
-    @Override
-    public ItemStack getDefaultStack() {
-        return new ItemStack(this);
-    }
-
     @Override
     public boolean isDamageable() {
         return false;

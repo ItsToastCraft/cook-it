@@ -14,6 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
+import net.minecraft.nbt.NbtList;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
@@ -33,7 +34,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class MixingBowl extends CookingContainer {
-
+    private static final MapCodec<MixingBowl> CODEC = createCodec(MixingBowl::new);
     public static final List<Item> MIXING_BOWL_LIQUIDS = List.of(Items.WATER_BUCKET, Items.MILK_BUCKET);
     public static BooleanProperty HAS_GOOP = BooleanProperty.of("has_goop");
 
@@ -43,22 +44,24 @@ public class MixingBowl extends CookingContainer {
     }
 
     @Override
-    protected MapCodec<? extends BlockWithEntity> getCodec() {
-        return CODEC;
+    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+        builder.add(HAS_GOOP);
     }
 
     @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        builder.add(MixingBowl.HAS_GOOP);
+    public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext ctx) {
+        return VoxelShapes.cuboid(0.125f, 0f, 0.125f, 0.875f, 0.5f, 0.875f);
     }
 
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        MixingBowlEntity entity = (MixingBowlEntity) world.getBlockEntity(pos);
-        if (world.isClient() || entity == null) {
-            return ActionResult.CONSUME;
-        }
         world.updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
+        MixingBowlEntity entity = (MixingBowlEntity) world.getBlockEntity(pos);
+
+        if (world.isClient() || entity == null) {
+            return ActionResult.PASS;
+        }
+
         ItemStack item = player.getStackInHand(hand);
         if (player.isSneaking()) {
             return BlockEntityUtils.dropOnUse(this, entity, player, world, pos);
@@ -90,11 +93,12 @@ public class MixingBowl extends CookingContainer {
     public static void transferTo(ItemStack bowl, CookingBlockEntity to, int stack) {
         NbtCompound nbt = bowl.getSubNbt("BlockEntityTag");
         if (nbt == null || !nbt.contains("Items", NbtElement.LIST_TYPE)) return;
-        ItemStack item = ItemStack.fromNbt(nbt.getList("Items", NbtElement.COMPOUND_TYPE).getCompound(0));
+        NbtCompound compound = nbt.getList("Items", NbtElement.COMPOUND_TYPE).getCompound(0);
+        ItemStack item = ItemStack.fromNbt(compound);
 
+        to.setStack(stack, item);
         if (item.isOf(CookItItems.GOOP)) {
-            to.setStack(stack, item);
-            nbt.getList("Items", NbtElement.COMPOUND_TYPE).getCompound(0).putInt("Count", item.getCount() - 1);
+            compound.putInt("Count", item.getCount() - 1);
         }
     }
 
@@ -104,16 +108,15 @@ public class MixingBowl extends CookingContainer {
         MixingBowlEntity entity = (MixingBowlEntity) world.getBlockEntity(pos);
 
         NbtCompound nbt = itemStack.getSubNbt("BlockEntityTag");
-        if (nbt == null || entity == null || world.isClient()) {
+        if (world.isClient() || nbt == null || entity == null) {
             return;
         }
 
         entity.setGoopColor(nbt.getInt("color"));
+        NbtList list = nbt.getList("Items", NbtElement.COMPOUND_TYPE);
 
-        if (nbt.contains("Items", NbtElement.LIST_TYPE)) {
-            if (ItemStack.fromNbt(nbt.getList("Items", NbtElement.COMPOUND_TYPE).getCompound(0)).isOf(CookItItems.GOOP)) {
-                world.scheduleBlockTick(pos, state.getBlock(), 1);
-            }
+        if (list != null && ItemStack.fromNbt(list.getCompound(0)).isOf(CookItItems.GOOP)) {
+            world.scheduleBlockTick(pos, state.getBlock(), 1);
         }
     }
 
@@ -124,8 +127,8 @@ public class MixingBowl extends CookingContainer {
     }
 
     @Override
-    public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext ctx) {
-        return VoxelShapes.cuboid(0.125f, 0f, 0.125f, 0.875f, 0.5f, 0.875f);
+    protected MapCodec<? extends BlockWithEntity> getCodec() {
+        return CODEC;
     }
 
     @Override

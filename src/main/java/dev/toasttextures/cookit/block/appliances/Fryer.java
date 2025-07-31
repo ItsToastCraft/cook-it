@@ -30,7 +30,7 @@ import dev.toasttextures.cookit.registries.CookItItems;
 import static dev.toasttextures.cookit.registries.CookItProperties.ON;
 
 public class Fryer extends CookingContainer {
-    private static final MapCodec<? extends BlockWithEntity> CODEC = createCodec(Fryer::new);
+    protected static final MapCodec<Fryer> CODEC = createCodec(Fryer::new);
 
     public Fryer(Settings settings) {
         super(settings);
@@ -38,8 +38,13 @@ public class Fryer extends CookingContainer {
     }
 
     @Override
-    protected MapCodec<? extends BlockWithEntity> getCodec() {
-        return CODEC;
+    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+        builder.add(ON, Properties.HORIZONTAL_FACING);
+    }
+
+    @Override
+    public BlockRenderType getRenderType(BlockState state) {
+        return BlockRenderType.MODEL;
     }
 
     @Override
@@ -54,8 +59,8 @@ public class Fryer extends CookingContainer {
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         world.updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
         FryerEntity blockEntity = (FryerEntity) world.getBlockEntity(pos);
-        if (blockEntity == null) {
-            return ActionResult.FAIL;
+        if (world.isClient() || blockEntity == null) {
+            return ActionResult.PASS;
         }
 
         ItemStack heldItem = player.getStackInHand(hand);
@@ -66,9 +71,8 @@ public class Fryer extends CookingContainer {
         } else if (heldItem.getItem() instanceof CookItFood food && food.getFoodType().equals(FoodTypes.FRYING)) {
             ItemStack stack = blockEntity.getStack(0);
             FryerBasket.setItem(stack, heldItem.split(1));
-            blockEntity.setStack(0, ItemStack.EMPTY);
+//            blockEntity.setStack(0, ItemStack.EMPTY);
             blockEntity.markDirty();
-
         } else {
             player.getInventory().insertStack(blockEntity.getStack(0));
         }
@@ -80,13 +84,8 @@ public class Fryer extends CookingContainer {
     }
 
     @Override
-    public BlockRenderType getRenderType(BlockState state) {
-        return BlockRenderType.MODEL;
-    }
-
-    @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        builder.add(ON, Properties.HORIZONTAL_FACING);
+    protected MapCodec<? extends BlockWithEntity> getCodec() {
+        return CODEC;
     }
 
     @Override
@@ -97,6 +96,7 @@ public class Fryer extends CookingContainer {
 
     @Nullable
     @Override
-    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) { return new FryerEntity(pos, state); }
+    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+        return new FryerEntity(pos, state);
+    }
 }
-

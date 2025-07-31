@@ -16,7 +16,6 @@ import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
 import dev.toasttextures.cookit.CookIt;
-import dev.toasttextures.cookit.block.Bench;
 import dev.toasttextures.cookit.block.food_blocks.pizza.Pizza;
 
 import java.util.ArrayList;
@@ -28,7 +27,7 @@ public class CookItBlocks {
     public static final List<Block> BLOCKS = new ArrayList<>();
     public static final List<Plate> PLATES = new ArrayList<>();
     public static final List<Bowl> BOWLS = new ArrayList<>();
-    public static final List<Block> CUTTING_BOARDS = new ArrayList<>();
+    public static final List<CuttingBoard> CUTTING_BOARDS = new ArrayList<>();
     public static final List<Block> APPLIANCES = new ArrayList<>();
     public static final List<Block> CONTAINERS = new ArrayList<>();
 
@@ -51,15 +50,14 @@ public class CookItBlocks {
     public static final Block MIXING_BOWL = registerBlock("mixing_bowl", new MixingBowl(FabricBlockSettings.copyOf(MUFFIN_TIN)));
 
     // -- Miscellaneous --
-    public static final Block BENCH = registerBlock("bench", new Bench(FabricBlockSettings.create()));
     public static final Block VANILLA_VINE_STEM = registerBlockNoItem("vanilla_vine_stem", new VanillaVineStem(FabricBlockSettings.copyOf(Blocks.VINE)));
     public static final Block VANILLA_VINE = registerBlockNoItem("vanilla_vine", new VanillaVinePlant(FabricBlockSettings.copyOf(Blocks.VINE)));
 
     public static void registerColoredBlocks() {
         for (DyeColor color : DyeColor.values()) {
-            Block PLATE = registerBlock(color + "_plate", new Plate(FabricBlockSettings.create().strength(0.4f).sounds(BlockSoundGroup.DECORATED_POT)));
-            Block LARGE_PLATE = registerBlock(color + "_large_plate", new Plate(FabricBlockSettings.create().strength(0.4f).sounds(BlockSoundGroup.DECORATED_POT)));
-            Block BOWL = registerBlock(color + "_bowl", new Bowl(FabricBlockSettings.create().strength(0.4f).sounds(BlockSoundGroup.DECORATED_POT)));
+            Block PLATE = registerBlock(color + "_plate", new Plate(FabricBlockSettings.create().strength(0.4f).sounds(BlockSoundGroup.DECORATED_POT), color));
+            Block LARGE_PLATE = registerBlock(color + "_large_plate", new Plate(FabricBlockSettings.create().strength(0.4f).sounds(BlockSoundGroup.DECORATED_POT), color));
+            Block BOWL = registerBlock(color + "_bowl", new Bowl(FabricBlockSettings.create().strength(0.4f).sounds(BlockSoundGroup.DECORATED_POT), color));
             PLATES.add((Plate) PLATE);
             PLATES.add((Plate) LARGE_PLATE);
             BOWLS.add((Bowl) BOWL);
@@ -69,7 +67,7 @@ public class CookItBlocks {
 
         for (String woodType : SUPPORTED_WOOD_TYPES) {
             Block CUTTING_BOARD = registerBlock(woodType + "_cutting_board", new CuttingBoard(FabricBlockSettings.copyOf(Blocks.SPRUCE_PLANKS)));
-            CUTTING_BOARDS.add(CUTTING_BOARD);
+            CUTTING_BOARDS.add((CuttingBoard) CUTTING_BOARD);
         }
     }
     public static Block registerBlockNoItem(String name, Block block) {
@@ -97,6 +95,4 @@ public class CookItBlocks {
         CONTAINERS.add(MIXING_BOWL);
         CONTAINERS.add(PIZZA_PAN);
     }
-
-
 }

@@ -1,7 +1,6 @@
 package dev.toasttextures.cookit.item;
 
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.block.CampfireBlock;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -18,8 +17,12 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
+import java.util.Random;
+
 // The code you're about to see will scare you. Run while you still can!
 public class FireExtinguisherItem extends Item {
+    private static final int OFFSET_DISTANCE = 4;
+    private static final Random RANDOM = new Random();
 
     public FireExtinguisherItem(Settings settings) {
         super(settings);
@@ -30,35 +33,39 @@ public class FireExtinguisherItem extends Item {
         PlayerEntity user = context.getPlayer();
         World world = context.getWorld();
 
-        assert user != null;
+        if (world.isClient() || user == null) {
+            return ActionResult.PASS;
+        }
+
         Vec3d pos = user.getPos();
         Vec3d hitPos = context.getHitPos();
 
         double playerPitch = Math.toRadians(user.getPitch());
         double playerYaw = Math.toRadians(user.getYaw());
 
-        world.playSound(null, hitPos.x, hitPos.y, hitPos.z, SoundEvents.WEATHER_RAIN, SoundCategory.BLOCKS, 1f, 1f);
-        if (world instanceof ServerWorld) {
+        if (world instanceof ServerWorld serverWorld) {
+            serverWorld.playSound(null, hitPos.x, hitPos.y, hitPos.z, SoundEvents.WEATHER_RAIN, SoundCategory.BLOCKS, 1f, 1f);
+
+            double offsetX = -MathHelper.sin((float) playerYaw) * MathHelper.cos((float) playerPitch) * OFFSET_DISTANCE;
+            double offsetY = -MathHelper.sin((float) playerPitch) * OFFSET_DISTANCE;
+            double offsetZ = MathHelper.cos((float) playerYaw) * MathHelper.cos((float) playerPitch) * OFFSET_DISTANCE;
+
+            BlockPos.Mutable extinguishPos = new BlockPos.Mutable();
             // Summons particles and removes fire wherever they land
             for (int i = 0; i < 200; i++) {
-                double offsetDistance = 4;
+                double particleX = pos.x + (hitPos.x - pos.x) * i / 1000 + offsetX + RANDOM.nextFloat(4) - 2;
+                double particleY = pos.y + 1 + (hitPos.y + 1 - pos.y) * i / 1000 + offsetY + RANDOM.nextFloat(2);
+                double particleZ = pos.z + (hitPos.z - pos.z) * i / 1000 + offsetZ + RANDOM.nextFloat(4) - 2;
 
-                double offsetX = -MathHelper.sin((float) playerYaw) * MathHelper.cos((float) playerPitch) * offsetDistance;
-                double offsetY = -MathHelper.sin((float) playerPitch) * offsetDistance;
-                double offsetZ = MathHelper.cos((float) playerYaw) * MathHelper.cos((float) playerPitch) * offsetDistance;
-
-                double particleX = pos.x + (hitPos.x - pos.x) * i / 1000 + offsetX + ((Math.random() * 4) - 2);
-                double particleY = pos.y + 1 + (hitPos.y + 1 - pos.y) * i / 1000 + offsetY + Math.random() * 2.5;
-                double particleZ = pos.z + (hitPos.z - pos.z) * i / 1000 + offsetZ + ((Math.random() * 4) - 2);
-
-                extinguishFire(new BlockPos((int) particleX, (int) particleY, (int) particleZ), (ServerWorld) world);
-                ((ServerWorld) world).spawnParticles(ParticleTypes.SPIT, particleX, particleY, particleZ, 1, 0.0f,0.125f,0.0f,0f);
+                serverWorld.spawnParticles(ParticleTypes.SPIT, particleX, particleY, particleZ, 1, 0.0f,0.125f,0.0f,0f);
+                if (RANDOM.nextFloat() > 0.3f) {
+                    extinguishPos.set((int) particleX, (int) particleY, (int) particleZ);
+                    extinguishFire(extinguishPos, serverWorld);
+                }
             }
         }
 
-        // Damage the item
         context.getStack().damage(1, user, playerEntity -> user.sendToolBreakStatus(user.getActiveHand()));
-
         return ActionResult.PASS;
     }
 
@@ -66,7 +73,7 @@ public class FireExtinguisherItem extends Item {
         BlockState blockState = world.getBlockState(pos);
         if (blockState.isIn(BlockTags.FIRE)) {
             world.playSound(null, pos, SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS, 0.5f, 1f);
-            world.breakBlock(pos, false, null);
+            world.removeBlock(pos, false);
         } else if (blockState.isIn(BlockTags.CAMPFIRES) && CampfireBlock.isLitCampfire(blockState)) {
             world.setBlockState(pos, blockState.with(Properties.LIT, false));
         }

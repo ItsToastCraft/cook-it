@@ -12,13 +12,12 @@ import dev.toasttextures.cookit.registries.CookItItems;
 import java.util.List;
 
 public class Fries extends CookItFood {
-
     public Fries(Settings settings, FoodTypes foodType) {
         super(settings, foodType);
     }
 
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
-        if (stack.getItem() == CookItItems.UNCOOKED_FRENCH_FRIES) {
+        if (stack.isOf(CookItItems.UNCOOKED_FRENCH_FRIES)) {
             tooltip.add(1, Text.literal("Uncooked").formatted(Formatting.ITALIC, Formatting.GRAY));
         }
     }

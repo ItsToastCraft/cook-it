@@ -1,6 +1,5 @@
 package dev.toasttextures.cookit.block.appliances;
 
-
 import com.mojang.serialization.MapCodec;
 import dev.toasttextures.cookit.enums.ToasterStage;
 import net.minecraft.block.Block;
@@ -30,16 +29,14 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import dev.toasttextures.cookit.registries.CookItItems;
 
-import static dev.toasttextures.cookit.enums.ToasterStage.*;
 
 public class Toaster extends HorizontalFacingBlock {
-
+    protected static final MapCodec<Toaster> CODEC = createCodec(Toaster::new);
     public static final EnumProperty<ToasterStage> TOASTER_STATE = EnumProperty.of("toaster_state", ToasterStage.class);
 
-    protected static final MapCodec<? extends HorizontalFacingBlock> CODEC = createCodec(Toaster::new);
     public Toaster(Settings settings) {
         super(settings);
-        setDefaultState(getDefaultState().with(Properties.HORIZONTAL_FACING, Direction.NORTH).with(Toaster.TOASTER_STATE, NONE));
+        setDefaultState(getDefaultState().with(Properties.HORIZONTAL_FACING, Direction.NORTH).with(TOASTER_STATE, ToasterStage.NONE));
     }
 
     @Override
@@ -49,7 +46,7 @@ public class Toaster extends HorizontalFacingBlock {
 
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        builder.add(Properties.HORIZONTAL_FACING).add(Toaster.TOASTER_STATE);
+        builder.add(Properties.HORIZONTAL_FACING).add(TOASTER_STATE);
     }
 
     @Override
@@ -68,25 +65,19 @@ public class Toaster extends HorizontalFacingBlock {
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         ItemStack heldItem = player.getStackInHand(hand);
         ToasterStage toastState = state.get(TOASTER_STATE);
-        // Check if the player is holding bread
-        if (heldItem.isOf(Items.BREAD)) {
-            if (toastState.isUntoasted()) {
-                heldItem.decrement(1);
-                world.setBlockState(pos, state.with(TOASTER_STATE, toastState.incrementStage()));
-                this.scheduleTick(world, pos);
-            }
-            return ActionResult.SUCCESS;
-        }
-        if (heldItem.getItem() == Items.AIR) {
 
+        // Check if the player is holding bread
+        if (heldItem.isOf(Items.BREAD) && toastState.isUntoasted()) {
+            heldItem.decrement(1);
+            world.setBlockState(pos, state.with(TOASTER_STATE, toastState.incrementStage()));
+            this.scheduleTick(world, pos);
+        } else if (heldItem.isOf(Items.AIR)) {
             if (!toastState.isUntoasted()) {
                 player.getInventory().insertStack(new ItemStack(CookItItems.TOAST));
-                ToasterStage toasterState = state.get(TOASTER_STATE);
-                world.setBlockState(pos, state.with(TOASTER_STATE, toasterState.decreaseStage()));
+                world.setBlockState(pos, state.with(TOASTER_STATE, toastState.decreaseStage()));
             }
-            return ActionResult.SUCCESS;
         }
-        return ActionResult.PASS; // If not holding bread, do nothing
+        return ActionResult.SUCCESS;
     }
 
     @Override

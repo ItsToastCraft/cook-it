@@ -7,5 +7,4 @@ public abstract class CookingContainer extends BlockWithEntity implements BlockE
     public CookingContainer(Settings settings) {
         super(settings);
     }
-
 }

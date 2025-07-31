@@ -11,13 +11,12 @@ import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.RotationAxis;
 import dev.toasttextures.cookit.CookIt;
 
 import java.util.Objects;
-
-import static dev.toasttextures.cookit.block.appliances.Microwave.FACING;
 
 @Environment(EnvType.CLIENT)
 public class MicrowaveEntityRenderer implements BlockEntityRenderer<MicrowaveEntity> {
@@ -31,7 +30,7 @@ public class MicrowaveEntityRenderer implements BlockEntityRenderer<MicrowaveEnt
 
         ItemStack stack = blockEntity.getStack(0);
 
-        Direction facing = blockEntity.getCachedState().get(FACING);
+        Direction facing = blockEntity.getCachedState().get(Properties.HORIZONTAL_FACING);
         float x, y, z, x2, y2, z2;
         int dir = 0;
         switch (facing) {

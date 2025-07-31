@@ -54,7 +54,7 @@ public class OvenSlot {
         if (this.maxProgress <= this.progress) {
             complete(entity);
         }
-    };
+    }
 
     public FoodProcessingStatus getStatus() {
         return this.status;
@@ -76,7 +76,7 @@ public class OvenSlot {
         List<ItemStack> containerItems = entity.getContainerItems(container);
 
         for (int i = 0; i < containerItems.size(); i++) {
-            ItemStack output = containerItems.get(i);;
+            ItemStack output = containerItems.get(i);
             Optional<RecipeEntry<OvenRecipe>> recipe = entity.getCurrentRecipe(output);
 
             if (recipe.isPresent()) {

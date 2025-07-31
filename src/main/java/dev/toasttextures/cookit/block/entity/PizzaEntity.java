@@ -3,7 +3,6 @@ package dev.toasttextures.cookit.block.entity;
 import dev.toasttextures.cookit.block.food_blocks.pizza.PizzaTopping;
 import dev.toasttextures.cookit.registries.CookItBlockEntities;
 import dev.toasttextures.cookit.registries.CookItBlocks;
-import dev.toasttextures.cookit.registries.CookItItems;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.item.ItemStack;
@@ -19,7 +18,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class PizzaEntity extends BlockEntity {
-
     private NbtList toppings = new NbtList();
     private boolean isCooked = false;
     private int sliceCount = 4;
@@ -40,17 +38,15 @@ public class PizzaEntity extends BlockEntity {
         this.toppings.clear();
 
         int slices = 1;
-        NbtCompound tag = stack.getNbt();
+        NbtCompound tag = stack.getNbt().getCompound("BlockEntityTag");
 
-        if (stack.getNbt().contains("BlockEntityTag")) {
-            tag = tag.getCompound("BlockEntityTag");
+        if (tag != null) {
             if (tag.contains("sliceCount", NbtElement.INT_TYPE)) {
                 slices = tag.getInt("sliceCount");
             }
-        }
-
-        if (tag.contains("toppings", NbtElement.LIST_TYPE)) {
-            this.toppings = tag.getList("toppings", NbtElement.STRING_TYPE).copy();
+            if (tag.contains("toppings", NbtElement.LIST_TYPE)) {
+                this.toppings = tag.getList("toppings", NbtElement.STRING_TYPE).copy();
+            }
         }
 
         this.isCooked = stack.getItem() != CookItBlocks.UNCOOKED_PIZZA.asItem();
@@ -105,4 +101,3 @@ public class PizzaEntity extends BlockEntity {
         return createNbt();
     }
 }
-

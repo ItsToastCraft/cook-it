@@ -64,37 +64,40 @@ public class MixingBowlEntity extends CookingBlockEntity {
     public int getUses() { return this.uses; }
 
     public boolean processRecipe() {
-        Optional<RecipeEntry<MixingBowlRecipe>> recipe = getCurrentRecipe();
-        if (recipe.isPresent() && recipe.get().value().getLiquid().isOf(this.getLiquid())) {
+        Optional<RecipeEntry<MixingBowlRecipe>> recipeEntry = getCurrentRecipe();
+        if (recipeEntry.isPresent()) {
+            MixingBowlRecipe recipe = recipeEntry.get().value();
+            if(!recipe.getLiquid().isOf(this.getLiquid())) {
+                return false;
+            }
+
             this.clicks++;
 
-            int mixes = recipe.get().value().getMixes();
+            int mixes = recipe.getMixes();
             if (world != null && world instanceof ServerWorld serverWorld) {
-                world.playSound(null, pos.getX(), pos.getY(), pos.getZ(), SoundEvents.ENTITY_ITEM_FRAME_REMOVE_ITEM, SoundCategory.BLOCKS, 0.5f, 0.25f);
-                serverWorld.spawnParticles(new ItemStackParticleEffect(ParticleTypes.ITEM, recipe.get().value().getResult(null)), pos.getX() + 0.5f, pos.getY(), pos.getZ() + 0.5f, 10, 0f,0.025f,0.0f,0.125f);
+                serverWorld.playSound(null, pos, SoundEvents.ENTITY_ITEM_FRAME_REMOVE_ITEM, SoundCategory.BLOCKS, 0.5f, 0.25f);
+                serverWorld.spawnParticles(new ItemStackParticleEffect(ParticleTypes.ITEM, recipe.getResult(null)), pos.getX() + 0.5f, pos.getY(), pos.getZ() + 0.5f, 10, 0f,0.025f,0.0f,0.125f);
             }
 
             if (this.getClicks() >= mixes) {
-                complete(recipe.get());
-            } else if (this.getClicks() == mixes - 1 && hasGoop) {
+                complete(recipeEntry.get());
+            } else if (this.getClicks() == mixes - 1 && recipe.hasGoop()) {
                 // Set the color one click early
-                this.color = recipe.get().value().goopColor();
+                this.color = recipe.goopColor();
                 if (world != null && !world.isClient()) {
                     markDirty();
                 }
             }
-
         }
         return false;
     }
 
     public void complete(@NotNull RecipeEntry<? extends Recipe<SimpleInventory>> entry) {
         MixingBowlRecipe recipe = (MixingBowlRecipe) entry.value();
-        boolean hasGoop = recipe.hasGoop();
         this.setItems(DefaultedList.ofSize(this.size(), ItemStack.EMPTY));
         ItemStack output = recipe.craft(new SimpleInventory(), world.getRegistryManager());
-        if (hasGoop){
 
+        if (recipe.hasGoop()){
             ItemStack goop = new ItemStack(CookItItems.GOOP, output.getCount());
             output.setCount(1);
             output.writeNbt(goop.getOrCreateSubNbt("output"));
@@ -116,6 +119,7 @@ public class MixingBowlEntity extends CookingBlockEntity {
     public void setGoopColor(int color) {
         this.color = color;
     }
+
     public int getGoopColor() {
         return this.color;
     }

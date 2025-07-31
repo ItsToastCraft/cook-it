@@ -24,6 +24,7 @@ public class Pizza extends BlockWithEntity implements BlockEntityProvider {
     public Pizza(Settings settings) {
         super(settings);
     }
+
     public BlockRenderType getRenderType(BlockState state) {
         return BlockRenderType.MODEL;
     }

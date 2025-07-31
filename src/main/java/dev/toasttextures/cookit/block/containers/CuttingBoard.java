@@ -25,50 +25,66 @@ import java.util.Objects;
 
 public class CuttingBoard extends HorizontalFacingBlock implements BlockEntityProvider {
     public static final MapCodec<CuttingBoard> CODEC = createCodec(CuttingBoard::new);
+    private final String woodType;
 
     public CuttingBoard(Settings settings) {
+        this(settings, "oak");
+    }
+
+    public CuttingBoard(Settings settings, String woodType) {
         super(settings);
+        this.woodType = woodType;
         setDefaultState(getDefaultState().with(Properties.HORIZONTAL_FACING, Direction.EAST));
     }
 
-    @Override
-    protected MapCodec<? extends HorizontalFacingBlock> getCodec() {
-        return CODEC;
+    public String getWoodType() {
+        return woodType;
     }
 
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
         builder.add(Properties.HORIZONTAL_FACING);
-
     }
+
+    @Override
+    public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext ctx) {
+        Direction dir = state.get(FACING);
+        return switch (dir) {
+            case EAST, WEST -> VoxelShapes.cuboid(0.125f, 0.0f, 0.0f, 0.875f, 0.0625f, 1.0f);
+            case NORTH, SOUTH -> VoxelShapes.cuboid(0.0f, 0.0f, 0.125f, 1.0f, 0.0625f, 0.875f);
+            default -> VoxelShapes.fullCube();
+        };
+    }
+
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         world.updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
         CuttingBoardEntity blockEntity = (CuttingBoardEntity) world.getBlockEntity(pos);
-        if (blockEntity == null) {
-            return ActionResult.FAIL;
+        if (world.isClient() || blockEntity == null) {
+            return ActionResult.PASS;
         }
-        if (world.isClient) { return ActionResult.SUCCESS; }
 
         ItemStack heldItem = player.getStackInHand(hand);
-        if (heldItem.getItem() instanceof FryerBasket) { return ActionResult.FAIL; }
+        // Passed to fryer basket instead
+        if (heldItem.getItem() instanceof FryerBasket) {
+            return ActionResult.PASS;
+        }
 
-        if (blockEntity.isEmpty()) {
-            if (!heldItem.isEmpty()) {
+        if (heldItem.isEmpty()) {
+            if (!blockEntity.processRecipe(heldItem, false)) {
+                pickUpCookingBoardItems(state, world, pos, player);
+            }
+        } else {
+            if (blockEntity.isEmpty()) {
                 blockEntity.setStack(0, heldItem.split(1));
             } else {
-                return ActionResult.FAIL;
+                blockEntity.processRecipe(heldItem, false);
             }
-        } else if (!heldItem.isEmpty()) {
-            blockEntity.processRecipe(heldItem, false);
-        } else {
-            if (!blockEntity.processRecipe(heldItem, false))
-                pickUpCookingBoardItems(state, world, pos, player);
         }
         return ActionResult.SUCCESS;
     }
 
-    // pickups items, boolean used to cancel the block break if the block wasn't empty
+    // picks up items, boolean used to cancel the block break if the block wasn't empty
     public void pickUpCookingBoardItems(BlockState state, World world, BlockPos pos, PlayerEntity player) {
         CuttingBoardEntity blockEntity = (CuttingBoardEntity) world.getBlockEntity(pos);
         if (blockEntity != null && !blockEntity.isEmpty() && player.isSneaking()) {
@@ -99,28 +115,21 @@ public class CuttingBoard extends HorizontalFacingBlock implements BlockEntityPr
     // pick up item in survival before break
     @Override
     public void onBlockBreakStart(BlockState state, World world, BlockPos pos, PlayerEntity player) {
-        if (!world.isClient) {
-            CuttingBoardEntity blockEntity = (CuttingBoardEntity) world.getBlockEntity(pos);
-            if (blockEntity != null) {
-                blockEntity.processRecipe(ItemStack.EMPTY, true);
-            }
+        CuttingBoardEntity blockEntity = (CuttingBoardEntity) world.getBlockEntity(pos);
+        if (!world.isClient() && blockEntity != null) {
+            blockEntity.processRecipe(ItemStack.EMPTY, true);
         }
         super.onBlockBreakStart(state, world, pos, player);
     }
 
     @Override
-    public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext ctx) {
-        Direction dir = state.get(FACING);
-        return switch (dir) {
-            case EAST, WEST -> VoxelShapes.cuboid(0.125f, 0.0f, 0.0f, 0.875f, 0.0625f, 1.0f);
-            case NORTH, SOUTH -> VoxelShapes.cuboid(0.0f, 0.0f, 0.125f, 1.0f, 0.0625f, 0.875f);
-            default -> VoxelShapes.fullCube();
-        };
+    public BlockState getPlacementState(ItemPlacementContext ctx) {
+        return Objects.requireNonNull(super.getPlacementState(ctx)).with(Properties.HORIZONTAL_FACING, ctx.getHorizontalPlayerFacing().getOpposite());
     }
 
     @Override
-    public BlockState getPlacementState(ItemPlacementContext ctx) {
-        return Objects.requireNonNull(super.getPlacementState(ctx)).with(Properties.HORIZONTAL_FACING, ctx.getHorizontalPlayerFacing().getOpposite());
+    protected MapCodec<? extends HorizontalFacingBlock> getCodec() {
+        return CODEC;
     }
 
     @Nullable

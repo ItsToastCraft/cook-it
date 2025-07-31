@@ -1,12 +1,10 @@
 package dev.toasttextures.cookit.block.food_blocks;
 
 import com.mojang.serialization.MapCodec;
-import dev.toasttextures.cookit.CookIt;
 import dev.toasttextures.cookit.registries.CookItBlocks;
 import net.minecraft.block.*;
 
 import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.BlockPos;
@@ -22,8 +20,6 @@ import java.util.Objects;
 public class VanillaVineStem extends AbstractPlantStemBlock implements Fertilizable, VanillaVines {
 
     public static final MapCodec<VanillaVineStem> CODEC = createCodec(VanillaVineStem::new);
-
-
 
     public VanillaVineStem(Settings settings) {
         super(settings, Direction.DOWN, EAST, false, GROW_CHANCE);

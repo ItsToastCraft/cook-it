@@ -93,7 +93,8 @@ public class FryerBasket extends Item {
     }
 
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
-        Text text = Text.literal("Item: ").formatted(Formatting.GRAY).append(Text.literal(getItem(stack).getName().getString()).formatted(Formatting.BLUE));
+        Text text = Text.literal("Item: ").formatted(Formatting.GRAY)
+                .append(getItem(stack).getName()).formatted(Formatting.BLUE);
         if (!getItem(stack).isEmpty()) {
             tooltip.add(text);
         } else {

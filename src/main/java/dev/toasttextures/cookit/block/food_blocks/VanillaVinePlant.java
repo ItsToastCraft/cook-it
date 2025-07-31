@@ -1,7 +1,6 @@
 package dev.toasttextures.cookit.block.food_blocks;
 
 import com.mojang.serialization.MapCodec;
-import dev.toasttextures.cookit.CookIt;
 import dev.toasttextures.cookit.registries.CookItBlocks;
 import dev.toasttextures.cookit.registries.CookItItems;
 import net.minecraft.block.*;
@@ -93,5 +92,4 @@ public class VanillaVinePlant extends AbstractPlantBlock implements Fertilizable
             default -> { return EAST; }
         }
     }
-
 }

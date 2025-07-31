@@ -20,34 +20,29 @@ import dev.toasttextures.cookit.block.food_blocks.pizza.Pizza;
 import org.jetbrains.annotations.Nullable;
 
 public class PizzaPan extends BlockWithEntity implements BlockEntityProvider {
+    protected static final MapCodec<PizzaPan> CODEC = createCodec(PizzaPan::new);
 
     public PizzaPan(Settings settings) {
         super(settings);
     }
-    public static final MapCodec<PizzaPan> CODEC = createCodec(PizzaPan::new);
 
-    @Override
-    protected MapCodec<? extends BlockWithEntity> getCodec() {
-        return CODEC;
-    }
     public BlockRenderType getRenderType(BlockState state) {
         return BlockRenderType.MODEL;
     }
 
-    private final VoxelShape OUTLINE = VoxelShapes.cuboid(0.0f, 0.0f, 0.0f, 1.0f, 0.0625f, 1.0f);
-
     @Override
     public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext ctx) {
-        return OUTLINE;
+        return VoxelShapes.cuboid(0.0f, 0.0f, 0.0f, 1.0f, 0.0625f, 1.0f);
     }
 
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-
-        if (world.isClient) { return ActionResult.SUCCESS; }
         world.updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
         PizzaPanEntity blockEntity = (PizzaPanEntity) world.getBlockEntity(pos);
-        if (blockEntity == null) { return ActionResult.FAIL; }
+        if (world.isClient() || blockEntity == null) {
+            return ActionResult.PASS;
+        }
+
         if (player.isSneaking()) {
             return BlockEntityUtils.dropOnUse(this, blockEntity, player, world, pos);
         }
@@ -66,9 +61,12 @@ public class PizzaPan extends BlockWithEntity implements BlockEntityProvider {
     }
 
     @Override
+    protected MapCodec<? extends BlockWithEntity> getCodec() {
+        return CODEC;
+    }
+
+    @Override
     public @Nullable BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
-
         return new PizzaPanEntity(pos, state);
-
     }
 }
