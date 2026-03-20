@@ -31,7 +31,7 @@ public class FryerBasket extends Item {
 
         if (!otherStack.isEmpty() && item.isEmpty()) {
             ItemStorage.setStoredItem(stack, otherStack.split(1));
-        } else if (!item.isEmpty()) {
+        } else if (!item.isEmpty() && otherStack.isEmpty()) {
             player.getInventory().offerOrDrop(item);
             ItemStorage.setStoredItem(stack, ItemStack.EMPTY);
         }
@@ -56,8 +56,9 @@ public class FryerBasket extends Item {
     }
 
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
-        Text text = Text.literal("Item: ").formatted(Formatting.GRAY).append(Text.literal(ItemStorage.getStoredItem(stack).getName().getString()).formatted(Formatting.BLUE));
-        if (!ItemStorage.getStoredItem(stack).isEmpty()) {
+        ItemStack stored = ItemStorage.getStoredItem(stack);
+        Text text = Text.literal("Item: ").formatted(Formatting.GRAY).append(Text.literal(stored.getName().getString()).formatted(Formatting.BLUE));
+        if (!stored.isEmpty()) {
             tooltip.add(text);
         } else {
             tooltip.remove(text);

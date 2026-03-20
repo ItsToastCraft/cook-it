@@ -36,8 +36,9 @@ public class CookedPizza extends Pizza {
     }
 
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+        if (world.isClient) return ActionResult.SUCCESS;
         PizzaEntity entity = (PizzaEntity) world.getBlockEntity(pos);
-        if (entity == null || world.isClient) return ActionResult.SUCCESS;
+        if (entity == null) return ActionResult.SUCCESS;
 
         int pizzaAmount = entity.getSliceCount();
         ItemStack heldItem = player.getStackInHand(hand);

@@ -1,90 +1,40 @@
 package dev.toasttextures.cookit.block.entity;
 
-import dev.toasttextures.cookit.block.ImplementedInventory;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.inventory.Inventories;
+import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NbtList;
-import net.minecraft.network.listener.ClientPlayPacketListener;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
-import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.recipe.Recipe;
+import net.minecraft.recipe.RecipeType;
 import net.minecraft.util.math.BlockPos;
-import org.jetbrains.annotations.Nullable;
+import net.minecraft.world.World;
 
-import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
-public abstract class CookingBlockEntity extends BlockEntity implements ImplementedInventory {
-    protected DefaultedList<ItemStack> items;
-
-
+public abstract class CookingBlockEntity<T extends Recipe<SimpleInventory>> extends Container {
     public CookingBlockEntity(BlockEntityType<?> blockEntity, BlockPos pos, BlockState state, int invSize) {
-        super(blockEntity, pos, state);
-        this.items = DefaultedList.ofSize(invSize, ItemStack.EMPTY);
+        super(blockEntity, pos, state, invSize);
+    }
+    RecipeType<T> recipeType;
+
+    protected CookingStatus status = CookingStatus.IDLE;
+
+    public CookingStatus getStatus() {
+        return status;
     }
 
-    @Override
-    public DefaultedList<ItemStack> getItems() {
-        return this.items;
+    public abstract void craft(World world, T recipe);
+
+    public abstract void reset();
+
+    public List<T> getRecipes() {
+        return getRecipes(-1);
     }
+    public List<T> getRecipes(int slot) {
+        SimpleInventory inv = (slot < 0 || slot >= size()) ? new SimpleInventory(this.getItems().toArray(new ItemStack[0])) : new SimpleInventory(getStack(slot));
+        if (world == null) return Collections.emptyList();
 
-    public void setItems(DefaultedList<ItemStack> items) { this.items = items;}
-
-    @Override
-    public void readNbt(NbtCompound nbt) {
-        this.items.clear();
-        super.readNbt(nbt);
-
-        Inventories.readNbt(nbt, this.items);
-    }
-
-    @Override
-    public void writeNbt(NbtCompound nbt) {
-        Inventories.writeNbt(nbt, this.items);
-
-        super.writeNbt(nbt);
-    }
-
-    @Nullable
-    @Override
-    public Packet<ClientPlayPacketListener> toUpdatePacket() {
-        return BlockEntityUpdateS2CPacket.create(this);
-    }
-
-    @Override
-    public NbtCompound toInitialChunkDataNbt() {
-        return createNbt();
-    }
-
-
-    // Checks if the item is a container that stores more items in its NBT
-    // Many items in this mod do this, like baking sheets, pizza pans, and muffin tins
-    public static boolean isContainer(ItemStack item) {
-        return isContainer(item, "BlockEntityTag");
-    }
-    public static boolean isContainer(ItemStack item, String key) {
-        NbtList nbtList = item.getOrCreateSubNbt(key).getList("Items", NbtElement.COMPOUND_TYPE);
-        return !nbtList.isEmpty();
-    }
-
-
-    public static ArrayList<ItemStack> getContainerItems(ItemStack container) {
-
-        ArrayList<ItemStack> itemStackList = new ArrayList<>();
-        NbtCompound nbt = container.getSubNbt("BlockEntityTag");
-        if (nbt != null && nbt.contains("Items")) {
-            NbtList itemsTag = nbt.getList("Items", NbtElement.COMPOUND_TYPE);
-            for (int j = 0; j < itemsTag.size(); j++) {
-                NbtCompound itemTag = itemsTag.getCompound(j);
-                ItemStack itemStack = ItemStack.fromNbt(itemTag);
-
-                itemStackList.add(itemStack);
-            }
-        }
-        return itemStackList;
+        return world.getRecipeManager().getAllMatches(recipeType, inv, world);
     }
 }

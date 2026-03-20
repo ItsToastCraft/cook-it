@@ -1,4 +1,4 @@
-package dev.toasttextures.cookit.block;
+package dev.toasttextures.cookit.block.entity;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventories;
@@ -11,19 +11,19 @@ import net.minecraft.util.collection.DefaultedList;
  * <p>
  * Originally by Juuz
  */
-public interface ImplementedInventory extends Inventory {
+public interface DefaultedInventory extends Inventory {
 
     /**
      * Creates an inventory from the item list.
      */
-    static ImplementedInventory of(DefaultedList<ItemStack> items) {
+    static DefaultedInventory of(DefaultedList<ItemStack> items) {
         return () -> items;
     }
 
     /**
      * Creates a new inventory with the specified size.
      */
-    static ImplementedInventory ofSize(int size) {
+    static DefaultedInventory ofSize(int size) {
         return of(DefaultedList.ofSize(size, ItemStack.EMPTY));
     }
 
@@ -48,9 +48,8 @@ public interface ImplementedInventory extends Inventory {
      */
     @Override
     default boolean isEmpty() {
-        for (int i = 0; i < size(); i++) {
-            ItemStack stack = getStack(i);
-            if (!stack.isEmpty()) {
+        for (ItemStack item : getItems()) {
+            if (!item.isEmpty()) {
                 return false;
             }
         }
@@ -64,7 +63,6 @@ public interface ImplementedInventory extends Inventory {
     default ItemStack getStack(int slot) {
         return getItems().get(slot);
     }
-
     /**
      * Removes items from an inventory slot.
      *

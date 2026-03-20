@@ -22,6 +22,10 @@ public class CookIt implements ModInitializer {
     public static final String MOD_ID = "cook-it";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
+    public static Identifier idOf(String name) {
+        return new Identifier(MOD_ID, name);
+    }
+
     public static final DefaultParticleType OIL_PARTICLE = FabricParticleTypes.simple();
 
     public static final List<String> SUPPORTED_WOOD_TYPES = List.of(new String[]{"acacia", "birch", "cherry", "crimson", "dark_oak", "jungle",  "oak", "mangrove", "spruce", "warped"});

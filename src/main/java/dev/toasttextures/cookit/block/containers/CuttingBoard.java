@@ -1,8 +1,8 @@
 package dev.toasttextures.cookit.block.containers;
 
-import com.mojang.serialization.MapCodec;
+import dev.toasttextures.cookit.block.WoodType;
 import dev.toasttextures.cookit.block.entity.CuttingBoardEntity;
-import dev.toasttextures.cookit.item.FryerBasket;
+import dev.toasttextures.cookit.registries.CookItItems;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -24,47 +24,46 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 
 public class CuttingBoard extends HorizontalFacingBlock implements BlockEntityProvider {
-    public static final MapCodec<CuttingBoard> CODEC = createCodec(CuttingBoard::new);
+    private final WoodType type;
 
-    public CuttingBoard(Settings settings) {
+    public CuttingBoard(Settings settings, WoodType type) {
         super(settings);
+        this.type = type;
         setDefaultState(getDefaultState().with(Properties.HORIZONTAL_FACING, Direction.EAST));
     }
 
-    @Override
-    protected MapCodec<? extends HorizontalFacingBlock> getCodec() {
-        return CODEC;
+    public WoodType getType() {
+        return type;
     }
 
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
         builder.add(Properties.HORIZONTAL_FACING);
-
     }
+
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        world.updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
+        if (world.isClient) return ActionResult.SUCCESS;
         CuttingBoardEntity blockEntity = (CuttingBoardEntity) world.getBlockEntity(pos);
-        if (blockEntity == null) {
-            return ActionResult.FAIL;
-        }
-        if (world.isClient) { return ActionResult.SUCCESS; }
+        if (blockEntity == null) return ActionResult.PASS;
 
         ItemStack heldItem = player.getStackInHand(hand);
-        if (heldItem.getItem() instanceof FryerBasket) { return ActionResult.FAIL; }
 
-        if (blockEntity.isEmpty()) {
-            if (!heldItem.isEmpty()) {
-                blockEntity.setStack(0, heldItem.split(1));
-            } else {
-                return ActionResult.FAIL;
+        if (heldItem.isOf(CookItItems.FRYER_BASKET)) return ActionResult.PASS;
+
+        if (heldItem.isEmpty()) {
+            if (!blockEntity.processRecipe(heldItem, false)) {
+                blockEntity.retrieve();
+                blockEntity.reset();
             }
-        } else if (!heldItem.isEmpty()) {
-            blockEntity.processRecipe(heldItem, false);
-        } else {
-            if (!blockEntity.processRecipe(heldItem, false))
-                pickUpCookingBoardItems(state, world, pos, player);
+            return ActionResult.SUCCESS;
         }
+        if (blockEntity.isEmpty()) {
+            blockEntity.setStack(0, heldItem.split(1));
+        } else if (!blockEntity.processRecipe(heldItem, false)) {
+            pickUpCookingBoardItems(state, world, pos, player);
+        }
+
         return ActionResult.SUCCESS;
     }
 
@@ -89,13 +88,11 @@ public class CuttingBoard extends HorizontalFacingBlock implements BlockEntityPr
 
     // cancels particles
     @Override
-    public BlockState onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player) {
-        if (world.isClient && world.getBlockEntity(pos) instanceof CuttingBoardEntity cuttingBoardEntity) {
-            if (!cuttingBoardEntity.isEmpty()) {
-                return state;
-            }
+    public void onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player) {
+        if (world.isClient && world.getBlockEntity(pos) instanceof CuttingBoardEntity cuttingBoardEntity && !cuttingBoardEntity.isEmpty()) {
+            return;
         }
-        return super.onBreak(world, pos, state, player);
+        super.onBreak(world, pos, state, player);
     }
 
     // pick up item in survival before break
