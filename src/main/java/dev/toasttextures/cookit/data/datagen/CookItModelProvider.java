@@ -1,6 +1,7 @@
-package dev.toasttextures.cookit.datagen;
+package dev.toasttextures.cookit.data.datagen;
 
 import dev.toasttextures.cookit.CookIt;
+import dev.toasttextures.cookit.block.containers.LargePlate;
 import dev.toasttextures.cookit.block.food_blocks.VanillaVines;
 import dev.toasttextures.cookit.registries.CookItItems;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
@@ -16,7 +17,7 @@ import dev.toasttextures.cookit.block.containers.Plate;
 import dev.toasttextures.cookit.registries.CookItBlocks;
 import net.minecraft.util.math.Direction;
 
-import static dev.toasttextures.cookit.datagen.CookItModels.*;
+import static dev.toasttextures.cookit.data.datagen.CookItModels.*;
 
 public class CookItModelProvider extends FabricModelProvider {
 
@@ -29,7 +30,7 @@ public class CookItModelProvider extends FabricModelProvider {
         for (Plate plate : CookItBlocks.PLATES) {
             TextureMap textureMap = coloredTextureMap(PLATE, plate, "plate");
             Identifier identifier, identifier2, identifier3, identifier4;
-            if (Plate.isLargePlate(plate)) {
+            if (plate instanceof LargePlate) {
                 identifier = TEMPLATE_LARGE_PLATE_1.upload(setModelOutput("block/plate/", plate, "_1"), textureMap, blockStateModelGenerator.modelCollector);
                 identifier2 = TEMPLATE_LARGE_PLATE_2.upload(setModelOutput("block/plate/", plate, "_2"), textureMap, blockStateModelGenerator.modelCollector);
                 identifier3 = TEMPLATE_LARGE_PLATE_3.upload(setModelOutput("block/plate/", plate, "_3"), textureMap, blockStateModelGenerator.modelCollector);
@@ -40,7 +41,7 @@ public class CookItModelProvider extends FabricModelProvider {
                 identifier3 = TEMPLATE_PLATE_3.upload(setModelOutput("block/plate/", plate, "_3"), textureMap, blockStateModelGenerator.modelCollector);
                 identifier4 = TEMPLATE_PLATE_4.upload(setModelOutput("block/plate/", plate, "_4"), textureMap, blockStateModelGenerator.modelCollector);
             }
-            blockStateModelGenerator.blockStateCollector.accept(VariantsBlockStateSupplier.create(plate).coordinate(BlockStateVariantMap.create(Plate.PLATES_AMOUNT).register(1, BlockStateVariant.create().put(VariantSettings.MODEL, identifier)).register(2, BlockStateVariant.create().put(VariantSettings.MODEL, identifier2)).register(3, BlockStateVariant.create().put(VariantSettings.MODEL, identifier3)).register(4, BlockStateVariant.create().put(VariantSettings.MODEL, identifier4))));
+            blockStateModelGenerator.blockStateCollector.accept(VariantsBlockStateSupplier.create(plate).coordinate(BlockStateVariantMap.create(Plate.COUNT).register(1, BlockStateVariant.create().put(VariantSettings.MODEL, identifier)).register(2, BlockStateVariant.create().put(VariantSettings.MODEL, identifier2)).register(3, BlockStateVariant.create().put(VariantSettings.MODEL, identifier3)).register(4, BlockStateVariant.create().put(VariantSettings.MODEL, identifier4))));
             blockStateModelGenerator.registerParentedItemModel(plate, identifier);
         }
         for (Bowl bowl : CookItBlocks.BOWLS) {

@@ -1,4 +1,4 @@
-package dev.toasttextures.cookit.datagen;
+package dev.toasttextures.cookit.data.datagen;
 
 import dev.toasttextures.cookit.block.containers.Plate;
 import dev.toasttextures.cookit.block.food_blocks.VanillaVines;
@@ -46,19 +46,19 @@ public class CookItLootTables extends FabricBlockLootTableProvider {
                         .apply(SetCountLootFunction.builder(ConstantLootNumberProvider.create(1.0f))
                             .conditionally(BlockStatePropertyLootCondition.builder(block)
                             .properties(StatePredicate.Builder.create()
-                            .exactMatch(Plate.PLATES_AMOUNT, 1))))
+                            .exactMatch(Plate.COUNT, 1))))
                         .apply(SetCountLootFunction.builder(ConstantLootNumberProvider.create(2.0f))
                             .conditionally(BlockStatePropertyLootCondition.builder(block)
                             .properties(StatePredicate.Builder.create()
-                            .exactMatch(Plate.PLATES_AMOUNT, 2))))
+                            .exactMatch(Plate.COUNT, 2))))
                         .apply(SetCountLootFunction.builder(ConstantLootNumberProvider.create(3.0f))
                             .conditionally(BlockStatePropertyLootCondition.builder(block)
                             .properties(StatePredicate.Builder.create()
-                            .exactMatch(Plate.PLATES_AMOUNT, 3))))
+                            .exactMatch(Plate.COUNT, 3))))
                         .apply(SetCountLootFunction.builder(ConstantLootNumberProvider.create(4.0f))
                             .conditionally(BlockStatePropertyLootCondition.builder(block)
                             .properties(StatePredicate.Builder.create()
-                            .exactMatch(Plate.PLATES_AMOUNT, 4))))
+                            .exactMatch(Plate.COUNT, 4))))
                     )));
             // Nvm I don't like this I'll just have the plate drop the content later
 //                    .pool(LootPool.builder().rolls(ConstantLootNumberProvider.create(1.0f)).with(ItemEntry.builder(plate.asItem())

@@ -1,4 +1,4 @@
-package dev.toasttextures.cookit.datagen;
+package dev.toasttextures.cookit.data.datagen;
 
 import net.minecraft.block.Block;
 import net.minecraft.data.client.Model;

@@ -1,10 +1,11 @@
-package dev.toasttextures.cookit.datagen;
+package dev.toasttextures.cookit.data.datagen;
 
 import dev.toasttextures.cookit.CookIt;
+import dev.toasttextures.cookit.block.containers.CuttingBoard;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.minecraft.block.Block;
-import net.minecraft.data.server.recipe.RecipeExporter;
+import net.minecraft.data.server.recipe.RecipeJsonProvider;
 import net.minecraft.data.server.recipe.ShapedRecipeJsonBuilder;
 import net.minecraft.item.Item;
 import net.minecraft.recipe.book.RecipeCategory;
@@ -14,27 +15,19 @@ import dev.toasttextures.cookit.block.containers.Bowl;
 import dev.toasttextures.cookit.block.containers.Plate;
 import dev.toasttextures.cookit.registries.CookItBlocks;
 
+import java.util.function.Consumer;
+
 import static dev.toasttextures.cookit.registries.CookItItems.ROLLING_PINS;
 
 public class CookItRecipeGenerator extends FabricRecipeProvider {
-
-
     public CookItRecipeGenerator(FabricDataOutput output) {
         super(output);
     }
-
-    public static String getColor(Plate plate) {
-        return Registries.BLOCK.getId(plate).getPath().replace(Plate.isLargePlate(plate) ? "_large_plate" : "_plate", "");
-    }
-
-    public static String getColor(Bowl bowl) {
-        return Registries.BLOCK.getId(bowl).getPath().replace("_bowl", "");
-    }
-
+    
     @Override
-    public void generate(RecipeExporter exporter) {
+    public void generate(Consumer<RecipeJsonProvider> exporter) {
         for (Plate plate : CookItBlocks.PLATES) {
-            String color = getColor(plate);
+            String color = plate.getColor().asString();
             ShapedRecipeJsonBuilder.create(RecipeCategory.DECORATIONS, plate).pattern("ccc")
                     .input('c', Registries.BLOCK.get(new Identifier("minecraft", color + "_concrete")))
                     .criterion(FabricRecipeProvider.hasItem(plate),
@@ -42,7 +35,7 @@ public class CookItRecipeGenerator extends FabricRecipeProvider {
                     .offerTo(exporter);
         }
         for (Bowl bowl : CookItBlocks.BOWLS) {
-            String color = getColor(bowl);
+            String color = bowl.getColor().asString();
             ShapedRecipeJsonBuilder.create(RecipeCategory.DECORATIONS, bowl).pattern("ccc").pattern("ccc")
                     .input('c', Registries.BLOCK.get(new Identifier("minecraft", color + "_concrete")))
                     .criterion(FabricRecipeProvider.hasItem(bowl),
@@ -50,8 +43,8 @@ public class CookItRecipeGenerator extends FabricRecipeProvider {
                     .offerTo(exporter);
         }
 
-        for (Block cuttingBoard : CookItBlocks.CUTTING_BOARDS) {
-            String woodType = CookIt.SUPPORTED_WOOD_TYPES.get(CookItBlocks.CUTTING_BOARDS.indexOf(cuttingBoard));
+        for (CuttingBoard cuttingBoard : CookItBlocks.CUTTING_BOARDS) {
+            String woodType = cuttingBoard.getType().toString();
             Block slab = Registries.BLOCK.get(new Identifier("minecraft", woodType + "_slab"));
             ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, cuttingBoard).pattern("sss")
                     .input('s', slab)

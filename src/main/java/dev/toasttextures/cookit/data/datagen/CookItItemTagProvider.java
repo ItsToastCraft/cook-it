@@ -1,4 +1,4 @@
-package dev.toasttextures.cookit.datagen;
+package dev.toasttextures.cookit.data.datagen;
 
 import dev.toasttextures.cookit.CookIt;
 import dev.toasttextures.cookit.registries.CookItItems;
