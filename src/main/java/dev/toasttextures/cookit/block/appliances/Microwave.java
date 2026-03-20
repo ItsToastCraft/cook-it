@@ -1,7 +1,7 @@
 package dev.toasttextures.cookit.block.appliances;
 
-import com.mojang.serialization.MapCodec;
 import dev.toasttextures.cookit.block.entity.MicrowaveEntity;
+import dev.toasttextures.cookit.registries.CookItBlockEntities;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
@@ -10,95 +10,83 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
-import net.minecraft.state.property.BooleanProperty;
-import net.minecraft.state.property.Properties;
-import net.minecraft.state.property.Property;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
-import dev.toasttextures.cookit.registries.CookItBlockEntities;
 
-public class Microwave extends BlockWithEntity implements BlockEntityProvider {
-    public static final BooleanProperty OPEN = BooleanProperty.of("open");
-    public static final BooleanProperty ON = BooleanProperty.of("on");
-    public static final Property<Direction> FACING = Properties.HORIZONTAL_FACING;
+import static net.minecraft.state.property.Properties.*;
 
+public class Microwave extends BlockWithEntity {
+    private static final VoxelShape NORTH_SOUTH_SHAPE = createCuboidShape(3.0, 0f, 1.0, 13.0, 0.5f, 15.0);
+    private static final VoxelShape EAST_WEST_SHAPE = createCuboidShape(1.0, 0f, 3.0, 15.0, 0.5f, 13.0);
 
     public Microwave(Settings settings) {
         super(settings);
-        setDefaultState(getDefaultState().with(OPEN, false).with(ON, false));
-    }
-
-    @Override
-    protected MapCodec<? extends BlockWithEntity> getCodec() {
-        return null;
+        setDefaultState(getDefaultState()
+                .with(OPEN, false)
+                .with(LIT, false)
+                .with(HORIZONTAL_FACING, Direction.NORTH));
     }
 
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        builder.add(OPEN, ON, FACING);
+        builder.add(HORIZONTAL_FACING, LIT, OPEN);
     }
+
     @Override
     public BlockRenderType getRenderType(BlockState state) {
-        return BlockRenderType.MODEL /*that does something*/ ;
+        return BlockRenderType.MODEL;
     }
 
     @Override
     public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext ctx) {
-        switch (state.get(FACING)) {
-            case EAST, WEST -> {
-                return VoxelShapes.cuboid(0.1875f, 0f, 0.0625f, 0.8125f, 0.5f, 0.9375f);
-            }
-            default -> {
-                return VoxelShapes.cuboid(0.0625f, 0f, 0.1875f, 0.9375f, 0.5f, 0.8125f);
-            }
-
-        }
+        return switch (state.get(HORIZONTAL_FACING)) {
+            case NORTH, SOUTH -> NORTH_SOUTH_SHAPE;
+            default -> EAST_WEST_SHAPE;
+        };
     }
 
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-
-        world.updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
-        boolean open = state.get(OPEN);
+        if (world.isClient) return ActionResult.SUCCESS;
 
         MicrowaveEntity blockEntity = (MicrowaveEntity) world.getBlockEntity(pos);
+        if (blockEntity == null) return ActionResult.SUCCESS;
 
         ItemStack heldItem = player.getStackInHand(hand);
+        boolean open = state.get(OPEN);
 
-        if (world.isClient || blockEntity == null) {
-            return ActionResult.SUCCESS;
+        if (!open && heldItem.isEmpty()) {
+            toggleDoor(state, world, pos, true);
+            world.playSound(null, pos, SoundEvents.BLOCK_IRON_TRAPDOOR_OPEN, SoundCategory.BLOCKS);
+        } else if (!heldItem.isEmpty() && open) {
+            toggleDoor(state, world, pos, false);
+            blockEntity.setStack(0, heldItem.split(1));
+        } else if (!blockEntity.getStack(0).isEmpty()) {
+            toggleDoor(state, world, pos, false);
+            player.getInventory().insertStack(blockEntity.getStack(0));
         } else {
-            if (!open && heldItem.isEmpty()) {
-                world.setBlockState(pos, state.with(OPEN, true));
-                world.playSound(null, pos, SoundEvents.BLOCK_IRON_TRAPDOOR_OPEN, SoundCategory.BLOCKS);
-
-                return ActionResult.PASS;
-            } else if (!heldItem.isEmpty() && open) {
-                world.playSound(null, pos, SoundEvents.BLOCK_IRON_TRAPDOOR_CLOSE, SoundCategory.BLOCKS);
-                world.setBlockState(pos, state.with(OPEN, false));
-                blockEntity.setStack(0, new ItemStack(heldItem.getItem(), 1));
-                heldItem.decrement(1);
-
-            } else if (!blockEntity.getStack(0).isEmpty()){
-                world.setBlockState(pos, state.with(OPEN, false).with(ON, false));
-                player.getInventory().insertStack(blockEntity.getStack(0));
-            } else {
-                world.setBlockState(pos, state.with(OPEN, false).with(ON, false));
-
-            }
+            toggleDoor(state, world, pos, false);
         }
 
         return ActionResult.SUCCESS;
+    }
+
+    private void toggleDoor(BlockState state, World world, BlockPos pos, boolean doorState) {
+        if (world.isClient()) return;
+        SoundEvent sound = doorState ? SoundEvents.BLOCK_IRON_DOOR_OPEN : SoundEvents.BLOCK_IRON_DOOR_CLOSE;
+
+        world.playSound(null, pos, sound, SoundCategory.BLOCKS);
+        world.setBlockState(pos, state.with(OPEN, doorState).with(LIT, doorState && state.get(LIT)), NOTIFY_LISTENERS);
     }
 
     public BlockState getPlacementState(ItemPlacementContext ctx) {
@@ -108,12 +96,13 @@ public class Microwave extends BlockWithEntity implements BlockEntityProvider {
 
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
-        return validateTicker(type, CookItBlockEntities.MICROWAVE_ENTITY,
-                (world1, pos, state1, blockEntity) -> blockEntity.tick(world, pos, state));
+        return checkType(type, CookItBlockEntities.MICROWAVE, MicrowaveEntity::tick);
     }
 
     @Nullable
     @Override
-    public MicrowaveEntity createBlockEntity(BlockPos pos, BlockState state) { return new MicrowaveEntity(pos, state); }
+    public MicrowaveEntity createBlockEntity(BlockPos pos, BlockState state) {
+        return new MicrowaveEntity(pos, state);
+    }
 
 }

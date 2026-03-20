@@ -24,6 +24,9 @@ import static net.minecraft.state.property.Properties.HORIZONTAL_FACING;
 import static net.minecraft.state.property.Properties.LIT;
 
 public class Fryer extends BlockWithEntity implements BlockEntityProvider {
+    private static final VoxelShape NORTH_SOUTH_SHAPE = createCuboidShape(3.0, 0f, 1.0, 13.0, 0.5f, 15.0);
+    private static final VoxelShape EAST_WEST_SHAPE = createCuboidShape(1.0, 0f, 3.0, 15.0, 0.5f, 13.0);
+
     public Fryer(Settings settings) {
         super(settings);
         setDefaultState(getDefaultState().with(LIT, false).with(HORIZONTAL_FACING, Direction.NORTH));
@@ -32,8 +35,8 @@ public class Fryer extends BlockWithEntity implements BlockEntityProvider {
     @Override
     public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext ctx) {
         return switch (state.get(HORIZONTAL_FACING)) {
-            case NORTH, SOUTH -> createCuboidShape(3.0, 0f, 1.0, 13.0, 0.5f, 15.0);
-            default -> createCuboidShape(1.0, 0f, 3.0, 15.0, 0.5f, 13.0);
+            case NORTH, SOUTH -> NORTH_SOUTH_SHAPE;
+            default -> EAST_WEST_SHAPE;
         };
     }
 

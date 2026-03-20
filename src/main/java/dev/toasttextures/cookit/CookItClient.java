@@ -2,11 +2,11 @@ package dev.toasttextures.cookit;
 
 import dev.toasttextures.cookit.block.containers.MixingBowl;
 import dev.toasttextures.cookit.block.entity.MixingBowlEntity;
-import dev.toasttextures.cookit.client.render.MuffinTinItemRenderer;
-import dev.toasttextures.cookit.client.render.PizzaPanItemRenderer;
+import dev.toasttextures.cookit.client.render.entity.MuffinTinItemRenderer;
+import dev.toasttextures.cookit.client.render.entity.PizzaPanItemRenderer;
 import dev.toasttextures.cookit.client.CookItEntityModelLayers;
-import dev.toasttextures.cookit.client.render.PizzaItemRenderer;
-import dev.toasttextures.cookit.item.armor.ChefOutfitRenderer;
+import dev.toasttextures.cookit.client.render.entity.PizzaItemRenderer;
+import dev.toasttextures.cookit.client.render.entity.ChefOutfitRenderer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -19,7 +19,7 @@ import net.minecraft.client.color.world.BiomeColors;
 import net.minecraft.client.item.ModelPredicateProviderRegistry;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.util.Identifier;
-import dev.toasttextures.cookit.client.render.BakingSheetItemRenderer;
+import dev.toasttextures.cookit.client.render.entity.BakingSheetItemRenderer;
 import dev.toasttextures.cookit.registries.*;
 
 @Environment(EnvType.CLIENT)

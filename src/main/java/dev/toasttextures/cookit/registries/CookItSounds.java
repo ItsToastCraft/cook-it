@@ -7,18 +7,13 @@ import net.minecraft.util.Identifier;
 import dev.toasttextures.cookit.CookIt;
 
 public class CookItSounds {
-    public static final Identifier MICROWAVE_SOUND = new Identifier(CookIt.MOD_ID, "microwave");
-    public static final SoundEvent MICROWAVE_SOUND_EVENT = registerSound(MICROWAVE_SOUND);
-    public static final Identifier MICROWAVE_BEEP = new Identifier(CookIt.MOD_ID, "microwave_beep");
-    public static final SoundEvent MICROWAVE_BEEP_EVENT = registerSound(MICROWAVE_BEEP);
+    public static final SoundEvent MICROWAVE_WORKING = registerSound("microwave_working");
+    public static final SoundEvent MICROWAVE_BEEP = registerSound("microwave_beep");
 
-
-    private static SoundEvent registerSound(Identifier id) {
-        SoundEvent soundEvent = SoundEvent.of(id);
-        return Registry.register(Registries.SOUND_EVENT, id, soundEvent);
-
+    private static SoundEvent registerSound(String name) {
+        Identifier id = CookIt.idOf(name);
+        return Registry.register(Registries.SOUND_EVENT, id, SoundEvent.of(id));
     }
-    public static void registerSounds() {
 
-    }
+    public static void register() {}
 }

@@ -1,7 +1,7 @@
 package dev.toasttextures.cookit.registries;
 
 import dev.toasttextures.cookit.block.entity.*;
-import dev.toasttextures.cookit.client.render.*;
+import dev.toasttextures.cookit.client.render.entity.*;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.minecraft.block.Block;
 import net.minecraft.block.entity.BlockEntity;

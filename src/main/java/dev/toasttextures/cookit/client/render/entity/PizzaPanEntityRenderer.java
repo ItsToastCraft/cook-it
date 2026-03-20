@@ -1,4 +1,4 @@
-package dev.toasttextures.cookit.client.render;
+package dev.toasttextures.cookit.client.render.entity;
 
 import dev.toasttextures.cookit.block.entity.PizzaPanEntity;
 import net.fabricmc.api.EnvType;
@@ -13,7 +13,6 @@ import net.minecraft.item.ItemStack;
 
 @Environment(EnvType.CLIENT)
 public class PizzaPanEntityRenderer implements BlockEntityRenderer<PizzaPanEntity> {
-
     public PizzaPanEntityRenderer(BlockEntityRendererFactory.Context ctx) {
     }
 

@@ -44,13 +44,15 @@ public class FireExtinguisherItem extends Item {
 
     @Override
     public ActionResult useOnEntity(ItemStack stack, PlayerEntity user, LivingEntity entity, Hand hand) {
-        if (entity.getWorld().isClient) return ActionResult.SUCCESS;
-        addExtinguishEffects(entity.getPos(), user, (ServerWorld) entity.getWorld());
+        World world = entity.getWorld();
+        if (world.isClient) return ActionResult.SUCCESS;
+        addExtinguishEffects(entity.getPos(), user, (ServerWorld) world);
 
         if (entity.isOnFire()) {
             entity.extinguish();
-            entity.getWorld().playSound(null, entity.getBlockPos(), SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS, 0.5f, 1.0f);
+            world.playSound(null, entity.getBlockPos(), SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS, 0.5f, 1.0f);
         }
+
         return ActionResult.SUCCESS;
     }
 

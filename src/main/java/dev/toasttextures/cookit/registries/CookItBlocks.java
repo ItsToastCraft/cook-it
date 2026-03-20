@@ -36,6 +36,7 @@ public class CookItBlocks {
     public static final List<CuttingBoard> CUTTING_BOARDS = registerWooden("_cutting_board", settings -> FabricBlockSettings.copyOf(Blocks.OAK_PLANKS), CuttingBoard::new);
     public static final List<Block> APPLIANCES = new ArrayList<>();
     public static final List<Block> CONTAINERS = new ArrayList<>();
+
     // -- Appliances --
     public static final Block FRYER = registerBlock("fryer", new Fryer(FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).nonOpaque()));
     public static final Block TOASTER = registerBlock("toaster", new Toaster(FabricBlockSettings.copyOf(Blocks.WHITE_CONCRETE)));
@@ -77,7 +78,12 @@ public class CookItBlocks {
     }
 
     public static <T extends Block> T registerBlock(String name, T block) {
-        registerBlockItem(name, block);
+        return registerBlock(name, block, true);
+    }
+
+    public static <T extends Block> T registerBlock(String name, T block, boolean withItem) {
+        if (withItem) registerBlockItem(name, block);
+
         BLOCKS.add(block);
         return Registry.register(Registries.BLOCK, CookIt.idOf(name), block);
     }
@@ -86,7 +92,7 @@ public class CookItBlocks {
         Registry.register(Registries.ITEM, CookIt.idOf(name), new BlockItem(block, new FabricItemSettings()));
     }
 
-    public static void registerBlocks() {
+    public static void register() {
         PLATES.addAll(registerDyed("_large_plate", dyeColor -> CERAMIC_SETTINGS, LargePlate::new));
         APPLIANCES.add(FRYER);
         APPLIANCES.add(TOASTER);

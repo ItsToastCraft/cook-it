@@ -1,43 +1,37 @@
 package dev.toasttextures.cookit.registries;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
 import dev.toasttextures.cookit.recipes.*;
+import net.minecraft.item.ItemStack;
+import net.minecraft.recipe.Recipe;
+import net.minecraft.recipe.RecipeSerializer;
+import net.minecraft.recipe.RecipeType;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 import dev.toasttextures.cookit.CookIt;
+import net.minecraft.util.JsonHelper;
 
 public class CookItRecipes {
+    public static void register() {
+        registerRecipe("microwaving", MicrowaveRecipe.Serializer.INSTANCE, MicrowaveRecipe.Type.INSTANCE);
+        registerRecipe("baking", OvenRecipe.Serializer.INSTANCE, OvenRecipe.Type.INSTANCE);
+        registerRecipe("cutting", CuttingBoardRecipe.Serializer.INSTANCE, CuttingBoardRecipe.Type.INSTANCE);
+        registerRecipe("frying", FryerRecipe.Serializer.INSTANCE, FryerRecipe.Type.INSTANCE);
+        registerRecipe("microwaving", MixingBowlRecipe.Serializer.INSTANCE, MixingBowlRecipe.Type.INSTANCE);
+    }
+    private static <T extends Recipe<?>> void registerRecipe(String name, RecipeSerializer<T> serializer, RecipeType<T> type) {
+        Identifier id = CookIt.idOf(name);
+        Registry.register(Registries.RECIPE_SERIALIZER, id, serializer);
+        Registry.register(Registries.RECIPE_TYPE, id, type);
+    }
 
-    public static void registerRecipes() {
-       Registry.register(Registries.RECIPE_SERIALIZER, new Identifier(CookIt.MOD_ID, "microwaving"),
-               MicrowaveRecipe.Serializer.INSTANCE);
-
-       Registry.register(Registries.RECIPE_TYPE, new Identifier(CookIt.MOD_ID, "microwaving"),
-               MicrowaveRecipe.Type.INSTANCE);
-
-       Registry.register(Registries.RECIPE_SERIALIZER, new Identifier(CookIt.MOD_ID, "baking"),
-               OvenRecipe.Serializer.INSTANCE);
-
-       Registry.register(Registries.RECIPE_TYPE, new Identifier(CookIt.MOD_ID, "baking"),
-               OvenRecipe.Type.INSTANCE);
-
-       Registry.register(Registries.RECIPE_SERIALIZER, new Identifier(CookIt.MOD_ID, "cutting"),
-               CuttingBoardRecipe.Serializer.INSTANCE);
-
-       Registry.register(Registries.RECIPE_TYPE, new Identifier(CookIt.MOD_ID, "cutting"),
-               CuttingBoardRecipe.Type.INSTANCE);
-
-       Registry.register(Registries.RECIPE_SERIALIZER, new Identifier(CookIt.MOD_ID, "frying"),
-               FryerRecipe.Serializer.INSTANCE);
-
-       Registry.register(Registries.RECIPE_TYPE, new Identifier(CookIt.MOD_ID, "frying"),
-               FryerRecipe.Type.INSTANCE);
-
-        Registry.register(Registries.RECIPE_SERIALIZER, new Identifier(CookIt.MOD_ID, "mixing"),
-                MixingBowlRecipe.Serializer.INSTANCE);
-
-        Registry.register(Registries.RECIPE_TYPE, new Identifier(CookIt.MOD_ID, "mixing"),
-                MixingBowlRecipe.Type.INSTANCE);
-
+    public static ItemStack validateItemStack(JsonObject obj, boolean canBeEmpty) {
+        ItemStack stack = new ItemStack(JsonHelper.getItem(obj, "item"), JsonHelper.getInt(obj, "count", 1));
+        if (!canBeEmpty && stack.isEmpty()) {
+            throw new JsonSyntaxException("Empty item not allowed here");
+        }
+        return stack;
     }
 }

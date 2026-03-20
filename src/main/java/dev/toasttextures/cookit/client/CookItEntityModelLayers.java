@@ -1,9 +1,8 @@
 package dev.toasttextures.cookit.client;
 
-import dev.toasttextures.cookit.client.render.PizzaEntityRenderer;
-import dev.toasttextures.cookit.item.armor.ChefOutfit.render.ChefOutfitModel;
+import dev.toasttextures.cookit.client.render.entity.PizzaEntityRenderer;
+import dev.toasttextures.cookit.client.render.model.ChefOutfitModel;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
-import net.minecraft.client.model.TexturedModelData;
 import net.minecraft.client.render.entity.model.EntityModelLayer;
 import net.minecraft.util.Identifier;
 
@@ -15,9 +14,8 @@ public class CookItEntityModelLayers {
     public static final EntityModelLayer PIZZA_TOPPING = new EntityModelLayer(new Identifier(MOD_ID,"pizza"), "topping");
 
     public static void registerLayers() {
-        EntityModelLayerRegistry.registerModelLayer(CHEF_OUTFIT, () -> TexturedModelData.of(ChefOutfitModel.getModelData(), 64, 64));
+        EntityModelLayerRegistry.registerModelLayer(CHEF_OUTFIT, ChefOutfitModel::getModelData);
         EntityModelLayerRegistry.registerModelLayer(PIZZA, PizzaEntityRenderer::getBaseModelData);
         EntityModelLayerRegistry.registerModelLayer(PIZZA_TOPPING, PizzaEntityRenderer::getToppingModelData);
-
     }
 }

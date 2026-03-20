@@ -1,4 +1,4 @@
-package dev.toasttextures.cookit.client.render;
+package dev.toasttextures.cookit.client.render.entity;
 
 import dev.toasttextures.cookit.registries.CookItBlocks;
 import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;

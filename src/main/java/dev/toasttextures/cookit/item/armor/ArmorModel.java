@@ -1,4 +1,4 @@
-package dev.toasttextures.cookit.item.armor.ChefOutfit;
+package dev.toasttextures.cookit.item.armor;
 
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.render.VertexConsumer;
@@ -7,9 +7,9 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 
-public class FullArmorModel extends BipedEntityModel<LivingEntity> {
+public class ArmorModel extends BipedEntityModel<LivingEntity> {
     final EquipmentSlot slot;
-    public FullArmorModel(ModelPart root, EquipmentSlot slot) {
+    public ArmorModel(ModelPart root, EquipmentSlot slot) {
         super(root);
         this.slot = slot;
     }
@@ -28,7 +28,7 @@ public class FullArmorModel extends BipedEntityModel<LivingEntity> {
                 rightArm.visible = true;
                 leftArm.visible = true;
             }
-            case LEGS -> {
+            case LEGS, FEET -> {
                 rightLeg.visible = true;
                 leftLeg.visible = true;
             }

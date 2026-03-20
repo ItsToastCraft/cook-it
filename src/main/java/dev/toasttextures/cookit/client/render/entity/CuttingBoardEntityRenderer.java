@@ -1,4 +1,4 @@
-package dev.toasttextures.cookit.client.render;
+package dev.toasttextures.cookit.client.render.entity;
 
 import dev.toasttextures.cookit.block.entity.CuttingBoardEntity;
 import dev.toasttextures.cookit.registries.CookItItems;
