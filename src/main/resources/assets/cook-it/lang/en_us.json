@@ -135,5 +135,6 @@
 
   "itemGroup.cook-it.items": "Cook It!",
   "subtitles.cook-it.microwave_hum": "Microwave Hums",
-  "subtitles.cook-it.microwave_beep": "Microwave Beeps"
+  "subtitles.cook-it.microwave_beep": "Microwave Beeps",
+  "stage.cook-it.uncooked": "Uncooked"
 }
