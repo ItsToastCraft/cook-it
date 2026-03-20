@@ -1,5 +1,6 @@
 package dev.toasttextures.cookit.block.entity;
 
+import dev.toasttextures.cookit.block.food_blocks.pizza.PizzaTopping;
 import dev.toasttextures.cookit.registries.CookItBlockEntities;
 import dev.toasttextures.cookit.registries.CookItBlocks;
 import dev.toasttextures.cookit.registries.CookItItems;
@@ -15,8 +16,9 @@ import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 
-public class PizzaEntity extends BlockEntity{
-
+public class PizzaEntity extends BlockEntity {
+    private static final String SLICE_COUNT_KEY = "Slices";
+    private static final String COOKED_KEY = "Cooked";
     private NbtList toppings = new NbtList();
     private boolean isCooked = false;
     private int sliceCount = 4;
@@ -31,23 +33,17 @@ public class PizzaEntity extends BlockEntity{
     }
 
     public void readFromItemStack(ItemStack stack) {
-        int slices = 4;
+        int slices = stack.isOf(CookItItems.PIZZA_SLICE) ? 1 : 4;
         this.toppings.clear();
-        if (!stack.isEmpty() && stack.getNbt() != null && stack.getNbt().contains("BlockEntityTag")) {
-            NbtCompound tag = stack.getNbt().getCompound("BlockEntityTag");
-            if (tag.contains("toppings", NbtElement.LIST_TYPE)) {
-                this.toppings = tag.getList("toppings", NbtElement.STRING_TYPE).copy();
-            }
-            if (tag.contains("sliceCount", NbtElement.INT_TYPE)) {
-                slices = tag.getInt("sliceCount");
-            }
-        }
 
-        if (stack.getItem() == CookItItems.PIZZA_SLICE) {
-            slices = 1;
-            NbtCompound tag = stack.getNbt();
-            if (tag != null && tag.contains("toppings", NbtElement.LIST_TYPE)) {
-                this.toppings = tag.getList("toppings", NbtElement.STRING_TYPE).copy();
+        NbtCompound compound = stack.getNbt();
+        if (compound != null) {
+            NbtList toppings = PizzaTopping.parse(compound);
+            if (toppings != null) {
+                this.toppings = toppings;
+            }
+            if (compound.contains(SLICE_COUNT_KEY, NbtElement.INT_TYPE)) {
+                slices = compound.getInt(SLICE_COUNT_KEY);
             }
         }
 
@@ -58,21 +54,21 @@ public class PizzaEntity extends BlockEntity{
     @Override
     public void readNbt(NbtCompound nbt) {
         super.readNbt(nbt);
-        this.toppings = nbt.getList("toppings", NbtElement.STRING_TYPE);
-        this.isCooked = nbt.getBoolean("isCooked");
-        this.sliceCount = nbt.getInt("sliceCount");
+        this.toppings = nbt.getList(PizzaTopping.TOPPINGS_KEY, NbtElement.STRING_TYPE);
+        this.isCooked = nbt.getBoolean(COOKED_KEY);
+        this.sliceCount = nbt.getInt(SLICE_COUNT_KEY);
     }
 
     @Override
     public void writeNbt(NbtCompound nbt) {
-        nbt.put("toppings", toppings);
-        nbt.putBoolean("isCooked", isCooked);
-        nbt.putInt("sliceCount", sliceCount);
+        nbt.put(PizzaTopping.TOPPINGS_KEY, toppings);
+        nbt.putBoolean(COOKED_KEY, isCooked);
+        nbt.putInt(SLICE_COUNT_KEY, sliceCount);
         super.writeNbt(nbt);
     }
 
     public NbtList getToppings() {
-        return toppings;
+        return toppings.copy();
     }
 
     public boolean isCooked() {
@@ -98,4 +94,3 @@ public class PizzaEntity extends BlockEntity{
         return createNbt();
     }
 }
-

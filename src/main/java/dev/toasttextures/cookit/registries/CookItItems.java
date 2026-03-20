@@ -47,17 +47,16 @@ public class CookItItems {
     public static final Item PIZZA_SLICE = registerItem("pizza_slice", new PizzaSlice(new FabricItemSettings().food(new FoodComponent.Builder().hunger(5).build())));
     public static final Item FRENCH_FRIES = registerItem("french_fries", new Fries(new FabricItemSettings().food(new FoodComponent.Builder().hunger(4).build()), CookItFoodTypes.DONE));
     public static final Item RAW_DONUT = registerItem("raw_donut", new CookItFood(new FabricItemSettings(), CookItFoodTypes.FRYING));
-    public static final Item DONUT = registerItem("plain_donut", new Donut(new FabricItemSettings().food(new FoodComponent.Builder().hunger(3).build())));
-    public static final Item CHOCOLATE_DONUT = registerItem("chocolate_donut", new Donut(new FabricItemSettings().food(new FoodComponent.Builder().hunger(4).build())));
-    public static final Item CHOCOLATE_DONUT_SPRINKLES = registerItem("chocolate_donut_sprinkles", new Donut(new FabricItemSettings().food(new FoodComponent.Builder().hunger(4).build())));
-    public static final Item CHOCOLATE_DONUT_STRIPED = registerItem("chocolate_donut_striped", new Donut(new FabricItemSettings().food(new FoodComponent.Builder().hunger(4).build())));
-    public static final Item SWEET_BERRY_DONUT = registerItem("sweet_berry_donut", new Donut(new FabricItemSettings().food(new FoodComponent.Builder().hunger(4).build())));
-    public static final Item SWEET_BERRY_DONUT_SPRINKLES = registerItem("sweet_berry_donut_sprinkles", new Donut(new FabricItemSettings().food(new FoodComponent.Builder().hunger(4).build())));
-    public static final Item VANILLA_DONUT = registerItem("vanilla_donut", new Donut(new FabricItemSettings().food(new FoodComponent.Builder().hunger(4).build())));
-    public static final Item VANILLA_DONUT_SPRINKLES = registerItem("vanilla_donut_sprinkles", new Donut(new FabricItemSettings().food(new FoodComponent.Builder().hunger(4).build())));
-
-    public static final Item VANILLA_DONUT_STRIPED = registerItem("vanilla_donut_striped", new Donut(new FabricItemSettings().food(new FoodComponent.Builder().hunger(4).build())));
-    public static final Item DONUT_WITH_NUTS = registerItem("peanut_donut", new Donut(new FabricItemSettings().food(new FoodComponent.Builder().hunger(4).build())));
+    public static final Item DONUT = registerItem("plain_donut", new Donut(new FabricItemSettings().food(new FoodComponent.Builder().hunger(3).build()), Donut.Type.PLAIN));
+    public static final Item CHOCOLATE_DONUT = registerItem("chocolate_donut", new Donut(new FabricItemSettings().food(new FoodComponent.Builder().hunger(4).build()), Donut.Type.PLAIN));
+    public static final Item CHOCOLATE_DONUT_SPRINKLES = registerItem("chocolate_donut_sprinkles", new Donut(new FabricItemSettings().food(new FoodComponent.Builder().hunger(4).build()), Donut.Type.SPRINKLES));
+    public static final Item CHOCOLATE_DONUT_STRIPED = registerItem("chocolate_donut_striped", new Donut(new FabricItemSettings().food(new FoodComponent.Builder().hunger(4).build()), Donut.Type.STRIPED));
+    public static final Item SWEET_BERRY_DONUT = registerItem("sweet_berry_donut", new Donut(new FabricItemSettings().food(new FoodComponent.Builder().hunger(4).build()), Donut.Type.PLAIN));
+    public static final Item SWEET_BERRY_DONUT_SPRINKLES = registerItem("sweet_berry_donut_sprinkles", new Donut(new FabricItemSettings().food(new FoodComponent.Builder().hunger(4).build()), Donut.Type.SPRINKLES));
+    public static final Item VANILLA_DONUT = registerItem("vanilla_donut", new Donut(new FabricItemSettings().food(new FoodComponent.Builder().hunger(4).build()), Donut.Type.PLAIN));
+    public static final Item VANILLA_DONUT_SPRINKLES = registerItem("vanilla_donut_sprinkles", new Donut(new FabricItemSettings().food(new FoodComponent.Builder().hunger(4).build()), Donut.Type.SPRINKLES));
+    public static final Item VANILLA_DONUT_STRIPED = registerItem("vanilla_donut_striped", new Donut(new FabricItemSettings().food(new FoodComponent.Builder().hunger(4).build()), Donut.Type.STRIPED));
+    public static final Item DONUT_WITH_NUTS = registerItem("peanut_donut", new Donut(new FabricItemSettings().food(new FoodComponent.Builder().hunger(4).build()), Donut.Type.PLAIN));
 
     public static final Item MUFFIN = registerItem("plain_muffin", new CookItFood(new FabricItemSettings().food(new FoodComponent.Builder().hunger(5).build()), CookItFoodTypes.DONE));
     public static final Item BLUEBERRY_MUFFIN = registerItem("blueberry_muffin", new CookItFood(new FabricItemSettings().food(new FoodComponent.Builder().hunger(7).build()), CookItFoodTypes.DONE));

@@ -13,6 +13,7 @@ import java.util.List;
 
 public class Donut extends Item {
     private final Type donutType;
+
     public Donut(Settings settings, Type donutType) {
         super(settings);
         this.donutType = donutType;

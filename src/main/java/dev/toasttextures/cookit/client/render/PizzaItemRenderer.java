@@ -14,6 +14,7 @@ import net.minecraft.util.math.BlockPos;
 public class PizzaItemRenderer implements BuiltinItemRendererRegistry.DynamicItemRenderer {
     private final PizzaEntity pizzaEntity = new PizzaEntity(BlockPos.ORIGIN, CookItBlocks.PIZZA.getDefaultState());
     private BlockEntityRenderDispatcher blockEntityRenderDispatcher;
+
     @Override
     public void render(ItemStack stack, ModelTransformationMode mode, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
         if (blockEntityRenderDispatcher == null) {
