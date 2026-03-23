@@ -52,8 +52,8 @@ public class CookItBlocks {
     public static final Block PIZZA_PAN = registerBlock("pizza_pan", new PizzaPan(FabricBlockSettings.copyOf(MUFFIN_TIN)));
     public static final Block MIXING_BOWL = registerBlock("mixing_bowl", new MixingBowl(FabricBlockSettings.copyOf(MUFFIN_TIN)));
     // -- Miscellaneous --
-    public static final Block VANILLA_VINE_STEM = registerBlockNoItem("vanilla_vine_stem", new VanillaVineStem(FabricBlockSettings.copyOf(Blocks.VINE)));
-    public static final Block VANILLA_VINE = registerBlockNoItem("vanilla_vine", new VanillaVinePlant(FabricBlockSettings.copyOf(Blocks.VINE)));
+    public static final VanillaVineStem VANILLA_VINE_STEM = registerBlock("vanilla_vine_stem", new VanillaVineStem(FabricBlockSettings.copyOf(Blocks.VINE)), false);
+    public static final VanillaVinePlant VANILLA_VINE = registerBlock("vanilla_vine", new VanillaVinePlant(FabricBlockSettings.copyOf(Blocks.VINE)), false);
 
     private static <T extends Block> List<T> registerDyed(String suffix, Function<DyeColor, AbstractBlock.Settings> settingsProvider, BiFunction<AbstractBlock.Settings, DyeColor, T> block) {
         List<T> list = new ArrayList<>();
@@ -71,10 +71,6 @@ public class CookItBlocks {
             list.add(registerBlock(type + "_" + suffix, block.apply(settings, type)));
         }
         return list;
-    }
-
-    public static Block registerBlockNoItem(String name, Block block) {
-        return Registry.register(Registries.BLOCK, CookIt.idOf(name), block);
     }
 
     public static <T extends Block> T registerBlock(String name, T block) {

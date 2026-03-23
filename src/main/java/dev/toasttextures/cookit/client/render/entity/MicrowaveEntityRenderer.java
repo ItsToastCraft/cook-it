@@ -1,5 +1,6 @@
 package dev.toasttextures.cookit.client.render.entity;
 
+import dev.toasttextures.cookit.CookIt;
 import dev.toasttextures.cookit.block.entity.MicrowaveEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -13,14 +14,21 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.RotationAxis;
-import dev.toasttextures.cookit.CookIt;
+import net.minecraft.util.math.Vec2f;
+import net.minecraft.world.World;
 
-import java.util.Objects;
+import java.util.Map;
 
-import static dev.toasttextures.cookit.block.appliances.Microwave.FACING;
+import static net.minecraft.state.property.Properties.HORIZONTAL_FACING;
 
 @Environment(EnvType.CLIENT)
 public class MicrowaveEntityRenderer implements BlockEntityRenderer<MicrowaveEntity> {
+
+    private static final Map<Direction, ItemRenderPosition> ITEM_POSITIONS = Map.of(
+            Direction.NORTH, new ItemRenderPosition(new Vec2f(1.0625f, 1.0f), new Vec2f(2.125f, 1.75f)),
+            Direction.SOUTH, new ItemRenderPosition(new Vec2f(0.9375f, 1.0f), new Vec2f(2.125f, 1.75f)),
+            Direction.EAST, new ItemRenderPosition(new Vec2f(1.0f, 1.0625f), new Vec2f(1.75f, 2.125f)),
+            Direction.WEST, new ItemRenderPosition(new Vec2f(1.0f, 0.9375f), new Vec2f(1.75f, 2.125f)));
 
     public MicrowaveEntityRenderer(BlockEntityRendererFactory.Context ctx) {
     }
@@ -30,75 +38,33 @@ public class MicrowaveEntityRenderer implements BlockEntityRenderer<MicrowaveEnt
         final MinecraftClient client = MinecraftClient.getInstance();
 
         ItemStack stack = blockEntity.getStack(0);
+        if (stack.isEmpty()) return;
+        World world = blockEntity.getWorld();
+        if (world == null) return;
 
-        Direction facing = blockEntity.getCachedState().get(FACING);
-        float x, y, z, x2, y2, z2;
-        int dir = 0;
-        switch (facing) {
-            case NORTH -> {
-                x = 1.0625f;
-                y = 0.71875f;
-                z = 1.0f;
-                x2 = 2.125f;
-                y2 = 1.0f;
-                z2 = 1.75f;
-            }
-            case SOUTH -> {
-                x = 0.9375f;
-                y = 0.71875f;
-                z = 1.0f;
-                x2 = 2.125f;
-                y2 = 1.0f;
-                z2 = 1.75f;
-                dir = 2;
-            }
-            case EAST -> {
-
-                x = 1.0f;
-                y = 0.71875f;
-                z = 1.0625f;
-                x2 = 1.75f;
-                y2 = 1.0f;
-                z2 = 2.125f;
-                dir = 3;
-            }
-            case WEST -> {
-                x = 1.0f;
-                y = 0.71875f;
-                z = 0.9375f;
-                x2 = 1.75f;
-                y2 = 1.0f;
-                z2 = 2.125f;
-                dir = 1;
-            }
-            default -> {
-                CookIt.LOGGER.error("Microwave combustion");
-                x = 0.0f;
-                y = 0.0f;
-                z = 0.0f;
-                x2 = 0.0f;
-                y2 = 0.0f;
-                z2 = 0.0f;
-            }
+        Direction facing = blockEntity.getCachedState().get(HORIZONTAL_FACING);
+        ItemRenderPosition pair = ITEM_POSITIONS.get(facing);
+        Vec2f pos;
+        matrices.push();
+        if (stack.getItem() instanceof BlockItem) {
+            pos = pair.blockItemPos;
+            matrices.scale(0.25f, 0.25f, 0.25f);
+            matrices.translate(pos.x, 1.0f, pos.y);
+        } else {
+            pos = pair.itemPos;
+            matrices.scale(0.5f, 0.5f, 0.5f);
+            matrices.translate(pos.x, 0.71875f, pos.y);
         }
-        if (!stack.isEmpty()) {
-            matrices.push();
-            if (stack.getItem() instanceof BlockItem) {
-                matrices.scale(0.25f, 0.25f, 0.25f);
-                matrices.translate(x2, y2, z2);
-            } else {
-                matrices.scale(0.5f, 0.5f, 0.5f);
-                matrices.translate(x, y, z);
-            }
-            matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(dir * 90));
+        matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(CookIt.DIRECTION_TO_FLOAT.getOrDefault(facing, 0.0f)));
 
-            // Rotate the item
-            if (blockEntity.getProgress() > 0) {
-                matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees((Objects.requireNonNull(blockEntity.getWorld()).getTime() + tickDelta) * 4));
-            }
-            client.getItemRenderer().renderItem(stack, ModelTransformationMode.NONE, light, overlay, matrices, vertexConsumers, blockEntity.getWorld(), 0);
-            matrices.pop();
+        // Rotate the item
+        if (blockEntity.getProgress() > 0) {
+            matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees((world.getTime() + tickDelta) * 4));
         }
+
+        client.getItemRenderer().renderItem(stack, ModelTransformationMode.NONE, light, overlay, matrices, vertexConsumers, world, 0);
+        matrices.pop();
     }
 
+    private record ItemRenderPosition(Vec2f itemPos, Vec2f blockItemPos) {}
 }

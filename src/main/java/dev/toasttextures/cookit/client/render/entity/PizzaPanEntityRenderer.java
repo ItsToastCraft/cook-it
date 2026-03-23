@@ -10,6 +10,7 @@ import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
 import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
 
 @Environment(EnvType.CLIENT)
 public class PizzaPanEntityRenderer implements BlockEntityRenderer<PizzaPanEntity> {
@@ -23,13 +24,16 @@ public class PizzaPanEntityRenderer implements BlockEntityRenderer<PizzaPanEntit
 
     @Override
     public void render(PizzaPanEntity blockEntity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
-        final MinecraftClient client = MinecraftClient.getInstance();
-        ItemStack stack = blockEntity.getStack(0);
+        render(blockEntity.getStack(0), matrices, vertexConsumers, blockEntity.getWorld(), light, overlay);
+    }
+
+    public static void render(ItemStack stack, MatrixStack matrices, VertexConsumerProvider vertexConsumers, World world, int light, int overlay) {
         if (stack.isEmpty()) return;
+        final MinecraftClient client = MinecraftClient.getInstance();
 
         matrices.push();
         matrices.translate(0.5f, 0.5125f, 0.5f);
-        client.getItemRenderer().renderItem(stack, ModelTransformationMode.NONE, light, overlay, matrices, vertexConsumers, blockEntity.getWorld(), 0);
+        client.getItemRenderer().renderItem(stack, ModelTransformationMode.NONE, light, overlay, matrices, vertexConsumers, world, 0);
         matrices.pop();
     }
 }

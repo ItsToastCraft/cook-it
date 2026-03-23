@@ -9,11 +9,9 @@ import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
-import net.minecraft.util.Identifier;
 import dev.toasttextures.cookit.CookIt;
 
 public class CookItBlockEntities {
-
     public static BlockEntityType<MuffinTinEntity> MUFFIN_TIN;
     public static BlockEntityType<BakingSheetEntity> BAKING_SHEET;
     public static BlockEntityType<MicrowaveEntity> MICROWAVE;
@@ -52,6 +50,6 @@ public class CookItBlockEntities {
     }
 
     public static <T extends BlockEntity> BlockEntityType<T> registerBlockEntities(String name, FabricBlockEntityTypeBuilder.Factory<T> factory, Block[] block) {
-        return Registry.register(Registries.BLOCK_ENTITY_TYPE, new Identifier(CookIt.MOD_ID, name), FabricBlockEntityTypeBuilder.create(factory, block).build());
+        return Registry.register(Registries.BLOCK_ENTITY_TYPE, CookIt.idOf(name), FabricBlockEntityTypeBuilder.create(factory, block).build());
     }
 }

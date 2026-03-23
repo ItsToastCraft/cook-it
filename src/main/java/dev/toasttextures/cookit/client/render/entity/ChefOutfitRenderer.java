@@ -19,16 +19,16 @@ public class ChefOutfitRenderer {
     }
 
     public static void register() {
-            ArmorRenderer renderer = (matrices, vertexConsumers, stack, entity, slot, light, contextModel) -> {
-                boolean shouldRender = !(contextModel instanceof PlayerEntityModel<?>) || (FiguraCompatibility.renderArmorPart((PlayerEntity) entity, slot));
+        ArmorRenderer renderer = (matrices, vertexConsumers, stack, entity, slot, light, contextModel) -> {
+            boolean shouldRender = !(contextModel instanceof PlayerEntityModel<?>) || (FiguraCompatibility.renderArmorPart((PlayerEntity) entity, slot));
+            if (!shouldRender) return;
 
-                if (shouldRender) {
-                    ChefOutfitItem armor = (ChefOutfitItem) stack.getItem();
-                    var model = armor.getArmorModel();
-                    contextModel.copyBipedStateTo(model);
-                    renderPart(matrices, vertexConsumers, light, stack, model);
-                }
+            ChefOutfitItem armor = (ChefOutfitItem) stack.getItem();
+            var model = armor.getArmorModel();
+            contextModel.copyBipedStateTo(model);
+            renderPart(matrices, vertexConsumers, light, stack, model);
         };
+
         ArmorRenderer.register(renderer, CookItItems.CHEF_UNIFORM, CookItItems.CHEF_PANTS);
     }
 }

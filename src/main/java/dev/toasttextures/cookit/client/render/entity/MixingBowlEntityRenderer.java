@@ -30,7 +30,7 @@ public class MixingBowlEntityRenderer implements BlockEntityRenderer<MixingBowlE
     public void render(MixingBowlEntity blockEntity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
         final MinecraftClient client = MinecraftClient.getInstance();
         BlockState state = blockEntity.getCachedState();
-        if (state.get(MixingBowl.HAS_GOOP)) return;
+        if (state.get(MixingBowl.CONTAINS_LIQUID)) return;
         for (int i = 0; i < blockEntity.size() - 1; i++) {
             ItemStack stack = blockEntity.getStack(i);
             if (!stack.isEmpty()) {
