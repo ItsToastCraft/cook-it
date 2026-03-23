@@ -1,6 +1,5 @@
 package dev.toasttextures.cookit.block.entity;
 
-import dev.toasttextures.cookit.block.ImplementedInventory;
 import dev.toasttextures.cookit.recipes.MixingBowlRecipe;
 import dev.toasttextures.cookit.registries.CookItBlockEntities;
 import dev.toasttextures.cookit.registries.CookItItems;
@@ -21,13 +20,13 @@ import net.minecraft.util.math.BlockPos;
 import java.util.Objects;
 import java.util.Optional;
 
-public class MixingBowlEntity extends CookingBlockEntity implements ImplementedInventory {
+public class MixingBowlEntity extends CookingBlockEntity implements DefaultedInventory {
     private int clicks = 0;
     private int uses = 0;
     private int color = 0;
 
     public MixingBowlEntity(BlockPos pos, BlockState state) {
-        super(CookItBlockEntities.MIXING_BOWL_ENTITY, pos, state, 7);
+        super(CookItBlockEntities.MIXING_BOWL, pos, state, 7);
     }
     @Override
     public void readNbt(NbtCompound nbt) {

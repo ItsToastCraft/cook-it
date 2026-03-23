@@ -1,124 +1,156 @@
 package dev.toasttextures.cookit.block.entity;
 
-
+import dev.toasttextures.cookit.registries.CookItItems;
 import net.minecraft.block.BlockState;
-import net.minecraft.inventory.Inventories;
 import net.minecraft.inventory.SimpleInventory;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.recipe.RecipeEntry;
+import net.minecraft.recipe.RecipeType;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import dev.toasttextures.cookit.block.ImplementedInventory;
 import dev.toasttextures.cookit.recipes.MicrowaveRecipe;
 import dev.toasttextures.cookit.registries.CookItBlockEntities;
 import dev.toasttextures.cookit.registries.CookItSounds;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.Objects;
 import java.util.Optional;
 
-import static dev.toasttextures.cookit.block.appliances.Microwave.ON;
-import static dev.toasttextures.cookit.block.appliances.Microwave.OPEN;
+import static net.minecraft.block.Block.NOTIFY_LISTENERS;
+import static net.minecraft.state.property.Properties.LIT;
+import static net.minecraft.state.property.Properties.OPEN;
 
-public class MicrowaveEntity extends CookingBlockEntity implements ImplementedInventory {
-    private static final int INPUT_SLOT = 0;
-    private static final int MICROWAVE_SOUND_INTERVAL = 111;
+public class MicrowaveEntity extends CookingBlockEntity<MicrowaveRecipe> {
     private int progress = 0;
     private int maxProgress = 0;
+    private ItemStack cachedItem = ItemStack.EMPTY;
+    @Nullable
+    private MicrowaveRecipe cachedRecipe = null;
 
-    public MicrowaveEntity(BlockPos pos, BlockState state) { super(CookItBlockEntities.MICROWAVE_ENTITY, pos, state, 2); }
+    public MicrowaveEntity(BlockPos pos, BlockState state) { super(CookItBlockEntities.MICROWAVE, pos, state, 1); }
 
     @Override
     public void readNbt(NbtCompound nbt) {
-        items.clear();
         super.readNbt(nbt);
-
-        Inventories.readNbt(nbt, items);
-        progress = nbt.getInt("progress");
+        progress = nbt.getInt("Progress");
     }
 
     @Override
     public void writeNbt(NbtCompound nbt) {
-        Inventories.writeNbt(nbt, this.items);
-        nbt.putInt("progress", progress);
+        nbt.putInt("Progress", progress);
         super.writeNbt(nbt);
     }
+
     public int getProgress() { return this.progress; }
-    public void tick(World world, BlockPos pos, BlockState state) {
 
-        if (world.isClient()) { return; }
-        if (this.hasRecipe()) {
-            if (this.getProgress() == 0 || world.getTime() % MICROWAVE_SOUND_INTERVAL == 0) {
-                playMicrowaveSound(world, pos, state, true);
+    private void addMicrowaveEffects(World world, BlockPos pos, BlockState state, boolean on) {
+        if (on && !state.get(OPEN)) {
+            world.playSound(null, pos, CookItSounds.MICROWAVE_WORKING, SoundCategory.BLOCKS, 0.3f, 1.0f);
+            world.setBlockState(pos, state.with(LIT, true), NOTIFY_LISTENERS);
+        } else {
+            world.setBlockState(pos, state.with(LIT, false), NOTIFY_LISTENERS);
+            if (state.get(OPEN)) return;
+            world.playSound(null, pos, CookItSounds.MICROWAVE_BEEP, SoundCategory.BLOCKS, 1.0f, 1.0f);
+        }
+    }
+
+    private void tickRecipe(World world, BlockState state) {
+        if (maxProgress <= progress) {
+            status = CookingStatus.DONE;
+            if (cachedRecipe == null && !world.isClient) {
+                addMicrowaveEffects(world, pos, state, false);
+                craft(world, cachedRecipe);
             }
-            if (state.get(OPEN)) playMicrowaveSound(world, pos, state, false);
+            reset();
+        } else {
+            progress++;
+            addMicrowaveEffects(world, pos, state, true);
+        }
+    }
 
-            this.updateMaxProgress();
-            this.addProgress();
-            markDirty(world, pos, state);
+    private void loadRecipe(World world, BlockState state) {
+        if (world.isClient) return;
+        cachedRecipe = getRecipes(0).stream().findFirst().orElse(null);
 
-            if (craftingFinished()) {
-                // Stop the continuous microwave sound and play the world's most annoying beep sound
-                playMicrowaveSound(world, pos, state, false);
+        if (cachedRecipe == null) return;
 
-                Optional<RecipeEntry<MicrowaveRecipe>> recipe = getCurrentRecipe();
-                this.craftRecipe();
-                this.resetProgress();
+        status = CookingStatus.PROCESSING;
+        addMicrowaveEffects(world, pos, state, true);
+        maxProgress = cachedRecipe.getMaxProgress();
+        markDirty();
+    }
 
-                //Kaboom stuff
-                float explosionPower = recipe.get().value().getExplosionPower();
-                if (explosionPower > 0) {
-                    if (this.world != null) {
-                        this.world.createExplosion(null, pos.getX(), pos.getY(), pos.getZ(), explosionPower, World.ExplosionSourceType.BLOCK);
-                    }
+
+    public static void tick(World world, BlockPos pos, BlockState state, MicrowaveEntity entity) {
+        if (world.isClient) return;
+
+        ItemStack first = entity.items.getFirst();
+
+        if (first.isEmpty()) {
+            entity.status = CookingStatus.IDLE;
+        } else if (first == entity.cachedItem) {
+            entity.tickRecipe(world, state);
+        } else if (entity.status == CookingStatus.INVALID) {
+            return;
+        } else {
+            entity.loadRecipe(world, state);
+        }
+
+    }
+
+    if (this.hasRecipe()) {
+        if (this.getProgress() == 0 || world.getTime() % MICROWAVE_SOUND_INTERVAL == 0) {
+            playMicrowaveSound(world, pos, state, true);
+        }
+        if (state.get(OPEN)) playMicrowaveSound(world, pos, state, false);
+
+        this.updateMaxProgress();
+        this.addProgress();
+        markDirty(world, pos, state);
+
+        if (craftingFinished()) {
+            // Stop the continuous microwave sound and play the world's most annoying beep sound
+            playMicrowaveSound(world, pos, state, false);
+
+            Optional<RecipeEntry<MicrowaveRecipe>> recipe = getCurrentRecipe();
+            this.craftRecipe();
+            this.resetProgress();
+
+            //Kaboom stuff
+            float explosionPower = recipe.get().value().getExplosionPower();
+            if (explosionPower > 0) {
+                if (this.world != null) {
+                    this.world.createExplosion(null, pos.getX(), pos.getY(), pos.getZ(), explosionPower, World.ExplosionSourceType.BLOCK);
                 }
             }
-        } else {
-            this.resetProgress();
+        }
+    } else {
+        this.resetProgress();
+    }
+    @Override
+    public RecipeType<MicrowaveRecipe> getRecipeType() {
+        return MicrowaveRecipe.Type.INSTANCE;
+    }
+
+    @Override
+    public void craft(World world, MicrowaveRecipe recipe) {
+        ItemStack first = items.getFirst();
+        if (recipe.hasEvent()) {
+            recipe.getEvent().apply((ServerWorld) world, pos);
+        }
+
+        if (!first.isEmpty()) {
+            setStack(0, recipe.craft(new SimpleInventory(first), world.getRegistryManager()));
+            reset();
         }
     }
 
-    private void updateMaxProgress() {
-        Optional<RecipeEntry<MicrowaveRecipe>> recipe = getCurrentRecipe();
+    @Override
+    public void reset() {
+        cachedItem = ItemStack.EMPTY;
+        cachedRecipe = null;
 
-        maxProgress = recipe.get().value().getMaxProgress();
-    }
-
-    private void craftRecipe() {
-        Optional<RecipeEntry<MicrowaveRecipe>> recipe = getCurrentRecipe();
-
-        this.setStack(INPUT_SLOT, recipe.get().value().craft(new SimpleInventory(this.getStack(0)), Objects.requireNonNull(this.world).getRegistryManager()));
-    }
-
-    private void resetProgress() { this.progress = 0; }
-
-    private boolean craftingFinished() { return this.maxProgress == this.progress;}
-
-    private void addProgress() { progress++; }
-
-    private boolean hasRecipe() {
-        Optional<RecipeEntry<MicrowaveRecipe>> recipe = getCurrentRecipe();
-        return recipe.isPresent();
-    }
-
-    private Optional<RecipeEntry<MicrowaveRecipe>> getCurrentRecipe() {
-        SimpleInventory inv = new SimpleInventory(this.size());
-
-        for (int i = 0; i < this.size(); i++) {
-            inv.setStack(i, this.getStack(i));
-        }
-        return Objects.requireNonNull(getWorld()).getRecipeManager().getFirstMatch(MicrowaveRecipe.Type.INSTANCE, inv, getWorld());
-    }
-
-    private void playMicrowaveSound(World world, BlockPos pos, BlockState state, boolean on) {
-        if (on && !state.get(OPEN)) {
-            world.playSound(null, pos, CookItSounds.MICROWAVE_SOUND_EVENT, SoundCategory.BLOCKS, 0.3f, 1.0f);
-            world.setBlockState(pos, state.with(ON, true));
-        } else {
-            world.setBlockState(pos, state.with(ON, false));
-            if (state.get(OPEN)) return;
-            world.playSound(null, pos, CookItSounds.MICROWAVE_BEEP_EVENT, SoundCategory.BLOCKS, 1.0f, 1.0f);
-        }
     }
 }
 

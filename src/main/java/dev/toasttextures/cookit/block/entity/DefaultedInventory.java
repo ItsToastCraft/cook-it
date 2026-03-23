@@ -41,6 +41,27 @@ public interface DefaultedInventory extends Inventory {
         return getItems().size();
     }
 
+
+    /**
+     * Finds the index of the first empty slot.
+     * Returns -1 if not found.
+     */
+    default int firstEmpty() {
+        for (int i = 0; i < getItems().size(); i++) {
+            if (getStack(i).isEmpty()) return i;
+        }
+        return -1;
+    }
+
+    default boolean fillFirst(ItemStack stack) {
+        if (stack.isEmpty()) return false;
+        int available = firstEmpty();
+        if (available == -1) return false;
+
+        setStack(available, stack.split(1));
+        return true;
+    }
+
     /**
      * Checks if the inventory is empty.
      *

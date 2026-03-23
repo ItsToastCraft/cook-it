@@ -1,10 +1,11 @@
 package dev.toasttextures.cookit.block.food_blocks.pizza;
+
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
-import net.minecraft.text.MutableText;
+import net.minecraft.nbt.NbtString;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
@@ -20,12 +21,20 @@ public class PizzaTopping {
     private final Identifier id;
     private final Item item;
     private final Identifier texture;
+    private NbtString nbt;
 
     private PizzaTopping(Identifier id, Item item, Identifier texture) {
         this.id = id;
         this.translationKey = Text.translatable("topping." + id.getNamespace() + "." + id.getPath()).formatted(Formatting.BLUE);
         this.item = item;
         this.texture = texture;
+    }
+
+    public NbtString asNbt() {
+        if (nbt == null) {
+            nbt = NbtString.of(this.toString());
+        }
+        return nbt;
     }
 
     public static PizzaTopping register(Identifier id, Item item, Identifier texture) {
@@ -36,22 +45,6 @@ public class PizzaTopping {
             }
             return new PizzaTopping(id, item, texture);
         }));
-    }
-
-    public Identifier getTexture() {
-        return texture;
-    }
-
-    public Identifier getId() {
-        return id;
-    }
-
-    public MutableText getTranslationKey() {
-        return translationKey.copy();
-    }
-
-    public Item getItem() {
-        return item;
     }
 
     public static PizzaTopping byItem(Item item) {
@@ -97,5 +90,21 @@ public class PizzaTopping {
             return null;
         }
         return compound.getList(TOPPINGS_KEY, NbtElement.STRING_TYPE);
+    }
+
+    public Identifier getTexture() {
+        return texture;
+    }
+
+    public Identifier getId() {
+        return id;
+    }
+
+    public Text getTranslationKey() {
+        return translationKey;
+    }
+
+    public Item getItem() {
+        return item;
     }
 }

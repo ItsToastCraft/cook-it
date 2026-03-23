@@ -9,36 +9,47 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.StateManager;
-import net.minecraft.state.property.Properties;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-public class CuttingBoard extends HorizontalFacingBlock implements BlockEntityProvider {
+import static net.minecraft.state.property.Properties.HORIZONTAL_FACING;
+
+public class CuttingBoard extends BlockWithEntity {
+    private static final VoxelShape NORTH_SOUTH_SHAPE = createCuboidShape(0.0, 0f, 2.0, 16.0, 1.0f, 14.0);
+    private static final VoxelShape EAST_WEST_SHAPE = createCuboidShape(2.0, 0f, 0.0, 14.0, 0.5f, 16.0);
+
     private final WoodType type;
 
     public CuttingBoard(Settings settings, WoodType type) {
         super(settings);
         this.type = type;
-        setDefaultState(getDefaultState().with(Properties.HORIZONTAL_FACING, Direction.EAST));
+        setDefaultState(getDefaultState().with(HORIZONTAL_FACING, Direction.EAST));
     }
 
-    public WoodType getType() {
+    @Override
+    public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext ctx) {
+        return switch (state.get(HORIZONTAL_FACING)) {
+            case NORTH, SOUTH -> NORTH_SOUTH_SHAPE;
+            default -> EAST_WEST_SHAPE;
+        };
+    }
+
+    public WoodType getWoodType() {
         return type;
     }
 
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        builder.add(Properties.HORIZONTAL_FACING);
+        builder.add(HORIZONTAL_FACING);
     }
 
     @Override
@@ -52,7 +63,7 @@ public class CuttingBoard extends HorizontalFacingBlock implements BlockEntityPr
         if (heldItem.isOf(CookItItems.FRYER_BASKET)) return ActionResult.PASS;
 
         if (heldItem.isEmpty()) {
-            if (!blockEntity.processRecipe(heldItem, false)) {
+            if (!blockEntity.process(world, heldItem, false)) {
                 blockEntity.retrieve();
                 blockEntity.reset();
             }
@@ -60,28 +71,26 @@ public class CuttingBoard extends HorizontalFacingBlock implements BlockEntityPr
         }
         if (blockEntity.isEmpty()) {
             blockEntity.setStack(0, heldItem.split(1));
-        } else if (!blockEntity.processRecipe(heldItem, false)) {
+        } else if (!blockEntity.process(world, heldItem, false)) {
             pickUpCookingBoardItems(state, world, pos, player);
         }
 
         return ActionResult.SUCCESS;
     }
 
-    // pickups items, boolean used to cancel the block break if the block wasn't empty
+    // picks up items, boolean used to cancel the block break if the block wasn't empty
     public void pickUpCookingBoardItems(BlockState state, World world, BlockPos pos, PlayerEntity player) {
         CuttingBoardEntity blockEntity = (CuttingBoardEntity) world.getBlockEntity(pos);
         if (blockEntity != null && !blockEntity.isEmpty() && player.isSneaking()) {
             player.getInventory().insertStack(blockEntity.getStack(0));
-            blockEntity.setClicks(0);
+            blockEntity.setInteractions(0);
             world.updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
         }
     }
 
-    public boolean resetRecipe(CuttingBoardEntity blockEntity) {
-
+    public boolean resetRecipe(World world, CuttingBoardEntity blockEntity) {
         if (blockEntity != null && !blockEntity.isEmpty()) {
-
-            return !blockEntity.processRecipe(ItemStack.EMPTY, true);
+            return !blockEntity.process(world, ItemStack.EMPTY, true);
         }
         return true;
     }
@@ -98,28 +107,19 @@ public class CuttingBoard extends HorizontalFacingBlock implements BlockEntityPr
     // pick up item in survival before break
     @Override
     public void onBlockBreakStart(BlockState state, World world, BlockPos pos, PlayerEntity player) {
-        if (!world.isClient) {
-            CuttingBoardEntity blockEntity = (CuttingBoardEntity) world.getBlockEntity(pos);
-            if (blockEntity != null) {
-                blockEntity.processRecipe(ItemStack.EMPTY, true);
-            }
+        if (world.isClient) return;
+
+        CuttingBoardEntity blockEntity = (CuttingBoardEntity) world.getBlockEntity(pos);
+        if (blockEntity != null) {
+            blockEntity.process(world, ItemStack.EMPTY, true);
         }
+
         super.onBlockBreakStart(state, world, pos, player);
     }
 
     @Override
-    public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext ctx) {
-        Direction dir = state.get(FACING);
-        return switch (dir) {
-            case EAST, WEST -> VoxelShapes.cuboid(0.125f, 0.0f, 0.0f, 0.875f, 0.0625f, 1.0f);
-            case NORTH, SOUTH -> VoxelShapes.cuboid(0.0f, 0.0f, 0.125f, 1.0f, 0.0625f, 0.875f);
-            default -> VoxelShapes.fullCube();
-        };
-    }
-
-    @Override
     public BlockState getPlacementState(ItemPlacementContext ctx) {
-        return Objects.requireNonNull(super.getPlacementState(ctx)).with(Properties.HORIZONTAL_FACING, ctx.getHorizontalPlayerFacing().getOpposite());
+        return Objects.requireNonNull(super.getPlacementState(ctx)).with(HORIZONTAL_FACING, ctx.getHorizontalPlayerFacing().getOpposite());
     }
 
     @Nullable

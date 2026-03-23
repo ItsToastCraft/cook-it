@@ -1,127 +1,122 @@
 package dev.toasttextures.cookit.block.entity;
 
-import dev.toasttextures.cookit.block.food_blocks.pizza.PizzaToppings;
+import dev.toasttextures.cookit.block.food_blocks.pizza.PizzaTopping;
 import dev.toasttextures.cookit.registries.CookItBlocks;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtString;
 import net.minecraft.particle.ItemStackParticleEffect;
 import net.minecraft.particle.ParticleTypes;
-import net.minecraft.recipe.RecipeEntry;
+import net.minecraft.recipe.RecipeType;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.BlockPos;
-import dev.toasttextures.cookit.block.ImplementedInventory;
 import dev.toasttextures.cookit.recipes.CuttingBoardRecipe;
 import dev.toasttextures.cookit.registries.CookItBlockEntities;
+import net.minecraft.world.World;
 
 import java.util.List;
-import java.util.Objects;
 
-public class CuttingBoardEntity extends CookingBlockEntity implements ImplementedInventory {
-    private int clicks = 0;
+public class CuttingBoardEntity extends CookingBlockEntity<CuttingBoardRecipe> {
+    private int interactions = 0;
 
     public CuttingBoardEntity(BlockPos pos, BlockState state) {
-        super(CookItBlockEntities.CUTTING_BOARD_ENTITY, pos, state, 1);
+        super(CookItBlockEntities.CUTTING_BOARD, pos, state, 1);
     }
+
     @Override
     public void readNbt(NbtCompound nbt) {
         super.readNbt(nbt);
-
-        this.clicks = nbt.getInt("clicks");
+        this.interactions = nbt.getInt(INTERACTIONS_KEY);
     }
 
     @Override
     public void writeNbt(NbtCompound nbt) {
-        nbt.putInt("clicks", clicks);
+        nbt.putInt(INTERACTIONS_KEY, interactions);
         super.writeNbt(nbt);
     }
 
-    public void setClicks(int clicks) {
-        this.clicks = clicks;
+    public int getInteractions() {
+        return this.interactions;
     }
-    public int getClicks() { return this.clicks; }
 
-    // This function returns whether it was successful
-    public boolean processRecipe(ItemStack tool, boolean tryReset) {
-        if (this.getStack(0).isOf(CookItBlocks.UNCOOKED_PIZZA.asItem())) {
-            if (processPizza(tool))
-                return true;
+    public void setInteractions(int interactions) {
+        this.interactions = interactions;
+    }
+
+    @Override
+    public RecipeType<CuttingBoardRecipe> getRecipeType() {
+        return CuttingBoardRecipe.Type.INSTANCE;
+    }
+
+    public boolean process(World world, ItemStack tool, boolean shouldReset) {
+        ItemStack first = items.getFirst();
+        if (world.isClient) return false;
+
+        if (first.isOf(CookItBlocks.UNCOOKED_PIZZA.asItem())) {
+            return craftPizza(tool);
         }
+        List<CuttingBoardRecipe> recipes = getRecipes(0);
+        if (recipes.isEmpty()) return false;
 
-        List<RecipeEntry<CuttingBoardRecipe>> recipes = getCurrentRecipe();
-        if (!recipes.isEmpty()) {
-            for(RecipeEntry<CuttingBoardRecipe> recipeEntry : recipes) {
-                if (tryReset) {
-                    if (recipeEntry.value().isResetable() && tool.isEmpty()) {
-                        complete(recipeEntry);
-
-                        return true;
-                    }
-                } else {
-                    for (ItemStack otherTool : recipeEntry.value().getTool()) {
-                        if (tool.getItem().asItem().equals(otherTool.getItem()) && !recipeEntry.value().isResetable()) {
-                            this.clicks++;
-                            Objects.requireNonNull(world).playSound(null, pos.getX(), pos.getY(), pos.getZ(), SoundEvents.ENTITY_ITEM_FRAME_REMOVE_ITEM, SoundCategory.BLOCKS, 0.5f, 0.25f);
-                            ((ServerWorld) Objects.requireNonNull(world)).spawnParticles(new ItemStackParticleEffect(ParticleTypes.ITEM, recipeEntry.value().getResult(null)), pos.getX() + 0.5f, pos.getY(), pos.getZ() + 0.5f, 10, 0f,0.025f,0.0f,0.125f);
-                            if (recipeEntry.value().usesItem()) { tool.decrement(1); }
-                            if (this.getClicks() < recipeEntry.value().getClicks()) { return true; }
-                            complete(recipeEntry);
-                            return true;
-                        }
-                    }
+        for (CuttingBoardRecipe recipe : getRecipes(0)) {
+            if (recipe.resets()) {
+                if (shouldReset && tool.isEmpty()) {
+                    craft(world, recipe);
                 }
+                return true;
+            }
+            for (ItemStack stack : recipe.getTool()) {
+                if (!tool.isOf(stack.getItem())) continue;
+
+                world.playSound(null, pos, SoundEvents.ENTITY_ITEM_FRAME_REMOVE_ITEM, SoundCategory.BLOCKS, 0.5f, 0.25f);
+                ((ServerWorld) world).spawnParticles(new ItemStackParticleEffect(ParticleTypes.ITEM, recipe.getOutput(null)), pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, 10, 0.0, 0.125, 0.0, 0.125);
+
+                this.interactions++;
+                if (recipe.usesItem()) {
+                    tool.decrement(1);
+                }
+
+                if (interactions < recipe.getInteractions()) return true;
+
+                craft(world, recipe);
+                return true;
             }
         }
         return false;
     }
 
-    public boolean processPizza(ItemStack tool) {
+    public boolean craftPizza(ItemStack stack) {
+        NbtList toppings = PizzaTopping.parse(items.getFirst().getSubNbt(PizzaTopping.TOPPINGS_KEY));
+        if (toppings == null) return false;
+        if (toppings.size() == 3) return false;
 
-        NbtList toppings = this.getStack(0).getOrCreateSubNbt("BlockEntityTag").getList("toppings", NbtElement.STRING_TYPE);
+        PizzaTopping topping = PizzaTopping.byItem(stack.getItem());
+        if (topping == null) return false;
 
-        // The pizza has maxed out toppings, so no change happened
-        if (toppings.size() == 3) {
-            return false;
-        }
-
-        // Try and get the topping from the held item, so the pizza has changed
-        PizzaToppings topping = PizzaToppings.fromItem(tool.getItem());
-        if (topping != null) {
-
-            // no need to loop, at this point we're already sure there's a topping slot available.
-            toppings.add(NbtString.of(topping.asString()));
-            tool.decrement(1);
-            // set the topping to whatever it is
-            this.getStack(0).getOrCreateSubNbt("BlockEntityTag").put("toppings", toppings);
-            this.markDirty();
-            Objects.requireNonNull(world).updateListeners(pos, this.getCachedState(), this.getCachedState(), Block.NOTIFY_LISTENERS);
-            return true;
-        }
-        return false;
+        toppings.copy().add(NbtString.of(topping.toString()));
+        stack.decrement(1);
+        items.getFirst().getOrCreateNbt().put(PizzaTopping.TOPPINGS_KEY, toppings);
+        return true;
     }
 
-    private void complete(RecipeEntry<CuttingBoardRecipe> recipeEntry) {
-
-        ItemStack output = recipeEntry.value().craft(new SimpleInventory(this.getStack(0)), this.world.getRegistryManager());
-        output.setCount(recipeEntry.value().getOutputCount());
-        this.setStack(0, output);
-        this.setClicks(0);
-        this.markDirty();
-        world.updateListeners(pos, this.getCachedState(), this.getCachedState(), Block.NOTIFY_LISTENERS);
+    @Override
+    public void reset() {
+        interactions = 0;
+        markDirty();
     }
 
-    private List<RecipeEntry<CuttingBoardRecipe>> getCurrentRecipe() {
-        SimpleInventory inv = new SimpleInventory(this.size());
-        for (int i = 0; i < this.size(); i++) {
-            inv.setStack(i, this.getStack(i));
+    @Override
+    public void craft(World world, CuttingBoardRecipe recipe) {
+        ItemStack first = items.getFirst();
+
+        if (!first.isEmpty()) {
+            setStack(0, recipe.craft(new SimpleInventory(first), world.getRegistryManager()));
+            reset();
         }
-        return Objects.requireNonNull(world).getRecipeManager().getAllMatches(CuttingBoardRecipe.Type.INSTANCE, inv, world);
     }
 }

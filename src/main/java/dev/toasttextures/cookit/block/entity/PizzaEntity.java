@@ -20,15 +20,15 @@ public class PizzaEntity extends BlockEntity {
     private static final String SLICE_COUNT_KEY = "Slices";
     private static final String COOKED_KEY = "Cooked";
     private NbtList toppings = new NbtList();
-    private boolean isCooked = false;
+    private boolean isCooked;
     private int sliceCount = 4;
 
     public PizzaEntity(BlockPos pos, BlockState state) {
-        super(CookItBlockEntities.PIZZA_ENTITY, pos, state);
+        this(pos, state, false);
     }
 
     public PizzaEntity(BlockPos pos, BlockState state, boolean isCooked) {
-        super(CookItBlockEntities.PIZZA_ENTITY, pos, state);
+        super(CookItBlockEntities.PIZZA, pos, state);
         this.isCooked = isCooked;
     }
 

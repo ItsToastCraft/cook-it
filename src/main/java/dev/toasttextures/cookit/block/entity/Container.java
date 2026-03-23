@@ -55,17 +55,18 @@ public class Container extends BlockEntity implements DefaultedInventory {
         return items;
     }
 
+    public ItemStack retrieve() {
+        return retrieve(item -> true);
+    }
+
     public ItemStack retrieve(Predicate<Item> exclusions) {
-        for (ItemStack stack : items) {
+        for (int i = items.size(); i >= 0; i--) {
+            ItemStack stack = getStack(i);
             if (exclusions.test(stack.getItem())) {
                 return stack;
             }
         }
         return ItemStack.EMPTY;
-    }
-
-    public ItemStack retrieve() {
-        return retrieve(item -> true);
     }
 
     @Override
@@ -111,7 +112,7 @@ public class Container extends BlockEntity implements DefaultedInventory {
 
     public static void appendToolTip(ItemStack container, List<Text> tooltip, Predicate<Item> exclusions) {
         int startSize = tooltip.size();
-        for (ItemStack stack :getItems(container)) {
+        for (ItemStack stack : getItems(container)) {
             if (exclusions.test(stack.getItem())) {
                 tooltip.add(stack.getName().copy().formatted(Formatting.BLUE));
             }

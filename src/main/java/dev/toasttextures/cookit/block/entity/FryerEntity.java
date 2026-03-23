@@ -24,8 +24,7 @@ import static net.minecraft.block.Block.NOTIFY_LISTENERS;
 import static net.minecraft.state.property.Properties.LIT;
 
 public class FryerEntity extends CookingBlockEntity<FryerRecipe> implements Transferable {
-    private final RecipeType<FryerRecipe> recipeType = FryerRecipe.Type.INSTANCE;
-    int progress = 0;
+    private int progress = 0;
     private int maxProgress = 0;
 
     private ItemStack cachedItem = ItemStack.EMPTY;
@@ -39,12 +38,12 @@ public class FryerEntity extends CookingBlockEntity<FryerRecipe> implements Tran
     @Override
     public void readNbt(NbtCompound nbt) {
         super.readNbt(nbt);
-        progress = nbt.getInt("Progress");
+        progress = nbt.getInt(PROGRESS_KEY);
     }
 
     @Override
     public void writeNbt(NbtCompound nbt) {
-        nbt.putInt("Progress", progress);
+        nbt.putInt(PROGRESS_KEY, progress);
         super.writeNbt(nbt);
     }
 
@@ -79,6 +78,11 @@ public class FryerEntity extends CookingBlockEntity<FryerRecipe> implements Tran
 
             ((ServerWorld) world).spawnParticles(CookIt.OIL_PARTICLE, particleX, particleY, particleZ, 1, 0.0, 0.0, 0.0, 0.0);
         }
+    }
+
+    @Override
+    public RecipeType<FryerRecipe> getRecipeType() {
+        return FryerRecipe.Type.INSTANCE;
     }
 
     @Override

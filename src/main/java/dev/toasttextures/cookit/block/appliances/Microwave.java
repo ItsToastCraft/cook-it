@@ -9,12 +9,14 @@ import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.StringIdentifiable;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -22,6 +24,9 @@ import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 
 import static net.minecraft.state.property.Properties.*;
 
@@ -105,4 +110,23 @@ public class Microwave extends BlockWithEntity {
         return new MicrowaveEntity(pos, state);
     }
 
+    public enum Event implements StringIdentifiable {
+        NONE((world, pos) -> {}),
+        EXPLOSION((world, pos) -> world.createExplosion(null, pos.getX(), pos.getY(), pos.getZ(), 3, World.ExplosionSourceType.BLOCK));
+
+        private final BiConsumer<ServerWorld, BlockPos> processor;
+
+        Event(BiConsumer<ServerWorld, BlockPos> processor) {
+            this.processor = processor;
+        }
+
+        public void apply(ServerWorld world, BlockPos pos) {
+            this.processor.accept(world, pos);
+        }
+
+        @Override
+        public String asString() {
+            return this.name().toLowerCase();
+        }
+    }
 }

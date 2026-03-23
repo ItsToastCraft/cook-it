@@ -1,6 +1,5 @@
 package dev.toasttextures.cookit.block.appliances;
 
-import com.mojang.serialization.MapCodec;
 import dev.toasttextures.cookit.block.entity.OvenEntity;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
@@ -13,9 +12,6 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
-import net.minecraft.state.property.BooleanProperty;
-import net.minecraft.state.property.Properties;
-import net.minecraft.state.property.Property;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
@@ -25,46 +21,41 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import dev.toasttextures.cookit.registries.CookItBlockEntities;
 import static dev.toasttextures.cookit.registries.CookItBlocks.CONTAINERS;
+import static net.minecraft.state.property.Properties.HORIZONTAL_FACING;
+import static net.minecraft.state.property.Properties.OPEN;
 
 public class Oven extends BlockWithEntity implements BlockEntityProvider {
-    public static final BooleanProperty OPEN = BooleanProperty.of("open");
-    public static final BooleanProperty DONE = BooleanProperty.of("done");
-
-    public static final Property<Direction> FACING = Properties.HORIZONTAL_FACING;
-
     public Oven(Settings settings) {
         super(settings);
-        setDefaultState(getDefaultState().with(OPEN, false).with(DONE, false).with(FACING, Direction.NORTH));
+        setDefaultState(getDefaultState()
+                .with(OPEN, false)
+                .with(HORIZONTAL_FACING, Direction.NORTH));
     }
 
     @Override
-    protected MapCodec<? extends BlockWithEntity> getCodec() {
-        return null;
-    }
-    @Override
     public BlockRenderType getRenderType(BlockState state) {
-        return BlockRenderType.MODEL /*that does something*/ ;
+        return BlockRenderType.MODEL;
     }
 
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        builder.add(OPEN).add(DONE).add(FACING);
+        builder.add(OPEN, HORIZONTAL_FACING);
     }
 
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        world.updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
+        if (world.isClient) return ActionResult.SUCCESS;
         OvenEntity blockEntity = (OvenEntity) world.getBlockEntity(pos);
 
-        if (world.isClient || blockEntity == null) {
-            return ActionResult.SUCCESS;
-        }
+        if (blockEntity == null) return ActionResult.SUCCESS;
 
         boolean open = state.get(OPEN);
 
         if (!open) {
             // Open the oven if it's closed and the player is not holding anything
-            if (player.getStackInHand(hand).isEmpty()) { openOven(world, pos, state, true); }
+            if (player.getStackInHand(hand).isEmpty()) {
+                openOven(world, pos, state, true);
+            }
         } else {
             ItemStack heldItem = player.getStackInHand(hand);
 
@@ -111,7 +102,6 @@ public class Oven extends BlockWithEntity implements BlockEntityProvider {
 
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
-        return validateTicker(type, CookItBlockEntities.OVEN_ENTITY,
-                (world1, pos, state1, blockEntity) -> blockEntity.tick(world, pos, state));
+        return checkType(type, CookItBlockEntities.OVEN, OvenEntity::tick);
     }
 }
