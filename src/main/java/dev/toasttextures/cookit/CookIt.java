@@ -10,8 +10,11 @@ import net.minecraft.particle.DefaultParticleType;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.Direction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Map;
 
 public class CookIt implements ModInitializer {
     public static final String MOD_ID = "cook-it";
@@ -40,4 +43,11 @@ public class CookIt implements ModInitializer {
             return true;
         });
     }
+
+    public static final Map<Direction, Float> DIRECTION_TO_FLOAT = Map.of(
+            Direction.NORTH, 0.0f,
+            Direction.SOUTH, 180.0f,
+            Direction.EAST, 90.0f,
+            Direction.WEST, 270.0f
+    );
 }

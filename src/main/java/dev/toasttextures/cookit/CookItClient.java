@@ -67,7 +67,7 @@ public class CookItClient implements ClientModInitializer {
 
         ColorProviderRegistry.BLOCK.register((state, view, pos, tintIndex) -> {
 
-            if (view != null && view.getBlockEntity(pos) instanceof MixingBowlEntity entity && state.get(MixingBowl.HAS_GOOP)) {
+            if (view != null && view.getBlockEntity(pos) instanceof MixingBowlEntity entity && state.get(MixingBowl.CONTAINS_LIQUID)) {
                 return entity.getGoopColor();
             }
             return 0xF8D478;

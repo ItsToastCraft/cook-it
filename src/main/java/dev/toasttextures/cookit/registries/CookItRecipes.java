@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import dev.toasttextures.cookit.recipes.*;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.RecipeType;
@@ -28,7 +29,7 @@ public class CookItRecipes {
     }
 
     public static ItemStack validateItemStack(JsonObject obj, boolean canBeEmpty) {
-        ItemStack stack = new ItemStack(JsonHelper.getItem(obj, "item"), JsonHelper.getInt(obj, "count", 1));
+        ItemStack stack = new ItemStack(JsonHelper.getItem(obj, "item", Items.AIR), JsonHelper.getInt(obj, "count", 1));
         if (!canBeEmpty && stack.isEmpty()) {
             throw new JsonSyntaxException("Empty item not allowed here");
         }

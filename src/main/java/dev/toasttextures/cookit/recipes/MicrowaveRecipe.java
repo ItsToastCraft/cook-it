@@ -1,8 +1,7 @@
 package dev.toasttextures.cookit.recipes;
 
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.DataResult;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.google.gson.JsonObject;
+import dev.toasttextures.cookit.block.appliances.Microwave;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
@@ -11,25 +10,25 @@ import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.RecipeType;
 import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
-import net.minecraft.util.dynamic.Codecs;
 import net.minecraft.world.World;
 
-import java.util.List;
+import java.util.Objects;
 
 public class MicrowaveRecipe implements Recipe<SimpleInventory> {
+    private final Identifier id;
     private final ItemStack output;
-    private final List<Ingredient> recipeItems;
+    private final Ingredient input;
     private final int maxProgress;
-    private final String event;
-    private final float explosionPower;
+    private final Microwave.Event event;
 
-    public MicrowaveRecipe(List<Ingredient> ingredients, ItemStack itemStack, int maxProgress, String event, float explosionPower) {
+    public MicrowaveRecipe(Identifier id, Ingredient input, ItemStack itemStack, int maxProgress, Microwave.Event event) {
+        this.id = id;
         this.output = itemStack;
-        this.recipeItems = ingredients;
+        this.input = input;
         this.maxProgress = maxProgress;
         this.event = event;
-        this.explosionPower = explosionPower;
     }
 
     @Override
@@ -37,11 +36,16 @@ public class MicrowaveRecipe implements Recipe<SimpleInventory> {
         if(world.isClient()) {
             return false;
         }
-        return recipeItems.get(0).test(inventory.getStack(0));
+        return input.test(inventory.getStack(0));
     }
 
     @Override
     public boolean isIgnoredInRecipeBook() { return true; }
+
+    @Override
+    public Identifier getId() {
+        return id;
+    }
 
     @Override
     public ItemStack craft(SimpleInventory inventory, DynamicRegistryManager registryManager) {
@@ -50,8 +54,8 @@ public class MicrowaveRecipe implements Recipe<SimpleInventory> {
 
     @Override
     public DefaultedList<Ingredient> getIngredients() {
-        DefaultedList<Ingredient> list = DefaultedList.ofSize(this.recipeItems.size());
-        list.addAll(recipeItems);
+        DefaultedList<Ingredient> list = DefaultedList.ofSize(1);
+        list.add(input);
         return list;
     }
 
@@ -59,12 +63,11 @@ public class MicrowaveRecipe implements Recipe<SimpleInventory> {
         return maxProgress;
     }
 
-    public String getEvent() {
+    public Microwave.Event getEvent() {
         return event;
     }
-
-    public float getExplosionPower() {
-        return explosionPower;
+    public boolean hasEvent() {
+        return event != null && event != Microwave.Event.NONE;
     }
 
     @Override
@@ -73,7 +76,7 @@ public class MicrowaveRecipe implements Recipe<SimpleInventory> {
     }
 
     @Override
-    public ItemStack getResult(DynamicRegistryManager registryManager) {
+    public ItemStack getOutput(DynamicRegistryManager registryManager) {
         return output;
     }
 
@@ -93,55 +96,51 @@ public class MicrowaveRecipe implements Recipe<SimpleInventory> {
 
     public static class Serializer implements RecipeSerializer<MicrowaveRecipe> {
         public static final Serializer INSTANCE = new Serializer();
-        public static final Codec<MicrowaveRecipe> CODEC = RecordCodecBuilder.create(in -> in.group(
-                validateAmount(Ingredient.DISALLOW_EMPTY_CODEC, 9).fieldOf("ingredients").forGetter(MicrowaveRecipe::getIngredients),
-                ItemStack.RECIPE_RESULT_CODEC.fieldOf("output").forGetter(r -> r.output),
+//        public static final Codec<MicrowaveRecipe> CODEC = RecordCodecBuilder.create(in -> in.group(
+//                validateAmount(Ingredient.DISALLOW_EMPTY_CODEC, 9).fieldOf("ingredients").forGetter(MicrowaveRecipe::getIngredients),
+//                ItemStack.RECIPE_RESULT_CODEC.fieldOf("output").forGetter(r -> r.output),
+//
+//                Codec.INT.fieldOf("time").forGetter(MicrowaveRecipe::getMaxProgress),
+//
+//                Codec.STRING.optionalFieldOf("event", "none:none").forGetter(MicrowaveRecipe::getEvent),
+//
+//                Codecs.validate(Codec.FLOAT, a -> a < 0 ? DataResult.error(() -> "Negative recipe explosion power") : DataResult.success(a))
+//                        .optionalFieldOf("explosion_power", 0.0f).forGetter(MicrowaveRecipe::getExplosionPower)
+//        ).apply(in, MicrowaveRecipe::new));
+//
+//        private static Codec<List<Ingredient>> validateAmount(Codec<Ingredient> delegate, int max) {
+//            return Codecs.validate(Codecs.validate(
+//                    delegate.listOf(), list -> list.size() > max ? DataResult.error(() -> "Recipe has too many ingredients!") : DataResult.success(list)),
+//                    list -> list.isEmpty() ? DataResult.error(() -> "Recipe has no ingredients!") : DataResult.success(list));
+//        }
+//
+//        @Override
+//        public Codec<MicrowaveRecipe> codec() {
+//            return CODEC;
+//        }
 
-                Codec.INT.fieldOf("time").forGetter(MicrowaveRecipe::getMaxProgress),
-
-                Codec.STRING.optionalFieldOf("event", "none:none").forGetter(MicrowaveRecipe::getEvent),
-
-                Codecs.validate(Codec.FLOAT, a -> a < 0 ? DataResult.error(() -> "Negative recipe explosion power") : DataResult.success(a))
-                        .optionalFieldOf("explosion_power", 0.0f).forGetter(MicrowaveRecipe::getExplosionPower)
-        ).apply(in, MicrowaveRecipe::new));
-
-        private static Codec<List<Ingredient>> validateAmount(Codec<Ingredient> delegate, int max) {
-            return Codecs.validate(Codecs.validate(
-                    delegate.listOf(), list -> list.size() > max ? DataResult.error(() -> "Recipe has too many ingredients!") : DataResult.success(list)),
-                    list -> list.isEmpty() ? DataResult.error(() -> "Recipe has no ingredients!") : DataResult.success(list));
+        @Override
+        public MicrowaveRecipe read(Identifier id, JsonObject json) {
+            return null;
         }
 
         @Override
-        public Codec<MicrowaveRecipe> codec() {
-            return CODEC;
-        }
-
-        @Override
-        public MicrowaveRecipe read(PacketByteBuf buf) {
-            DefaultedList<Ingredient> inputs = DefaultedList.ofSize(buf.readInt(), Ingredient.EMPTY);
-
-            inputs.replaceAll(ignored -> Ingredient.fromPacket(buf));
-
-            ItemStack output = buf.readItemStack();
-            int time = buf.readInt();
-            String event = buf.readString();
-            float explosionPower = buf.readFloat();
-            return new MicrowaveRecipe(inputs, output, time, event, explosionPower);
+        public MicrowaveRecipe read(Identifier id, PacketByteBuf buf) {
+            return new MicrowaveRecipe(
+                    id,
+                    Ingredient.fromPacket(buf),
+                    buf.readItemStack(),
+                    buf.readInt(),
+                    Objects.requireNonNullElse(buf.readEnumConstant(Microwave.Event.class), Microwave.Event.NONE)
+            );
         }
 
         @Override
         public void write(PacketByteBuf buf, MicrowaveRecipe recipe) {
-            buf.writeInt(recipe.getIngredients().size());
-
-            for (Ingredient ingredient : recipe.getIngredients()) {
-
-                ingredient.write(buf);
-            }
-
-            buf.writeItemStack(recipe.getResult(null));
+            recipe.input.write(buf);
+            buf.writeItemStack(recipe.output);
             buf.writeInt(recipe.maxProgress);
-            buf.writeString(recipe.event);
-            buf.writeFloat(recipe.explosionPower);
+            buf.writeEnumConstant(recipe.event);
         }
     }
 }
