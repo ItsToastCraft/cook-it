@@ -1,4 +1,4 @@
-package dev.toasttextures.cookit.block.food_blocks.pizza;
+package dev.toasttextures.cookit.block.food.pizza;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;

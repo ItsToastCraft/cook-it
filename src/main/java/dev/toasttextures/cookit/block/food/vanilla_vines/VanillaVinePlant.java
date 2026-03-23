@@ -1,7 +1,5 @@
-package dev.toasttextures.cookit.block.food_blocks;
+package dev.toasttextures.cookit.block.food.vanilla_vines;
 
-import com.mojang.serialization.MapCodec;
-import dev.toasttextures.cookit.CookIt;
 import dev.toasttextures.cookit.registries.CookItBlocks;
 import dev.toasttextures.cookit.registries.CookItItems;
 import net.minecraft.block.*;
@@ -9,7 +7,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
-import net.minecraft.state.property.Properties;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
@@ -21,31 +18,34 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldView;
 
-public class VanillaVinePlant extends AbstractPlantBlock implements Fertilizable, VanillaVines {
-    public static final MapCodec<VanillaVinePlant> CODEC = createCodec(VanillaVinePlant::new);
+import static net.minecraft.state.property.Properties.HORIZONTAL_FACING;
 
-    @Override
-    public MapCodec<VanillaVinePlant> getCodec() {
-        return CODEC;
-    }
+public class VanillaVinePlant extends AbstractPlantBlock implements Fertilizable, VanillaVines {
 
     public VanillaVinePlant(Settings settings) {
         super(settings, Direction.DOWN, EAST, false);
-        this.setDefaultState(this.stateManager.getDefaultState().with(PLANT_STATE, 0).with(Properties.HORIZONTAL_FACING, Direction.EAST));
+        setDefaultState(getDefaultState()
+                .with(PLANT_STATE, Stage.EMPTY)
+                .with(HORIZONTAL_FACING, Direction.EAST));
     }
 
     @Override
     protected AbstractPlantStemBlock getStem() {
-        return (AbstractPlantStemBlock) CookItBlocks.VANILLA_VINE_STEM;
+        return CookItBlocks.VANILLA_VINE_STEM;
+    }
+
+    @Override
+    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+        builder.add(PLANT_STATE).add(HORIZONTAL_FACING);
     }
 
     @Override
     protected BlockState copyState(BlockState from, BlockState to) {
-        return to.with(PLANT_STATE, from.get(PLANT_STATE)).with(Properties.HORIZONTAL_FACING, from.get(Properties.HORIZONTAL_FACING));
+        return to.with(PLANT_STATE, from.get(PLANT_STATE)).with(HORIZONTAL_FACING, from.get(HORIZONTAL_FACING));
     }
 
     @Override
-    public ItemStack getPickStack(WorldView world, BlockPos pos, BlockState state) {
+    public ItemStack getPickStack(BlockView world, BlockPos pos, BlockState state) {
         return new ItemStack(CookItItems.VANILLA_BEAN);
     }
 
@@ -55,13 +55,8 @@ public class VanillaVinePlant extends AbstractPlantBlock implements Fertilizable
     }
 
     @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        builder.add(PLANT_STATE).add(Properties.HORIZONTAL_FACING);
-    }
-
-    @Override
-    public boolean isFertilizable(WorldView world, BlockPos pos, BlockState state) {
-        return state.get(PLANT_STATE) < 2;
+    public boolean isFertilizable(WorldView world, BlockPos pos, BlockState state, boolean isClient) {
+        return state.get(PLANT_STATE).ordinal() < 2;
     }
 
     @Override
@@ -71,27 +66,19 @@ public class VanillaVinePlant extends AbstractPlantBlock implements Fertilizable
 
     @Override
     public void grow(ServerWorld world, Random random, BlockPos pos, BlockState state) {
-        if (state.get(PLANT_STATE) == 0) {
-            world.setBlockState(pos, state.with(PLANT_STATE, 1), Block.NOTIFY_LISTENERS);
+        if (state.get(PLANT_STATE) == Stage.EMPTY) {
+            world.setBlockState(pos, state.with(PLANT_STATE, Stage.BLOOMED), Block.NOTIFY_LISTENERS);
         }
     }
     @Override
     public void randomTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
         super.randomTick(state, world, pos, random);
-        if (state.get(PLANT_STATE) == 1) {
+        if (state.get(PLANT_STATE) != Stage.BLOOMED) return;
 
-            world.setBlockState(pos, state.with(PLANT_STATE, 2), Block.NOTIFY_LISTENERS);
-        }
+        world.setBlockState(pos, state.with(PLANT_STATE, Stage.HARVESTABLE), Block.NOTIFY_LISTENERS);
     }
     @Override
     public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        Direction dir = state.get(Properties.HORIZONTAL_FACING);
-        switch (dir) {
-            case NORTH -> { return NORTH; }
-            case WEST -> { return WEST; }
-            case SOUTH -> { return SOUTH; }
-            default -> { return EAST; }
-        }
+        return getOutlineShape(state.get(HORIZONTAL_FACING));
     }
-
 }

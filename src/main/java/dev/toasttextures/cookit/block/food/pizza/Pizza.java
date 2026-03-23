@@ -1,4 +1,4 @@
-package dev.toasttextures.cookit.block.food_blocks.pizza;
+package dev.toasttextures.cookit.block.food.pizza;
 
 import dev.toasttextures.cookit.block.entity.PizzaEntity;
 import net.minecraft.block.*;
