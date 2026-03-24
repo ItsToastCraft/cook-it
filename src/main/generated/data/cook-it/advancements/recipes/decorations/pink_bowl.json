@@ -22,13 +22,14 @@
   },
   "requirements": [
     [
-      "has_the_recipe",
-      "has_pink_bowl"
+      "has_pink_bowl",
+      "has_the_recipe"
     ]
   ],
   "rewards": {
     "recipes": [
       "cook-it:pink_bowl"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

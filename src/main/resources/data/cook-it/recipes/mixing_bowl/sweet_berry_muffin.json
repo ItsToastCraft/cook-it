@@ -1,6 +1,6 @@
 {
   "type": "cook-it:mixing",
-  "ingredients": [
+  "inputs": [
     {
       "item": "minecraft:egg"
     },
@@ -22,7 +22,7 @@
     "item": "cook-it:sweet_berry_muffin",
     "count": 6
   },
-  "clicks": 4,
+  "interactions": 4,
   "liquid": {
     "item": "minecraft:milk_bucket"
   },

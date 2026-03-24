@@ -12,5 +12,6 @@
   ],
   "result": {
     "item": "cook-it:light_gray_bowl"
-  }
+  },
+  "show_notification": true
 }

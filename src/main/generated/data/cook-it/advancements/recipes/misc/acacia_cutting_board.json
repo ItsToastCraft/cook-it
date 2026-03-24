@@ -22,13 +22,14 @@
   },
   "requirements": [
     [
-      "has_the_recipe",
-      "has_acacia_slab"
+      "has_acacia_slab",
+      "has_the_recipe"
     ]
   ],
   "rewards": {
     "recipes": [
       "cook-it:acacia_cutting_board"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

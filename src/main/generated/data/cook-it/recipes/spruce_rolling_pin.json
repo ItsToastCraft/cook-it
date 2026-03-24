@@ -16,5 +16,6 @@
   ],
   "result": {
     "item": "cook-it:spruce_rolling_pin"
-  }
+  },
+  "show_notification": true
 }

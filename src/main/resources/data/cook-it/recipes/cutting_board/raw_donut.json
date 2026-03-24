@@ -6,9 +6,9 @@
   "output": {
     "item": "cook-it:raw_donut"
   },
-  "count": 4,
   "tool": {
-    "item": "cook-it:donut_cutter"
+    "item": "cook-it:donut_cutter",
+    "count": 4
   },
-  "clicks": 4
+  "interactions": 4
 }

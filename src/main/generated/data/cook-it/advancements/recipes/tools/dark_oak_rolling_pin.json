@@ -22,13 +22,14 @@
   },
   "requirements": [
     [
-      "has_the_recipe",
-      "has_dark_oak_planks"
+      "has_dark_oak_planks",
+      "has_the_recipe"
     ]
   ],
   "rewards": {
     "recipes": [
       "cook-it:dark_oak_rolling_pin"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

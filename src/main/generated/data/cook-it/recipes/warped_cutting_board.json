@@ -11,5 +11,6 @@
   ],
   "result": {
     "item": "cook-it:warped_cutting_board"
-  }
+  },
+  "show_notification": true
 }

@@ -11,5 +11,6 @@
   ],
   "result": {
     "item": "cook-it:blue_plate"
-  }
+  },
+  "show_notification": true
 }

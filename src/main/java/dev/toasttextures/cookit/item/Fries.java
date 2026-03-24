@@ -17,7 +17,7 @@ public class Fries extends Item {
     }
 
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
-        if (stack.isOf(CookItItems.UNCOOKED_FRENCH_FRIES)) {
+        if (stack.isOf(CookItItems.UNCOOKED_FRIES)) {
             tooltip.add(1, Text.translatable("stage.cook-it.uncooked").formatted(Formatting.ITALIC, Formatting.GRAY));
         }
     }

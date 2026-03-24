@@ -19,7 +19,7 @@
           "dev.toasttextures.cookit.CookIt"
 		],
 		"fabric-datagen": [
-			"dev.toasttextures.cookit.datagen.CookItDataGenerator"
+			"dev.toasttextures.cookit.data.datagen.CookItDataGenerator"
 		],
 		"client": [
 			"dev.toasttextures.cookit.CookItClient"
@@ -31,7 +31,7 @@
 	],
 	"depends": {
 		"fabricloader": ">=0.15.5",
-		"minecraft": "~1.20.4",
+		"minecraft": "~1.20.1",
 		"java": ">=17",
 		"fabric-api": "*"
 	},

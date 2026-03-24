@@ -22,13 +22,14 @@
   },
   "requirements": [
     [
-      "has_the_recipe",
-      "has_pink_large_plate"
+      "has_pink_large_plate",
+      "has_the_recipe"
     ]
   ],
   "rewards": {
     "recipes": [
       "cook-it:pink_large_plate"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

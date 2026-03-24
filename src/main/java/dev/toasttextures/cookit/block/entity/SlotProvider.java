@@ -11,8 +11,6 @@ public interface SlotProvider<T extends Slot<?>> {
     <E extends BlockEntity> T createSlot(Vec3d pos, E entity, int index);
     
     default T getSlotAt(Vec3d entityPos, Vec3d clickPos) {
-        return getSlots().getFirst();
-        //TODO
-    };
+        return getSlots().get(0);
+    }
 }
-

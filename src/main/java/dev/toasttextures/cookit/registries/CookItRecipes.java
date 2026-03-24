@@ -5,6 +5,7 @@ import com.google.gson.JsonSyntaxException;
 import dev.toasttextures.cookit.recipes.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.RecipeType;
@@ -14,13 +15,13 @@ import net.minecraft.util.Identifier;
 import dev.toasttextures.cookit.CookIt;
 import net.minecraft.util.JsonHelper;
 
-public class CookItRecipes {
+public final class CookItRecipes {
     public static void register() {
         registerRecipe("microwaving", MicrowaveRecipe.Serializer.INSTANCE, MicrowaveRecipe.Type.INSTANCE);
         registerRecipe("baking", OvenRecipe.Serializer.INSTANCE, OvenRecipe.Type.INSTANCE);
         registerRecipe("cutting", CuttingBoardRecipe.Serializer.INSTANCE, CuttingBoardRecipe.Type.INSTANCE);
         registerRecipe("frying", FryerRecipe.Serializer.INSTANCE, FryerRecipe.Type.INSTANCE);
-        registerRecipe("microwaving", MixingBowlRecipe.Serializer.INSTANCE, MixingBowlRecipe.Type.INSTANCE);
+        registerRecipe("mixing", MixingBowlRecipe.Serializer.INSTANCE, MixingBowlRecipe.Type.INSTANCE);
     }
     private static <T extends Recipe<?>> void registerRecipe(String name, RecipeSerializer<T> serializer, RecipeType<T> type) {
         Identifier id = CookIt.idOf(name);
@@ -34,5 +35,9 @@ public class CookItRecipes {
             throw new JsonSyntaxException("Empty item not allowed here");
         }
         return stack;
+    }
+
+    public static Ingredient allowAirIngredient(JsonObject json, String key) {
+        return json.has(key) ? Ingredient.fromJson(json.getAsJsonObject(key)) : Ingredient.EMPTY;
     }
 }

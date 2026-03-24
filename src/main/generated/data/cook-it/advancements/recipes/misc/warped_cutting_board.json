@@ -22,13 +22,14 @@
   },
   "requirements": [
     [
-      "has_the_recipe",
-      "has_warped_slab"
+      "has_warped_slab",
+      "has_the_recipe"
     ]
   ],
   "rewards": {
     "recipes": [
       "cook-it:warped_cutting_board"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

@@ -22,13 +22,14 @@
   },
   "requirements": [
     [
-      "has_the_recipe",
-      "has_mangrove_planks"
+      "has_mangrove_planks",
+      "has_the_recipe"
     ]
   ],
   "rewards": {
     "recipes": [
       "cook-it:mangrove_rolling_pin"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

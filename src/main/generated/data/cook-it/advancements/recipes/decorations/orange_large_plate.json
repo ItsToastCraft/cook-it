@@ -22,13 +22,14 @@
   },
   "requirements": [
     [
-      "has_the_recipe",
-      "has_orange_large_plate"
+      "has_orange_large_plate",
+      "has_the_recipe"
     ]
   ],
   "rewards": {
     "recipes": [
       "cook-it:orange_large_plate"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

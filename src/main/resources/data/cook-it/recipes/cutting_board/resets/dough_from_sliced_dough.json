@@ -5,10 +5,5 @@
   },
   "output": {
     "item": "cook-it:dough"
-  },
-  "tool": {
-    "item": "minecraft:air"
-  },
-  "usesItem": false,
-  "resetable": true
+  }
 }

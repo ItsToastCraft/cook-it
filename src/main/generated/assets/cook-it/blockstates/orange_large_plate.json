@@ -1,16 +1,16 @@
 {
   "variants": {
-    "plate_amount=1": {
-      "model": "cook-it:block/plate/orange_large_plate_1"
+    "count=1": {
+      "model": "cook-it:block/plateorange_large_plate_0"
     },
-    "plate_amount=2": {
-      "model": "cook-it:block/plate/orange_large_plate_2"
+    "count=2": {
+      "model": "cook-it:block/plateorange_large_plate_1"
     },
-    "plate_amount=3": {
-      "model": "cook-it:block/plate/orange_large_plate_3"
+    "count=3": {
+      "model": "cook-it:block/plateorange_large_plate_2"
     },
-    "plate_amount=4": {
-      "model": "cook-it:block/plate/orange_large_plate_4"
+    "count=4": {
+      "model": "cook-it:block/plateorange_large_plate_3"
     }
   }
 }

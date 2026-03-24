@@ -13,7 +13,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
-import dev.toasttextures.cookit.block.food_blocks.pizza.Pizza;
+import dev.toasttextures.cookit.block.food.pizza.Pizza;
 import org.jetbrains.annotations.Nullable;
 
 public class PizzaPan extends BlockWithEntity implements BlockEntityProvider {

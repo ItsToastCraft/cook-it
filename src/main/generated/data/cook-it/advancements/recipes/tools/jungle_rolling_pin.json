@@ -22,13 +22,14 @@
   },
   "requirements": [
     [
-      "has_the_recipe",
-      "has_jungle_planks"
+      "has_jungle_planks",
+      "has_the_recipe"
     ]
   ],
   "rewards": {
     "recipes": [
       "cook-it:jungle_rolling_pin"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

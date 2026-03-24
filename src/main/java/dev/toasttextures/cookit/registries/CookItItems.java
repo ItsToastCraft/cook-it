@@ -22,7 +22,7 @@ import static dev.toasttextures.cookit.registries.CookItBlocks.BLOCKS;
 
 public class CookItItems {
     public static final List<Item> ITEMS = new ArrayList<>();
-    public static final List<Item> ROLLING_PINS = registerWooden("_rolling_pin", settings -> new FabricItemSettings(), RollingPin::new);
+    public static final List<RollingPin> ROLLING_PINS = registerWooden("rolling_pin", settings -> new FabricItemSettings(), RollingPin::new);
 
     // -- Utensils --
     public static final Item KITCHEN_KNIFE = registerItem("knife", new SwordItem(ToolMaterials.IRON, 1, -2, new FabricItemSettings().maxCount(1)));
@@ -36,7 +36,7 @@ public class CookItItems {
     public static final Item DOUGH = registerItem("dough", new Item(new FabricItemSettings()));
     public static final Item DOUGH_ROLLED = registerItem("dough_rolled", new Item(new FabricItemSettings()));
     public static final Item DOUGH_SLICED = registerItem("dough_sliced", new Item(new FabricItemSettings()));
-    public static final Item UNCOOKED_FRENCH_FRIES = registerItem("uncooked_french_fries", new Fries(new FabricItemSettings()));
+    public static final Item UNCOOKED_FRIES = registerItem("uncooked_fries", new Fries(new FabricItemSettings()));
 
     // -- Food --
     public static final Item VANILLA_BEAN = registerItem("vanilla_bean", new AliasedBlockItem(CookItBlocks.VANILLA_VINE_STEM, new FabricItemSettings()));
@@ -45,7 +45,7 @@ public class CookItItems {
     public static final Item RAW_CROISSANT = registerItem("raw_croissant", new Item(new FabricItemSettings()));
     public static final Item CROISSANT = registerItem("croissant", new Item(new FabricItemSettings().food(new FoodComponent.Builder().hunger(3).build())));
     public static final Item PIZZA_SLICE = registerItem("pizza_slice", new PizzaSlice(new FabricItemSettings().food(new FoodComponent.Builder().hunger(5).build())));
-    public static final Item FRENCH_FRIES = registerItem("french_fries", new Fries(new FabricItemSettings().food(new FoodComponent.Builder().hunger(4).build())));
+    public static final Item FRIES = registerItem("fries", new Fries(new FabricItemSettings().food(new FoodComponent.Builder().hunger(4).build())));
     public static final Item RAW_DONUT = registerItem("raw_donut", new Item(new FabricItemSettings()));
     public static final Item DONUT = registerItem("plain_donut", new Donut(new FabricItemSettings().food(new FoodComponent.Builder().hunger(3).build()), Donut.Type.PLAIN));
     public static final Item CHOCOLATE_DONUT = registerItem("chocolate_donut", new Donut(new FabricItemSettings().food(new FoodComponent.Builder().hunger(4).build()), Donut.Type.PLAIN));

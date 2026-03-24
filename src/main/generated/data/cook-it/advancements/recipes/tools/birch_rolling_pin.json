@@ -22,13 +22,14 @@
   },
   "requirements": [
     [
-      "has_the_recipe",
-      "has_birch_planks"
+      "has_birch_planks",
+      "has_the_recipe"
     ]
   ],
   "rewards": {
     "recipes": [
       "cook-it:birch_rolling_pin"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

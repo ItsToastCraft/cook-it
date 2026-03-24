@@ -22,13 +22,14 @@
   },
   "requirements": [
     [
-      "has_the_recipe",
-      "has_crimson_planks"
+      "has_crimson_planks",
+      "has_the_recipe"
     ]
   ],
   "rewards": {
     "recipes": [
       "cook-it:crimson_rolling_pin"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

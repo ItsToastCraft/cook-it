@@ -12,5 +12,6 @@
   ],
   "result": {
     "item": "cook-it:cyan_bowl"
-  }
+  },
+  "show_notification": true
 }

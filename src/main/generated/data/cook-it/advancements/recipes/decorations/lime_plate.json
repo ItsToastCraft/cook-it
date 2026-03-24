@@ -22,13 +22,14 @@
   },
   "requirements": [
     [
-      "has_the_recipe",
-      "has_lime_plate"
+      "has_lime_plate",
+      "has_the_recipe"
     ]
   ],
   "rewards": {
     "recipes": [
       "cook-it:lime_plate"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

@@ -5,7 +5,7 @@ import dev.toasttextures.cookit.registries.CookItBlockEntities;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.inventory.SimpleInventory;
-import net.minecraft.recipe.RecipeType;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
@@ -21,7 +21,7 @@ public class OvenEntity extends CookingBlockEntity<OvenRecipe> implements SlotPr
 
     private final List<OvenSlot> slots;
     public OvenEntity(BlockPos pos, BlockState state) {
-        super(CookItBlockEntities.OVEN, pos, state, 2);
+        super(CookItBlockEntities.OVEN, OvenRecipe.Type.INSTANCE, pos, state, 2);
         Direction dir = state.get(HORIZONTAL_FACING);
         List<Vec3d> slots = OvenSlot.rotated(dir);
 
@@ -32,8 +32,15 @@ public class OvenEntity extends CookingBlockEntity<OvenRecipe> implements SlotPr
     }
 
     @Override
-    public RecipeType<OvenRecipe> getRecipeType() {
-        return OvenRecipe.Type.INSTANCE;
+    public void readNbt(NbtCompound nbt) {
+        super.readNbt(nbt);
+        progress = nbt.getIntArray(PROGRESS_KEY);
+    }
+
+    @Override
+    protected void writeNbt(NbtCompound nbt) {
+        nbt.putIntArray(PROGRESS_KEY, progress);
+        super.writeNbt(nbt);
     }
 
     @Override

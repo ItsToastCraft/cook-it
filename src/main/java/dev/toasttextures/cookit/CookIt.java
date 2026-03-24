@@ -14,6 +14,7 @@ import net.minecraft.util.math.Direction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.EnumMap;
 import java.util.Map;
 
 public class CookIt implements ModInitializer {
@@ -44,10 +45,10 @@ public class CookIt implements ModInitializer {
         });
     }
 
-    public static final Map<Direction, Float> DIRECTION_TO_FLOAT = Map.of(
+    public static final EnumMap<Direction, Float> DIRECTION_TO_FLOAT = new EnumMap<>(Map.of(
             Direction.NORTH, 0.0f,
             Direction.SOUTH, 180.0f,
             Direction.EAST, 90.0f,
             Direction.WEST, 270.0f
-    );
+    ));
 }

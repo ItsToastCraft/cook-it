@@ -7,10 +7,10 @@ import dev.toasttextures.cookit.block.appliances.Microwave;
 import dev.toasttextures.cookit.block.appliances.Oven;
 import dev.toasttextures.cookit.block.appliances.Toaster;
 import dev.toasttextures.cookit.block.containers.*;
-import dev.toasttextures.cookit.block.food_blocks.VanillaVinePlant;
-import dev.toasttextures.cookit.block.food_blocks.VanillaVineStem;
-import dev.toasttextures.cookit.block.food_blocks.pizza.CookedPizza;
-import dev.toasttextures.cookit.block.food_blocks.pizza.Pizza;
+import dev.toasttextures.cookit.block.food.vanilla_vines.VanillaVinePlant;
+import dev.toasttextures.cookit.block.food.vanilla_vines.VanillaVineStem;
+import dev.toasttextures.cookit.block.food.pizza.CookedPizza;
+import dev.toasttextures.cookit.block.food.pizza.Pizza;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.AbstractBlock;
@@ -31,9 +31,9 @@ public class CookItBlocks {
     private static final FabricBlockSettings CERAMIC_SETTINGS = FabricBlockSettings.create().strength(0.4f).sounds(BlockSoundGroup.DECORATED_POT);
 
     public static final List<Block> BLOCKS = new ArrayList<>();
-    public static final List<Plate> PLATES = registerDyed("_plate", dyeColor -> CERAMIC_SETTINGS, Plate::new);
-    public static final List<Bowl> BOWLS = registerDyed("_bowl", dyeColor -> CERAMIC_SETTINGS, Bowl::new);
-    public static final List<CuttingBoard> CUTTING_BOARDS = registerWooden("_cutting_board", settings -> FabricBlockSettings.copyOf(Blocks.OAK_PLANKS), CuttingBoard::new);
+    public static final List<Plate> PLATES = registerDyed("plate", dyeColor -> CERAMIC_SETTINGS, Plate::new);
+    public static final List<Bowl> BOWLS = registerDyed("bowl", dyeColor -> CERAMIC_SETTINGS, Bowl::new);
+    public static final List<CuttingBoard> CUTTING_BOARDS = registerWooden("cutting_board", settings -> FabricBlockSettings.copyOf(Blocks.OAK_PLANKS), CuttingBoard::new);
     public static final List<Block> APPLIANCES = new ArrayList<>();
     public static final List<Block> CONTAINERS = new ArrayList<>();
 
@@ -89,7 +89,7 @@ public class CookItBlocks {
     }
 
     public static void register() {
-        PLATES.addAll(registerDyed("_large_plate", dyeColor -> CERAMIC_SETTINGS, LargePlate::new));
+        PLATES.addAll(registerDyed("large_plate", dyeColor -> CERAMIC_SETTINGS, LargePlate::new));
         APPLIANCES.add(FRYER);
         APPLIANCES.add(TOASTER);
         APPLIANCES.add(OVEN);

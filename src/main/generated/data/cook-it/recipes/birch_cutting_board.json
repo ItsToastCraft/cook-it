@@ -11,5 +11,6 @@
   ],
   "result": {
     "item": "cook-it:birch_cutting_board"
-  }
+  },
+  "show_notification": true
 }

@@ -15,17 +15,17 @@ import java.util.List;
 public abstract class CookingBlockEntity<T extends Recipe<SimpleInventory>> extends Container {
     protected static final String PROGRESS_KEY = "Progress";
     protected static final String INTERACTIONS_KEY = "Interactions";
-    public CookingBlockEntity(BlockEntityType<?> blockEntity, BlockPos pos, BlockState state, int invSize) {
-        super(blockEntity, pos, state, invSize);
-    }
-
+    private final RecipeType<T> recipeType;
     protected CookingStatus status = CookingStatus.IDLE;
+
+    public CookingBlockEntity(BlockEntityType<?> blockEntity, RecipeType<T> recipeType, BlockPos pos, BlockState state, int invSize) {
+        super(blockEntity, pos, state, invSize);
+        this.recipeType = recipeType;
+    }
 
     public CookingStatus getStatus() {
         return status;
     }
-
-    public abstract RecipeType<T> getRecipeType();
 
     public abstract void craft(World world, T recipe);
 
@@ -39,6 +39,6 @@ public abstract class CookingBlockEntity<T extends Recipe<SimpleInventory>> exte
         SimpleInventory inv = (slot < 0 || slot >= size()) ? new SimpleInventory(this.getItems().toArray(new ItemStack[0])) : new SimpleInventory(getStack(slot));
         if (world == null) return Collections.emptyList();
 
-        return world.getRecipeManager().getAllMatches(getRecipeType(), inv, world);
+        return world.getRecipeManager().getAllMatches(recipeType, inv, world);
     }
 }

@@ -1,9 +1,9 @@
 {
   "variants": {
-    "has_goop=false": {
+    "liquid=false": {
       "model": "cook-it:block/mixing_bowl"
     },
-    "has_goop=true": {
+    "liquid=true": {
       "model": "cook-it:block/mixing_bowl_filled"
     }
   }

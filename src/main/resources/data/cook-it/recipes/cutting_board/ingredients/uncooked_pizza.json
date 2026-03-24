@@ -6,9 +6,8 @@
   "output": {
     "item": "cook-it:uncooked_pizza"
   },
-
   "tool": {
     "item": "cook-it:cheese"
   },
-  "usesItem": true
+  "uses_item": true
 }

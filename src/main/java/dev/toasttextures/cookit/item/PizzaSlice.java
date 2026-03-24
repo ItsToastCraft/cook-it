@@ -1,6 +1,6 @@
 package dev.toasttextures.cookit.item;
 
-import dev.toasttextures.cookit.block.food_blocks.pizza.CookedPizza;
+import dev.toasttextures.cookit.block.food.pizza.CookedPizza;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;

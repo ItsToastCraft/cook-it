@@ -1,11 +1,9 @@
 package dev.toasttextures.cookit.block.entity;
 
-import dev.toasttextures.cookit.registries.CookItItems;
 import net.minecraft.block.BlockState;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.recipe.RecipeType;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.math.BlockPos;
@@ -14,8 +12,6 @@ import dev.toasttextures.cookit.recipes.MicrowaveRecipe;
 import dev.toasttextures.cookit.registries.CookItBlockEntities;
 import dev.toasttextures.cookit.registries.CookItSounds;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Optional;
 
 import static net.minecraft.block.Block.NOTIFY_LISTENERS;
 import static net.minecraft.state.property.Properties.LIT;
@@ -28,7 +24,9 @@ public class MicrowaveEntity extends CookingBlockEntity<MicrowaveRecipe> {
     @Nullable
     private MicrowaveRecipe cachedRecipe = null;
 
-    public MicrowaveEntity(BlockPos pos, BlockState state) { super(CookItBlockEntities.MICROWAVE, pos, state, 1); }
+    public MicrowaveEntity(BlockPos pos, BlockState state) {
+        super(CookItBlockEntities.MICROWAVE, MicrowaveRecipe.Type.INSTANCE, pos, state, 1);
+    }
 
     @Override
     public void readNbt(NbtCompound nbt) {
@@ -63,7 +61,7 @@ public class MicrowaveEntity extends CookingBlockEntity<MicrowaveRecipe> {
                 craft(world, cachedRecipe);
             }
             reset();
-        } else {
+        } else if (!state.get(OPEN)){
             progress++;
             addMicrowaveEffects(world, pos, state, true);
         }
@@ -81,61 +79,23 @@ public class MicrowaveEntity extends CookingBlockEntity<MicrowaveRecipe> {
         markDirty();
     }
 
-
     public static void tick(World world, BlockPos pos, BlockState state, MicrowaveEntity entity) {
         if (world.isClient) return;
 
-        ItemStack first = entity.items.getFirst();
+        ItemStack first = entity.getStack(0);
 
         if (first.isEmpty()) {
             entity.status = CookingStatus.IDLE;
         } else if (first == entity.cachedItem) {
             entity.tickRecipe(world, state);
-        } else if (entity.status == CookingStatus.INVALID) {
-            return;
-        } else {
+        } else if (entity.status != CookingStatus.INVALID) {
             entity.loadRecipe(world, state);
         }
-
-    }
-
-    if (this.hasRecipe()) {
-        if (this.getProgress() == 0 || world.getTime() % MICROWAVE_SOUND_INTERVAL == 0) {
-            playMicrowaveSound(world, pos, state, true);
-        }
-        if (state.get(OPEN)) playMicrowaveSound(world, pos, state, false);
-
-        this.updateMaxProgress();
-        this.addProgress();
-        markDirty(world, pos, state);
-
-        if (craftingFinished()) {
-            // Stop the continuous microwave sound and play the world's most annoying beep sound
-            playMicrowaveSound(world, pos, state, false);
-
-            Optional<RecipeEntry<MicrowaveRecipe>> recipe = getCurrentRecipe();
-            this.craftRecipe();
-            this.resetProgress();
-
-            //Kaboom stuff
-            float explosionPower = recipe.get().value().getExplosionPower();
-            if (explosionPower > 0) {
-                if (this.world != null) {
-                    this.world.createExplosion(null, pos.getX(), pos.getY(), pos.getZ(), explosionPower, World.ExplosionSourceType.BLOCK);
-                }
-            }
-        }
-    } else {
-        this.resetProgress();
-    }
-    @Override
-    public RecipeType<MicrowaveRecipe> getRecipeType() {
-        return MicrowaveRecipe.Type.INSTANCE;
     }
 
     @Override
     public void craft(World world, MicrowaveRecipe recipe) {
-        ItemStack first = items.getFirst();
+        ItemStack first = getStack(0);
         if (recipe.hasEvent()) {
             recipe.getEvent().apply((ServerWorld) world, pos);
         }
@@ -150,7 +110,5 @@ public class MicrowaveEntity extends CookingBlockEntity<MicrowaveRecipe> {
     public void reset() {
         cachedItem = ItemStack.EMPTY;
         cachedRecipe = null;
-
     }
 }
-

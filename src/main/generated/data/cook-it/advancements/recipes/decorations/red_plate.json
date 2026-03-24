@@ -22,13 +22,14 @@
   },
   "requirements": [
     [
-      "has_the_recipe",
-      "has_red_plate"
+      "has_red_plate",
+      "has_the_recipe"
     ]
   ],
   "rewards": {
     "recipes": [
       "cook-it:red_plate"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

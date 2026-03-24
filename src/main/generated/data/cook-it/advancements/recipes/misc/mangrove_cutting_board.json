@@ -22,13 +22,14 @@
   },
   "requirements": [
     [
-      "has_the_recipe",
-      "has_mangrove_slab"
+      "has_mangrove_slab",
+      "has_the_recipe"
     ]
   ],
   "rewards": {
     "recipes": [
       "cook-it:mangrove_cutting_board"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

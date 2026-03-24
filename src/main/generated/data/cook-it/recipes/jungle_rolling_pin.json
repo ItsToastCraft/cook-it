@@ -16,5 +16,6 @@
   ],
   "result": {
     "item": "cook-it:jungle_rolling_pin"
-  }
+  },
+  "show_notification": true
 }

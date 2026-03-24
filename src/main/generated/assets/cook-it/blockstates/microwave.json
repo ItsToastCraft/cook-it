@@ -1,0 +1,84 @@
+{
+  "variants": {
+    "facing=east,lit=false,open=false": {
+      "model": "cook-it:block/microwave/microwave",
+      "uvlock": false,
+      "y": 90
+    },
+    "facing=east,lit=false,open=true": {
+      "model": "cook-it:block/microwave/microwave_open",
+      "uvlock": false,
+      "y": 90
+    },
+    "facing=east,lit=true,open=false": {
+      "model": "cook-it:block/microwave/microwave_on",
+      "uvlock": false,
+      "y": 90
+    },
+    "facing=east,lit=true,open=true": {
+      "model": "cook-it:block/microwave/microwave_open_on",
+      "uvlock": false,
+      "y": 90
+    },
+    "facing=north,lit=false,open=false": {
+      "model": "cook-it:block/microwave/microwave",
+      "uvlock": false,
+      "y": 0
+    },
+    "facing=north,lit=false,open=true": {
+      "model": "cook-it:block/microwave/microwave_open",
+      "uvlock": false,
+      "y": 0
+    },
+    "facing=north,lit=true,open=false": {
+      "model": "cook-it:block/microwave/microwave_on",
+      "uvlock": false,
+      "y": 0
+    },
+    "facing=north,lit=true,open=true": {
+      "model": "cook-it:block/microwave/microwave_open_on",
+      "uvlock": false,
+      "y": 0
+    },
+    "facing=south,lit=false,open=false": {
+      "model": "cook-it:block/microwave/microwave",
+      "uvlock": false,
+      "y": 180
+    },
+    "facing=south,lit=false,open=true": {
+      "model": "cook-it:block/microwave/microwave_open",
+      "uvlock": false,
+      "y": 180
+    },
+    "facing=south,lit=true,open=false": {
+      "model": "cook-it:block/microwave/microwave_on",
+      "uvlock": false,
+      "y": 180
+    },
+    "facing=south,lit=true,open=true": {
+      "model": "cook-it:block/microwave/microwave_open_on",
+      "uvlock": false,
+      "y": 180
+    },
+    "facing=west,lit=false,open=false": {
+      "model": "cook-it:block/microwave/microwave",
+      "uvlock": false,
+      "y": 270
+    },
+    "facing=west,lit=false,open=true": {
+      "model": "cook-it:block/microwave/microwave_open",
+      "uvlock": false,
+      "y": 270
+    },
+    "facing=west,lit=true,open=false": {
+      "model": "cook-it:block/microwave/microwave_on",
+      "uvlock": false,
+      "y": 270
+    },
+    "facing=west,lit=true,open=true": {
+      "model": "cook-it:block/microwave/microwave_open_on",
+      "uvlock": false,
+      "y": 270
+    }
+  }
+}

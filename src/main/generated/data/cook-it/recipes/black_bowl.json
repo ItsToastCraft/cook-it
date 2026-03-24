@@ -12,5 +12,6 @@
   ],
   "result": {
     "item": "cook-it:black_bowl"
-  }
+  },
+  "show_notification": true
 }

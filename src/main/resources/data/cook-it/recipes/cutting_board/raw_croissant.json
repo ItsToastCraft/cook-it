@@ -4,11 +4,8 @@
     "item": "cook-it:dough_sliced"
   },
   "output": {
-    "item": "cook-it:raw_croissant"
+    "item": "cook-it:raw_croissant",
+    "count": 4
   },
-  "count": 4,
-  "tool": {
-    "item": "minecraft:air"
-  },
-  "clicks": 4
+  "interactions": 4
 }

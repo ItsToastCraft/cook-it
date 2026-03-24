@@ -17,6 +17,7 @@ import net.minecraft.util.math.RotationAxis;
 import dev.toasttextures.cookit.CookIt;
 import net.minecraft.util.math.Vec2f;
 
+import java.util.EnumMap;
 import java.util.Map;
 
 import static net.minecraft.state.property.Properties.HORIZONTAL_FACING;
@@ -53,10 +54,10 @@ public class FryerEntityRenderer implements BlockEntityRenderer<FryerEntity> {
         }
     }
 
-    private static final Map<Direction, Vec2f> ITEM_POSITIONS = Map.of(
-            Direction.NORTH, new Vec2f(-0.5f,-0.4375f),
-            Direction.SOUTH, new Vec2f(0.5f, 0.5625f),
-            Direction.EAST, new Vec2f(-0.5f,0.5625f),
-            Direction.WEST, new Vec2f(0.5f, -0.4375f)
-    );
+    private static final EnumMap<Direction, Vec2f> ITEM_POSITIONS = new EnumMap<>(Map.of(
+        Direction.NORTH, new Vec2f(-0.5f,-0.4375f),
+        Direction.SOUTH, new Vec2f(0.5f, 0.5625f),
+        Direction.EAST, new Vec2f(-0.5f,0.5625f),
+        Direction.WEST, new Vec2f(0.5f, -0.4375f)
+    ));
 }

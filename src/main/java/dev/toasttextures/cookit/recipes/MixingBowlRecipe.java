@@ -140,7 +140,7 @@ public class MixingBowlRecipe implements Recipe<SimpleInventory> {
         @Override
         public MixingBowlRecipe read(Identifier id, JsonObject json) {
             JsonArray array = json.getAsJsonArray("inputs");
-            DefaultedList<Ingredient> inputs = DefaultedList.ofSize(array.size());
+            DefaultedList<Ingredient> inputs = DefaultedList.ofSize(array.size(), Ingredient.EMPTY);
             for (int i = 0; i < array.size(); i++) {
                 inputs.set(i, Ingredient.fromJson(array.get(i)));
             }

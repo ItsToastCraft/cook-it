@@ -16,5 +16,6 @@
   ],
   "result": {
     "item": "cook-it:dark_oak_rolling_pin"
-  }
+  },
+  "show_notification": true
 }

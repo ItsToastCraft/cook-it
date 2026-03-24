@@ -12,5 +12,6 @@
   ],
   "result": {
     "item": "cook-it:purple_bowl"
-  }
+  },
+  "show_notification": true
 }

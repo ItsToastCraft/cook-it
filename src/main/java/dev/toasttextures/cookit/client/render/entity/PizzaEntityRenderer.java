@@ -2,7 +2,7 @@ package dev.toasttextures.cookit.client.render.entity;
 
 import dev.toasttextures.cookit.CookIt;
 import dev.toasttextures.cookit.block.entity.PizzaEntity;
-import dev.toasttextures.cookit.block.food_blocks.pizza.PizzaTopping;
+import dev.toasttextures.cookit.block.food.pizza.PizzaTopping;
 import dev.toasttextures.cookit.client.CookItEntityModelLayers;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;

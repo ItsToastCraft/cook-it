@@ -22,13 +22,14 @@
   },
   "requirements": [
     [
-      "has_the_recipe",
-      "has_magenta_bowl"
+      "has_magenta_bowl",
+      "has_the_recipe"
     ]
   ],
   "rewards": {
     "recipes": [
       "cook-it:magenta_bowl"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

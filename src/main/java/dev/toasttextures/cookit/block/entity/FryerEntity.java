@@ -1,6 +1,5 @@
 package dev.toasttextures.cookit.block.entity;
 
-
 import dev.toasttextures.cookit.CookIt;
 import dev.toasttextures.cookit.item.ItemStorage;
 import dev.toasttextures.cookit.recipes.FryerRecipe;
@@ -11,7 +10,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.recipe.RecipeType;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
@@ -32,7 +30,7 @@ public class FryerEntity extends CookingBlockEntity<FryerRecipe> implements Tran
     private FryerRecipe cachedRecipe = null;
 
     public FryerEntity(BlockPos pos, BlockState state) {
-        super(CookItBlockEntities.FRYER, pos, state, 1);
+        super(CookItBlockEntities.FRYER, FryerRecipe.Type.INSTANCE, pos, state, 1);
     }
 
     @Override
@@ -49,7 +47,7 @@ public class FryerEntity extends CookingBlockEntity<FryerRecipe> implements Tran
 
     @Override
     public void transfer(PlayerEntity player, ItemStack stack) {
-        ItemStack first = items.getFirst();
+        ItemStack first = getStack(0);
         if (first.isEmpty() && stack.isOf(CookItItems.FRYER_BASKET)) {
             items.set(0, stack.split(1));
         } else if (!first.isEmpty()) {
@@ -81,13 +79,8 @@ public class FryerEntity extends CookingBlockEntity<FryerRecipe> implements Tran
     }
 
     @Override
-    public RecipeType<FryerRecipe> getRecipeType() {
-        return FryerRecipe.Type.INSTANCE;
-    }
-
-    @Override
     public void craft(World world, FryerRecipe recipe) {
-        ItemStack first = items.getFirst();
+        ItemStack first = getStack(0);
 
         if (!first.isEmpty() && status == CookingStatus.DONE) {
             ItemStorage.setStoredItem(first, recipe.craft(new SimpleInventory(first), world.getRegistryManager()));
@@ -130,7 +123,7 @@ public class FryerEntity extends CookingBlockEntity<FryerRecipe> implements Tran
 
     public static void tick(World world, BlockPos pos, BlockState state, FryerEntity entity) {
         if (world.isClient) return;
-        ItemStack first = entity.items.getFirst();
+        ItemStack first = entity.getStack(0);
         if (first.isEmpty()) {
             entity.status = CookingStatus.IDLE;
         } else if (!first.isOf(CookItItems.FRYER_BASKET)) {

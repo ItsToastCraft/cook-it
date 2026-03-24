@@ -22,13 +22,14 @@
   },
   "requirements": [
     [
-      "has_the_recipe",
-      "has_magenta_large_plate"
+      "has_magenta_large_plate",
+      "has_the_recipe"
     ]
   ],
   "rewards": {
     "recipes": [
       "cook-it:magenta_large_plate"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

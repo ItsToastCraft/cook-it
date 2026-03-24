@@ -19,6 +19,7 @@ import net.minecraft.world.World;
 import java.util.List;
 
 public class BakingSheet extends BlockWithEntity {
+    private static final VoxelShape SHAPE = createCuboidShape(3.0, 0.0, 1.0, 13.0, 2.0, 15.0);
 
     public BakingSheet(Settings settings) {
         super(settings);
@@ -44,7 +45,7 @@ public class BakingSheet extends BlockWithEntity {
 
     @Override
     public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext ctx) {
-        return createCuboidShape(3.0, 0.0, 1.0, 13.0, 2.0, 15.0);
+        return SHAPE;
     }
     @Override
     public void appendTooltip(ItemStack stack, BlockView world, List<Text> tooltip, TooltipContext context) {

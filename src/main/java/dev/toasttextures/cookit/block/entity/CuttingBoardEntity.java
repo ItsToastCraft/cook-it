@@ -1,6 +1,6 @@
 package dev.toasttextures.cookit.block.entity;
 
-import dev.toasttextures.cookit.block.food_blocks.pizza.PizzaTopping;
+import dev.toasttextures.cookit.block.food.pizza.PizzaTopping;
 import dev.toasttextures.cookit.registries.CookItBlocks;
 import net.minecraft.block.BlockState;
 import net.minecraft.inventory.SimpleInventory;
@@ -10,7 +10,6 @@ import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtString;
 import net.minecraft.particle.ItemStackParticleEffect;
 import net.minecraft.particle.ParticleTypes;
-import net.minecraft.recipe.RecipeType;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
@@ -25,7 +24,7 @@ public class CuttingBoardEntity extends CookingBlockEntity<CuttingBoardRecipe> {
     private int interactions = 0;
 
     public CuttingBoardEntity(BlockPos pos, BlockState state) {
-        super(CookItBlockEntities.CUTTING_BOARD, pos, state, 1);
+        super(CookItBlockEntities.CUTTING_BOARD, CuttingBoardRecipe.Type.INSTANCE, pos, state, 1);
     }
 
     @Override
@@ -48,13 +47,8 @@ public class CuttingBoardEntity extends CookingBlockEntity<CuttingBoardRecipe> {
         this.interactions = interactions;
     }
 
-    @Override
-    public RecipeType<CuttingBoardRecipe> getRecipeType() {
-        return CuttingBoardRecipe.Type.INSTANCE;
-    }
-
     public boolean process(World world, ItemStack tool, boolean shouldReset) {
-        ItemStack first = items.getFirst();
+        ItemStack first = items.get(0);
         if (world.isClient) return false;
 
         if (first.isOf(CookItBlocks.UNCOOKED_PIZZA.asItem())) {
@@ -91,7 +85,7 @@ public class CuttingBoardEntity extends CookingBlockEntity<CuttingBoardRecipe> {
     }
 
     public boolean craftPizza(ItemStack stack) {
-        NbtList toppings = PizzaTopping.parse(items.getFirst().getSubNbt(PizzaTopping.TOPPINGS_KEY));
+        NbtList toppings = PizzaTopping.parse(getStack(0).getSubNbt(PizzaTopping.TOPPINGS_KEY));
         if (toppings == null) return false;
         if (toppings.size() == 3) return false;
 
@@ -100,7 +94,7 @@ public class CuttingBoardEntity extends CookingBlockEntity<CuttingBoardRecipe> {
 
         toppings.copy().add(NbtString.of(topping.toString()));
         stack.decrement(1);
-        items.getFirst().getOrCreateNbt().put(PizzaTopping.TOPPINGS_KEY, toppings);
+        getStack(0).getOrCreateNbt().put(PizzaTopping.TOPPINGS_KEY, toppings);
         return true;
     }
 
@@ -112,7 +106,7 @@ public class CuttingBoardEntity extends CookingBlockEntity<CuttingBoardRecipe> {
 
     @Override
     public void craft(World world, CuttingBoardRecipe recipe) {
-        ItemStack first = items.getFirst();
+        ItemStack first = getStack(0);
 
         if (!first.isEmpty()) {
             setStack(0, recipe.craft(new SimpleInventory(first), world.getRegistryManager()));

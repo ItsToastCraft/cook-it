@@ -57,7 +57,7 @@ public class OvenSlot extends Slot<OvenEntity> {
         if (world.isClient) return;
         List<OvenRecipe> recipes = attachedEntity.getRecipes(index);
         if (recipes.isEmpty()) return;
-        cachedRecipe = recipes.getFirst();
+        cachedRecipe = recipes.get(0);
 
         if (cachedRecipe == null) return;
 

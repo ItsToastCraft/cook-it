@@ -1,6 +1,0 @@
-{
-	"parent": "item/generated",
-	"textures": {
-		"layer0": "cook-it:item/temp/vanilla_bean"
-	}
-}

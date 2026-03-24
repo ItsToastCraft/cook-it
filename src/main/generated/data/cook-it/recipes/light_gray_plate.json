@@ -11,5 +11,6 @@
   ],
   "result": {
     "item": "cook-it:light_gray_plate"
-  }
+  },
+  "show_notification": true
 }

@@ -12,5 +12,6 @@
   ],
   "result": {
     "item": "cook-it:magenta_bowl"
-  }
+  },
+  "show_notification": true
 }

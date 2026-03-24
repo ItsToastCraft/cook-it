@@ -11,5 +11,6 @@
   ],
   "result": {
     "item": "cook-it:pink_large_plate"
-  }
+  },
+  "show_notification": true
 }

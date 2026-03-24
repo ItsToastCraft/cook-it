@@ -1,6 +1,5 @@
 package dev.toasttextures.cookit.block.appliances;
 
-
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.HorizontalFacingBlock;
@@ -30,14 +29,16 @@ import dev.toasttextures.cookit.registries.CookItItems;
 import static net.minecraft.state.property.Properties.HORIZONTAL_FACING;
 
 public class Toaster extends HorizontalFacingBlock {
+    private static final VoxelShape NORTH_SOUTH_SHAPE = createCuboidShape(4.0, 0.0, 2.0, 12.0, 7.0, 14.0);
+    private static final VoxelShape EAST_WEST_SHAPE = createCuboidShape(2.0, 0.0, 4.0, 14.0, 7.0, 12.0);
 
-    public static final EnumProperty<Stage> STAGE = EnumProperty.of("toaster_state", Stage.class);
+    public static final EnumProperty<Stage> STAGE = EnumProperty.of("stage", Stage.class);
 
     public Toaster(Settings settings) {
         super(settings);
         setDefaultState(getDefaultState()
                 .with(HORIZONTAL_FACING, Direction.NORTH)
-                .with(STAGE, Stage.NONE));
+                .with(STAGE, Stage.EMPTY));
     }
 
     @Override
@@ -48,8 +49,8 @@ public class Toaster extends HorizontalFacingBlock {
     @Override
     public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext ctx) {
         return switch (state.get(HORIZONTAL_FACING)) {
-            case NORTH, SOUTH -> createCuboidShape(4.0, 0.0, 2.0, 12.0, 7.0, 14.0);
-            default -> createCuboidShape(2.0, 0.0, 4.0, 14.0, 7.0, 12.0);
+            case NORTH, SOUTH -> NORTH_SOUTH_SHAPE;
+            default -> EAST_WEST_SHAPE;
         };
     }
     
@@ -57,17 +58,17 @@ public class Toaster extends HorizontalFacingBlock {
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         ItemStack heldItem = player.getStackInHand(hand);
-        Stage toastState = state.get(STAGE);
+        Stage stage = state.get(STAGE);
 
-        if (!toastState.isToasted() && heldItem.isOf(Items.BREAD)) {
+        if (!stage.isToasted() && heldItem.isOf(Items.BREAD)) {
             heldItem.decrement(1);
-            world.setBlockState(pos, state.with(STAGE, toastState.increment()));
+            world.setBlockState(pos, state.with(STAGE, stage.increment()));
             this.scheduleTick(world, pos);
         }
 
-        if (heldItem.isEmpty() && toastState.isToasted()) {
+        if (heldItem.isEmpty() && stage.isToasted()) {
             player.getInventory().insertStack(new ItemStack(CookItItems.TOAST));
-            world.setBlockState(pos, state.with(STAGE, toastState.decrement()));
+            world.setBlockState(pos, state.with(STAGE, stage.decrement()));
         }
         return ActionResult.SUCCESS;
     }
@@ -90,7 +91,7 @@ public class Toaster extends HorizontalFacingBlock {
     }
 
     public enum Stage implements StringIdentifiable {
-        NONE,
+        EMPTY,
         HALF_UNTOASTED,
         FULL_UNTOASTED,
         HALF_TOASTED,
@@ -107,7 +108,7 @@ public class Toaster extends HorizontalFacingBlock {
 
         public Stage increment() {
             return switch (this) {
-                case NONE -> HALF_UNTOASTED;
+                case EMPTY -> HALF_UNTOASTED;
                 case HALF_UNTOASTED -> FULL_UNTOASTED;
                 case HALF_TOASTED -> FULL_TOASTED;
                 default -> this;
@@ -116,7 +117,7 @@ public class Toaster extends HorizontalFacingBlock {
 
         public Stage decrement() {
             return switch (this) {
-                case HALF_TOASTED -> NONE;
+                case HALF_TOASTED -> EMPTY;
                 case FULL_TOASTED -> HALF_TOASTED;
                 default -> this;
             };

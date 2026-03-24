@@ -11,5 +11,6 @@
   ],
   "result": {
     "item": "cook-it:magenta_large_plate"
-  }
+  },
+  "show_notification": true
 }

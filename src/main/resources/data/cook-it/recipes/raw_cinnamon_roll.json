@@ -1,10 +1,8 @@
 {
   "type": "cook-it:baking",
-  "ingredients": [
-    {
+  "input":{
       "item": "cook-it:raw_cinnamon_roll"
-    }
-  ],
+  },
   "output": {
     "item": "cook-it:cinnamon_roll"
   },

@@ -16,5 +16,6 @@
   ],
   "result": {
     "item": "cook-it:acacia_rolling_pin"
-  }
+  },
+  "show_notification": true
 }

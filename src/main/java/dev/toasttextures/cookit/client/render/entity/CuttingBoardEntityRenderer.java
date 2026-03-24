@@ -18,6 +18,7 @@ import dev.toasttextures.cookit.CookIt;
 import net.minecraft.util.math.Vec2f;
 import net.minecraft.world.World;
 
+import java.util.EnumMap;
 import java.util.Map;
 
 import static net.minecraft.state.property.Properties.HORIZONTAL_FACING;
@@ -39,7 +40,7 @@ public class CuttingBoardEntityRenderer implements BlockEntityRenderer<CuttingBo
         float facing = CookIt.DIRECTION_TO_FLOAT.getOrDefault(dir, 0.0f);
 
         if (Registries.ITEM.getId(stack.getItem()).getNamespace().equals("minecraft")) {
-            Vec2f position = ITEM_POSITIONS.getOrDefault(dir, Vec2f.ZERO);
+            Vec2f position = ITEM_POSITIONS.get(dir);
             matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(90));
             matrices.translate(position.x, position.y, -0.125f);
         } else {
@@ -70,10 +71,10 @@ public class CuttingBoardEntityRenderer implements BlockEntityRenderer<CuttingBo
         }
     }
 
-    private static final Map<Direction, Vec2f> ITEM_POSITIONS = Map.of(
-            Direction.NORTH, new Vec2f(0.5f, 0.625f),
-            Direction.SOUTH, new Vec2f(-0.5f, -0.375f),
-            Direction.EAST, new Vec2f(0.5f, -0.375f),
-            Direction.WEST, new Vec2f(-0.5f, 0.625f)
-    );
+    private static final EnumMap<Direction, Vec2f> ITEM_POSITIONS = new EnumMap<>(Map.of(
+        Direction.NORTH, new Vec2f(0.5f, 0.625f),
+        Direction.SOUTH, new Vec2f(-0.5f, -0.375f),
+        Direction.EAST, new Vec2f(0.5f, -0.375f),
+        Direction.WEST, new Vec2f(-0.5f, 0.625f)
+    ));
 }

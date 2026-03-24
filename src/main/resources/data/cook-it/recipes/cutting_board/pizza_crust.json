@@ -6,8 +6,5 @@
   "output": {
     "item": "cook-it:pizza_crust"
   },
-  "tool": {
-    "item": "minecraft:air"
-  },
-  "clicks": 3
+  "interactions": 3
 }

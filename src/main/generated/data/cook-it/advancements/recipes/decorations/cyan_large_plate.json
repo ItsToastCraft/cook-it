@@ -22,13 +22,14 @@
   },
   "requirements": [
     [
-      "has_the_recipe",
-      "has_cyan_large_plate"
+      "has_cyan_large_plate",
+      "has_the_recipe"
     ]
   ],
   "rewards": {
     "recipes": [
       "cook-it:cyan_large_plate"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

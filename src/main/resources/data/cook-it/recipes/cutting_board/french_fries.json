@@ -4,7 +4,7 @@
     "item": "minecraft:potato"
   },
   "output": {
-    "item": "cook-it:uncooked_french_fries"
+    "item": "cook-it:uncooked_fries"
   },
   "tool": {
     "item": "cook-it:knife"

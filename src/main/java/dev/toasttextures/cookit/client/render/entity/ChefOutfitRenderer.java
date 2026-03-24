@@ -11,10 +11,9 @@ import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
 
 public class ChefOutfitRenderer {
-    static void renderPart(MatrixStack matrices, VertexConsumerProvider consumers, int light, ItemStack stack, Model model) {
+    static void renderPart(MatrixStack matrices, VertexConsumerProvider consumers, int light, Model model) {
         model.render(matrices, consumers.getBuffer(RenderLayer.getArmorCutoutNoCull(ChefOutfitItem.texture)), light, OverlayTexture.DEFAULT_UV, 1.0f,1.0f,1.0f,1.0f);
     }
 
@@ -26,7 +25,7 @@ public class ChefOutfitRenderer {
             ChefOutfitItem armor = (ChefOutfitItem) stack.getItem();
             var model = armor.getArmorModel();
             contextModel.copyBipedStateTo(model);
-            renderPart(matrices, vertexConsumers, light, stack, model);
+            renderPart(matrices, vertexConsumers, light, model);
         };
 
         ArmorRenderer.register(renderer, CookItItems.CHEF_UNIFORM, CookItItems.CHEF_PANTS);

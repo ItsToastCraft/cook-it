@@ -16,5 +16,6 @@
   ],
   "result": {
     "item": "cook-it:mangrove_rolling_pin"
-  }
+  },
+  "show_notification": true
 }

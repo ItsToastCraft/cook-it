@@ -1,7 +1,6 @@
 package dev.toasttextures.cookit.recipes;
 
 import com.google.gson.JsonObject;
-import dev.toasttextures.cookit.registries.CookItRecipes;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
@@ -14,6 +13,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
 import net.minecraft.world.World;
 
+import static dev.toasttextures.cookit.registries.CookItRecipes.allowAirIngredient;
 import static dev.toasttextures.cookit.registries.CookItRecipes.validateItemStack;
 
 public class CuttingBoardRecipe implements Recipe<SimpleInventory> {
@@ -56,7 +56,7 @@ public class CuttingBoardRecipe implements Recipe<SimpleInventory> {
     }
 
     public boolean resets() {
-        return tool.getMatchingStacks().length == 0;
+        return tool.isEmpty();
     }
 
     public boolean usesItem() {
@@ -114,9 +114,9 @@ public class CuttingBoardRecipe implements Recipe<SimpleInventory> {
         public CuttingBoardRecipe read(Identifier id, JsonObject json) {
             return new CuttingBoardRecipe(
                 id,
-                Ingredient.fromJson(json.getAsJsonArray("input")),
+                Ingredient.fromJson(json.getAsJsonObject("input")),
                 validateItemStack(json.getAsJsonObject("output"), false),
-                Ingredient.fromJson(json.getAsJsonArray("tool"), true),
+                allowAirIngredient(json, "tool"),
                 JsonHelper.getInt(json, "interactions", 1),
                 JsonHelper.getBoolean(json, "uses_item", false)
             );

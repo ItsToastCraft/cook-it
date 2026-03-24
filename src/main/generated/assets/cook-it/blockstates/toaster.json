@@ -1,0 +1,104 @@
+{
+  "variants": {
+    "facing=east,stage=empty": {
+      "model": "cook-it:block/toaster/toaster_empty",
+      "uvlock": false,
+      "y": 90
+    },
+    "facing=east,stage=full_toasted": {
+      "model": "cook-it:block/toaster/toaster_full_toasted",
+      "uvlock": false,
+      "y": 90
+    },
+    "facing=east,stage=full_untoasted": {
+      "model": "cook-it:block/toaster/toaster_full_untoasted",
+      "uvlock": false,
+      "y": 90
+    },
+    "facing=east,stage=half_toasted": {
+      "model": "cook-it:block/toaster/toaster_half_toasted",
+      "uvlock": false,
+      "y": 90
+    },
+    "facing=east,stage=half_untoasted": {
+      "model": "cook-it:block/toaster/toaster_half_untoasted",
+      "uvlock": false,
+      "y": 90
+    },
+    "facing=north,stage=empty": {
+      "model": "cook-it:block/toaster/toaster_empty",
+      "uvlock": false,
+      "y": 0
+    },
+    "facing=north,stage=full_toasted": {
+      "model": "cook-it:block/toaster/toaster_full_toasted",
+      "uvlock": false,
+      "y": 0
+    },
+    "facing=north,stage=full_untoasted": {
+      "model": "cook-it:block/toaster/toaster_full_untoasted",
+      "uvlock": false,
+      "y": 0
+    },
+    "facing=north,stage=half_toasted": {
+      "model": "cook-it:block/toaster/toaster_half_toasted",
+      "uvlock": false,
+      "y": 0
+    },
+    "facing=north,stage=half_untoasted": {
+      "model": "cook-it:block/toaster/toaster_half_untoasted",
+      "uvlock": false,
+      "y": 0
+    },
+    "facing=south,stage=empty": {
+      "model": "cook-it:block/toaster/toaster_empty",
+      "uvlock": false,
+      "y": 180
+    },
+    "facing=south,stage=full_toasted": {
+      "model": "cook-it:block/toaster/toaster_full_toasted",
+      "uvlock": false,
+      "y": 180
+    },
+    "facing=south,stage=full_untoasted": {
+      "model": "cook-it:block/toaster/toaster_full_untoasted",
+      "uvlock": false,
+      "y": 180
+    },
+    "facing=south,stage=half_toasted": {
+      "model": "cook-it:block/toaster/toaster_half_toasted",
+      "uvlock": false,
+      "y": 180
+    },
+    "facing=south,stage=half_untoasted": {
+      "model": "cook-it:block/toaster/toaster_half_untoasted",
+      "uvlock": false,
+      "y": 180
+    },
+    "facing=west,stage=empty": {
+      "model": "cook-it:block/toaster/toaster_empty",
+      "uvlock": false,
+      "y": 270
+    },
+    "facing=west,stage=full_toasted": {
+      "model": "cook-it:block/toaster/toaster_full_toasted",
+      "uvlock": false,
+      "y": 270
+    },
+    "facing=west,stage=full_untoasted": {
+      "model": "cook-it:block/toaster/toaster_full_untoasted",
+      "uvlock": false,
+      "y": 270
+    },
+    "facing=west,stage=half_toasted": {
+      "model": "cook-it:block/toaster/toaster_half_toasted",
+      "uvlock": false,
+      "y": 270
+    },
+    "facing=west,stage=half_untoasted": {
+      "model": "cook-it:block/toaster/toaster_half_untoasted",
+      "uvlock": false,
+      "y": 270
+    }
+  }
+}

@@ -1,6 +1,6 @@
 package dev.toasttextures.cookit.block.entity;
 
-import dev.toasttextures.cookit.block.food_blocks.pizza.PizzaTopping;
+import dev.toasttextures.cookit.block.food.pizza.PizzaTopping;
 import dev.toasttextures.cookit.registries.CookItBlockEntities;
 import dev.toasttextures.cookit.registries.CookItBlocks;
 import dev.toasttextures.cookit.registries.CookItItems;

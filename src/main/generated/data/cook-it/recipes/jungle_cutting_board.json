@@ -11,5 +11,6 @@
   ],
   "result": {
     "item": "cook-it:jungle_cutting_board"
-  }
+  },
+  "show_notification": true
 }

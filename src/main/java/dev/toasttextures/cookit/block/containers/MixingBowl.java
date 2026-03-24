@@ -48,17 +48,17 @@ public class MixingBowl extends BlockWithEntity implements BlockEntityProvider {
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         if (world.isClient) return ActionResult.SUCCESS;
-        ItemStack item = player.getStackInHand(hand);
+
         MixingBowlEntity entity = (MixingBowlEntity) world.getBlockEntity(pos);
         if (entity == null) return ActionResult.PASS;
-
+        ItemStack item = player.getStackInHand(hand);
         if (player.isSneaking()) {
             return entity.dropAsContainer(player, world, this, pos);
         }
 
         if (entity.getStack(0).isOf(CookItItems.GOOP)) { return ActionResult.CONSUME; }
         if (item.isOf(CookItItems.WHISK)) {
-            boolean hasGoop = entity.processRecipe();
+            boolean hasGoop = entity.process(world);
             if (hasGoop) {
                 world.setBlockState(pos, state.with(CONTAINS_LIQUID, true));
                 world.updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);

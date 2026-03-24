@@ -22,13 +22,14 @@
   },
   "requirements": [
     [
-      "has_the_recipe",
-      "has_orange_bowl"
+      "has_orange_bowl",
+      "has_the_recipe"
     ]
   ],
   "rewards": {
     "recipes": [
       "cook-it:orange_bowl"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

@@ -12,5 +12,6 @@
   ],
   "result": {
     "item": "cook-it:green_bowl"
-  }
+  },
+  "show_notification": true
 }

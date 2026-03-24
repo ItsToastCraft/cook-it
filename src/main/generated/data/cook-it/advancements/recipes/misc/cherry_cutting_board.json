@@ -22,13 +22,14 @@
   },
   "requirements": [
     [
-      "has_the_recipe",
-      "has_cherry_slab"
+      "has_cherry_slab",
+      "has_the_recipe"
     ]
   ],
   "rewards": {
     "recipes": [
       "cook-it:cherry_cutting_board"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

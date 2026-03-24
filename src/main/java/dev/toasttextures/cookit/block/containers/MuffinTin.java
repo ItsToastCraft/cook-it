@@ -1,6 +1,5 @@
 package dev.toasttextures.cookit.block.containers;
 
-import dev.toasttextures.cookit.CookIt;
 import dev.toasttextures.cookit.block.entity.MuffinTinEntity;
 import dev.toasttextures.cookit.registries.CookItBlocks;
 import dev.toasttextures.cookit.registries.CookItItems;
@@ -59,12 +58,7 @@ public class MuffinTin extends Block implements BlockEntityProvider {
             if (!item.isEmpty()) {
                 // Check if there's goop that can be transferred to the muffin tin
                 if (item.isOf(CookItBlocks.MIXING_BOWL.asItem()) && item.getSubNbt("BlockEntityTag") != null) {
-                    for (int i = 0; i < blockEntity.size(); i++) {
-                        if (blockEntity.getStack(i).isEmpty()) {
-                            MixingBowl.transferTo(item, blockEntity, i);
-                            return ActionResult.SUCCESS;
-                        }
-                    }
+                    blockEntity.transfer(player, item);
                 }
             } else {
                 for (int i = blockEntity.size() - 1; i >= 0; i--) {

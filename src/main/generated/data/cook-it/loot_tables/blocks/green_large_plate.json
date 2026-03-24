@@ -8,60 +8,11 @@
           "type": "minecraft:item",
           "functions": [
             {
-              "add": false,
-              "conditions": [
-                {
-                  "block": "cook-it:green_large_plate",
-                  "condition": "minecraft:block_state_property",
-                  "properties": {
-                    "plate_amount": "1"
-                  }
-                }
-              ],
-              "count": 1.0,
-              "function": "minecraft:set_count"
-            },
-            {
-              "add": false,
-              "conditions": [
-                {
-                  "block": "cook-it:green_large_plate",
-                  "condition": "minecraft:block_state_property",
-                  "properties": {
-                    "plate_amount": "2"
-                  }
-                }
-              ],
-              "count": 2.0,
-              "function": "minecraft:set_count"
-            },
-            {
-              "add": false,
-              "conditions": [
-                {
-                  "block": "cook-it:green_large_plate",
-                  "condition": "minecraft:block_state_property",
-                  "properties": {
-                    "plate_amount": "3"
-                  }
-                }
-              ],
-              "count": 3.0,
-              "function": "minecraft:set_count"
-            },
-            {
-              "add": false,
-              "conditions": [
-                {
-                  "block": "cook-it:green_large_plate",
-                  "condition": "minecraft:block_state_property",
-                  "properties": {
-                    "plate_amount": "4"
-                  }
-                }
-              ],
-              "count": 4.0,
-              "function": "minecraft:set_count"
+              "block": "cook-it:green_large_plate",
+              "function": "minecraft:copy_state",
+              "properties": [
+                "count"
+              ]
             }
           ],
           "name": "cook-it:green_large_plate"

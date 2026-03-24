@@ -8,7 +8,7 @@
           "block": "cook-it:vanilla_vine",
           "condition": "minecraft:block_state_property",
           "properties": {
-            "plant_state": "2"
+            "plant_state": "harvestable"
           }
         }
       ],

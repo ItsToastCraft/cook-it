@@ -26,7 +26,6 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.BiConsumer;
-import java.util.function.Function;
 
 import static net.minecraft.state.property.Properties.*;
 

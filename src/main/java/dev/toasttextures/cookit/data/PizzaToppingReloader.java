@@ -5,7 +5,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.toasttextures.cookit.CookIt;
-import dev.toasttextures.cookit.block.food_blocks.pizza.PizzaTopping;
+import dev.toasttextures.cookit.block.food.pizza.PizzaTopping;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.registry.Registries;
 import net.minecraft.resource.Resource;

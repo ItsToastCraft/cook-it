@@ -1,8 +1,6 @@
 package dev.toasttextures.cookit.recipes;
 
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.DataResult;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.google.gson.JsonObject;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
@@ -11,35 +9,39 @@ import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.RecipeType;
 import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.JsonHelper;
 import net.minecraft.util.collection.DefaultedList;
-import net.minecraft.util.dynamic.Codecs;
 import net.minecraft.world.World;
 
-import java.util.List;
+import static dev.toasttextures.cookit.registries.CookItRecipes.validateItemStack;
 
 public class OvenRecipe implements Recipe<SimpleInventory> {
+    private final Identifier id;
+    private final Ingredient input;
     private final ItemStack output;
-    private final List<Ingredient> recipeItems;
     private final int maxProgress;
-    private final String event;
 
-    public OvenRecipe(List<Ingredient> ingredients, ItemStack itemStack, int maxProgress, String event) {
+    public OvenRecipe(Identifier id, Ingredient input, ItemStack itemStack, int maxProgress) {
+        this.id = id;
         this.output = itemStack;
-        this.recipeItems = ingredients;
+        this.input = input;
         this.maxProgress = maxProgress;
-        this.event = event;
     }
 
     @Override
     public boolean matches(SimpleInventory inventory, World world) {
-        if(world.isClient()) {
-            return false;
-        }
-        return recipeItems.get(0).test(inventory.getStack(0));
+        if(world.isClient()) return false;
+        return input.test(inventory.getStack(0));
     }
 
     @Override
     public boolean isIgnoredInRecipeBook() { return true; }
+
+    @Override
+    public Identifier getId() {
+        return id;
+    }
 
     @Override
     public ItemStack craft(SimpleInventory inventory, DynamicRegistryManager registryManager) {
@@ -48,8 +50,8 @@ public class OvenRecipe implements Recipe<SimpleInventory> {
 
     @Override
     public DefaultedList<Ingredient> getIngredients() {
-        DefaultedList<Ingredient> list = DefaultedList.ofSize(this.recipeItems.size());
-        list.addAll(recipeItems);
+        DefaultedList<Ingredient> list = DefaultedList.ofSize(1);
+        list.add(input);
         return list;
     }
 
@@ -57,16 +59,13 @@ public class OvenRecipe implements Recipe<SimpleInventory> {
         return maxProgress;
     }
 
-    public String getEvent() {
-        return event;
-    }
     @Override
     public boolean fits(int width, int height) {
         return true;
     }
 
     @Override
-    public ItemStack getResult(DynamicRegistryManager registryManager) {
+    public ItemStack getOutput(DynamicRegistryManager registryManager) {
         return output;
     }
 
@@ -86,49 +85,51 @@ public class OvenRecipe implements Recipe<SimpleInventory> {
 
     public static class Serializer implements RecipeSerializer<OvenRecipe> {
         public static final Serializer INSTANCE = new Serializer();
-        public static final Codec<OvenRecipe> CODEC = RecordCodecBuilder.create(in -> in.group(
-                validateAmount(Ingredient.DISALLOW_EMPTY_CODEC).fieldOf("ingredients").forGetter(OvenRecipe::getIngredients),
-                ItemStack.RECIPE_RESULT_CODEC.fieldOf("output").forGetter(r -> r.output),
+//        public static final Codec<OvenRecipe> CODEC = RecordCodecBuilder.create(in -> in.group(
+//                validateAmount(Ingredient.DISALLOW_EMPTY_CODEC).fieldOf("ingredients").forGetter(OvenRecipe::getIngredients),
+//                ItemStack.RECIPE_RESULT_CODEC.fieldOf("output").forGetter(r -> r.output),
+//
+//                Codec.INT.fieldOf("time").forGetter(OvenRecipe::getMaxProgress),
+//
+//                Codec.STRING.optionalFieldOf("event", "none:none").forGetter(OvenRecipe::getEvent)
+//        ).apply(in, OvenRecipe::new));
+//
+//        private static Codec<List<Ingredient>> validateAmount(Codec<Ingredient> delegate) {
+//            return Codecs.validate(Codecs.validate(
+//                    delegate.listOf(), list -> list.size() > 9 ? DataResult.error(() -> "Recipe has too many ingredients!") : DataResult.success(list)),
+//                    list -> list.isEmpty() ? DataResult.error(() -> "Recipe has no ingredients!") : DataResult.success(list));
+//        }
+//
+//        @Override
+//        public Codec<OvenRecipe> codec() {
+//            return CODEC;
+//        }
 
-                Codec.INT.fieldOf("time").forGetter(OvenRecipe::getMaxProgress),
-
-                Codec.STRING.optionalFieldOf("event", "none:none").forGetter(OvenRecipe::getEvent)
-        ).apply(in, OvenRecipe::new));
-
-        private static Codec<List<Ingredient>> validateAmount(Codec<Ingredient> delegate) {
-            return Codecs.validate(Codecs.validate(
-                    delegate.listOf(), list -> list.size() > 9 ? DataResult.error(() -> "Recipe has too many ingredients!") : DataResult.success(list)),
-                    list -> list.isEmpty() ? DataResult.error(() -> "Recipe has no ingredients!") : DataResult.success(list));
+        @Override
+        public OvenRecipe read(Identifier id, JsonObject json) {
+            return new OvenRecipe(
+                id,
+                Ingredient.fromJson(json.getAsJsonObject("input")),
+                validateItemStack(json.getAsJsonObject("output"), false),
+                JsonHelper.getInt(json, "time")
+            );
         }
 
         @Override
-        public Codec<OvenRecipe> codec() {
-            return CODEC;
-        }
-
-        @Override
-        public OvenRecipe read(PacketByteBuf buf) {
-            DefaultedList<Ingredient> inputs = DefaultedList.ofSize(buf.readInt(), Ingredient.EMPTY);
-
-            inputs.replaceAll(ignored -> Ingredient.fromPacket(buf));
-
-            ItemStack output = buf.readItemStack();
-            int time = buf.readInt();
-            String event = buf.readString();
-            return new OvenRecipe(inputs, output, time, event);
+        public OvenRecipe read(Identifier id, PacketByteBuf buf) {
+            return new OvenRecipe(
+                id,
+                Ingredient.fromPacket(buf),
+                buf.readItemStack(),
+                buf.readInt()
+            );
         }
 
         @Override
         public void write(PacketByteBuf buf, OvenRecipe recipe) {
-            buf.writeInt(recipe.getIngredients().size());
-
-            for (Ingredient ingredient : recipe.getIngredients()) {
-                ingredient.write(buf);
-            }
-
-            buf.writeItemStack(recipe.getResult(null));
+            recipe.input.write(buf);
+            buf.writeItemStack(recipe.getOutput(null));
             buf.writeInt(recipe.maxProgress);
-            buf.writeString(recipe.event);
         }
     }
 }
