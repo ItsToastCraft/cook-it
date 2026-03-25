@@ -57,10 +57,11 @@ public class Toaster extends HorizontalFacingBlock {
     // I know this allows you to just put a piece of bread at the last second but like I don't care :cat_plushie:
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+        if (world.isClient) return ActionResult.SUCCESS;
         ItemStack heldItem = player.getStackInHand(hand);
         Stage stage = state.get(STAGE);
 
-        if (!stage.isToasted() && heldItem.isOf(Items.BREAD)) {
+        if (!stage.isFull() && heldItem.isOf(Items.BREAD)) {
             heldItem.decrement(1);
             world.setBlockState(pos, state.with(STAGE, stage.increment()));
             this.scheduleTick(world, pos);
@@ -68,7 +69,9 @@ public class Toaster extends HorizontalFacingBlock {
 
         if (heldItem.isEmpty() && stage.isToasted()) {
             player.getInventory().insertStack(new ItemStack(CookItItems.TOAST));
-            world.setBlockState(pos, state.with(STAGE, stage.decrement()));
+            world.setBlockState(pos, state.with(STAGE, stage.retrieve()));
+
+            world.playSound(null, pos, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.MASTER);
         }
         return ActionResult.SUCCESS;
     }
@@ -80,14 +83,14 @@ public class Toaster extends HorizontalFacingBlock {
 
     private void scheduleTick(WorldAccess world, BlockPos pos) {
         if (!world.isClient() && !world.getBlockTickScheduler().isQueued(pos, this)) {
-            world.scheduleBlockTick(pos, this, 200);
+            world.scheduleBlockTick(pos, this, 150);
         }
     }
 
     @Override
     public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
         world.playSound(null, pos, SoundEvents.ENTITY_IRON_GOLEM_REPAIR, SoundCategory.MASTER);
-        world.setBlockState(pos, state.with(STAGE, state.get(STAGE).increment()));
+        world.setBlockState(pos, state.with(STAGE, state.get(STAGE).toast()), NOTIFY_LISTENERS);
     }
 
     public enum Stage implements StringIdentifiable {
@@ -106,16 +109,27 @@ public class Toaster extends HorizontalFacingBlock {
             return this.ordinal() > 2;
         }
 
+        public boolean isFull() {
+            return this == FULL_TOASTED || this == FULL_UNTOASTED;
+        }
+
         public Stage increment() {
             return switch (this) {
                 case EMPTY -> HALF_UNTOASTED;
                 case HALF_UNTOASTED -> FULL_UNTOASTED;
-                case HALF_TOASTED -> FULL_TOASTED;
                 default -> this;
             };
         }
 
-        public Stage decrement() {
+        public Stage toast() {
+            return switch (this) {
+                case HALF_UNTOASTED -> HALF_TOASTED;
+                case FULL_UNTOASTED -> FULL_TOASTED;
+                default -> this;
+            };
+        }
+
+        public Stage retrieve() {
             return switch (this) {
                 case HALF_TOASTED -> EMPTY;
                 case FULL_TOASTED -> HALF_TOASTED;

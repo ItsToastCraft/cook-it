@@ -100,7 +100,7 @@ public class MixingBowl extends BlockWithEntity implements BlockEntityProvider {
         super.onPlaced(world, pos, state, placer, itemStack);
         MixingBowlEntity entity = (MixingBowlEntity) world.getBlockEntity(pos);
 
-        NbtCompound nbt =itemStack.getSubNbt("BlockEntityTag");
+        NbtCompound nbt = itemStack.getSubNbt("BlockEntityTag");
         if (nbt == null) return;
         if (entity != null && !world.isClient) {
             entity.setGoopColor(nbt.getInt("color"));

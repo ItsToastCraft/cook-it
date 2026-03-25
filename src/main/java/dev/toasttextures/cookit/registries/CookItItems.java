@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import static dev.toasttextures.cookit.registries.CookItBlocks.BLOCKS;
+import static dev.toasttextures.cookit.registries.CookItBlocks.*;
 
 public class CookItItems {
     public static final List<Item> ITEMS = new ArrayList<>();
@@ -105,8 +105,11 @@ public class CookItItems {
                 for (Item item : ITEMS) {
                     entries.add(item);
                 }
+
                 for (Block block : BLOCKS) {
-                    entries.add(block);
+                    if (!(block.equals(VANILLA_VINE_STEM) || block.equals(VANILLA_VINE))) {
+                        entries.add(block);
+                    }
                 }
             })
             .build();

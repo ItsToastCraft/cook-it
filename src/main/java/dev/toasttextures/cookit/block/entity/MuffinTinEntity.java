@@ -18,11 +18,11 @@ public class MuffinTinEntity extends Container implements Transferable {
     @Override
     public void transfer(PlayerEntity player, ItemStack stack) {
         if (!stack.isOf(CookItBlocks.MIXING_BOWL.asItem())) return;
-        NbtList items = Container.getContainerNbt(stack);
+        NbtList items = Container.getItemList(stack);
         if (items.isEmpty()) return;
         ItemStack goop = ItemStack.fromNbt((NbtCompound) items.get(0));
         if (!goop.isOf(CookItItems.GOOP)) return;
-        if (!fillFirst(goop)) return;
+        if (!fillFirst(player, goop)) return;
 
         // Idk I might have to do further testing
         items.getCompound(0).putInt("Count", goop.getCount() - 1);

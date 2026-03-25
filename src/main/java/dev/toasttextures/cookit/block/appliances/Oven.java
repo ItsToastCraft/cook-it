@@ -67,7 +67,7 @@ public class Oven extends BlockWithEntity implements BlockEntityProvider {
                 openOven(world, pos, state, false);
             }
         } else if (Block.getBlockFromItem(heldItem.getItem()).getDefaultState().isIn(CookItTags.CONTAINERS)) {
-            return blockEntity.fillFirst(heldItem) ? ActionResult.SUCCESS : ActionResult.FAIL;
+            return blockEntity.fillFirst(player, heldItem) ? ActionResult.SUCCESS : ActionResult.FAIL;
         }
 
         return ActionResult.FAIL;

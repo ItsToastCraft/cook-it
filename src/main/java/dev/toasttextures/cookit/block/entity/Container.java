@@ -1,5 +1,6 @@
 package dev.toasttextures.cookit.block.entity;
 
+import dev.toasttextures.cookit.CookIt;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
@@ -9,6 +10,7 @@ import net.minecraft.inventory.Inventories;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
@@ -23,18 +25,17 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
 
 public class Container extends BlockEntity implements DefaultedInventory {
     public static final String CONTAINER_KEY = "Container";
+
     protected final DefaultedList<ItemStack> items;
 
     public Container(BlockEntityType<?> blockEntity, BlockPos pos, BlockState state, int size) {
         super(blockEntity, pos, state);
-        this.items = DefaultedList.ofSize(size);
+        this.items = DefaultedList.ofSize(size, ItemStack.EMPTY);
     }
 
     @Override
@@ -55,14 +56,35 @@ public class Container extends BlockEntity implements DefaultedInventory {
         return items;
     }
 
+    /**
+     * Finds the index of the first empty slot.
+     * Returns -1 if not found.
+     */
+    public int firstEmpty() {
+        for (int i = 0; i < getItems().size(); i++) {
+            if (getStack(i).isEmpty()) return i;
+        }
+        return -1;
+    }
+
+    public boolean fillFirst(PlayerEntity player, ItemStack stack) {
+        if (stack.isEmpty()) return false;
+        int available = firstEmpty();
+        if (available == -1) return false;
+        ItemStack inserted = player.isCreative() ? stack.copyWithCount(1) : stack.split(1);
+        setStack(available, inserted);
+        return true;
+    }
+
     public ItemStack retrieve() {
-        return retrieve(item -> true);
+        return retrieve(item -> item != Items.AIR);
     }
 
     public ItemStack retrieve(Predicate<Item> exclusions) {
-        for (int i = items.size(); i >= 0; i--) {
+        for (int i = items.size() - 1; i >= 0; i--) {
             ItemStack stack = getStack(i);
             if (exclusions.test(stack.getItem())) {
+                this.markDirty();
                 return stack;
             }
         }
@@ -89,25 +111,36 @@ public class Container extends BlockEntity implements DefaultedInventory {
         return ActionResult.SUCCESS;
     }
 
-    public static NbtList getContainerNbt(ItemStack container) {
-        NbtCompound nbt = container.getSubNbt(CONTAINER_KEY);
+    // Puts the Container NBT out into CONTAINER_KEY
+    @Override
+    public void setStackNbt(ItemStack stack) {
+        NbtCompound nbt = this.createNbt();
+        NbtList items = nbt.getList("Items",  NbtElement.COMPOUND_TYPE).copy();
+        nbt.remove("Items");
+
+        stack.getOrCreateSubNbt(CONTAINER_KEY).put("Items", items);
+        BlockItem.setBlockEntityNbt(stack, this.getType(), nbt);
+    }
+
+    @Nullable
+    public static NbtCompound getContainerNbt(ItemStack container) {
+        return container.getSubNbt(CONTAINER_KEY);
+    }
+
+    public static NbtList getItemList(ItemStack container) {
+        NbtCompound nbt = getContainerNbt(container);
         if (nbt == null) return new NbtList();
         return nbt.getList("Items", NbtElement.COMPOUND_TYPE);
     }
 
-    public static boolean isContainer(ItemStack container) {
-        return container.getSubNbt(CONTAINER_KEY) != null;
-    }
+    public static DefaultedList<ItemStack> getItems(ItemStack container) {
+        NbtCompound nbt = container.getSubNbt(CONTAINER_KEY);
+        if (nbt == null) return DefaultedList.of();
 
-    public static List<ItemStack> getItems(ItemStack container) {
-        NbtList nbt = getContainerNbt(container);
-        if (nbt.isEmpty()) return Collections.emptyList();
-        List<ItemStack> stackList = new ArrayList<>();
-        for (NbtElement element : nbt) {
-            ItemStack stack = ItemStack.fromNbt((NbtCompound) element);
-            if (!stack.isEmpty()) stackList.add(stack);
-        }
-        return stackList;
+        NbtList containerNbt = getItemList(container);
+        DefaultedList<ItemStack> items = DefaultedList.ofSize(containerNbt.size(), ItemStack.EMPTY);
+        Inventories.readNbt(nbt, items);
+        return items;
     }
 
     public static void appendToolTip(ItemStack container, List<Text> tooltip, Predicate<Item> exclusions) {
@@ -125,29 +158,28 @@ public class Container extends BlockEntity implements DefaultedInventory {
     }
 
     public static void writeTo(ItemStack container, List<ItemStack> stacks) {
-        NbtList list = new NbtList();
-        NbtCompound collected = new NbtCompound();
-        for (int i = 0; i < stacks.size(); i++) {
-            NbtCompound compound = new NbtCompound();
-            compound.putByte("Slot", (byte) i);
-            stacks.get(i).writeNbt(compound);
-            list.add(compound);
-        }
-        collected.put("Items", list);
-
-        container.getOrCreateSubNbt("BlockEntityTag").put(CONTAINER_KEY, collected);
+        Inventories.writeNbt(container.getOrCreateSubNbt(CONTAINER_KEY), DefaultedList.copyOf(ItemStack.EMPTY, stacks.toArray(new ItemStack[0])));
     }
 
     public static void addTo(ItemStack container, ItemStack stack) {
-        NbtCompound root = BlockItem.getBlockEntityNbt(container);
-        if (root == null) return;
+        if (stack.isEmpty()) return;
 
-        NbtCompound nbt = root.getCompound(CONTAINER_KEY);
-        NbtList list = nbt.getList("Items", NbtElement.COMPOUND_TYPE);
+        NbtList list = getItemList(container);
         NbtCompound compound = new NbtCompound();
+
         compound.putByte("Slot", (byte) (list.size() + 1));
         stack.writeNbt(compound);
         list.add(compound);
-        nbt.put("Items", list);
+        container.getOrCreateSubNbt(CONTAINER_KEY).put("Items", list);
+    }
+
+    public static void onPlaced(World world, BlockPos pos, ItemStack itemStack) {
+        if (world.isClient) return;
+        Container entity = (Container) world.getBlockEntity(pos);
+        if (entity == null) return;
+        NbtCompound nbt = getContainerNbt(itemStack);
+        if (nbt != null) {
+            Inventories.readNbt(nbt, entity.items);
+        }
     }
 }

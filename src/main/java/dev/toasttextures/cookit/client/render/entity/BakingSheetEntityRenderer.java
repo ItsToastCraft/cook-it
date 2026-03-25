@@ -1,5 +1,6 @@
 package dev.toasttextures.cookit.client.render.entity;
 
+import dev.toasttextures.cookit.CookIt;
 import dev.toasttextures.cookit.block.entity.BakingSheetEntity;
 import dev.toasttextures.cookit.registries.CookItItems;
 import net.fabricmc.api.EnvType;
@@ -33,9 +34,10 @@ public class BakingSheetEntityRenderer implements BlockEntityRenderer<BakingShee
 
     public static void render(List<ItemStack> items, MatrixStack matrices, VertexConsumerProvider vertexConsumers, World world, int light, int overlay) {
         final MinecraftClient client = MinecraftClient.getInstance();
-
+        if (items.isEmpty()) return;
         for (int i = 0; i < items.size(); i++) {
             ItemStack stack = items.get(i);
+
             if (stack.isEmpty()) continue;
 
             matrices.push();
