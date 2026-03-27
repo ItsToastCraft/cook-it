@@ -1,24 +1,28 @@
 package dev.toasttextures.cookit.recipes;
 
 import com.google.gson.JsonObject;
-import net.minecraft.inventory.SimpleInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketByteBuf;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.recipe.*;
-import net.minecraft.registry.DynamicRegistryManager;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.JsonHelper;
-import net.minecraft.world.World;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.Level;
 
 import static dev.toasttextures.cookit.registries.CookItRecipes.validateItemStack;
 
-public class FryerRecipe implements Recipe<SimpleInventory> {
-    private final Identifier id;
+public class FryerRecipe implements Recipe<SimpleContainer> {
+    private final ResourceLocation id;
     private final Ingredient input;
     private final ItemStack output;
     private final int maxProgress;
 
-    public FryerRecipe(Identifier id, Ingredient input, ItemStack output, int maxProgress) {
+    public FryerRecipe(ResourceLocation id, Ingredient input, ItemStack output, int maxProgress) {
         this.id = id;
         this.input = input;
         this.output = output;
@@ -26,23 +30,23 @@ public class FryerRecipe implements Recipe<SimpleInventory> {
     }
 
     @Override
-    public boolean matches(SimpleInventory inventory, World world) {
-        if(world.isClient()) {
+    public boolean matches(SimpleContainer inventory, Level world) {
+        if(world.isClientSide()) {
             return false;
         }
-        return input.test(inventory.getStack(0));
+        return input.test(inventory.getItem(0));
     }
 
     @Override
-    public Identifier getId() {
+    public ResourceLocation getId() {
         return id;
     }
 
     @Override
-    public boolean isIgnoredInRecipeBook() { return true; }
+    public boolean isSpecial() { return true; }
 
     @Override
-    public ItemStack craft(SimpleInventory inventory, DynamicRegistryManager registryManager) {
+    public ItemStack assemble(SimpleContainer inventory, RegistryAccess registryManager) {
         return output.copy();
     }
 
@@ -51,12 +55,12 @@ public class FryerRecipe implements Recipe<SimpleInventory> {
     }
 
     @Override
-    public boolean fits(int width, int height) {
+    public boolean canCraftInDimensions(int width, int height) {
         return true;
     }
 
     @Override
-    public ItemStack getOutput(DynamicRegistryManager registryManager) {
+    public ItemStack getResultItem(RegistryAccess registryManager) {
         return output;
     }
 
@@ -97,29 +101,29 @@ public class FryerRecipe implements Recipe<SimpleInventory> {
 //        }
 
         @Override
-        public FryerRecipe read(Identifier id, JsonObject json) {
+        public FryerRecipe fromJson(ResourceLocation id, JsonObject json) {
             return new FryerRecipe(
                     id,
                     Ingredient.fromJson(json.getAsJsonObject("input")),
                     validateItemStack(json.getAsJsonObject("output"), false),
-                    JsonHelper.getInt(json, "time")
+                    GsonHelper.getAsInt(json, "time")
             );
         }
 
         @Override
-        public FryerRecipe read(Identifier id, PacketByteBuf buf) {
+        public FryerRecipe fromNetwork(ResourceLocation id, FriendlyByteBuf buf) {
             return new FryerRecipe(
                     id,
-                    Ingredient.fromPacket(buf),
-                    buf.readItemStack(),
+                    Ingredient.fromNetwork(buf),
+                    buf.readItem(),
                     buf.readInt()
             );
         }
 
         @Override
-        public void write(PacketByteBuf buf, FryerRecipe recipe) {
-            recipe.input.write(buf);
-            buf.writeItemStack(recipe.output);
+        public void toNetwork(FriendlyByteBuf buf, FryerRecipe recipe) {
+            recipe.input.toNetwork(buf);
+            buf.writeItem(recipe.output);
             buf.writeInt(recipe.maxProgress);
         }
     }

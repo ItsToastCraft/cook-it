@@ -4,48 +4,48 @@ import dev.toasttextures.cookit.CookIt;
 import dev.toasttextures.cookit.block.entity.MicrowaveEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.block.entity.BlockEntityRenderer;
-import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
-import net.minecraft.client.render.model.json.ModelTransformationMode;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.RotationAxis;
-import net.minecraft.util.math.Vec2f;
-import net.minecraft.world.World;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.world.item.ItemDisplayContext;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.Direction;
+import com.mojang.math.Axis;
+import net.minecraft.world.phys.Vec2;
+import net.minecraft.world.level.Level;
 
 import java.util.Map;
 
-import static net.minecraft.state.property.Properties.HORIZONTAL_FACING;
+import static net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING;
 
 @Environment(EnvType.CLIENT)
 public class MicrowaveEntityRenderer implements BlockEntityRenderer<MicrowaveEntity> {
 
     private static final Map<Direction, ItemRenderPosition> ITEM_POSITIONS = Map.of(
-            Direction.NORTH, new ItemRenderPosition(new Vec2f(1.0625f, 1.0f), new Vec2f(2.125f, 1.75f)),
-            Direction.SOUTH, new ItemRenderPosition(new Vec2f(0.9375f, 1.0f), new Vec2f(2.125f, 1.75f)),
-            Direction.EAST, new ItemRenderPosition(new Vec2f(1.0f, 1.0625f), new Vec2f(1.75f, 2.125f)),
-            Direction.WEST, new ItemRenderPosition(new Vec2f(1.0f, 0.9375f), new Vec2f(1.75f, 2.125f)));
+            Direction.NORTH, new ItemRenderPosition(new Vec2(1.0625f, 1.0f), new Vec2(2.125f, 1.75f)),
+            Direction.SOUTH, new ItemRenderPosition(new Vec2(0.9375f, 1.0f), new Vec2(2.125f, 1.75f)),
+            Direction.EAST, new ItemRenderPosition(new Vec2(1.0f, 1.0625f), new Vec2(1.75f, 2.125f)),
+            Direction.WEST, new ItemRenderPosition(new Vec2(1.0f, 0.9375f), new Vec2(1.75f, 2.125f)));
 
-    public MicrowaveEntityRenderer(BlockEntityRendererFactory.Context ctx) {
+    public MicrowaveEntityRenderer(BlockEntityRendererProvider.Context ctx) {
     }
 
     @Override
-    public void render(MicrowaveEntity blockEntity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
-        final MinecraftClient client = MinecraftClient.getInstance();
+    public void render(MicrowaveEntity blockEntity, float tickDelta, PoseStack matrices, MultiBufferSource vertexConsumers, int light, int overlay) {
+        final Minecraft client = Minecraft.getInstance();
 
-        ItemStack stack = blockEntity.getStack(0);
+        ItemStack stack = blockEntity.getItem(0);
         if (stack.isEmpty()) return;
-        World world = blockEntity.getWorld();
+        Level world = blockEntity.getLevel();
         if (world == null) return;
 
-        Direction facing = blockEntity.getCachedState().get(HORIZONTAL_FACING);
+        Direction facing = blockEntity.getBlockState().getValue(HORIZONTAL_FACING);
         ItemRenderPosition pair = ITEM_POSITIONS.get(facing);
-        Vec2f pos;
-        matrices.push();
+        Vec2 pos;
+        matrices.pushPose();
         if (stack.getItem() instanceof BlockItem) {
             pos = pair.blockItemPos;
             matrices.scale(0.25f, 0.25f, 0.25f);
@@ -55,16 +55,16 @@ public class MicrowaveEntityRenderer implements BlockEntityRenderer<MicrowaveEnt
             matrices.scale(0.5f, 0.5f, 0.5f);
             matrices.translate(pos.x, 0.71875f, pos.y);
         }
-        matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(CookIt.DIRECTION_TO_FLOAT.getOrDefault(facing, 0.0f)));
+        matrices.mulPose(Axis.YP.rotationDegrees(CookIt.DIRECTION_TO_FLOAT.getOrDefault(facing, 0.0f)));
 
         // Rotate the item
         if (blockEntity.getProgress() > 0) {
-            matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees((world.getTime() + tickDelta) * 4));
+            matrices.mulPose(Axis.YP.rotationDegrees((world.getGameTime() + tickDelta) * 4));
         }
 
-        client.getItemRenderer().renderItem(stack, ModelTransformationMode.NONE, light, overlay, matrices, vertexConsumers, world, 0);
-        matrices.pop();
+        client.getItemRenderer().renderStatic(stack, ItemDisplayContext.NONE, light, overlay, matrices, vertexConsumers, world, 0);
+        matrices.popPose();
     }
 
-    private record ItemRenderPosition(Vec2f itemPos, Vec2f blockItemPos) {}
+    private record ItemRenderPosition(Vec2 itemPos, Vec2 blockItemPos) {}
 }

@@ -2,57 +2,63 @@ package dev.toasttextures.cookit.block.containers;
 
 import dev.toasttextures.cookit.block.entity.PizzaPanEntity;
 import net.minecraft.block.*;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import dev.toasttextures.cookit.block.food.pizza.Pizza;
 import org.jetbrains.annotations.Nullable;
 
-public class PizzaPan extends BlockWithEntity implements BlockEntityProvider {
-    public PizzaPan(Settings settings) {
+public class PizzaPan extends BaseEntityBlock implements EntityBlock {
+    public PizzaPan(Properties settings) {
         super(settings);
     }
 
-    public BlockRenderType getRenderType(BlockState state) {
-        return BlockRenderType.MODEL;
+    public RenderShape getRenderShape(BlockState state) {
+        return RenderShape.MODEL;
     }
 
-    private static final VoxelShape SHAPE = createCuboidShape(0.0, 0.0, 0.0, 16.0, 1.0, 16.0);
+    private static final VoxelShape SHAPE = box(0.0, 0.0, 0.0, 16.0, 1.0, 16.0);
 
     @Override
-    public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext ctx) {
+    public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext ctx) {
         return SHAPE;
     }
 
     @Override
-    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        if (world.isClient) { return ActionResult.SUCCESS; }
+    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        if (world.isClientSide) { return InteractionResult.SUCCESS; }
         PizzaPanEntity blockEntity = (PizzaPanEntity) world.getBlockEntity(pos);
-        if (blockEntity == null) { return ActionResult.PASS; }
+        if (blockEntity == null) { return InteractionResult.PASS; }
 
-        if (player.isSneaking()) return blockEntity.dropAsContainer(player, world, this, pos);
+        if (player.isShiftKeyDown()) return blockEntity.dropAsContainer(player, world, this, pos);
 
-        ItemStack heldItem = player.getStackInHand(hand);
+        ItemStack heldItem = player.getItemInHand(hand);
 
         boolean hasPizza = !blockEntity.isEmpty();
         if (heldItem.getItem() instanceof BlockItem blockItem && blockItem.getBlock() instanceof Pizza && !hasPizza) {
-            blockEntity.setStack(0, heldItem.split(1));
+            blockEntity.setItem(0, heldItem.split(1));
         } else if (heldItem.isEmpty() && hasPizza) {
-            player.getInventory().offerOrDrop(blockEntity.getStack(0).split(1));
+            player.getInventory().placeItemBackInInventory(blockEntity.getItem(0).split(1));
         }
-        return ActionResult.SUCCESS;
+        return InteractionResult.SUCCESS;
     }
 
     @Override
-    public @Nullable BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+    public @Nullable BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new PizzaPanEntity(pos, state);
     }
 }

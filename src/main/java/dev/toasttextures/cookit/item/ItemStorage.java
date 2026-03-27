@@ -1,8 +1,8 @@
 package dev.toasttextures.cookit.item;
 
 import dev.toasttextures.cookit.block.entity.Container;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
 
 import static dev.toasttextures.cookit.block.entity.Container.CONTAINER_KEY;
 import static dev.toasttextures.cookit.block.entity.Container.getItems;
@@ -19,7 +19,7 @@ public final class ItemStorage {
     }
 
     public static void setStoredItem(ItemStack input, ItemStack item) {
-        NbtCompound nbt = input.getOrCreateSubNbt(CONTAINER_KEY);
+        CompoundTag nbt = input.getOrCreateTagElement(CONTAINER_KEY);
         if (item.isEmpty()) {
             nbt.remove("Items");
             return;

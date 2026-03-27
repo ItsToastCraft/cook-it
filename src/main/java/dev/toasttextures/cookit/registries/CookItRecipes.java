@@ -3,17 +3,17 @@ package dev.toasttextures.cookit.registries;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import dev.toasttextures.cookit.recipes.*;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.recipe.Ingredient;
-import net.minecraft.recipe.Recipe;
-import net.minecraft.recipe.RecipeSerializer;
-import net.minecraft.recipe.RecipeType;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.util.Identifier;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceLocation;
 import dev.toasttextures.cookit.CookIt;
-import net.minecraft.util.JsonHelper;
+import net.minecraft.util.GsonHelper;
 
 public final class CookItRecipes {
     public static void register() {
@@ -24,13 +24,13 @@ public final class CookItRecipes {
         registerRecipe("mixing", MixingBowlRecipe.Serializer.INSTANCE, MixingBowlRecipe.Type.INSTANCE);
     }
     private static <T extends Recipe<?>> void registerRecipe(String name, RecipeSerializer<T> serializer, RecipeType<T> type) {
-        Identifier id = CookIt.idOf(name);
-        Registry.register(Registries.RECIPE_SERIALIZER, id, serializer);
-        Registry.register(Registries.RECIPE_TYPE, id, type);
+        ResourceLocation id = CookIt.idOf(name);
+        Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, id, serializer);
+        Registry.register(BuiltInRegistries.RECIPE_TYPE, id, type);
     }
 
     public static ItemStack validateItemStack(JsonObject obj, boolean canBeEmpty) {
-        ItemStack stack = new ItemStack(JsonHelper.getItem(obj, "item", Items.AIR), JsonHelper.getInt(obj, "count", 1));
+        ItemStack stack = new ItemStack(GsonHelper.getAsItem(obj, "item", Items.AIR), GsonHelper.getAsInt(obj, "count", 1));
         if (!canBeEmpty && stack.isEmpty()) {
             throw new JsonSyntaxException("Empty item not allowed here");
         }

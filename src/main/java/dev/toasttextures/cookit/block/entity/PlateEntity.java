@@ -2,12 +2,12 @@ package dev.toasttextures.cookit.block.entity;
 
 import dev.toasttextures.cookit.item.ItemStorage;
 import dev.toasttextures.cookit.registries.CookItItems;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.BlockPos;
 import dev.toasttextures.cookit.registries.CookItBlockEntities;
 
 public class PlateEntity extends Container implements DefaultedInventory, Transferable {
@@ -20,17 +20,17 @@ public class PlateEntity extends Container implements DefaultedInventory, Transf
     }
 
     @Override
-    public void writeNbt(NbtCompound nbt) {
-        super.writeNbt(nbt);
+    public void saveAdditional(CompoundTag nbt) {
+        super.saveAdditional(nbt);
     }
 
     @Override
-    public void transfer(PlayerEntity player, ItemStack stack) {
-        ItemStack first = getStack(0);
-        if (first.isEmpty() && stack.isOf(CookItItems.FRYER_BASKET)) {
+    public void transfer(Player player, ItemStack stack) {
+        ItemStack first = getItem(0);
+        if (first.isEmpty() && stack.is(CookItItems.FRYER_BASKET)) {
             items.set(0, ItemStorage.getStoredItem(stack).split(1));
         } else if (!first.isEmpty()) {
-            player.getInventory().offerOrDrop(stack.copyAndEmpty());
+            player.getInventory().placeItemBackInInventory(stack.copyAndClear());
         }
     }
 }

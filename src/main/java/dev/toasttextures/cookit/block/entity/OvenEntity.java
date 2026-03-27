@@ -2,18 +2,18 @@ package dev.toasttextures.cookit.block.entity;
 
 import dev.toasttextures.cookit.recipes.OvenRecipe;
 import dev.toasttextures.cookit.registries.CookItBlockEntities;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.inventory.SimpleInventory;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 
 import java.util.List;
 
-import static net.minecraft.state.property.Properties.HORIZONTAL_FACING;
+import static net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING;
 
 public class OvenEntity extends CookingBlockEntity<OvenRecipe> implements SlotProvider<OvenSlot> {
     private int[] progress = new int[2];
@@ -22,8 +22,8 @@ public class OvenEntity extends CookingBlockEntity<OvenRecipe> implements SlotPr
     private final List<OvenSlot> slots;
     public OvenEntity(BlockPos pos, BlockState state) {
         super(CookItBlockEntities.OVEN, OvenRecipe.Type.INSTANCE, pos, state, 2);
-        Direction dir = state.get(HORIZONTAL_FACING);
-        List<Vec3d> slots = OvenSlot.rotated(dir);
+        Direction dir = state.getValue(HORIZONTAL_FACING);
+        List<Vec3> slots = OvenSlot.rotated(dir);
 
         this.slots = List.of(
             createSlot(slots.get(0), this, 0),
@@ -32,22 +32,22 @@ public class OvenEntity extends CookingBlockEntity<OvenRecipe> implements SlotPr
     }
 
     @Override
-    public void readNbt(NbtCompound nbt) {
-        super.readNbt(nbt);
+    public void load(CompoundTag nbt) {
+        super.load(nbt);
         progress = nbt.getIntArray(PROGRESS_KEY);
     }
 
     @Override
-    protected void writeNbt(NbtCompound nbt) {
+    protected void saveAdditional(CompoundTag nbt) {
         nbt.putIntArray(PROGRESS_KEY, progress);
-        super.writeNbt(nbt);
+        super.saveAdditional(nbt);
     }
 
     @Override
-    public void craft(World world, OvenRecipe recipe) {
+    public void craft(Level world, OvenRecipe recipe) {
         if (completed == null) return;
         if (!items.get(completed.index).isEmpty() && completed.getStatus() == CookingStatus.DONE) {
-            setStack(completed.index, recipe.craft(new SimpleInventory(items.get(completed.index)), world.getRegistryManager()));
+            setItem(completed.index, recipe.assemble(new SimpleContainer(items.get(completed.index)), world.registryAccess()));
         }
     }
 
@@ -55,7 +55,7 @@ public class OvenEntity extends CookingBlockEntity<OvenRecipe> implements SlotPr
     public void reset() {
         progress[completed.index] = 0;
         completed = null;
-        markDirty();
+        setChanged();
     }
 
     void updateStatus(OvenSlot slot) {
@@ -84,16 +84,16 @@ public class OvenEntity extends CookingBlockEntity<OvenRecipe> implements SlotPr
     }
 
     @Override
-    public <E extends BlockEntity> OvenSlot createSlot(Vec3d pos, E entity, int index) {
+    public <E extends BlockEntity> OvenSlot createSlot(Vec3 pos, E entity, int index) {
         return new OvenSlot(pos, (OvenEntity) entity, index);
     }
 
     @Override
-    public OvenSlot getSlotAt(Vec3d entityPos, Vec3d clickPos) {
+    public OvenSlot getSlotAt(Vec3 entityPos, Vec3 clickPos) {
         return null;
     }
 
-    public static void tick(World world, BlockPos pos, BlockState state, OvenEntity entity) {
+    public static void tick(Level world, BlockPos pos, BlockState state, OvenEntity entity) {
         for (OvenSlot slot : entity.getSlots()) {
             slot.process(world, state);
         }

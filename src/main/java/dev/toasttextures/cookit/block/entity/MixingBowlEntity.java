@@ -3,18 +3,18 @@ package dev.toasttextures.cookit.block.entity;
 import dev.toasttextures.cookit.recipes.MixingBowlRecipe;
 import dev.toasttextures.cookit.registries.CookItBlockEntities;
 import dev.toasttextures.cookit.registries.CookItItems;
-import net.minecraft.block.BlockState;
-import net.minecraft.inventory.SimpleInventory;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.particle.ItemStackParticleEffect;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.particles.ItemParticleOption;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 
 public class MixingBowlEntity extends CookingBlockEntity<MixingBowlRecipe> implements DefaultedInventory {
     private static final String USES_KEY = "Uses";
@@ -27,22 +27,22 @@ public class MixingBowlEntity extends CookingBlockEntity<MixingBowlRecipe> imple
         super(CookItBlockEntities.MIXING_BOWL, MixingBowlRecipe.Type.INSTANCE, pos, state, 7);
     }
     @Override
-    public void readNbt(NbtCompound nbt) {
-        super.readNbt(nbt);
+    public void load(CompoundTag nbt) {
+        super.load(nbt);
         this.interactions = nbt.getInt(INTERACTIONS_KEY);
         this.uses = nbt.getInt(USES_KEY);
         this.color = nbt.getInt(COLOR_KEY);
     }
 
     @Override
-    public void writeNbt(NbtCompound nbt) {
+    public void saveAdditional(CompoundTag nbt) {
         nbt.putInt(INTERACTIONS_KEY, interactions);
         nbt.putInt(USES_KEY, uses);
         nbt.putInt(COLOR_KEY, color);
-        super.writeNbt(nbt);
+        super.saveAdditional(nbt);
     }
     public Item getLiquid() {
-        return this.getStack(this.size() - 1).getItem();
+        return this.getItem(this.getContainerSize() - 1).getItem();
     }
 
     // Amount of times the entity has been clicked (mixed)
@@ -50,8 +50,8 @@ public class MixingBowlEntity extends CookingBlockEntity<MixingBowlRecipe> imple
         return this.interactions;
     }
 
-    public boolean process(World world) {
-        if (world.isClient) return false;
+    public boolean process(Level world) {
+        if (world.isClientSide) return false;
 
         MixingBowlRecipe recipe = getRecipes(0).stream().findFirst().orElse(null);
 
@@ -59,9 +59,9 @@ public class MixingBowlEntity extends CookingBlockEntity<MixingBowlRecipe> imple
         boolean hasGoop = recipe.hasGoop();
         this.interactions++;
 
-        if (world instanceof ServerWorld serverWorld) {
-            serverWorld.playSound(null, pos.getX(), pos.getY(), pos.getZ(), SoundEvents.ENTITY_ITEM_FRAME_REMOVE_ITEM, SoundCategory.BLOCKS, 0.5f, 0.25f);
-            serverWorld.spawnParticles(new ItemStackParticleEffect(ParticleTypes.ITEM, recipe.getOutput(null)), pos.getX() + 0.5f, pos.getY(), pos.getZ() + 0.5f, 10, 0.0f, 0.025f,0.0f,0.125f);
+        if (world instanceof ServerLevel serverWorld) {
+            serverWorld.playSound(null, worldPosition.getX(), worldPosition.getY(), worldPosition.getZ(), SoundEvents.ITEM_FRAME_REMOVE_ITEM, SoundSource.BLOCKS, 0.5f, 0.25f);
+            serverWorld.sendParticles(new ItemParticleOption(ParticleTypes.ITEM, recipe.getResultItem(null)), worldPosition.getX() + 0.5f, worldPosition.getY(), worldPosition.getZ() + 0.5f, 10, 0.0f, 0.025f,0.0f,0.125f);
         }
 
         if (this.interactions >= recipe.getMixes()) {
@@ -70,7 +70,7 @@ public class MixingBowlEntity extends CookingBlockEntity<MixingBowlRecipe> imple
             return hasGoop;
         } else if (this.interactions == recipe.getMixes() - 1 && hasGoop) {
             this.color = recipe.goopColor();
-            markDirty();
+            setChanged();
         }
         return false;
     }
@@ -83,17 +83,17 @@ public class MixingBowlEntity extends CookingBlockEntity<MixingBowlRecipe> imple
     }
 
     @Override
-    public void craft(World world, MixingBowlRecipe recipe) {
-        this.clear();
-        ItemStack output = recipe.craft(new SimpleInventory(), world.getRegistryManager());
+    public void craft(Level world, MixingBowlRecipe recipe) {
+        this.clearContent();
+        ItemStack output = recipe.assemble(new SimpleContainer(), world.registryAccess());
         if (recipe.hasGoop()) {
             ItemStack goop = new ItemStack(CookItItems.GOOP, output.getCount());
-            goop.getOrCreateNbt().putInt("Color", this.getGoopColor());
+            goop.getOrCreateTag().putInt("Color", this.getGoopColor());
             output.setCount(1);
-            output.writeNbt(goop.getOrCreateSubNbt("Output"));
+            output.save(goop.getOrCreateTagElement("Output"));
             output = goop;
         }
-        this.setStack(0, output);
+        this.setItem(0, output);
     }
 
     @Override

@@ -2,47 +2,53 @@ package dev.toasttextures.cookit.block.food.pizza;
 
 import dev.toasttextures.cookit.block.entity.PizzaEntity;
 import net.minecraft.block.*;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.util.shape.VoxelShapes;
-import net.minecraft.world.BlockView;
+import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.level.BlockGetter;
 import org.jetbrains.annotations.Nullable;
 
-public class Pizza extends BlockWithEntity implements BlockEntityProvider {
-    public Pizza(Settings settings) {
+public class Pizza extends BaseEntityBlock implements EntityBlock {
+    public Pizza(Properties settings) {
         super(settings);
     }
 
-    public BlockRenderType getRenderType(BlockState state) {
-        return BlockRenderType.ENTITYBLOCK_ANIMATED;
+    public RenderShape getRenderShape(BlockState state) {
+        return RenderShape.ENTITYBLOCK_ANIMATED;
     }
 
     @Override
-    public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext ctx) {
+    public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext ctx) {
         return Slices.FULL.shape;
     }
 
     @Override
-    public ItemStack getPickStack(BlockView world, BlockPos pos, BlockState state) {
-        ItemStack stack = super.getPickStack(world, pos, state);
+    public ItemStack getCloneItemStack(BlockGetter world, BlockPos pos, BlockState state) {
+        ItemStack stack = super.getCloneItemStack(world, pos, state);
         if (world.getBlockEntity(pos) instanceof PizzaEntity pizzaEntity) {
-            pizzaEntity.setStackNbt(stack);
+            pizzaEntity.saveToItem(stack);
         }
         return stack;
     }
 
     @Override
-    public @Nullable BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+    public @Nullable BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new PizzaEntity(pos, state, false);
     }
 
     protected enum Slices {
-        ONE_SLICE(createCuboidShape(1.0, 0.0, 1.0, 8.0, 2.0, 8.0)),
-        TWO_SLICES(createCuboidShape(1.0, 0.0, 1.0, 15.0, 2.0, 8.0)),
-        THREE_SLICES(VoxelShapes.union(TWO_SLICES.shape, createCuboidShape(8.0, 0.0, 8.0, 15.0, 2.0, 15.0))),
-        FULL(createCuboidShape(1.0, 0.0, 1.0, 15.0, 2.0, 15.0));
+        ONE_SLICE(box(1.0, 0.0, 1.0, 8.0, 2.0, 8.0)),
+        TWO_SLICES(box(1.0, 0.0, 1.0, 15.0, 2.0, 8.0)),
+        THREE_SLICES(Shapes.or(TWO_SLICES.shape, box(8.0, 0.0, 8.0, 15.0, 2.0, 15.0))),
+        FULL(box(1.0, 0.0, 1.0, 15.0, 2.0, 15.0));
 
         public final VoxelShape shape;
 

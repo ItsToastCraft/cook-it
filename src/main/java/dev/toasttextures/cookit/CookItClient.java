@@ -13,10 +13,10 @@ import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.client.color.world.BiomeColors;
-import net.minecraft.client.item.ModelPredicateProviderRegistry;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.renderer.BiomeColors;
+import net.minecraft.client.renderer.item.ItemProperties;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.resources.ResourceLocation;
 import dev.toasttextures.cookit.registries.*;
 
 @Environment(EnvType.CLIENT)
@@ -29,12 +29,12 @@ public class CookItClient implements ClientModInitializer {
         isFiguraLoaded = (FabricLoader.getInstance().isModLoaded("figura"));
 
         CookItBlockEntities.registerRenderers();
-        BlockRenderLayerMap.INSTANCE.putBlocks(RenderLayer.getTranslucent(),
+        BlockRenderLayerMap.INSTANCE.putBlocks(RenderType.translucent(),
                 CookItBlocks.OVEN,
                 CookItBlocks.MICROWAVE,
                 CookItBlocks.FRYER);
 
-        BlockRenderLayerMap.INSTANCE.putBlocks(RenderLayer.getCutout(),
+        BlockRenderLayerMap.INSTANCE.putBlocks(RenderType.cutout(),
                 CookItBlocks.MUFFIN_TIN,
                 CookItBlocks.PIZZA_CRUST,
                 CookItBlocks.VANILLA_VINE,
@@ -55,28 +55,28 @@ public class CookItClient implements ClientModInitializer {
             BuiltinItemRendererRegistry.INSTANCE.register(plate, new PlateItemRenderer());
         }
 
-        ModelPredicateProviderRegistry.register(CookItItems.FIRE_EXTINGUISHER, new Identifier("extinguisher_fuel"), (stack, world, entity, seed) -> (float) Math.round(((float) stack.getMaxDamage() - stack.getDamage()) / 100) / 10);
+        ItemProperties.register(CookItItems.FIRE_EXTINGUISHER, new ResourceLocation("extinguisher_fuel"), (stack, world, entity, seed) -> (float) Math.round(((float) stack.getMaxDamage() - stack.getDamageValue()) / 100) / 10);
         ParticleFactoryRegistry.getInstance().register(CookIt.OIL_PARTICLE, OilParticle.Factory::new);
 
         ColorProviderRegistry.BLOCK.register((state, view, pos, tintIndex) -> {
             if (view != null && pos != null) {
                 // Use the biome's grass color
-                return BiomeColors.getFoliageColor(view, pos);
+                return BiomeColors.getAverageFoliageColor(view, pos);
             }
             return 0xFFFFFF;
         }, CookItBlocks.VANILLA_VINE, CookItBlocks.VANILLA_VINE_STEM);
 
         ColorProviderRegistry.BLOCK.register((state, view, pos, tintIndex) -> {
 
-            if (view != null && view.getBlockEntity(pos) instanceof MixingBowlEntity entity && state.get(MixingBowl.CONTAINS_LIQUID)) {
+            if (view != null && view.getBlockEntity(pos) instanceof MixingBowlEntity entity && state.getValue(MixingBowl.CONTAINS_LIQUID)) {
                 return entity.getGoopColor();
             }
             return 0xF8D478;
         }, CookItBlocks.MIXING_BOWL);
 
         ColorProviderRegistry.ITEM.register((stack, tintIndex) -> {
-            assert stack.getNbt() != null;
-            return stack.getNbt().getInt("color");
+            assert stack.getTag() != null;
+            return stack.getTag().getInt("color");
         }, CookItItems.GOOP);
     }
 }

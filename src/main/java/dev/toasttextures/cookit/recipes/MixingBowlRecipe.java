@@ -2,22 +2,27 @@ package dev.toasttextures.cookit.recipes;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import net.minecraft.inventory.SimpleInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketByteBuf;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.entity.player.StackedContents;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.recipe.*;
-import net.minecraft.registry.DynamicRegistryManager;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.JsonHelper;
-import net.minecraft.util.collection.DefaultedList;
-import net.minecraft.world.World;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.core.NonNullList;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.Level;
 
 import java.util.List;
 
 import static dev.toasttextures.cookit.registries.CookItRecipes.validateItemStack;
 
-public class MixingBowlRecipe implements Recipe<SimpleInventory> {
-    private final Identifier id;
+public class MixingBowlRecipe implements Recipe<SimpleContainer> {
+    private final ResourceLocation id;
     private final ItemStack output;
     private final List<Ingredient> ingredients;
     private final int interactions;
@@ -25,7 +30,7 @@ public class MixingBowlRecipe implements Recipe<SimpleInventory> {
     private final boolean goop;
     private final int goopColor;
 
-    public MixingBowlRecipe(Identifier id, List<Ingredient> ingredients, ItemStack output, int interactions, ItemStack liquid, boolean outputIsGoop, int goopColor) {
+    public MixingBowlRecipe(ResourceLocation id, List<Ingredient> ingredients, ItemStack output, int interactions, ItemStack liquid, boolean outputIsGoop, int goopColor) {
         this.id = id;
         this.output = output;
         this.ingredients = ingredients;
@@ -36,33 +41,33 @@ public class MixingBowlRecipe implements Recipe<SimpleInventory> {
     }
 
     @Override
-    public boolean matches(SimpleInventory inventory, World world) {
-        if (world.isClient) return false;
+    public boolean matches(SimpleContainer inventory, Level world) {
+        if (world.isClientSide) return false;
 
-        RecipeMatcher matcher = new RecipeMatcher();
-        for (ItemStack stack : inventory.stacks) {
-            matcher.addInput(stack, 1);
+        StackedContents matcher = new StackedContents();
+        for (ItemStack stack : inventory.items) {
+            matcher.accountStack(stack, 1);
         }
 
-        return matcher.inputs.size() == this.ingredients.size() && matcher.match(this, null);
+        return matcher.contents.size() == this.ingredients.size() && matcher.canCraft(this, null);
     }
 
     @Override
-    public boolean isIgnoredInRecipeBook() { return true; }
+    public boolean isSpecial() { return true; }
 
     @Override
-    public Identifier getId() {
+    public ResourceLocation getId() {
         return id;
     }
 
     @Override
-    public ItemStack craft(SimpleInventory inventory, DynamicRegistryManager registryManager) {
+    public ItemStack assemble(SimpleContainer inventory, RegistryAccess registryManager) {
         return output.copy();
     }
 
     @Override
-    public DefaultedList<Ingredient> getIngredients() {
-        DefaultedList<Ingredient> list = DefaultedList.ofSize(this.ingredients.size());
+    public NonNullList<Ingredient> getIngredients() {
+        NonNullList<Ingredient> list = NonNullList.createWithCapacity(this.ingredients.size());
         list.addAll(ingredients);
         return list;
     }
@@ -87,12 +92,12 @@ public class MixingBowlRecipe implements Recipe<SimpleInventory> {
     }
 
     @Override
-    public boolean fits(int width, int height) {
+    public boolean canCraftInDimensions(int width, int height) {
         return true;
     }
 
     @Override
-    public ItemStack getOutput(DynamicRegistryManager registryManager) {
+    public ItemStack getResultItem(RegistryAccess registryManager) {
         return output;
     }
 
@@ -138,9 +143,9 @@ public class MixingBowlRecipe implements Recipe<SimpleInventory> {
 
 
         @Override
-        public MixingBowlRecipe read(Identifier id, JsonObject json) {
+        public MixingBowlRecipe fromJson(ResourceLocation id, JsonObject json) {
             JsonArray array = json.getAsJsonArray("inputs");
-            DefaultedList<Ingredient> inputs = DefaultedList.ofSize(array.size(), Ingredient.EMPTY);
+            NonNullList<Ingredient> inputs = NonNullList.withSize(array.size(), Ingredient.EMPTY);
             for (int i = 0; i < array.size(); i++) {
                 inputs.set(i, Ingredient.fromJson(array.get(i)));
             }
@@ -149,39 +154,39 @@ public class MixingBowlRecipe implements Recipe<SimpleInventory> {
                     id,
                     inputs,
                     validateItemStack(json.getAsJsonObject("output"), false),
-                    JsonHelper.getInt(json, "interactions", 1),
+                    GsonHelper.getAsInt(json, "interactions", 1),
                     validateItemStack(json.getAsJsonObject("liquid"), true),
-                    JsonHelper.getBoolean(json, "outputs_goop", false),
-                    JsonHelper.getInt(json, "goop_color", 0)
+                    GsonHelper.getAsBoolean(json, "outputs_goop", false),
+                    GsonHelper.getAsInt(json, "goop_color", 0)
             );
         }
 
         @Override
-        public MixingBowlRecipe read(Identifier id, PacketByteBuf buf) {
-            DefaultedList<Ingredient> inputs = DefaultedList.ofSize(buf.readInt(), Ingredient.EMPTY);
-            inputs.replaceAll(_unused -> Ingredient.fromPacket(buf));
+        public MixingBowlRecipe fromNetwork(ResourceLocation id, FriendlyByteBuf buf) {
+            NonNullList<Ingredient> inputs = NonNullList.withSize(buf.readInt(), Ingredient.EMPTY);
+            inputs.replaceAll(_unused -> Ingredient.fromNetwork(buf));
             return new MixingBowlRecipe(
                     id,
                     inputs,
-                    buf.readItemStack(),
+                    buf.readItem(),
                     buf.readInt(),
-                    buf.readItemStack(),
+                    buf.readItem(),
                     buf.readBoolean(),
                     buf.readInt()
             );
         }
 
         @Override
-        public void write(PacketByteBuf buf, MixingBowlRecipe recipe) {
+        public void toNetwork(FriendlyByteBuf buf, MixingBowlRecipe recipe) {
             buf.writeInt(recipe.getIngredients().size());
 
             for (Ingredient ingredient : recipe.getIngredients()) {
-                ingredient.write(buf);
+                ingredient.toNetwork(buf);
             }
 
-            buf.writeItemStack(recipe.output);
+            buf.writeItem(recipe.output);
             buf.writeInt(recipe.interactions);
-            buf.writeItemStack(recipe.liquid);
+            buf.writeItem(recipe.liquid);
             buf.writeBoolean(recipe.hasGoop());
             buf.writeInt(recipe.goopColor());
         }

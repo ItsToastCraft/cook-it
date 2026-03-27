@@ -3,37 +3,37 @@ package dev.toasttextures.cookit.client.render.entity;
 import dev.toasttextures.cookit.block.entity.PizzaPanEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.block.entity.BlockEntityRenderer;
-import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
-import net.minecraft.client.render.model.json.ModelTransformationMode;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.world.item.ItemDisplayContext;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 
 @Environment(EnvType.CLIENT)
 public class PizzaPanEntityRenderer implements BlockEntityRenderer<PizzaPanEntity> {
-    public PizzaPanEntityRenderer(BlockEntityRendererFactory.Context ctx) {
+    public PizzaPanEntityRenderer(BlockEntityRendererProvider.Context ctx) {
     }
 
     @Override
-    public int getRenderDistance() {
+    public int getViewDistance() {
         return 16;
     }
 
     @Override
-    public void render(PizzaPanEntity blockEntity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
-        render(blockEntity.getStack(0), matrices, vertexConsumers, blockEntity.getWorld(), light, overlay);
+    public void render(PizzaPanEntity blockEntity, float tickDelta, PoseStack matrices, MultiBufferSource vertexConsumers, int light, int overlay) {
+        render(blockEntity.getItem(0), matrices, vertexConsumers, blockEntity.getLevel(), light, overlay);
     }
 
-    public static void render(ItemStack stack, MatrixStack matrices, VertexConsumerProvider vertexConsumers, World world, int light, int overlay) {
+    public static void render(ItemStack stack, PoseStack matrices, MultiBufferSource vertexConsumers, Level world, int light, int overlay) {
         if (stack.isEmpty()) return;
-        final MinecraftClient client = MinecraftClient.getInstance();
+        final Minecraft client = Minecraft.getInstance();
 
-        matrices.push();
+        matrices.pushPose();
         matrices.translate(0.5f, 0.5125f, 0.5f);
-        client.getItemRenderer().renderItem(stack, ModelTransformationMode.NONE, light, overlay, matrices, vertexConsumers, world, 0);
-        matrices.pop();
+        client.getItemRenderer().renderStatic(stack, ItemDisplayContext.NONE, light, overlay, matrices, vertexConsumers, world, 0);
+        matrices.popPose();
     }
 }

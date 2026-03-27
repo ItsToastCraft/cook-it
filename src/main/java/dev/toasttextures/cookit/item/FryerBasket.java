@@ -1,42 +1,43 @@
 package dev.toasttextures.cookit.item;
 
-import net.minecraft.client.item.TooltipContext;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.StackReference;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.screen.slot.Slot;
-import net.minecraft.text.Text;
-import net.minecraft.util.ClickType;
-import net.minecraft.util.Formatting;
-import net.minecraft.world.World;
+import net.minecraft.world.item.Item.Properties;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.SlotAccess;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.inventory.ClickAction;
+import net.minecraft.ChatFormatting;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 public class FryerBasket extends Item {
-    public FryerBasket(Settings settings) {
+    public FryerBasket(Properties settings) {
         super(settings);
     }
 
     @Override
-    public boolean onClicked(ItemStack stack, ItemStack otherStack, Slot slot, ClickType clickType, PlayerEntity player, StackReference cursorStackReference) {
-        if (clickType != ClickType.RIGHT) return false;
+    public boolean overrideOtherStackedOnMe(ItemStack stack, ItemStack otherStack, Slot slot, ClickAction clickType, Player player, SlotAccess cursorStackReference) {
+        if (clickType != ClickAction.SECONDARY) return false;
         ItemStack item = ItemStorage.getStoredItem(stack);
 
         if (!otherStack.isEmpty() && item.isEmpty()) {
             ItemStorage.setStoredItem(stack, otherStack.split(1));
         } else if (!item.isEmpty() && otherStack.isEmpty()) {
-            player.getInventory().offerOrDrop(item);
+            player.getInventory().placeItemBackInInventory(item);
             ItemStorage.setStoredItem(stack, ItemStack.EMPTY);
         }
 
         return true;
     }
 
-    public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
+    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag context) {
         ItemStack stored = ItemStorage.getStoredItem(stack);
-        Text text = Text.literal("Item: ").formatted(Formatting.GRAY).append(Text.literal(stored.getName().getString()).formatted(Formatting.BLUE));
+        Component text = Component.literal("Item: ").withStyle(ChatFormatting.GRAY).append(Component.literal(stored.getHoverName().getString()).withStyle(ChatFormatting.BLUE));
         if (!stored.isEmpty()) {
             tooltip.add(text);
         } else {

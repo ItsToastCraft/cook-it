@@ -3,12 +3,12 @@ package dev.toasttextures.cookit.registries;
 import dev.toasttextures.cookit.block.entity.*;
 import dev.toasttextures.cookit.client.render.entity.*;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
-import net.minecraft.block.Block;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.Registry;
 import dev.toasttextures.cookit.CookIt;
 
 public class CookItBlockEntities {
@@ -37,19 +37,19 @@ public class CookItBlockEntities {
     }
 
     public static void registerRenderers() {
-        BlockEntityRendererFactories.register(BAKING_SHEET, BakingSheetEntityRenderer::new);
-        BlockEntityRendererFactories.register(MUFFIN_TIN, MuffinTinEntityRenderer::new);
-        BlockEntityRendererFactories.register(MICROWAVE, MicrowaveEntityRenderer::new);
-        BlockEntityRendererFactories.register(OVEN, OvenEntityRenderer::new);
-        BlockEntityRendererFactories.register(PLATE, PlateEntityRenderer::new);
-        BlockEntityRendererFactories.register(FRYER, FryerEntityRenderer::new);
-        BlockEntityRendererFactories.register(CUTTING_BOARD, CuttingBoardEntityRenderer::new);
-        BlockEntityRendererFactories.register(PIZZA_PAN, PizzaPanEntityRenderer::new);
-        BlockEntityRendererFactories.register(PIZZA, PizzaEntityRenderer::new);
-        BlockEntityRendererFactories.register(MIXING_BOWL, MixingBowlEntityRenderer::new);
+        BlockEntityRenderers.register(BAKING_SHEET, BakingSheetEntityRenderer::new);
+        BlockEntityRenderers.register(MUFFIN_TIN, MuffinTinEntityRenderer::new);
+        BlockEntityRenderers.register(MICROWAVE, MicrowaveEntityRenderer::new);
+        BlockEntityRenderers.register(OVEN, OvenEntityRenderer::new);
+        BlockEntityRenderers.register(PLATE, PlateEntityRenderer::new);
+        BlockEntityRenderers.register(FRYER, FryerEntityRenderer::new);
+        BlockEntityRenderers.register(CUTTING_BOARD, CuttingBoardEntityRenderer::new);
+        BlockEntityRenderers.register(PIZZA_PAN, PizzaPanEntityRenderer::new);
+        BlockEntityRenderers.register(PIZZA, PizzaEntityRenderer::new);
+        BlockEntityRenderers.register(MIXING_BOWL, MixingBowlEntityRenderer::new);
     }
 
     public static <T extends BlockEntity> BlockEntityType<T> registerBlockEntities(String name, FabricBlockEntityTypeBuilder.Factory<T> factory, Block[] block) {
-        return Registry.register(Registries.BLOCK_ENTITY_TYPE, CookIt.idOf(name), FabricBlockEntityTypeBuilder.create(factory, block).build());
+        return Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, CookIt.idOf(name), FabricBlockEntityTypeBuilder.create(factory, block).build());
     }
 }

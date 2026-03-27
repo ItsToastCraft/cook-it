@@ -2,129 +2,128 @@ package dev.toasttextures.cookit.block.appliances;
 
 import dev.toasttextures.cookit.block.entity.MicrowaveEntity;
 import dev.toasttextures.cookit.registries.CookItBlockEntities;
-import net.minecraft.block.*;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityTicker;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.state.StateManager;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.StringIdentifiable;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.*;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.util.StringRepresentable;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.BiConsumer;
 
-import static net.minecraft.state.property.Properties.*;
+import static net.minecraft.world.level.block.state.properties.BlockStateProperties.*;
 
-public class Microwave extends BlockWithEntity {
-    private static final VoxelShape NORTH_SOUTH_SHAPE = createCuboidShape(3.0, 0f, 1.0, 13.0, 0.5f, 15.0);
-    private static final VoxelShape EAST_WEST_SHAPE = createCuboidShape(1.0, 0f, 3.0, 15.0, 0.5f, 13.0);
+public class Microwave extends BaseEntityBlock {
+    private static final VoxelShape NORTH_SOUTH_SHAPE = box(3.0, 0f, 1.0, 13.0, 0.5f, 15.0);
+    private static final VoxelShape EAST_WEST_SHAPE = box(1.0, 0f, 3.0, 15.0, 0.5f, 13.0);
 
-    public Microwave(Settings settings) {
+    public Microwave(Properties settings) {
         super(settings);
-        setDefaultState(getDefaultState()
-                .with(OPEN, false)
-                .with(LIT, false)
-                .with(HORIZONTAL_FACING, Direction.NORTH));
+        registerDefaultState(defaultBlockState()
+                .setValue(OPEN, false)
+                .setValue(LIT, false)
+                .setValue(HORIZONTAL_FACING, Direction.NORTH));
     }
 
     @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(HORIZONTAL_FACING, LIT, OPEN);
     }
 
     @Override
-    public BlockRenderType getRenderType(BlockState state) {
-        return BlockRenderType.MODEL;
+    public RenderShape getRenderShape(BlockState state) {
+        return RenderShape.MODEL;
     }
 
     @Override
-    public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext ctx) {
-        return switch (state.get(HORIZONTAL_FACING)) {
+    public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext ctx) {
+        return switch (state.getValue(HORIZONTAL_FACING)) {
             case NORTH, SOUTH -> NORTH_SOUTH_SHAPE;
             default -> EAST_WEST_SHAPE;
         };
     }
 
     @Override
-    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        if (world.isClient) return ActionResult.SUCCESS;
+    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        if (world.isClientSide) return InteractionResult.SUCCESS;
 
         MicrowaveEntity blockEntity = (MicrowaveEntity) world.getBlockEntity(pos);
-        if (blockEntity == null) return ActionResult.SUCCESS;
+        if (blockEntity == null) return InteractionResult.SUCCESS;
 
-        ItemStack heldItem = player.getStackInHand(hand);
-        boolean open = state.get(OPEN);
+        ItemStack heldItem = player.getItemInHand(hand);
+        boolean open = state.getValue(OPEN);
 
         if (!open && heldItem.isEmpty()) {
             toggleDoor(state, world, pos, true);
-            world.playSound(null, pos, SoundEvents.BLOCK_IRON_TRAPDOOR_OPEN, SoundCategory.BLOCKS);
+            world.playSound(null, pos, SoundEvents.IRON_TRAPDOOR_OPEN, SoundSource.BLOCKS);
         } else if (!heldItem.isEmpty() && open) {
             toggleDoor(state, world, pos, false);
-            blockEntity.setStack(0, heldItem.split(1));
-        } else if (!blockEntity.getStack(0).isEmpty()) {
+            blockEntity.setItem(0, heldItem.split(1));
+        } else if (!blockEntity.getItem(0).isEmpty()) {
             toggleDoor(state, world, pos, false);
-            player.getInventory().insertStack(blockEntity.getStack(0));
+            player.getInventory().add(blockEntity.getItem(0));
         } else {
             toggleDoor(state, world, pos, false);
         }
 
-        return ActionResult.SUCCESS;
+        return InteractionResult.SUCCESS;
     }
 
-    private void toggleDoor(BlockState state, World world, BlockPos pos, boolean doorState) {
-        if (world.isClient()) return;
-        SoundEvent sound = doorState ? SoundEvents.BLOCK_IRON_DOOR_OPEN : SoundEvents.BLOCK_IRON_DOOR_CLOSE;
+    private void toggleDoor(BlockState state, Level world, BlockPos pos, boolean doorState) {
+        if (world.isClientSide()) return;
+        SoundEvent sound = doorState ? SoundEvents.IRON_DOOR_OPEN : SoundEvents.IRON_DOOR_CLOSE;
 
-        world.playSound(null, pos, sound, SoundCategory.BLOCKS);
-        world.setBlockState(pos, state.with(OPEN, doorState).with(LIT, doorState && state.get(LIT)), NOTIFY_LISTENERS);
+        world.playSound(null, pos, sound, SoundSource.BLOCKS);
+        world.setBlock(pos, state.setValue(OPEN, doorState).setValue(LIT, doorState && state.getValue(LIT)), UPDATE_CLIENTS);
     }
 
-    public BlockState getPlacementState(ItemPlacementContext ctx) {
-        return this.getDefaultState().with(FACING, ctx.getHorizontalPlayerFacing().getOpposite());
+    public BlockState getStateForPlacement(BlockPlaceContext ctx) {
+        return this.defaultBlockState().setValue(FACING, ctx.getHorizontalDirection().getOpposite());
     }
 
 
     @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
-        return checkType(type, CookItBlockEntities.MICROWAVE, MicrowaveEntity::tick);
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level world, BlockState state, BlockEntityType<T> type) {
+        return createTickerHelper(type, CookItBlockEntities.MICROWAVE, MicrowaveEntity::tick);
     }
 
     @Nullable
     @Override
-    public MicrowaveEntity createBlockEntity(BlockPos pos, BlockState state) {
+    public MicrowaveEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new MicrowaveEntity(pos, state);
     }
 
-    public enum Event implements StringIdentifiable {
+    public enum Event implements StringRepresentable {
         NONE((world, pos) -> {}),
-        EXPLOSION((world, pos) -> world.createExplosion(null, pos.getX(), pos.getY(), pos.getZ(), 3, World.ExplosionSourceType.BLOCK));
+        EXPLOSION((world, pos) -> world.explode(null, pos.getX(), pos.getY(), pos.getZ(), 3, Level.ExplosionInteraction.BLOCK));
 
-        private final BiConsumer<ServerWorld, BlockPos> processor;
+        private final BiConsumer<ServerLevel, BlockPos> processor;
 
-        Event(BiConsumer<ServerWorld, BlockPos> processor) {
+        Event(BiConsumer<ServerLevel, BlockPos> processor) {
             this.processor = processor;
         }
 
-        public void apply(ServerWorld world, BlockPos pos) {
+        public void apply(ServerLevel world, BlockPos pos) {
             this.processor.accept(world, pos);
         }
 
         @Override
-        public String asString() {
+        public String getSerializedName() {
             return this.name().toLowerCase();
         }
     }

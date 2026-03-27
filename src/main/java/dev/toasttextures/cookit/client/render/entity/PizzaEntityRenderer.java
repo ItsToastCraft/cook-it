@@ -7,14 +7,17 @@ import dev.toasttextures.cookit.client.CookItEntityModelLayers;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.model.*;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.block.entity.BlockEntityRenderer;
-import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.RotationAxis;
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.model.geom.PartPose;
+import net.minecraft.client.model.geom.builders.*;
+import net.minecraft.client.renderer.RenderType;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.resources.ResourceLocation;
+import com.mojang.math.Axis;
 
 import java.util.List;
 
@@ -23,83 +26,83 @@ public class PizzaEntityRenderer implements BlockEntityRenderer<PizzaEntity> {
     private final List<ModelPart> pizzaBaseParts;
     private final List<ModelPart> toppingLayerParts;
 
-    private final Identifier CHEESE_BASE = CookIt.idOf("textures/entity/pizza/pizza_cheese.png");
-    private final Identifier CRUST_BASE = CookIt.idOf("textures/entity/pizza/pizza_crust.png");
+    private final ResourceLocation CHEESE_BASE = CookIt.idOf("textures/entity/pizza/pizza_cheese.png");
+    private final ResourceLocation CRUST_BASE = CookIt.idOf("textures/entity/pizza/pizza_crust.png");
 
-    public PizzaEntityRenderer(BlockEntityRendererFactory.Context ctx) {
-        ModelPart pizzaRoot = ctx.getLayerModelPart(CookItEntityModelLayers.PIZZA);
+    public PizzaEntityRenderer(BlockEntityRendererProvider.Context ctx) {
+        ModelPart pizzaRoot = ctx.bakeLayer(CookItEntityModelLayers.PIZZA);
         this.pizzaBaseParts = List.of(pizzaRoot.getChild("pizza_slices_1"), pizzaRoot.getChild("pizza_slices_2"), pizzaRoot.getChild("pizza_slices_3"), pizzaRoot.getChild("pizza_full"));
 
-        ModelPart toppingRoot = ctx.getLayerModelPart(CookItEntityModelLayers.PIZZA_TOPPING);
+        ModelPart toppingRoot = ctx.bakeLayer(CookItEntityModelLayers.PIZZA_TOPPING);
         this.toppingLayerParts = List.of(toppingRoot.getChild("topping_slices_1"), toppingRoot.getChild("topping_slices_2"), toppingRoot.getChild("topping_slices_3"), toppingRoot.getChild("topping_full"));
     }
 
-    public static TexturedModelData getBaseModelData() {
-        ModelData modelData = new ModelData();
-        ModelPartData root = modelData.getRoot();
+    public static LayerDefinition getBaseModelData() {
+        MeshDefinition modelData = new MeshDefinition();
+        PartDefinition root = modelData.getRoot();
 
-        root.addChild("pizza_full", ModelPartBuilder.create()
-                .uv(0, 0).mirrored().cuboid(-7.0f, 7.0f, -7.0f, 14.0f, 1.0f, 14.0f, new Dilation(0.0f)).mirrored(false)
-                .uv(0, 28).cuboid(-7.0f, 6.0f, -6.0f, 1.0f, 2.0f, 12.0f, new Dilation(0.0f))
-                .uv(26, 28).cuboid(6.0f, 6.0f, -6.0f, 1.0f, 2.0f, 12.0f, new Dilation(0.0f))
-                .uv(0, 42).cuboid(-7.0f, 6.0f, -7.0f, 14.0f, 2.0f, 1.0f, new Dilation(0.0f))
-                .uv(30, 42).cuboid(-7.0f, 6.0f, 6.0f, 14.0f, 2.0f, 1.0f, new Dilation(0.0f)), ModelTransform.pivot(0.0f, 16.0f, 0.0f));
+        root.addOrReplaceChild("pizza_full", CubeListBuilder.create()
+                .texOffs(0, 0).mirror().addBox(-7.0f, 7.0f, -7.0f, 14.0f, 1.0f, 14.0f, new CubeDeformation(0.0f)).mirror(false)
+                .texOffs(0, 28).addBox(-7.0f, 6.0f, -6.0f, 1.0f, 2.0f, 12.0f, new CubeDeformation(0.0f))
+                .texOffs(26, 28).addBox(6.0f, 6.0f, -6.0f, 1.0f, 2.0f, 12.0f, new CubeDeformation(0.0f))
+                .texOffs(0, 42).addBox(-7.0f, 6.0f, -7.0f, 14.0f, 2.0f, 1.0f, new CubeDeformation(0.0f))
+                .texOffs(30, 42).addBox(-7.0f, 6.0f, 6.0f, 14.0f, 2.0f, 1.0f, new CubeDeformation(0.0f)), PartPose.offset(0.0f, 16.0f, 0.0f));
 
-        root.addChild("pizza_slices_3", ModelPartBuilder.create().uv(0, 28).cuboid(-7.0f, 6.0f, -6.0f, 1.0f, 2.0f, 12.0f, new Dilation(0.0f))
-                .uv(32, 34).cuboid(6.0f, 6.0f, -6.0f, 1.0f, 2.0f, 6.0f, new Dilation(0.0f))
-                .uv(7, 48).mirrored().cuboid(-7.0f, 7.0f, -7.0f, 14.0f, 1.0f, 7.0f, new Dilation(0.0f)).mirrored(false)
-                .uv(7, 17).mirrored().cuboid(-7.0f, 7.0f, 0.0f, 7.0f, 1.0f, 7.0f, new Dilation(0.0f)).mirrored(false)
-                .uv(0, 42).cuboid(-7.0f, 6.0f, -7.0f, 14.0f, 2.0f, 1.0f, new Dilation(0.0f))
-                .uv(44, 42).cuboid(-7.0f, 6.0f, 6.0f, 7.0f, 2.0f, 1.0f, new Dilation(0.0f)), ModelTransform.pivot(0.0f, 16.0f, 0.0f));
+        root.addOrReplaceChild("pizza_slices_3", CubeListBuilder.create().texOffs(0, 28).addBox(-7.0f, 6.0f, -6.0f, 1.0f, 2.0f, 12.0f, new CubeDeformation(0.0f))
+                .texOffs(32, 34).addBox(6.0f, 6.0f, -6.0f, 1.0f, 2.0f, 6.0f, new CubeDeformation(0.0f))
+                .texOffs(7, 48).mirror().addBox(-7.0f, 7.0f, -7.0f, 14.0f, 1.0f, 7.0f, new CubeDeformation(0.0f)).mirror(false)
+                .texOffs(7, 17).mirror().addBox(-7.0f, 7.0f, 0.0f, 7.0f, 1.0f, 7.0f, new CubeDeformation(0.0f)).mirror(false)
+                .texOffs(0, 42).addBox(-7.0f, 6.0f, -7.0f, 14.0f, 2.0f, 1.0f, new CubeDeformation(0.0f))
+                .texOffs(44, 42).addBox(-7.0f, 6.0f, 6.0f, 7.0f, 2.0f, 1.0f, new CubeDeformation(0.0f)), PartPose.offset(0.0f, 16.0f, 0.0f));
 
-        root.addChild("pizza_slices_2", ModelPartBuilder.create().uv(6, 34).cuboid(-7.0f, 6.0f, -6.0f, 1.0f, 2.0f, 6.0f, new Dilation(0.0f))
-                .uv(32, 34).cuboid(6.0f, 6.0f, -6.0f, 1.0f, 2.0f, 6.0f, new Dilation(0.0f))
-                .uv(7, 48).mirrored().cuboid(-7.0f, 7.0f, -7.0f, 14.0f, 1.0f, 7.0f, new Dilation(0.0f)).mirrored(false)
-                .uv(0, 42).cuboid(-7.0f, 6.0f, -7.0f, 14.0f, 2.0f, 1.0f, new Dilation(0.0f)), ModelTransform.pivot(0.0f, 16.0f, 0.0f));
+        root.addOrReplaceChild("pizza_slices_2", CubeListBuilder.create().texOffs(6, 34).addBox(-7.0f, 6.0f, -6.0f, 1.0f, 2.0f, 6.0f, new CubeDeformation(0.0f))
+                .texOffs(32, 34).addBox(6.0f, 6.0f, -6.0f, 1.0f, 2.0f, 6.0f, new CubeDeformation(0.0f))
+                .texOffs(7, 48).mirror().addBox(-7.0f, 7.0f, -7.0f, 14.0f, 1.0f, 7.0f, new CubeDeformation(0.0f)).mirror(false)
+                .texOffs(0, 42).addBox(-7.0f, 6.0f, -7.0f, 14.0f, 2.0f, 1.0f, new CubeDeformation(0.0f)), PartPose.offset(0.0f, 16.0f, 0.0f));
 
-        root.addChild("pizza_slices_1", ModelPartBuilder.create().uv(32, 34).cuboid(6.0f, 6.0f, -6.0f, 1.0f, 2.0f, 6.0f, new Dilation(0.0f))
-                .uv(22, 18).mirrored().cuboid(0.0f, 7.0f, -7.0f, 7.0f, 1.0f, 7.0f, new Dilation(0.0f)).mirrored(false)
-                .uv(7, 42).cuboid(0.0f, 6.0f, -7.0f, 7.0f, 2.0f, 1.0f, new Dilation(0.0f)), ModelTransform.pivot(0.0f, 16.0f, 0.0f));
+        root.addOrReplaceChild("pizza_slices_1", CubeListBuilder.create().texOffs(32, 34).addBox(6.0f, 6.0f, -6.0f, 1.0f, 2.0f, 6.0f, new CubeDeformation(0.0f))
+                .texOffs(22, 18).mirror().addBox(0.0f, 7.0f, -7.0f, 7.0f, 1.0f, 7.0f, new CubeDeformation(0.0f)).mirror(false)
+                .texOffs(7, 42).addBox(0.0f, 6.0f, -7.0f, 7.0f, 2.0f, 1.0f, new CubeDeformation(0.0f)), PartPose.offset(0.0f, 16.0f, 0.0f));
 
-        return TexturedModelData.of(modelData, 64, 64);
+        return LayerDefinition.create(modelData, 64, 64);
     }
 
-    public static TexturedModelData getToppingModelData() {
-        ModelData modelData = new ModelData();
-        ModelPartData root = modelData.getRoot();
+    public static LayerDefinition getToppingModelData() {
+        MeshDefinition modelData = new MeshDefinition();
+        PartDefinition root = modelData.getRoot();
 
-        root.addChild("topping_full", ModelPartBuilder.create().uv(-14, 0).mirrored().cuboid(-7.0f, -1.001f, -7.0f, 14.0f, 0.0f, 14.0f, new Dilation(0.0f)).mirrored(false), ModelTransform.pivot(0.0f, 24.0f, 0.0f));
+        root.addOrReplaceChild("topping_full", CubeListBuilder.create().texOffs(-14, 0).mirror().addBox(-7.0f, -1.001f, -7.0f, 14.0f, 0.0f, 14.0f, new CubeDeformation(0.0f)).mirror(false), PartPose.offset(0.0f, 24.0f, 0.0f));
 
-        root.addChild("topping_slices_3", ModelPartBuilder.create().uv(-7, 7).mirrored().cuboid(-7.0f, -1.001f, -7.0f, 14.0f, 0.0f, 7.0f, new Dilation(0.0f)).mirrored(false)
-                .uv(1, 1).mirrored().cuboid(-7.0f, -1.001f, 0.0f, 7.0f, 0.0f, 6.0f, new Dilation(0.0f)).mirrored(false), ModelTransform.pivot(0.0f, 24.0f, 0.0f));
+        root.addOrReplaceChild("topping_slices_3", CubeListBuilder.create().texOffs(-7, 7).mirror().addBox(-7.0f, -1.001f, -7.0f, 14.0f, 0.0f, 7.0f, new CubeDeformation(0.0f)).mirror(false)
+                .texOffs(1, 1).mirror().addBox(-7.0f, -1.001f, 0.0f, 7.0f, 0.0f, 6.0f, new CubeDeformation(0.0f)).mirror(false), PartPose.offset(0.0f, 24.0f, 0.0f));
 
-        root.addChild("topping_slices_2", ModelPartBuilder.create().uv(-7, 7).mirrored().cuboid(-7.0f, -1.001f, -7.0f, 14.0f, 0.0f, 7.0f, new Dilation(0.0f)).mirrored(false), ModelTransform.pivot(0.0f, 24.0f, 0.0f));
+        root.addOrReplaceChild("topping_slices_2", CubeListBuilder.create().texOffs(-7, 7).mirror().addBox(-7.0f, -1.001f, -7.0f, 14.0f, 0.0f, 7.0f, new CubeDeformation(0.0f)).mirror(false), PartPose.offset(0.0f, 24.0f, 0.0f));
 
-        root.addChild("topping_slices_1", ModelPartBuilder.create().uv(-7, 7).mirrored().cuboid(0.0f, -1.001f, -7.0f, 7.0f, 0.1f, 7.0f, new Dilation(0.0f)).mirrored(false), ModelTransform.pivot(0.0f, 24.0f, 0.0f));
+        root.addOrReplaceChild("topping_slices_1", CubeListBuilder.create().texOffs(-7, 7).mirror().addBox(0.0f, -1.001f, -7.0f, 7.0f, 0.1f, 7.0f, new CubeDeformation(0.0f)).mirror(false), PartPose.offset(0.0f, 24.0f, 0.0f));
 
-        return TexturedModelData.of(modelData, 32, 16);
+        return LayerDefinition.create(modelData, 32, 16);
     }
 
     @Override
-    public void render(PizzaEntity entity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
-        Identifier baseTexture = entity.isCooked() ? CHEESE_BASE : CRUST_BASE;
+    public void render(PizzaEntity entity, float tickDelta, PoseStack matrices, MultiBufferSource vertexConsumers, int light, int overlay) {
+        ResourceLocation baseTexture = entity.isCooked() ? CHEESE_BASE : CRUST_BASE;
 
-        matrices.push();
-        matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(180.0f));
+        matrices.pushPose();
+        matrices.mulPose(Axis.ZP.rotationDegrees(180.0f));
         matrices.translate(-0.5, -1.5, 0.5);
 
         // 0 indexed aah
         int sliceCount = Math.max(0, entity.getSliceCount() - 1);
 
-        VertexConsumer baseConsumer = vertexConsumers.getBuffer(RenderLayer.getEntityCutout(baseTexture));
+        VertexConsumer baseConsumer = vertexConsumers.getBuffer(RenderType.entityCutout(baseTexture));
         pizzaBaseParts.get(sliceCount).render(matrices, baseConsumer, light, overlay);
         List<PizzaTopping> toppings = PizzaTopping.getToppings(entity.getToppings());
 
         for (PizzaTopping topping : toppings) {
-            VertexConsumer toppingConsumer = vertexConsumers.getBuffer(RenderLayer.getEntityNoOutline(topping.getTexture()));
+            VertexConsumer toppingConsumer = vertexConsumers.getBuffer(RenderType.entityNoOutline(topping.getTexture()));
             toppingLayerParts.get(sliceCount).render(matrices, toppingConsumer, light, overlay);
         }
 
-        matrices.pop();
+        matrices.popPose();
     }
 }

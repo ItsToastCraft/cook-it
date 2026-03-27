@@ -5,24 +5,24 @@ import dev.toasttextures.cookit.item.ItemStorage;
 import dev.toasttextures.cookit.recipes.FryerRecipe;
 import dev.toasttextures.cookit.registries.CookItBlockEntities;
 import dev.toasttextures.cookit.registries.CookItItems;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.SimpleInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
 
 import static dev.toasttextures.cookit.registries.CookItTags.FRYABLE;
-import static net.minecraft.block.Block.NOTIFY_LISTENERS;
-import static net.minecraft.state.property.Properties.LIT;
+import static net.minecraft.world.level.block.Block.UPDATE_CLIENTS;
+import static net.minecraft.world.level.block.state.properties.BlockStateProperties.LIT;
 
 public class FryerEntity extends CookingBlockEntity<FryerRecipe> implements Transferable {
     private int progress = 0;
@@ -37,57 +37,57 @@ public class FryerEntity extends CookingBlockEntity<FryerRecipe> implements Tran
     }
 
     @Override
-    public void readNbt(NbtCompound nbt) {
-        super.readNbt(nbt);
+    public void load(CompoundTag nbt) {
+        super.load(nbt);
         progress = nbt.getInt(PROGRESS_KEY);
     }
 
     @Override
-    public void writeNbt(NbtCompound nbt) {
+    public void saveAdditional(CompoundTag nbt) {
         nbt.putInt(PROGRESS_KEY, progress);
-        super.writeNbt(nbt);
+        super.saveAdditional(nbt);
     }
 
     // Ok so only accept fryer baskets OR fryable items if there's already an empty basket
     @Override
-    public void transfer(PlayerEntity player, ItemStack stack) {
-        ItemStack first = getStack(0);
-        if (first.isEmpty() && stack.isOf(CookItItems.FRYER_BASKET)) {
+    public void transfer(Player player, ItemStack stack) {
+        ItemStack first = getItem(0);
+        if (first.isEmpty() && stack.is(CookItItems.FRYER_BASKET)) {
             CookIt.LOGGER.info("Hi inserted successfully");
-            setStack(0, stack.split(1));
+            setItem(0, stack.split(1));
         } else if (!first.isEmpty()) {
-            if (!stack.isEmpty() && stack.isIn(FRYABLE)) {  // Food
+            if (!stack.isEmpty() && stack.is(FRYABLE)) {  // Food
                 ItemStorage.setStoredItem(first, stack.split(1));
             }
         } else {
-            player.getInventory().offerOrDrop(stack.copyAndEmpty());
+            player.getInventory().placeItemBackInInventory(stack.copyAndClear());
         }
     }
 
-    private void addFryerEffects(World world) {
-        if (world.isClient) return;
+    private void addFryerEffects(Level world) {
+        if (world.isClientSide) return;
         if (progress % 8 == 0) {
-            world.playSound(null, pos, SoundEvents.BLOCK_BUBBLE_COLUMN_UPWARDS_AMBIENT, SoundCategory.BLOCKS, 0.5f, 8.0f);
+            world.playSound(null, worldPosition, SoundEvents.BUBBLE_COLUMN_UPWARDS_AMBIENT, SoundSource.BLOCKS, 0.5f, 8.0f);
         }
         if (progress % 30 == 0) {
-            world.playSound(null, pos, SoundEvents.BLOCK_FIRE_AMBIENT, SoundCategory.BLOCKS, 0.5f, 1.0f);
+            world.playSound(null, worldPosition, SoundEvents.FIRE_AMBIENT, SoundSource.BLOCKS, 0.5f, 1.0f);
         }
 
         for (int i = 0; i < 3; i++) {
-            double particleX = pos.getX() + 0.5 + world.getRandom().nextDouble() * 0.375 - 0.1875;
-            double particleY = pos.getY() + 0.25;
-            double particleZ = pos.getZ() + 0.5 + world.getRandom().nextDouble() * 0.375 - 0.1875;
+            double particleX = worldPosition.getX() + 0.5 + world.getRandom().nextDouble() * 0.375 - 0.1875;
+            double particleY = worldPosition.getY() + 0.25;
+            double particleZ = worldPosition.getZ() + 0.5 + world.getRandom().nextDouble() * 0.375 - 0.1875;
 
-            ((ServerWorld) world).spawnParticles(CookIt.OIL_PARTICLE, particleX, particleY, particleZ, 1, 0.0, 0.0, 0.0, 0.0);
+            ((ServerLevel) world).sendParticles(CookIt.OIL_PARTICLE, particleX, particleY, particleZ, 1, 0.0, 0.0, 0.0, 0.0);
         }
     }
 
     @Override
-    public void craft(World world, FryerRecipe recipe) {
-        ItemStack first = getStack(0);
+    public void craft(Level world, FryerRecipe recipe) {
+        ItemStack first = getItem(0);
 
         if (!first.isEmpty() && status == CookingStatus.DONE) {
-            ItemStorage.setStoredItem(first, recipe.craft(new SimpleInventory(first), world.getRegistryManager()));
+            ItemStorage.setStoredItem(first, recipe.assemble(new SimpleContainer(first), world.registryAccess()));
         }
     }
 
@@ -96,14 +96,14 @@ public class FryerEntity extends CookingBlockEntity<FryerRecipe> implements Tran
         progress = 0;
         cachedItem = ItemStack.EMPTY;
         cachedRecipe = null;
-        markDirty();
+        setChanged();
     }
 
-    private void tickRecipe(World world, BlockState state) {
+    private void tickRecipe(Level world, BlockState state) {
         if (maxProgress <= progress) {
             status = CookingStatus.DONE;
-            if (cachedRecipe == null && !world.isClient) {
-                world.setBlockState(pos, state.with(LIT, false), NOTIFY_LISTENERS);
+            if (cachedRecipe == null && !world.isClientSide) {
+                world.setBlock(worldPosition, state.setValue(LIT, false), UPDATE_CLIENTS);
                 craft(world, cachedRecipe);
             }
             reset();
@@ -115,32 +115,32 @@ public class FryerEntity extends CookingBlockEntity<FryerRecipe> implements Tran
 
     @Override
     public List<FryerRecipe> getRecipes() {
-        SimpleInventory inv = new SimpleInventory(ItemStorage.getStoredItem(getStack(0)));
-        if (world == null) return Collections.emptyList();
+        SimpleContainer inv = new SimpleContainer(ItemStorage.getStoredItem(getItem(0)));
+        if (level == null) return Collections.emptyList();
 
-        return world.getRecipeManager().getAllMatches(FryerRecipe.Type.INSTANCE, inv, world);
+        return level.getRecipeManager().getRecipesFor(FryerRecipe.Type.INSTANCE, inv, level);
     }
 
-    private void loadRecipe(World world, BlockState state) {
-        if (world.isClient) return;
+    private void loadRecipe(Level world, BlockState state) {
+        if (world.isClientSide) return;
         cachedRecipe = getRecipes().stream().findFirst().orElse(null);
 
         if (cachedRecipe == null) return;
 
         status = CookingStatus.PROCESSING;
-        world.setBlockState(pos, state.with(LIT, true), NOTIFY_LISTENERS);
+        world.setBlock(worldPosition, state.setValue(LIT, true), UPDATE_CLIENTS);
         maxProgress = cachedRecipe.getMaxProgress();
-        markDirty();
+        setChanged();
     }
 
-    public static void tick(World world, BlockPos pos, BlockState state, FryerEntity entity) {
-        if (world.isClient) return;
-        ItemStack first = entity.getStack(0);
+    public static void tick(Level world, BlockPos pos, BlockState state, FryerEntity entity) {
+        if (world.isClientSide) return;
+        ItemStack first = entity.getItem(0);
         if (first.isEmpty()) {
             entity.status = CookingStatus.IDLE;
-        } else if (!first.isOf(CookItItems.FRYER_BASKET)) {
+        } else if (!first.is(CookItItems.FRYER_BASKET)) {
             entity.status = CookingStatus.INVALID;
-        } else if (ItemStack.areEqual(first, entity.cachedItem)) { // I don't wanna decode the stored ItemStack every tick
+        } else if (ItemStack.matches(first, entity.cachedItem)) { // I don't wanna decode the stored ItemStack every tick
             entity.tickRecipe(world, state);
         } else {
             entity.loadRecipe(world, state);

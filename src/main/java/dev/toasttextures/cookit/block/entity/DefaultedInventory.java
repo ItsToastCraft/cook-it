@@ -1,22 +1,22 @@
 package dev.toasttextures.cookit.block.entity;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.Inventories;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.Container;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.NonNullList;
 
 /**
  * A simple {@code Inventory} implementation with only default methods + an item list getter.
  * <p>
  * Originally by Juuz
  */
-public interface DefaultedInventory extends Inventory {
+public interface DefaultedInventory extends Container {
 
     /**
      * Creates an inventory from the item list.
      */
-    static DefaultedInventory of(DefaultedList<ItemStack> items) {
+    static DefaultedInventory of(NonNullList<ItemStack> items) {
         return () -> items;
     }
 
@@ -24,20 +24,20 @@ public interface DefaultedInventory extends Inventory {
      * Creates a new inventory with the specified size.
      */
     static DefaultedInventory ofSize(int size) {
-        return of(DefaultedList.ofSize(size, ItemStack.EMPTY));
+        return of(NonNullList.withSize(size, ItemStack.EMPTY));
     }
 
     /**
      * Retrieves the item list of this inventory.
      * Must return the same instance every time it's called.
      */
-    DefaultedList<ItemStack> getItems();
+    NonNullList<ItemStack> getItems();
 
     /**
      * Returns the inventory size.
      */
     @Override
-    default int size() {
+    default int getContainerSize() {
         return getItems().size();
     }
 
@@ -62,7 +62,7 @@ public interface DefaultedInventory extends Inventory {
      * Retrieves the item in the slot.
      */
     @Override
-    default ItemStack getStack(int slot) {
+    default ItemStack getItem(int slot) {
         return getItems().get(slot);
     }
     /**
@@ -73,10 +73,10 @@ public interface DefaultedInventory extends Inventory {
      *              takes all items in that slot.
      */
     @Override
-    default ItemStack removeStack(int slot, int count) {
-        ItemStack result = Inventories.splitStack(getItems(), slot, count);
+    default ItemStack removeItem(int slot, int count) {
+        ItemStack result = ContainerHelper.removeItem(getItems(), slot, count);
         if (!result.isEmpty()) {
-            markDirty();
+            setChanged();
         }
         return result;
     }
@@ -87,8 +87,8 @@ public interface DefaultedInventory extends Inventory {
      * @param slot The slot to remove from.
      */
     @Override
-    default ItemStack removeStack(int slot) {
-        return Inventories.removeStack(getItems(), slot);
+    default ItemStack removeItemNoUpdate(int slot) {
+        return ContainerHelper.takeItem(getItems(), slot);
     }
 
     /**
@@ -96,14 +96,14 @@ public interface DefaultedInventory extends Inventory {
      *
      * @param slot  The inventory slot of which to replace the itemstack.
      * @param stack The replacing itemstack. If the stack is too big for
-     *              this inventory ({@link Inventory#getMaxCountPerStack()}),
+     *              this inventory ({@link Container#getMaxStackSize()}),
      *              it gets resized to this inventory's maximum amount.
      */
     @Override
-    default void setStack(int slot, ItemStack stack) {
+    default void setItem(int slot, ItemStack stack) {
         getItems().set(slot, stack);
-        if (stack.getCount() > stack.getMaxCount()) {
-            stack.setCount(stack.getMaxCount());
+        if (stack.getCount() > stack.getMaxStackSize()) {
+            stack.setCount(stack.getMaxStackSize());
         }
     }
 
@@ -111,7 +111,7 @@ public interface DefaultedInventory extends Inventory {
      * Clears the inventory.
      */
     @Override
-    default void clear() {
+    default void clearContent() {
         getItems().clear();
     }
 
@@ -121,7 +121,7 @@ public interface DefaultedInventory extends Inventory {
      * the inventory contents and notify neighboring blocks of inventory changes.
      */
     @Override
-    default void markDirty() {
+    default void setChanged() {
         // Override if you want behavior.
     }
 
@@ -129,7 +129,7 @@ public interface DefaultedInventory extends Inventory {
      * @return true if the player can use the inventory, false otherwise.
      */
     @Override
-    default boolean canPlayerUse(PlayerEntity player) {
+    default boolean stillValid(Player player) {
         return true;
     }
 

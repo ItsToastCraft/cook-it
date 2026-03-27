@@ -2,28 +2,28 @@ package dev.toasttextures.cookit.recipes;
 
 import com.google.gson.JsonObject;
 import dev.toasttextures.cookit.block.appliances.Microwave;
-import net.minecraft.inventory.SimpleInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.recipe.Ingredient;
-import net.minecraft.recipe.Recipe;
-import net.minecraft.recipe.RecipeSerializer;
-import net.minecraft.recipe.RecipeType;
-import net.minecraft.registry.DynamicRegistryManager;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.collection.DefaultedList;
-import net.minecraft.world.World;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.NonNullList;
+import net.minecraft.world.level.Level;
 
 import java.util.Objects;
 
-public class MicrowaveRecipe implements Recipe<SimpleInventory> {
-    private final Identifier id;
+public class MicrowaveRecipe implements Recipe<SimpleContainer> {
+    private final ResourceLocation id;
     private final ItemStack output;
     private final Ingredient input;
     private final int maxProgress;
     private final Microwave.Event event;
 
-    public MicrowaveRecipe(Identifier id, Ingredient input, ItemStack itemStack, int maxProgress, Microwave.Event event) {
+    public MicrowaveRecipe(ResourceLocation id, Ingredient input, ItemStack itemStack, int maxProgress, Microwave.Event event) {
         this.id = id;
         this.output = itemStack;
         this.input = input;
@@ -32,29 +32,29 @@ public class MicrowaveRecipe implements Recipe<SimpleInventory> {
     }
 
     @Override
-    public boolean matches(SimpleInventory inventory, World world) {
-        if(world.isClient()) {
+    public boolean matches(SimpleContainer inventory, Level world) {
+        if(world.isClientSide()) {
             return false;
         }
-        return input.test(inventory.getStack(0));
+        return input.test(inventory.getItem(0));
     }
 
     @Override
-    public boolean isIgnoredInRecipeBook() { return true; }
+    public boolean isSpecial() { return true; }
 
     @Override
-    public Identifier getId() {
+    public ResourceLocation getId() {
         return id;
     }
 
     @Override
-    public ItemStack craft(SimpleInventory inventory, DynamicRegistryManager registryManager) {
+    public ItemStack assemble(SimpleContainer inventory, RegistryAccess registryManager) {
         return output.copy();
     }
 
     @Override
-    public DefaultedList<Ingredient> getIngredients() {
-        DefaultedList<Ingredient> list = DefaultedList.ofSize(1);
+    public NonNullList<Ingredient> getIngredients() {
+        NonNullList<Ingredient> list = NonNullList.createWithCapacity(1);
         list.add(input);
         return list;
     }
@@ -71,12 +71,12 @@ public class MicrowaveRecipe implements Recipe<SimpleInventory> {
     }
 
     @Override
-    public boolean fits(int width, int height) {
+    public boolean canCraftInDimensions(int width, int height) {
         return true;
     }
 
     @Override
-    public ItemStack getOutput(DynamicRegistryManager registryManager) {
+    public ItemStack getResultItem(RegistryAccess registryManager) {
         return output;
     }
 
@@ -120,27 +120,27 @@ public class MicrowaveRecipe implements Recipe<SimpleInventory> {
 //        }
 
         @Override
-        public MicrowaveRecipe read(Identifier id, JsonObject json) {
+        public MicrowaveRecipe fromJson(ResourceLocation id, JsonObject json) {
             return null;
         }
 
         @Override
-        public MicrowaveRecipe read(Identifier id, PacketByteBuf buf) {
+        public MicrowaveRecipe fromNetwork(ResourceLocation id, FriendlyByteBuf buf) {
             return new MicrowaveRecipe(
                     id,
-                    Ingredient.fromPacket(buf),
-                    buf.readItemStack(),
+                    Ingredient.fromNetwork(buf),
+                    buf.readItem(),
                     buf.readInt(),
-                    Objects.requireNonNullElse(buf.readEnumConstant(Microwave.Event.class), Microwave.Event.NONE)
+                    Objects.requireNonNullElse(buf.readEnum(Microwave.Event.class), Microwave.Event.NONE)
             );
         }
 
         @Override
-        public void write(PacketByteBuf buf, MicrowaveRecipe recipe) {
-            recipe.input.write(buf);
-            buf.writeItemStack(recipe.output);
+        public void toNetwork(FriendlyByteBuf buf, MicrowaveRecipe recipe) {
+            recipe.input.toNetwork(buf);
+            buf.writeItem(recipe.output);
             buf.writeInt(recipe.maxProgress);
-            buf.writeEnumConstant(recipe.event);
+            buf.writeEnum(recipe.event);
         }
     }
 }

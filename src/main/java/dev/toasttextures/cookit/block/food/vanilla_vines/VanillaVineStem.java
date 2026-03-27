@@ -3,98 +3,105 @@ package dev.toasttextures.cookit.block.food.vanilla_vines;
 import dev.toasttextures.cookit.registries.CookItBlocks;
 import net.minecraft.block.*;
 
-import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.state.StateManager;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.random.Random;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldView;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.BonemealableBlock;
+import net.minecraft.world.level.block.GrowingPlantHeadBlock;
+import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 
 import java.util.Objects;
 
-import static net.minecraft.state.property.Properties.HORIZONTAL_FACING;
+import static net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING;
 
-public class VanillaVineStem extends AbstractPlantStemBlock implements Fertilizable, VanillaVines {
+public class VanillaVineStem extends GrowingPlantHeadBlock implements BonemealableBlock, VanillaVines {
 
-    public VanillaVineStem(Settings settings) {
+    public VanillaVineStem(Properties settings) {
         super(settings, Direction.DOWN, EAST, false, GROW_CHANCE);
-        setDefaultState(getDefaultState()
-                .with(AGE, 0)
-                .with(PLANT_STATE, Stage.EMPTY)
-                .with(HORIZONTAL_FACING, Direction.EAST));
+        registerDefaultState(defaultBlockState()
+                .setValue(AGE, 0)
+                .setValue(PLANT_STATE, Stage.EMPTY)
+                .setValue(HORIZONTAL_FACING, Direction.EAST));
     }
 
     @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(AGE, PLANT_STATE, HORIZONTAL_FACING);
     }
 
     @Override
-    protected BlockState copyState(BlockState from, BlockState to) {
-        return to.with(PLANT_STATE, from.get(PLANT_STATE)).with(HORIZONTAL_FACING, from.get(HORIZONTAL_FACING));
+    protected BlockState updateBodyAfterConvertedFromHead(BlockState from, BlockState to) {
+        return to.setValue(PLANT_STATE, from.getValue(PLANT_STATE)).setValue(HORIZONTAL_FACING, from.getValue(HORIZONTAL_FACING));
     }
 
     @Override
-    protected Block getPlant() {
+    protected Block getBodyBlock() {
         return CookItBlocks.VANILLA_VINE;
     }
 
     @Override
-    protected int getGrowthLength(Random random) {
+    protected int getBlocksToGrowWhenBonemealed(RandomSource random) {
         return 1;
     }
 
-    private boolean canPlaceOn(BlockView world, BlockPos pos, Direction side) {
+    private boolean canPlaceOn(BlockGetter world, BlockPos pos, Direction side) {
         BlockState blockState = world.getBlockState(pos);
-        return blockState.isSideSolidFullSquare(world, pos, side);
+        return blockState.isFaceSturdy(world, pos, side);
     }
 
     @Override
-    public boolean canPlaceAt(BlockState state, WorldView world, BlockPos pos) {
-        BlockPos blockPos = pos.offset(this.growthDirection.getOpposite());
+    public boolean canSurvive(BlockState state, LevelReader world, BlockPos pos) {
+        BlockPos blockPos = pos.relative(this.growthDirection.getOpposite());
         BlockState blockState = world.getBlockState(blockPos);
-        Direction direction = state.get(HORIZONTAL_FACING);
-        return this.canPlaceOn(world, pos.offset(direction.getOpposite()), direction) || blockState.isOf(this.getStem()) || blockState.isOf(this.getPlant());
+        Direction direction = state.getValue(HORIZONTAL_FACING);
+        return this.canPlaceOn(world, pos.relative(direction.getOpposite()), direction) || blockState.is(this.getHeadBlock()) || blockState.is(this.getBodyBlock());
     }
 
     @Override
-    protected boolean chooseStemState(BlockState state) {
+    protected boolean canGrowInto(BlockState state) {
         return state.isAir();
     }
 
     @Override
-    protected BlockState age(BlockState state, Random random) {
-        VanillaVines.Stage stage = state.get(PLANT_STATE);
-        return super.age(state, random).with(PLANT_STATE, random.nextFloat() < GROW_CHANCE ? stage.increment() : stage);
+    protected BlockState getGrowIntoState(BlockState state, RandomSource random) {
+        VanillaVines.Stage stage = state.getValue(PLANT_STATE);
+        return super.getGrowIntoState(state, random).setValue(PLANT_STATE, random.nextFloat() < GROW_CHANCE ? stage.increment() : stage);
     }
     @Override
-    public BlockState getPlacementState(ItemPlacementContext ctx) {
-        return Objects.requireNonNull(super.getPlacementState(ctx)).with(HORIZONTAL_FACING, ctx.getHorizontalPlayerFacing().getOpposite());
+    public BlockState getStateForPlacement(BlockPlaceContext ctx) {
+        return Objects.requireNonNull(super.getStateForPlacement(ctx)).setValue(HORIZONTAL_FACING, ctx.getHorizontalDirection().getOpposite());
     }
 
     @Override
-    public boolean isFertilizable(WorldView world, BlockPos pos, BlockState state, boolean isClient) {
+    public boolean isValidBonemealTarget(LevelReader world, BlockPos pos, BlockState state, boolean isClient) {
         return false;
     }
 
     @Override
-    public void neighborUpdate(BlockState state, World world, BlockPos pos, Block block, BlockPos neighborPos, boolean moved) {
-        super.neighborUpdate(state, world, pos, block, neighborPos, moved);
+    public void neighborChanged(BlockState state, Level world, BlockPos pos, Block block, BlockPos neighborPos, boolean moved) {
+        super.neighborChanged(state, world, pos, block, neighborPos, moved);
 
-        BlockPos support = pos.offset(state.get(HORIZONTAL_FACING).getOpposite());
+        BlockPos support = pos.relative(state.getValue(HORIZONTAL_FACING).getOpposite());
 
-        boolean invalidSupport = support.equals(neighborPos) && !world.getBlockState(support).isSolidBlock(world, support);
-        boolean brokenOrigin = neighborPos.equals(pos.up()) && world.getBlockState(neighborPos).getBlock().equals(Blocks.AIR);
+        boolean invalidSupport = support.equals(neighborPos) && !world.getBlockState(support).isRedstoneConductor(world, support);
+        boolean brokenOrigin = neighborPos.equals(pos.above()) && world.getBlockState(neighborPos).getBlock().equals(Blocks.AIR);
         if (invalidSupport || brokenOrigin) {
             world.removeBlock(pos, false);
         }
     }
 
     @Override
-    public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        return getOutlineShape(state.get(HORIZONTAL_FACING));
+    public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
+        return getOutlineShape(state.getValue(HORIZONTAL_FACING));
     }
 }

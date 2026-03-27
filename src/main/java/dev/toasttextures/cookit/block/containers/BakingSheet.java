@@ -3,77 +3,83 @@ package dev.toasttextures.cookit.block.containers;
 import dev.toasttextures.cookit.block.entity.BakingSheetEntity;
 import dev.toasttextures.cookit.block.entity.Container;
 import net.minecraft.block.*;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.client.item.TooltipContext;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class BakingSheet extends BlockWithEntity {
-    private static final VoxelShape SHAPE = createCuboidShape(3.0, 0.0, 1.0, 13.0, 2.0, 15.0);
+public class BakingSheet extends BaseEntityBlock {
+    private static final VoxelShape SHAPE = box(3.0, 0.0, 1.0, 13.0, 2.0, 15.0);
 
-    public BakingSheet(Settings settings) {
+    public BakingSheet(Properties settings) {
         super(settings);
     }
 
     @Override
-    public BlockRenderType getRenderType(BlockState state) {
-        return BlockRenderType.MODEL;
+    public RenderShape getRenderShape(BlockState state) {
+        return RenderShape.MODEL;
     }
 
-    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        if (world.isClient) return ActionResult.SUCCESS;
+    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        if (world.isClientSide) return InteractionResult.SUCCESS;
         BakingSheetEntity blockEntity = (BakingSheetEntity) world.getBlockEntity(pos);
-        if (blockEntity == null) return ActionResult.SUCCESS;
+        if (blockEntity == null) return InteractionResult.SUCCESS;
 
-        if (player.isSneaking()) return blockEntity.dropAsContainer(player, world, this, pos);
+        if (player.isShiftKeyDown()) return blockEntity.dropAsContainer(player, world, this, pos);
 
-        ItemStack heldItem = player.getStackInHand(hand);
+        ItemStack heldItem = player.getItemInHand(hand);
         ItemStack retrieved = blockEntity.retrieve();
         if (!heldItem.isEmpty()) {
             if (blockEntity.fillFirst(player, heldItem)) {
-                world.playSound(null, pos, SoundEvents.ENTITY_ITEM_FRAME_REMOVE_ITEM, SoundCategory.BLOCKS, 0.5f, 0.25f);
-                world.updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
+                world.playSound(null, pos, SoundEvents.ITEM_FRAME_REMOVE_ITEM, SoundSource.BLOCKS, 0.5f, 0.25f);
+                world.sendBlockUpdated(pos, state, state, Block.UPDATE_CLIENTS);
             }
         } else if (!retrieved.isEmpty()) {
-            world.playSound(null, pos, SoundEvents.ENTITY_ITEM_FRAME_REMOVE_ITEM, SoundCategory.BLOCKS);
-            world.updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
-            player.getInventory().offerOrDrop(retrieved);
+            world.playSound(null, pos, SoundEvents.ITEM_FRAME_REMOVE_ITEM, SoundSource.BLOCKS);
+            world.sendBlockUpdated(pos, state, state, Block.UPDATE_CLIENTS);
+            player.getInventory().placeItemBackInInventory(retrieved);
         }
-        blockEntity.markDirty();
+        blockEntity.setChanged();
 
-        return ActionResult.SUCCESS;
+        return InteractionResult.SUCCESS;
     }
 
     @Override
-    public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext ctx) {
+    public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext ctx) {
         return SHAPE;
     }
     @Override
-    public void appendTooltip(ItemStack stack, BlockView world, List<Text> tooltip, TooltipContext context) {
+    public void appendHoverText(ItemStack stack, BlockGetter world, List<Component> tooltip, TooltipFlag context) {
         Container.appendTooltip(stack, tooltip, item -> true);
     }
 
     @Override
-    public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+    public void setPlacedBy(Level world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         Container.onPlaced(world, pos, stack);
     }
 
     @Override
-    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new BakingSheetEntity(pos, state);
     }
 }

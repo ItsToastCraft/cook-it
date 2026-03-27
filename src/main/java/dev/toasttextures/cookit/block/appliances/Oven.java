@@ -3,91 +3,97 @@ package dev.toasttextures.cookit.block.appliances;
 import dev.toasttextures.cookit.block.entity.OvenEntity;
 import dev.toasttextures.cookit.registries.CookItTags;
 import net.minecraft.block.*;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityTicker;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.state.StateManager;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 import dev.toasttextures.cookit.registries.CookItBlockEntities;
 
-import static net.minecraft.state.property.Properties.*;
+import static net.minecraft.world.level.block.state.properties.BlockStateProperties.*;
 
-public class Oven extends BlockWithEntity implements BlockEntityProvider {
-    public Oven(Settings settings) {
+public class Oven extends BaseEntityBlock implements EntityBlock {
+    public Oven(Properties settings) {
         super(settings);
-        setDefaultState(getDefaultState()
-                .with(OPEN, false)
-                .with(HORIZONTAL_FACING, Direction.NORTH)
-                .with(LIT, false));
+        registerDefaultState(defaultBlockState()
+                .setValue(OPEN, false)
+                .setValue(HORIZONTAL_FACING, Direction.NORTH)
+                .setValue(LIT, false));
     }
 
     @Override
-    public BlockRenderType getRenderType(BlockState state) {
-        return BlockRenderType.MODEL;
+    public RenderShape getRenderShape(BlockState state) {
+        return RenderShape.MODEL;
     }
 
     @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(OPEN, HORIZONTAL_FACING, LIT);
     }
 
     @Override
-    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        if (world.isClient) return ActionResult.SUCCESS;
+    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        if (world.isClientSide) return InteractionResult.SUCCESS;
 
         OvenEntity blockEntity = (OvenEntity) world.getBlockEntity(pos);
-        if (blockEntity == null) return ActionResult.SUCCESS;
+        if (blockEntity == null) return InteractionResult.SUCCESS;
 
-        ItemStack heldItem = player.getStackInHand(hand);
+        ItemStack heldItem = player.getItemInHand(hand);
 
-        if (!state.get(OPEN) && heldItem.isEmpty()) {
+        if (!state.getValue(OPEN) && heldItem.isEmpty()) {
             openOven(world, pos, state, true);
-            return ActionResult.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
 
         if (heldItem.isEmpty()) {
-            if (state.get(LIT)) {
+            if (state.getValue(LIT)) {
                 ItemStack retrieved = blockEntity.retrieve();
                 if (!retrieved.isEmpty()) {
-                    player.getInventory().offerOrDrop(retrieved);
+                    player.getInventory().placeItemBackInInventory(retrieved);
                 }
             } else {
                 openOven(world, pos, state, false);
             }
-        } else if (Block.getBlockFromItem(heldItem.getItem()).getDefaultState().isIn(CookItTags.CONTAINERS)) {
-            return blockEntity.fillFirst(player, heldItem) ? ActionResult.SUCCESS : ActionResult.FAIL;
+        } else if (Block.byItem(heldItem.getItem()).defaultBlockState().is(CookItTags.CONTAINERS)) {
+            return blockEntity.fillFirst(player, heldItem) ? InteractionResult.SUCCESS : InteractionResult.FAIL;
         }
 
-        return ActionResult.FAIL;
+        return InteractionResult.FAIL;
     }
-    public BlockState getPlacementState(ItemPlacementContext ctx) {
-        return this.getDefaultState().with(HORIZONTAL_FACING, ctx.getHorizontalPlayerFacing().getOpposite());
+    public BlockState getStateForPlacement(BlockPlaceContext ctx) {
+        return this.defaultBlockState().setValue(HORIZONTAL_FACING, ctx.getHorizontalDirection().getOpposite());
     }
 
-    public void openOven(World world, BlockPos pos, BlockState state, boolean open) {
-        SoundEvent sound = open ? SoundEvents.BLOCK_IRON_TRAPDOOR_OPEN : SoundEvents.BLOCK_IRON_TRAPDOOR_CLOSE;
-        world.playSound(null, pos, sound, SoundCategory.BLOCKS);
-        world.setBlockState(pos, state.with(OPEN, open));
+    public void openOven(Level world, BlockPos pos, BlockState state, boolean open) {
+        SoundEvent sound = open ? SoundEvents.IRON_TRAPDOOR_OPEN : SoundEvents.IRON_TRAPDOOR_CLOSE;
+        world.playSound(null, pos, sound, SoundSource.BLOCKS);
+        world.setBlockAndUpdate(pos, state.setValue(OPEN, open));
     }
 
     @Nullable
     @Override
-    public OvenEntity createBlockEntity(BlockPos pos, BlockState state) { return new OvenEntity(pos, state); }
+    public OvenEntity newBlockEntity(BlockPos pos, BlockState state) { return new OvenEntity(pos, state); }
 
     @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
-        return checkType(type, CookItBlockEntities.OVEN, OvenEntity::tick);
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level world, BlockState state, BlockEntityType<T> type) {
+        return createTickerHelper(type, CookItBlockEntities.OVEN, OvenEntity::tick);
     }
 }

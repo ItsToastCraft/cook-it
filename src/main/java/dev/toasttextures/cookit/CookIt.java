@@ -6,11 +6,11 @@ import dev.toasttextures.cookit.registries.*;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
-import net.minecraft.particle.DefaultParticleType;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.Direction;
+import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.Direction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,11 +21,11 @@ public class CookIt implements ModInitializer {
     public static final String MOD_ID = "cook-it";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
-    public static Identifier idOf(String name) {
-        return new Identifier(MOD_ID, name);
+    public static ResourceLocation idOf(String name) {
+        return new ResourceLocation(MOD_ID, name);
     }
 
-    public static final DefaultParticleType OIL_PARTICLE = FabricParticleTypes.simple();
+    public static final SimpleParticleType OIL_PARTICLE = FabricParticleTypes.simple();
 
     @Override
     public void onInitialize() {
@@ -35,7 +35,7 @@ public class CookIt implements ModInitializer {
         CookItSounds.register();
         CookItTags.register();
         CookItBlockEntities.registerEntities();
-        Registry.register(Registries.PARTICLE_TYPE, idOf("oil"), OIL_PARTICLE);
+        Registry.register(BuiltInRegistries.PARTICLE_TYPE, idOf("oil"), OIL_PARTICLE);
 
         PlayerBlockBreakEvents.BEFORE.register((world, player, pos, state, blockEntity) -> {
             if (state.getBlock() instanceof CuttingBoard cuttingBoard) {

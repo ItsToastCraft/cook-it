@@ -4,42 +4,42 @@ import dev.toasttextures.cookit.block.containers.MixingBowl;
 import dev.toasttextures.cookit.block.entity.MixingBowlEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.block.BlockState;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.block.entity.BlockEntityRenderer;
-import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
-import net.minecraft.client.render.model.json.ModelTransformationMode;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.item.ItemStack;
-import net.minecraft.registry.Registries;
-import net.minecraft.util.math.RotationAxis;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.world.item.ItemDisplayContext;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.registries.BuiltInRegistries;
+import com.mojang.math.Axis;
 
 @Environment(EnvType.CLIENT)
 public class MixingBowlEntityRenderer implements BlockEntityRenderer<MixingBowlEntity> {
 
-    public MixingBowlEntityRenderer(BlockEntityRendererFactory.Context ctx) {
+    public MixingBowlEntityRenderer(BlockEntityRendererProvider.Context ctx) {
     }
 
     @Override
-    public void render(MixingBowlEntity blockEntity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
-        final MinecraftClient client = MinecraftClient.getInstance();
-        BlockState state = blockEntity.getCachedState();
-        if (state.get(MixingBowl.CONTAINS_LIQUID)) return;
+    public void render(MixingBowlEntity blockEntity, float tickDelta, PoseStack matrices, MultiBufferSource vertexConsumers, int light, int overlay) {
+        final Minecraft client = Minecraft.getInstance();
+        BlockState state = blockEntity.getBlockState();
+        if (state.getValue(MixingBowl.CONTAINS_LIQUID)) return;
 
-        for (int i = 0; i < blockEntity.size(); i++) {
-            ItemStack stack = blockEntity.getStack(i);
+        for (int i = 0; i < blockEntity.getContainerSize(); i++) {
+            ItemStack stack = blockEntity.getItem(i);
             if (stack.isEmpty()) continue;
             ItemRenderPosition pos = ITEM_RENDER_POSITIONS[i];
-            float height = Registries.ITEM.getId(stack.getItem()).getNamespace().equals("minecraft") ? 0.25f : 0.5f;
+            float height = BuiltInRegistries.ITEM.getKey(stack.getItem()).getNamespace().equals("minecraft") ? 0.25f : 0.5f;
 
-            matrices.push();
+            matrices.pushPose();
             matrices.scale(0.3125f,0.3125f,0.3125f);
             matrices.translate(pos.x, height + pos.y, pos.z);
-            matrices.multiply(RotationAxis.NEGATIVE_X.rotationDegrees(90));
-            matrices.multiply(RotationAxis.NEGATIVE_Z.rotationDegrees(pos.angle));
-            client.getItemRenderer().renderItem(stack, ModelTransformationMode.NONE, light, overlay, matrices, vertexConsumers, blockEntity.getWorld(), 0);
-            matrices.pop();
+            matrices.mulPose(Axis.XN.rotationDegrees(90));
+            matrices.mulPose(Axis.ZN.rotationDegrees(pos.angle));
+            client.getItemRenderer().renderStatic(stack, ItemDisplayContext.NONE, light, overlay, matrices, vertexConsumers, blockEntity.getLevel(), 0);
+            matrices.popPose();
         }
     }
 

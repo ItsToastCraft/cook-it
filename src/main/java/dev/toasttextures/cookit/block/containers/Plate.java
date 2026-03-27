@@ -4,37 +4,43 @@ import dev.toasttextures.cookit.block.entity.Container;
 import dev.toasttextures.cookit.block.entity.PlateEntity;
 import dev.toasttextures.cookit.item.ItemStorage;
 import net.minecraft.block.*;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.client.item.TooltipContext;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.IntProperty;
-import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.DyeColor;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 import dev.toasttextures.cookit.registries.CookItItems;
 
 import java.util.List;
 
-public class Plate extends BlockWithEntity {
-    public static final IntProperty COUNT = IntProperty.of("count", 1, 4);
+public class Plate extends BaseEntityBlock {
+    public static final IntegerProperty COUNT = IntegerProperty.create("count", 1, 4);
 
     private final DyeColor color;
-    public Plate(Settings settings, DyeColor color) {
+    public Plate(Properties settings, DyeColor color) {
         super(settings);
         this.color = color;
-        setDefaultState(getDefaultState().with(COUNT, 1));
+        registerDefaultState(defaultBlockState().setValue(COUNT, 1));
     }
 
     public DyeColor getColor() {
@@ -42,91 +48,91 @@ public class Plate extends BlockWithEntity {
     }
 
     @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(COUNT);
     }
 
     @Override
-    public BlockRenderType getRenderType(BlockState state) {
-        return BlockRenderType.MODEL;
+    public RenderShape getRenderShape(BlockState state) {
+        return RenderShape.MODEL;
     }
 
     @Override
-    public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext ctx) {
-        return createCuboidShape(4.0, 0.0, 4.0, 12.0, state.get(COUNT), 12.0);
+    public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext ctx) {
+        return box(4.0, 0.0, 4.0, 12.0, state.getValue(COUNT), 12.0);
     }
 
     @Override
-    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        if (world.isClient) return ActionResult.SUCCESS;
+    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        if (world.isClientSide) return InteractionResult.SUCCESS;
         PlateEntity blockEntity = (PlateEntity) world.getBlockEntity(pos);
-        if (blockEntity == null) return ActionResult.SUCCESS;
+        if (blockEntity == null) return InteractionResult.SUCCESS;
 
-        int plateAmount = state.get(COUNT);
-        ItemStack heldItem = player.getStackInHand(hand);
+        int plateAmount = state.getValue(COUNT);
+        ItemStack heldItem = player.getItemInHand(hand);
 
         // If there is no item in the player's hand and there is more than one plate, give one plate
         // Otherwise give back whatever is on the plate (because there's only one sooo)
 
         ItemStack first = blockEntity.retrieve();
         if (heldItem.isEmpty()) {
-            if (player.isSneaking()) {
+            if (player.isShiftKeyDown()) {
                 // Why did it take me 80 billion years to remember this exists
                 blockEntity.dropAsContainer(player, world, this, pos);
                 decreasePlates(state, world, pos);
             } else if (!first.isEmpty()) {
-                player.getInventory().offerOrDrop(first);
+                player.getInventory().placeItemBackInInventory(first);
             } else {
-                player.getInventory().offerOrDrop(this.getPickStack(world, pos, state));
+                player.getInventory().placeItemBackInInventory(this.getCloneItemStack(world, pos, state));
                 decreasePlates(state, world, pos);
             }
-            return ActionResult.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
 
-        if (heldItem.isOf(CookItItems.FRYER_BASKET)) return ActionResult.PASS;
+        if (heldItem.is(CookItItems.FRYER_BASKET)) return InteractionResult.PASS;
 
         // Add another plate if the player is holding one of the same type and there aren't already 4 on there.
-        if (heldItem.isOf(this.asItem()) && plateAmount < 4 && first.isEmpty()) {
+        if (heldItem.is(this.asItem()) && plateAmount < 4 && first.isEmpty()) {
             ItemStack stored = ItemStorage.getStoredItem(heldItem);
             if (!stored.isEmpty()) {
-                blockEntity.setStack(0, heldItem.split(1));
+                blockEntity.setItem(0, heldItem.split(1));
             }
-            world.playSound(null, pos, SoundEvents.BLOCK_COPPER_PLACE, SoundCategory.BLOCKS, 1, 1.75f);
-            world.setBlockState(pos, state.with(COUNT, plateAmount + 1));
+            world.playSound(null, pos, SoundEvents.COPPER_PLACE, SoundSource.BLOCKS, 1, 1.75f);
+            world.setBlockAndUpdate(pos, state.setValue(COUNT, plateAmount + 1));
         // Add whatever is in the player's hand, as long as it's food (sorry)
-        } else if (first.isEmpty() && heldItem.isFood()) {
-            blockEntity.setStack(0, heldItem.split(1));
-            world.playSound(null, pos, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.BLOCKS, 1, 1.0f);
-            world.updateListeners(pos, state, state, NOTIFY_LISTENERS);
+        } else if (first.isEmpty() && heldItem.isEdible()) {
+            blockEntity.setItem(0, heldItem.split(1));
+            world.playSound(null, pos, SoundEvents.ITEM_PICKUP, SoundSource.BLOCKS, 1, 1.0f);
+            world.sendBlockUpdated(pos, state, state, UPDATE_CLIENTS);
         }
 
-        return ActionResult.SUCCESS;
+        return InteractionResult.SUCCESS;
     }
-    private void decreasePlates(BlockState state, World world, BlockPos pos) {
-        int plateAmount = state.get(COUNT) - 1;
+    private void decreasePlates(BlockState state, Level world, BlockPos pos) {
+        int plateAmount = state.getValue(COUNT) - 1;
 
         if (plateAmount == 0) {
-            world.breakBlock(pos, false);
+            world.destroyBlock(pos, false);
             return;
         }
-        world.setBlockState(pos, state.with(COUNT, plateAmount));
+        world.setBlockAndUpdate(pos, state.setValue(COUNT, plateAmount));
     }
 
     @Override
-    public void onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player) {
+    public void playerWillDestroy(Level world, BlockPos pos, BlockState state, Player player) {
         if (world.getBlockEntity(pos) instanceof PlateEntity plateEntity && !plateEntity.getFirst().isEmpty()) {
-            dropStack(world, pos, plateEntity.getFirst().split(1));
+            popResource(world, pos, plateEntity.getFirst().split(1));
         }
-        super.onBreak(world, pos, state, player);
+        super.playerWillDestroy(world, pos, state, player);
     }
 
     @Override
-    public void appendTooltip(ItemStack stack, @Nullable BlockView world, List<Text> tooltip, TooltipContext options) {
+    public void appendHoverText(ItemStack stack, @Nullable BlockGetter world, List<Component> tooltip, TooltipFlag options) {
         Container.appendTooltip(stack, tooltip, item -> item != Items.AIR);
     }
 
     @Nullable
-    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new PlateEntity(pos, state);
     }
 }

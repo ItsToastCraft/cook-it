@@ -1,16 +1,16 @@
 package dev.toasttextures.cookit.block.entity;
 
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 
 public interface SlotProvider<T extends Slot<?>> {
     List<T> getSlots();
 
-    <E extends BlockEntity> T createSlot(Vec3d pos, E entity, int index);
+    <E extends BlockEntity> T createSlot(Vec3 pos, E entity, int index);
     
-    default T getSlotAt(Vec3d entityPos, Vec3d clickPos) {
+    default T getSlotAt(Vec3 entityPos, Vec3 clickPos) {
         return getSlots().get(0);
     }
 }

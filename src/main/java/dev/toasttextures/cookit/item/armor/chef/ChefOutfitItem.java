@@ -5,27 +5,29 @@ import dev.toasttextures.cookit.client.CookItEntityModelLayers;
 import dev.toasttextures.cookit.item.armor.ArmorModel;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.entity.model.BipedEntityModel;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ArmorItem;
-import net.minecraft.item.ArmorMaterial;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.ArmorItem.Type;
+import net.minecraft.world.item.ArmorMaterial;
+import net.minecraft.world.item.Item.Properties;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.resources.ResourceLocation;
 
 public class ChefOutfitItem extends ArmorItem {
-    public static final Identifier texture = CookIt.idOf("textures/armor/chef_outfit.png");
+    public static final ResourceLocation texture = CookIt.idOf("textures/armor/chef_outfit.png");
 
     @Environment(EnvType.CLIENT)
-    private BipedEntityModel<LivingEntity> model;
+    private HumanoidModel<LivingEntity> model;
 
-    public ChefOutfitItem(ArmorMaterial material, Type type, Settings settings) {
+    public ChefOutfitItem(ArmorMaterial material, Type type, Properties settings) {
         super(material, type, settings);
     }
 
     @Override
-    public boolean isDamageable() {
+    public boolean canBeDepleted() {
         return false;
     }
 
@@ -35,26 +37,26 @@ public class ChefOutfitItem extends ArmorItem {
     }
 
     @Override
-    public boolean hasGlint(ItemStack stack) {
+    public boolean isFoil(ItemStack stack) {
         return false;
     }
 
     @Override
-    public boolean canRepair(ItemStack first, ItemStack second) {
+    public boolean isValidRepairItem(ItemStack first, ItemStack second) {
         return false;
     }
 
     @Environment(EnvType.CLIENT)
-    protected BipedEntityModel<LivingEntity> provideArmorModelForSlot(EquipmentSlot slot) {
-        var models = MinecraftClient.getInstance().getEntityModelLoader();
+    protected HumanoidModel<LivingEntity> provideArmorModelForSlot(EquipmentSlot slot) {
+        var models = Minecraft.getInstance().getEntityModels();
 
-        return new ArmorModel(models.getModelPart(CookItEntityModelLayers.CHEF_OUTFIT), slot);
+        return new ArmorModel(models.bakeLayer(CookItEntityModelLayers.CHEF_OUTFIT), slot);
     }
 
     @Environment(EnvType.CLIENT)
-    public BipedEntityModel<LivingEntity> getArmorModel() {
+    public HumanoidModel<LivingEntity> getArmorModel() {
         if (model == null) {
-            model = provideArmorModelForSlot(getSlotType());
+            model = provideArmorModelForSlot(getEquipmentSlot());
         }
         return model;
     }

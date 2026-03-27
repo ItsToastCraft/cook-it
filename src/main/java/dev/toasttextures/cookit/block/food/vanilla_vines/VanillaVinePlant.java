@@ -3,82 +3,89 @@ package dev.toasttextures.cookit.block.food.vanilla_vines;
 import dev.toasttextures.cookit.registries.CookItBlocks;
 import dev.toasttextures.cookit.registries.CookItItems;
 import net.minecraft.block.*;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.state.StateManager;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.random.Random;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldView;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.BonemealableBlock;
+import net.minecraft.world.level.block.GrowingPlantBodyBlock;
+import net.minecraft.world.level.block.GrowingPlantHeadBlock;
+import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 
-import static net.minecraft.state.property.Properties.HORIZONTAL_FACING;
+import static net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING;
 
-public class VanillaVinePlant extends AbstractPlantBlock implements Fertilizable, VanillaVines {
+public class VanillaVinePlant extends GrowingPlantBodyBlock implements BonemealableBlock, VanillaVines {
 
-    public VanillaVinePlant(Settings settings) {
+    public VanillaVinePlant(Properties settings) {
         super(settings, Direction.DOWN, EAST, false);
-        setDefaultState(getDefaultState()
-                .with(PLANT_STATE, Stage.EMPTY)
-                .with(HORIZONTAL_FACING, Direction.EAST));
+        registerDefaultState(defaultBlockState()
+                .setValue(PLANT_STATE, Stage.EMPTY)
+                .setValue(HORIZONTAL_FACING, Direction.EAST));
     }
 
     @Override
-    protected AbstractPlantStemBlock getStem() {
+    protected GrowingPlantHeadBlock getHeadBlock() {
         return CookItBlocks.VANILLA_VINE_STEM;
     }
 
     @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(PLANT_STATE).add(HORIZONTAL_FACING);
     }
 
     @Override
-    protected BlockState copyState(BlockState from, BlockState to) {
-        return to.with(PLANT_STATE, from.get(PLANT_STATE)).with(HORIZONTAL_FACING, from.get(HORIZONTAL_FACING));
+    protected BlockState updateHeadAfterConvertedFromBody(BlockState from, BlockState to) {
+        return to.setValue(PLANT_STATE, from.getValue(PLANT_STATE)).setValue(HORIZONTAL_FACING, from.getValue(HORIZONTAL_FACING));
     }
 
     @Override
-    public ItemStack getPickStack(BlockView world, BlockPos pos, BlockState state) {
+    public ItemStack getCloneItemStack(BlockGetter world, BlockPos pos, BlockState state) {
         return new ItemStack(CookItItems.VANILLA_BEAN);
     }
 
     @Override
-    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         return VanillaVines.removeVanilla(player, state, world, pos);
     }
 
     @Override
-    public boolean isFertilizable(WorldView world, BlockPos pos, BlockState state, boolean isClient) {
-        return state.get(PLANT_STATE).ordinal() < 2;
+    public boolean isValidBonemealTarget(LevelReader world, BlockPos pos, BlockState state, boolean isClient) {
+        return state.getValue(PLANT_STATE).ordinal() < 2;
     }
 
     @Override
-    public boolean canGrow(World world, Random random, BlockPos pos, BlockState state) {
+    public boolean isBonemealSuccess(Level world, RandomSource random, BlockPos pos, BlockState state) {
         return true;
     }
 
     @Override
-    public void grow(ServerWorld world, Random random, BlockPos pos, BlockState state) {
-        if (state.get(PLANT_STATE) == Stage.EMPTY) {
-            world.setBlockState(pos, state.with(PLANT_STATE, Stage.BLOOMED), Block.NOTIFY_LISTENERS);
+    public void performBonemeal(ServerLevel world, RandomSource random, BlockPos pos, BlockState state) {
+        if (state.getValue(PLANT_STATE) == Stage.EMPTY) {
+            world.setBlock(pos, state.setValue(PLANT_STATE, Stage.BLOOMED), Block.UPDATE_CLIENTS);
         }
     }
     @Override
-    public void randomTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
+    public void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
         super.randomTick(state, world, pos, random);
-        if (state.get(PLANT_STATE) != Stage.BLOOMED) return;
+        if (state.getValue(PLANT_STATE) != Stage.BLOOMED) return;
 
-        world.setBlockState(pos, state.with(PLANT_STATE, Stage.HARVESTABLE), Block.NOTIFY_LISTENERS);
+        world.setBlock(pos, state.setValue(PLANT_STATE, Stage.HARVESTABLE), Block.UPDATE_CLIENTS);
     }
     @Override
-    public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        return getOutlineShape(state.get(HORIZONTAL_FACING));
+    public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
+        return getOutlineShape(state.getValue(HORIZONTAL_FACING));
     }
 }

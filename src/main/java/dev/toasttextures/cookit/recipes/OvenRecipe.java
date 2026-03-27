@@ -1,28 +1,28 @@
 package dev.toasttextures.cookit.recipes;
 
 import com.google.gson.JsonObject;
-import net.minecraft.inventory.SimpleInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.recipe.Ingredient;
-import net.minecraft.recipe.Recipe;
-import net.minecraft.recipe.RecipeSerializer;
-import net.minecraft.recipe.RecipeType;
-import net.minecraft.registry.DynamicRegistryManager;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.JsonHelper;
-import net.minecraft.util.collection.DefaultedList;
-import net.minecraft.world.World;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.core.NonNullList;
+import net.minecraft.world.level.Level;
 
 import static dev.toasttextures.cookit.registries.CookItRecipes.validateItemStack;
 
-public class OvenRecipe implements Recipe<SimpleInventory> {
-    private final Identifier id;
+public class OvenRecipe implements Recipe<SimpleContainer> {
+    private final ResourceLocation id;
     private final Ingredient input;
     private final ItemStack output;
     private final int maxProgress;
 
-    public OvenRecipe(Identifier id, Ingredient input, ItemStack itemStack, int maxProgress) {
+    public OvenRecipe(ResourceLocation id, Ingredient input, ItemStack itemStack, int maxProgress) {
         this.id = id;
         this.output = itemStack;
         this.input = input;
@@ -30,27 +30,27 @@ public class OvenRecipe implements Recipe<SimpleInventory> {
     }
 
     @Override
-    public boolean matches(SimpleInventory inventory, World world) {
-        if(world.isClient()) return false;
-        return input.test(inventory.getStack(0));
+    public boolean matches(SimpleContainer inventory, Level world) {
+        if(world.isClientSide()) return false;
+        return input.test(inventory.getItem(0));
     }
 
     @Override
-    public boolean isIgnoredInRecipeBook() { return true; }
+    public boolean isSpecial() { return true; }
 
     @Override
-    public Identifier getId() {
+    public ResourceLocation getId() {
         return id;
     }
 
     @Override
-    public ItemStack craft(SimpleInventory inventory, DynamicRegistryManager registryManager) {
+    public ItemStack assemble(SimpleContainer inventory, RegistryAccess registryManager) {
         return output.copy();
     }
 
     @Override
-    public DefaultedList<Ingredient> getIngredients() {
-        DefaultedList<Ingredient> list = DefaultedList.ofSize(1);
+    public NonNullList<Ingredient> getIngredients() {
+        NonNullList<Ingredient> list = NonNullList.createWithCapacity(1);
         list.add(input);
         return list;
     }
@@ -60,12 +60,12 @@ public class OvenRecipe implements Recipe<SimpleInventory> {
     }
 
     @Override
-    public boolean fits(int width, int height) {
+    public boolean canCraftInDimensions(int width, int height) {
         return true;
     }
 
     @Override
-    public ItemStack getOutput(DynamicRegistryManager registryManager) {
+    public ItemStack getResultItem(RegistryAccess registryManager) {
         return output;
     }
 
@@ -106,29 +106,29 @@ public class OvenRecipe implements Recipe<SimpleInventory> {
 //        }
 
         @Override
-        public OvenRecipe read(Identifier id, JsonObject json) {
+        public OvenRecipe fromJson(ResourceLocation id, JsonObject json) {
             return new OvenRecipe(
                 id,
                 Ingredient.fromJson(json.getAsJsonObject("input")),
                 validateItemStack(json.getAsJsonObject("output"), false),
-                JsonHelper.getInt(json, "time")
+                GsonHelper.getAsInt(json, "time")
             );
         }
 
         @Override
-        public OvenRecipe read(Identifier id, PacketByteBuf buf) {
+        public OvenRecipe fromNetwork(ResourceLocation id, FriendlyByteBuf buf) {
             return new OvenRecipe(
                 id,
-                Ingredient.fromPacket(buf),
-                buf.readItemStack(),
+                Ingredient.fromNetwork(buf),
+                buf.readItem(),
                 buf.readInt()
             );
         }
 
         @Override
-        public void write(PacketByteBuf buf, OvenRecipe recipe) {
-            recipe.input.write(buf);
-            buf.writeItemStack(recipe.getOutput(null));
+        public void toNetwork(FriendlyByteBuf buf, OvenRecipe recipe) {
+            recipe.input.toNetwork(buf);
+            buf.writeItem(recipe.getResultItem(null));
             buf.writeInt(recipe.maxProgress);
         }
     }

@@ -1,3 +1,4 @@
+// TODO(Ravel): Failed to fully resolve file: null cannot be cast to non-null type com.intellij.psi.PsiJavaCodeReferenceElement
 package dev.toasttextures.cookit.registries;
 
 import dev.toasttextures.cookit.CookIt;
@@ -13,14 +14,14 @@ import dev.toasttextures.cookit.block.food.pizza.CookedPizza;
 import dev.toasttextures.cookit.block.food.pizza.Pizza;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.item.BlockItem;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.sound.BlockSoundGroup;
-import net.minecraft.util.DyeColor;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.Registry;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.item.DyeColor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +29,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class CookItBlocks {
-    private static final FabricBlockSettings CERAMIC_SETTINGS = FabricBlockSettings.create().strength(0.4f).sounds(BlockSoundGroup.DECORATED_POT);
+    private static final FabricBlockSettings CERAMIC_SETTINGS = FabricBlockSettings.create().strength(0.4f).sound(SoundType.DECORATED_POT);
 
     public static final List<Block> BLOCKS = new ArrayList<>();
     public static final List<Plate> PLATES = registerDyed("plate", dyeColor -> CERAMIC_SETTINGS, Plate::new);
@@ -38,10 +39,10 @@ public class CookItBlocks {
     public static final List<Block> CONTAINERS = new ArrayList<>();
 
     // -- Appliances --
-    public static final Block FRYER = registerBlock("fryer", new Fryer(FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).nonOpaque()));
+    public static final Block FRYER = registerBlock("fryer", new Fryer(FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).noOcclusion()));
     public static final Block TOASTER = registerBlock("toaster", new Toaster(FabricBlockSettings.copyOf(Blocks.WHITE_CONCRETE)));
-    public static final Block OVEN = registerBlock("oven", new Oven(FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).nonOpaque()));
-    public static final Block MICROWAVE = registerBlock("microwave", new Microwave(FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).nonOpaque()));
+    public static final Block OVEN = registerBlock("oven", new Oven(FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).noOcclusion()));
+    public static final Block MICROWAVE = registerBlock("microwave", new Microwave(FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).noOcclusion()));
     // -- Food Blocks --
     public static final Block PIZZA = registerBlock("pizza", new CookedPizza(FabricBlockSettings.create()));
     public static final Block UNCOOKED_PIZZA = registerBlock("uncooked_pizza", new Pizza(FabricBlockSettings.create()));
@@ -55,7 +56,7 @@ public class CookItBlocks {
     public static final VanillaVineStem VANILLA_VINE_STEM = registerBlock("vanilla_vine_stem", new VanillaVineStem(FabricBlockSettings.copyOf(Blocks.VINE)), false);
     public static final VanillaVinePlant VANILLA_VINE = registerBlock("vanilla_vine", new VanillaVinePlant(FabricBlockSettings.copyOf(Blocks.VINE)), false);
 
-    private static <T extends Block> List<T> registerDyed(String suffix, Function<DyeColor, AbstractBlock.Settings> settingsProvider, BiFunction<AbstractBlock.Settings, DyeColor, T> block) {
+    private static <T extends Block> List<T> registerDyed(String suffix, Function<DyeColor, BlockBehaviour.Properties> settingsProvider, BiFunction<BlockBehaviour.Properties, DyeColor, T> block) {
         List<T> list = new ArrayList<>();
         for (DyeColor color : DyeColor.values()) {
             AbstractBlock.Settings settings = settingsProvider.apply(color);

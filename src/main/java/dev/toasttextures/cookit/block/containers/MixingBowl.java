@@ -4,128 +4,135 @@ import dev.toasttextures.cookit.block.entity.CookingBlockEntity;
 import dev.toasttextures.cookit.block.entity.MixingBowlEntity;
 import dev.toasttextures.cookit.registries.CookItItems;
 import net.minecraft.block.*;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NbtList;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.BooleanProperty;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.random.Random;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.util.shape.VoxelShapes;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
-public class MixingBowl extends BlockWithEntity implements BlockEntityProvider {
+public class MixingBowl extends BaseEntityBlock implements EntityBlock {
 
-    public static BooleanProperty CONTAINS_LIQUID = BooleanProperty.of("liquid");
+    public static BooleanProperty CONTAINS_LIQUID = BooleanProperty.create("liquid");
 
-    public BlockRenderType getRenderType(BlockState state) {
-        return BlockRenderType.MODEL;
+    public RenderShape getRenderShape(BlockState state) {
+        return RenderShape.MODEL;
     }
-    public MixingBowl(Settings settings) {
+    public MixingBowl(Properties settings) {
         super(settings);
-        setDefaultState(getDefaultState().with(CONTAINS_LIQUID, false));
+        registerDefaultState(defaultBlockState().setValue(CONTAINS_LIQUID, false));
     }
 
     @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(CONTAINS_LIQUID);
     }
 
     @Override
-    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        if (world.isClient) return ActionResult.SUCCESS;
+    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        if (world.isClientSide) return InteractionResult.SUCCESS;
 
         MixingBowlEntity entity = (MixingBowlEntity) world.getBlockEntity(pos);
-        if (entity == null) return ActionResult.PASS;
-        ItemStack item = player.getStackInHand(hand);
-        if (player.isSneaking()) {
+        if (entity == null) return InteractionResult.PASS;
+        ItemStack item = player.getItemInHand(hand);
+        if (player.isShiftKeyDown()) {
             return entity.dropAsContainer(player, world, this, pos);
         }
 
-        if (entity.getStack(0).isOf(CookItItems.GOOP)) { return ActionResult.CONSUME; }
-        if (item.isOf(CookItItems.WHISK)) {
+        if (entity.getItem(0).is(CookItItems.GOOP)) { return InteractionResult.CONSUME; }
+        if (item.is(CookItItems.WHISK)) {
             boolean hasGoop = entity.process(world);
             if (hasGoop) {
-                world.setBlockState(pos, state.with(CONTAINS_LIQUID, true));
-                world.updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
+                world.setBlockAndUpdate(pos, state.setValue(CONTAINS_LIQUID, true));
+                world.sendBlockUpdated(pos, state, state, Block.UPDATE_CLIENTS);
             }
-            return ActionResult.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
-        if ((item.isOf(Items.MILK_BUCKET) || item.isOf(Items.WATER_BUCKET)) && entity.getLiquid() == Items.AIR) {
-            world.playSound(null, pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BLOCK_WATER_AMBIENT, SoundCategory.BLOCKS, 0.5f, 1.25f);
-            entity.setStack(entity.size() - 1, item.split(1));
-            player.setStackInHand(hand, new ItemStack(Items.BUCKET, 1));
-            return ActionResult.SUCCESS;
+        if ((item.is(Items.MILK_BUCKET) || item.is(Items.WATER_BUCKET)) && entity.getLiquid() == Items.AIR) {
+            world.playSound(null, pos.getX(), pos.getY(), pos.getZ(), SoundEvents.WATER_AMBIENT, SoundSource.BLOCKS, 0.5f, 1.25f);
+            entity.setItem(entity.getContainerSize() - 1, item.split(1));
+            player.setItemInHand(hand, new ItemStack(Items.BUCKET, 1));
+            return InteractionResult.SUCCESS;
         }
 
         if (!item.isEmpty()) {
-            for(int i = 0; i < entity.size() - 1; i++) {
-                ItemStack stack = entity.getStack(i);
+            for(int i = 0; i < entity.getContainerSize() - 1; i++) {
+                ItemStack stack = entity.getItem(i);
                 if (stack.isEmpty()) {
-                    entity.setStack(i, item.split(1));
-                    return ActionResult.FAIL;
+                    entity.setItem(i, item.split(1));
+                    return InteractionResult.FAIL;
                 }
             }
         }
-        return ActionResult.FAIL;
+        return InteractionResult.FAIL;
     }
     public static void transferTo(ItemStack bowl, CookingBlockEntity to, int stack) {
-        NbtCompound nbt = bowl.getSubNbt("BlockEntityTag");
+        CompoundTag nbt = bowl.getTagElement("BlockEntityTag");
         if (nbt == null || !nbt.contains("Items")) return;
 
-        NbtList items = nbt.getList("Items", NbtElement.COMPOUND_TYPE);
-        ItemStack item = ItemStack.fromNbt(items.getCompound(0));
-        if (item.isOf(CookItItems.GOOP)) {
-            to.setStack(stack, item);
+        ListTag items = nbt.getList("Items", Tag.TAG_COMPOUND);
+        ItemStack item = ItemStack.of(items.getCompound(0));
+        if (item.is(CookItItems.GOOP)) {
+            to.setItem(stack, item);
             items.getCompound(0).putInt("Count", item.getCount() - 1);
         }
     }
 
     @Override
-    public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
-        super.onPlaced(world, pos, state, placer, itemStack);
+    public void setPlacedBy(Level world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
+        super.setPlacedBy(world, pos, state, placer, itemStack);
         MixingBowlEntity entity = (MixingBowlEntity) world.getBlockEntity(pos);
 
-        NbtCompound nbt = itemStack.getSubNbt("BlockEntityTag");
+        CompoundTag nbt = itemStack.getTagElement("BlockEntityTag");
         if (nbt == null) return;
-        if (entity != null && !world.isClient) {
+        if (entity != null && !world.isClientSide) {
             entity.setGoopColor(nbt.getInt("color"));
         }
-        if (nbt.contains("Items", NbtElement.LIST_TYPE)) {
-            if (ItemStack.fromNbt(nbt.getList("Items", NbtElement.COMPOUND_TYPE).getCompound(0)).isOf(CookItItems.GOOP)) {
-                world.scheduleBlockTick(pos, state.getBlock(), 1);
+        if (nbt.contains("Items", Tag.TAG_LIST)) {
+            if (ItemStack.of(nbt.getList("Items", Tag.TAG_COMPOUND).getCompound(0)).is(CookItItems.GOOP)) {
+                world.scheduleTick(pos, state.getBlock(), 1);
             }
         }
     }
 
     @Override
-    public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
-        super.scheduledTick(state, world, pos, random);
-        world.setBlockState(pos, state.with(CONTAINS_LIQUID, true));
+    public void tick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
+        super.tick(state, world, pos, random);
+        world.setBlockAndUpdate(pos, state.setValue(CONTAINS_LIQUID, true));
 
     }
 
     @Override
-    public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext ctx) {
-        return VoxelShapes.cuboid(0.125f, 0f, 0.125f, 0.875f, 0.5f, 0.875f);
+    public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext ctx) {
+        return Shapes.box(0.125f, 0f, 0.125f, 0.875f, 0.5f, 0.875f);
     }
 
     @Override
-    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new MixingBowlEntity(pos, state);
     }
 }

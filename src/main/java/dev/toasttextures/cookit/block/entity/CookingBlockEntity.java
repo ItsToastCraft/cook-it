@@ -1,18 +1,18 @@
 package dev.toasttextures.cookit.block.entity;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.inventory.SimpleInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.recipe.Recipe;
-import net.minecraft.recipe.RecipeType;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 
 import java.util.Collections;
 import java.util.List;
 
-public abstract class CookingBlockEntity<T extends Recipe<SimpleInventory>> extends Container {
+public abstract class CookingBlockEntity<T extends Recipe<SimpleContainer>> extends Container {
     protected static final String PROGRESS_KEY = "Progress";
     protected static final String INTERACTIONS_KEY = "Interactions";
     private final RecipeType<T> recipeType;
@@ -27,7 +27,7 @@ public abstract class CookingBlockEntity<T extends Recipe<SimpleInventory>> exte
         return status;
     }
 
-    public abstract void craft(World world, T recipe);
+    public abstract void craft(Level world, T recipe);
 
     public abstract void reset();
 
@@ -36,9 +36,9 @@ public abstract class CookingBlockEntity<T extends Recipe<SimpleInventory>> exte
     }
 
     public List<T> getRecipes(int slot) {
-        SimpleInventory inv = (slot < 0 || slot >= size()) ? new SimpleInventory(this.getItems().toArray(new ItemStack[0])) : new SimpleInventory(getStack(slot));
-        if (world == null) return Collections.emptyList();
+        SimpleContainer inv = (slot < 0 || slot >= getContainerSize()) ? new SimpleContainer(this.getItems().toArray(new ItemStack[0])) : new SimpleContainer(getItem(slot));
+        if (level == null) return Collections.emptyList();
 
-        return world.getRecipeManager().getAllMatches(recipeType, inv, world);
+        return level.getRecipeManager().getRecipesFor(recipeType, inv, level);
     }
 }

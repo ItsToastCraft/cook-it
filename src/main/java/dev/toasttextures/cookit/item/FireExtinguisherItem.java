@@ -1,71 +1,72 @@
 package dev.toasttextures.cookit.item;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.CampfireBlock;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUsageContext;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.registry.tag.BlockTags;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.world.item.Item.Properties;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.CampfireBlock;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 
-import static net.minecraft.state.property.Properties.LIT;
+import static net.minecraft.world.level.block.state.properties.BlockStateProperties.LIT;
 
 public class FireExtinguisherItem extends Item {
     public static final double OFFSET_DISTANCE = 4.0;
 
-    public FireExtinguisherItem(Settings settings) {
+    public FireExtinguisherItem(Properties settings) {
         super(settings);
     }
 
     @Override
-    public ActionResult useOnBlock(ItemUsageContext context) {
-        World world = context.getWorld();
-        if (world.isClient) return ActionResult.CONSUME;
-        PlayerEntity user = context.getPlayer();
-        if (user == null) return ActionResult.CONSUME;
+    public InteractionResult useOn(UseOnContext context) {
+        Level world = context.getLevel();
+        if (world.isClientSide) return InteractionResult.CONSUME;
+        Player user = context.getPlayer();
+        if (user == null) return InteractionResult.CONSUME;
 
-        Vec3d hitPos = context.getHitPos();
-        addExtinguishEffects(hitPos, user, (ServerWorld) world);
+        Vec3 hitPos = context.getClickLocation();
+        addExtinguishEffects(hitPos, user, (ServerLevel) world);
 
-        context.getStack().damage(1, user, playerEntity -> user.sendToolBreakStatus(user.getActiveHand()));
+        context.getItemInHand().hurtAndBreak(1, user, playerEntity -> user.broadcastBreakEvent(user.getUsedItemHand()));
 
-        return ActionResult.SUCCESS;
+        return InteractionResult.SUCCESS;
     }
 
     @Override
-    public ActionResult useOnEntity(ItemStack stack, PlayerEntity user, LivingEntity entity, Hand hand) {
-        World world = entity.getWorld();
-        if (world.isClient) return ActionResult.SUCCESS;
-        addExtinguishEffects(entity.getPos(), user, (ServerWorld) world);
+    public InteractionResult interactLivingEntity(ItemStack stack, Player user, LivingEntity entity, InteractionHand hand) {
+        Level world = entity.level();
+        if (world.isClientSide) return InteractionResult.SUCCESS;
+        addExtinguishEffects(entity.position(), user, (ServerLevel) world);
 
         if (entity.isOnFire()) {
-            entity.extinguish();
-            world.playSound(null, entity.getBlockPos(), SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS, 0.5f, 1.0f);
+            entity.clearFire();
+            world.playSound(null, entity.blockPosition(), SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.5f, 1.0f);
         }
 
-        return ActionResult.SUCCESS;
+        return InteractionResult.SUCCESS;
     }
 
-    private void addExtinguishEffects(Vec3d origin, PlayerEntity player, ServerWorld world) {
-        world.playSound(null, origin.x, origin.y, origin.z, SoundEvents.WEATHER_RAIN, SoundCategory.PLAYERS, 0.5f, 1.0f);
+    private void addExtinguishEffects(Vec3 origin, Player player, ServerLevel world) {
+        world.playSound(null, origin.x, origin.y, origin.z, SoundEvents.WEATHER_RAIN, SoundSource.PLAYERS, 0.5f, 1.0f);
 
-        Vec3d pos = player.getPos();
-        double pitch = Math.toRadians(player.getPitch());
-        double yaw = Math.toRadians(player.getYaw());
-        Vec3d direction = new Vec3d(-Math.sin(yaw) * Math.cos(pitch) * OFFSET_DISTANCE, -Math.sin(pitch) * OFFSET_DISTANCE, Math.cos(yaw) * Math.cos(pitch) * OFFSET_DISTANCE);
+        Vec3 pos = player.position();
+        double pitch = Math.toRadians(player.getXRot());
+        double yaw = Math.toRadians(player.getYRot());
+        Vec3 direction = new Vec3(-Math.sin(yaw) * Math.cos(pitch) * OFFSET_DISTANCE, -Math.sin(pitch) * OFFSET_DISTANCE, Math.cos(yaw) * Math.cos(pitch) * OFFSET_DISTANCE);
 
-        Vec3d hitOffset = origin.subtract(pos.x, pos.y + 1.0, pos.z);
-        BlockPos.Mutable mutablePos = new BlockPos.Mutable();
+        Vec3 hitOffset = origin.subtract(pos.x, pos.y + 1.0, pos.z);
+        BlockPos.MutableBlockPos mutablePos = new BlockPos.MutableBlockPos();
 
         for (int i = 0; i < 200; i++) {
             double div = i / 128.0;
@@ -75,7 +76,7 @@ public class FireExtinguisherItem extends Item {
 
             mutablePos.set(particleX, particleY, particleZ);
 
-            world.spawnParticles(ParticleTypes.SPIT, particleX, particleY, particleZ, 1, 0.0, 0.124, 0.0, 0.0);
+            world.sendParticles(ParticleTypes.SPIT, particleX, particleY, particleZ, 1, 0.0, 0.124, 0.0, 0.0);
 
             if (world.random.nextFloat() < 0.5f) {
                 extinguishFire(player, mutablePos, world);
@@ -83,13 +84,13 @@ public class FireExtinguisherItem extends Item {
         }
     }
 
-    private void extinguishFire(PlayerEntity player, BlockPos pos, ServerWorld world) {
+    private void extinguishFire(Player player, BlockPos pos, ServerLevel world) {
         BlockState state = world.getBlockState(pos);
-        if (state.isIn(BlockTags.FIRE)) {
-            world.playSound(null, pos, SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS, 0.5f, 1f);
-            world.breakBlock(pos, false, null);
+        if (state.is(BlockTags.FIRE)) {
+            world.playSound(null, pos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.5f, 1f);
+            world.destroyBlock(pos, false, null);
         } else if (CampfireBlock.isLitCampfire(state)) {
-            CampfireBlock.extinguish(player, world, pos, state.with(LIT, false));
+            CampfireBlock.dowse(player, world, pos, state.setValue(LIT, false));
         }
     }
 }

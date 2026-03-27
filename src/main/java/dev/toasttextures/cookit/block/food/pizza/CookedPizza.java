@@ -2,98 +2,99 @@ package dev.toasttextures.cookit.block.food.pizza;
 
 import dev.toasttextures.cookit.block.entity.PizzaEntity;
 import dev.toasttextures.cookit.registries.CookItItems;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.ShapeContext;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.client.item.TooltipContext;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtList;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.ChatFormatting;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 public class CookedPizza extends Pizza {
-    public CookedPizza(Settings settings) {
+    public CookedPizza(Properties settings) {
         super(settings);
     }
 
     @Override
-    public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext ctx) {
+    public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext ctx) {
         int pizzaAmount = world.getBlockEntity(pos) instanceof PizzaEntity pizzaEntity ? pizzaEntity.getSliceCount() : 4;
         return Slices.values()[pizzaAmount - 1].shape;
     }
 
-    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        if (world.isClient) return ActionResult.SUCCESS;
+    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        if (world.isClientSide) return InteractionResult.SUCCESS;
         PizzaEntity entity = (PizzaEntity) world.getBlockEntity(pos);
-        if (entity == null) return ActionResult.SUCCESS;
+        if (entity == null) return InteractionResult.SUCCESS;
 
         int pizzaAmount = entity.getSliceCount();
-        ItemStack heldItem = player.getStackInHand(hand);
+        ItemStack heldItem = player.getItemInHand(hand);
 
         if (heldItem.isEmpty()) {
-            NbtList toppings = entity.getToppings();
+            ListTag toppings = entity.getToppings();
 
             ItemStack itemStack = new ItemStack(CookItItems.PIZZA_SLICE, 1);
             if (!toppings.isEmpty()) {
-                itemStack.getOrCreateNbt().put(PizzaTopping.TOPPINGS_KEY, toppings);
+                itemStack.getOrCreateTag().put(PizzaTopping.TOPPINGS_KEY, toppings);
             }
 
-            player.getInventory().offerOrDrop(itemStack);
-            world.playSound(null, pos, SoundEvents.BLOCK_WOOL_BREAK, SoundCategory.BLOCKS);
+            player.getInventory().placeItemBackInInventory(itemStack);
+            world.playSound(null, pos, SoundEvents.WOOL_BREAK, SoundSource.BLOCKS);
 
             if (pizzaAmount > 1) {
                 entity.setSliceCount(entity.getSliceCount() - 1);
             } else {
-                world.breakBlock(pos, false);
+                world.destroyBlock(pos, false);
             }
         }
-        return ActionResult.SUCCESS;
+        return InteractionResult.SUCCESS;
     }
 
     @Override
-    public @Nullable BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+    public @Nullable BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new PizzaEntity(pos, state, true);
     }
 
     @Override
-    public void onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player) {
+    public void playerWillDestroy(Level world, BlockPos pos, BlockState state, Player player) {
         if (world.getBlockEntity(pos) instanceof PizzaEntity pizzaEntity) {
             int pizzaAmount = pizzaEntity.getSliceCount();
             if (pizzaAmount > 0) {
                 ItemStack itemStack = new ItemStack(CookItItems.PIZZA_SLICE, pizzaAmount);
                 if (!pizzaEntity.getToppings().isEmpty()) {
-                    itemStack.getOrCreateNbt().put(PizzaTopping.TOPPINGS_KEY, pizzaEntity.getToppings());
+                    itemStack.getOrCreateTag().put(PizzaTopping.TOPPINGS_KEY, pizzaEntity.getToppings());
                 }
-                dropStack(world, pos, itemStack);
+                popResource(world, pos, itemStack);
             }
         }
-        super.onBreak(world, pos, state, player);
+        super.playerWillDestroy(world, pos, state, player);
     }
 
     @Override
-    public void appendTooltip(ItemStack stack, BlockView world, List<Text> tooltip, TooltipContext context) {
+    public void appendHoverText(ItemStack stack, BlockGetter world, List<Component> tooltip, TooltipFlag context) {
         appendTooltip(stack, tooltip);
     }
 
-    public static void appendTooltip(ItemStack stack, List<Text> tooltip) {
+    public static void appendTooltip(ItemStack stack, List<Component> tooltip) {
         List<PizzaTopping> toppings = PizzaTopping.getToppings(stack);
 
         if (toppings.isEmpty()) return;
 
-        tooltip.add((Text.literal("Toppings:").formatted(Formatting.GRAY)));
+        tooltip.add((Component.literal("Toppings:").withStyle(ChatFormatting.GRAY)));
 
         for (PizzaTopping topping : toppings) {
             tooltip.add(topping.getTranslationKey());

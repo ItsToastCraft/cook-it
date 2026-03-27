@@ -1,30 +1,30 @@
 package dev.toasttextures.cookit.recipes;
 
 import com.google.gson.JsonObject;
-import net.minecraft.inventory.SimpleInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.recipe.Ingredient;
-import net.minecraft.recipe.Recipe;
-import net.minecraft.recipe.RecipeSerializer;
-import net.minecraft.recipe.RecipeType;
-import net.minecraft.registry.DynamicRegistryManager;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.JsonHelper;
-import net.minecraft.world.World;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.world.level.Level;
 
 import static dev.toasttextures.cookit.registries.CookItRecipes.allowAirIngredient;
 import static dev.toasttextures.cookit.registries.CookItRecipes.validateItemStack;
 
-public class CuttingBoardRecipe implements Recipe<SimpleInventory> {
-    private final Identifier id;
+public class CuttingBoardRecipe implements Recipe<SimpleContainer> {
+    private final ResourceLocation id;
     private final ItemStack output;
     private final Ingredient input;
     private final int interactions;
     private final Ingredient tool;
     private final boolean usesItem;
 
-    public CuttingBoardRecipe(Identifier id, Ingredient input, ItemStack output, Ingredient tool, int interactions, boolean usesItem) {
+    public CuttingBoardRecipe(ResourceLocation id, Ingredient input, ItemStack output, Ingredient tool, int interactions, boolean usesItem) {
         this.id = id;
         this.output = output;
         this.input = input;
@@ -34,25 +34,25 @@ public class CuttingBoardRecipe implements Recipe<SimpleInventory> {
     }
 
     @Override
-    public boolean matches(SimpleInventory inventory, World world) {
-        if(world.isClient()) {
+    public boolean matches(SimpleContainer inventory, Level world) {
+        if(world.isClientSide()) {
             return false;
         }
-        return input.test(inventory.getStack(0));
+        return input.test(inventory.getItem(0));
     }
 
     @Override
-    public boolean isIgnoredInRecipeBook() { return true; }
+    public boolean isSpecial() { return true; }
 
     @Override
-    public ItemStack craft(SimpleInventory inventory, DynamicRegistryManager registryManager) {
+    public ItemStack assemble(SimpleContainer inventory, RegistryAccess registryManager) {
         return output.copy();
     }
 
     public ItemStack[] getTool() {
         if (tool.isEmpty()) return new ItemStack[]{ ItemStack.EMPTY};
 
-        return tool.getMatchingStacks();
+        return tool.getItems();
     }
 
     public boolean resets() {
@@ -68,12 +68,12 @@ public class CuttingBoardRecipe implements Recipe<SimpleInventory> {
     }
 
     @Override
-    public boolean fits(int width, int height) {
+    public boolean canCraftInDimensions(int width, int height) {
         return true;
     }
 
     @Override
-    public ItemStack getOutput(DynamicRegistryManager registryManager) {
+    public ItemStack getResultItem(RegistryAccess registryManager) {
         return output;
     }
 
@@ -88,7 +88,7 @@ public class CuttingBoardRecipe implements Recipe<SimpleInventory> {
     }
 
     @Override
-    public Identifier getId() {
+    public ResourceLocation getId() {
         return id;
     }
 
@@ -111,34 +111,34 @@ public class CuttingBoardRecipe implements Recipe<SimpleInventory> {
 //        ).apply(in, CuttingBoardRecipe::new));
 
         @Override
-        public CuttingBoardRecipe read(Identifier id, JsonObject json) {
+        public CuttingBoardRecipe fromJson(ResourceLocation id, JsonObject json) {
             return new CuttingBoardRecipe(
                 id,
                 Ingredient.fromJson(json.getAsJsonObject("input")),
                 validateItemStack(json.getAsJsonObject("output"), false),
                 allowAirIngredient(json, "tool"),
-                JsonHelper.getInt(json, "interactions", 1),
-                JsonHelper.getBoolean(json, "uses_item", false)
+                GsonHelper.getAsInt(json, "interactions", 1),
+                GsonHelper.getAsBoolean(json, "uses_item", false)
             );
         }
 
         @Override
-        public CuttingBoardRecipe read(Identifier id, PacketByteBuf buf) {
+        public CuttingBoardRecipe fromNetwork(ResourceLocation id, FriendlyByteBuf buf) {
             return new CuttingBoardRecipe(
                 id,
-                Ingredient.fromPacket(buf),
-                buf.readItemStack(),
-                Ingredient.fromPacket(buf),
+                Ingredient.fromNetwork(buf),
+                buf.readItem(),
+                Ingredient.fromNetwork(buf),
                 buf.readInt(),
                 buf.readBoolean()
             );
         }
 
         @Override
-        public void write(PacketByteBuf buf, CuttingBoardRecipe recipe) {
-            recipe.input.write(buf);
-            buf.writeItemStack(recipe.getOutput(null));
-            recipe.tool.write(buf);
+        public void toNetwork(FriendlyByteBuf buf, CuttingBoardRecipe recipe) {
+            recipe.input.toNetwork(buf);
+            buf.writeItem(recipe.getResultItem(null));
+            recipe.tool.toNetwork(buf);
             buf.writeInt(recipe.interactions);
             buf.writeBoolean(recipe.usesItem());
         }

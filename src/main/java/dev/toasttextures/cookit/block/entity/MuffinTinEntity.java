@@ -2,12 +2,12 @@ package dev.toasttextures.cookit.block.entity;
 
 import dev.toasttextures.cookit.registries.CookItBlocks;
 import dev.toasttextures.cookit.registries.CookItItems;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtList;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.core.BlockPos;
 import dev.toasttextures.cookit.registries.CookItBlockEntities;
 
 public class MuffinTinEntity extends Container implements Transferable {
@@ -16,16 +16,16 @@ public class MuffinTinEntity extends Container implements Transferable {
     }
 
     @Override
-    public void transfer(PlayerEntity player, ItemStack stack) {
-        if (!stack.isOf(CookItBlocks.MIXING_BOWL.asItem())) return;
-        NbtList items = Container.getItemList(stack);
+    public void transfer(Player player, ItemStack stack) {
+        if (!stack.is(CookItBlocks.MIXING_BOWL.asItem())) return;
+        ListTag items = Container.getItemList(stack);
         if (items.isEmpty()) return;
-        ItemStack goop = ItemStack.fromNbt((NbtCompound) items.get(0));
-        if (!goop.isOf(CookItItems.GOOP)) return;
+        ItemStack goop = ItemStack.of((CompoundTag) items.get(0));
+        if (!goop.is(CookItItems.GOOP)) return;
         if (!fillFirst(player, goop)) return;
 
         // Idk I might have to do further testing
         items.getCompound(0).putInt("Count", goop.getCount() - 1);
-        stack.getOrCreateSubNbt("BlockEntityTag").put(CONTAINER_KEY, items);
+        stack.getOrCreateTagElement("BlockEntityTag").put(CONTAINER_KEY, items);
     }
 }

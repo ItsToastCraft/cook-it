@@ -1,9 +1,9 @@
 package dev.toasttextures.cookit.registries;
 
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.util.Identifier;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.Registry;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.resources.ResourceLocation;
 import dev.toasttextures.cookit.CookIt;
 
 public class CookItSounds {
@@ -11,8 +11,8 @@ public class CookItSounds {
     public static final SoundEvent MICROWAVE_BEEP = registerSound("microwave_beep");
 
     private static SoundEvent registerSound(String name) {
-        Identifier id = CookIt.idOf(name);
-        return Registry.register(Registries.SOUND_EVENT, id, SoundEvent.of(id));
+        ResourceLocation id = CookIt.idOf(name);
+        return Registry.register(BuiltInRegistries.SOUND_EVENT, id, SoundEvent.createVariableRangeEvent(id));
     }
 
     public static void register() {}

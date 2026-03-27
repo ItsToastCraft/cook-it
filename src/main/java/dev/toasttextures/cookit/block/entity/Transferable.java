@@ -1,8 +1,8 @@
 package dev.toasttextures.cookit.block.entity;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 
 public interface Transferable {
-    void transfer(PlayerEntity player, ItemStack stack);
+    void transfer(Player player, ItemStack stack);
 }

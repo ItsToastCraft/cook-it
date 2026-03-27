@@ -4,40 +4,45 @@ import dev.toasttextures.cookit.block.WoodType;
 import dev.toasttextures.cookit.block.entity.CuttingBoardEntity;
 import dev.toasttextures.cookit.registries.CookItItems;
 import net.minecraft.block.*;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.state.StateManager;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-import static net.minecraft.state.property.Properties.HORIZONTAL_FACING;
+import static net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING;
 
-public class CuttingBoard extends BlockWithEntity {
-    private static final VoxelShape NORTH_SOUTH_SHAPE = createCuboidShape(0.0, 0f, 2.0, 16.0, 1.0f, 14.0);
-    private static final VoxelShape EAST_WEST_SHAPE = createCuboidShape(2.0, 0f, 0.0, 14.0, 0.5f, 16.0);
+public class CuttingBoard extends BaseEntityBlock {
+    private static final VoxelShape NORTH_SOUTH_SHAPE = box(0.0, 0f, 2.0, 16.0, 1.0f, 14.0);
+    private static final VoxelShape EAST_WEST_SHAPE = box(2.0, 0f, 0.0, 14.0, 0.5f, 16.0);
 
     private final WoodType type;
 
-    public CuttingBoard(Settings settings, WoodType type) {
+    public CuttingBoard(Properties settings, WoodType type) {
         super(settings);
         this.type = type;
-        setDefaultState(getDefaultState().with(HORIZONTAL_FACING, Direction.EAST));
+        registerDefaultState(defaultBlockState().setValue(HORIZONTAL_FACING, Direction.EAST));
     }
 
     @Override
-    public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext ctx) {
-        return switch (state.get(HORIZONTAL_FACING)) {
+    public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext ctx) {
+        return switch (state.getValue(HORIZONTAL_FACING)) {
             case NORTH, SOUTH -> NORTH_SOUTH_SHAPE;
             default -> EAST_WEST_SHAPE;
         };
@@ -48,47 +53,47 @@ public class CuttingBoard extends BlockWithEntity {
     }
 
     @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(HORIZONTAL_FACING);
     }
 
     @Override
-    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        if (world.isClient) return ActionResult.SUCCESS;
+    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        if (world.isClientSide) return InteractionResult.SUCCESS;
         CuttingBoardEntity blockEntity = (CuttingBoardEntity) world.getBlockEntity(pos);
-        if (blockEntity == null) return ActionResult.PASS;
+        if (blockEntity == null) return InteractionResult.PASS;
 
-        ItemStack heldItem = player.getStackInHand(hand);
+        ItemStack heldItem = player.getItemInHand(hand);
 
-        if (heldItem.isOf(CookItItems.FRYER_BASKET)) return ActionResult.PASS;
+        if (heldItem.is(CookItItems.FRYER_BASKET)) return InteractionResult.PASS;
 
         if (heldItem.isEmpty()) {
             if (!blockEntity.process(world, heldItem, false)) {
                 blockEntity.retrieve();
                 blockEntity.reset();
             }
-            return ActionResult.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
         if (blockEntity.isEmpty()) {
-            blockEntity.setStack(0, heldItem.split(1));
+            blockEntity.setItem(0, heldItem.split(1));
         } else if (!blockEntity.process(world, heldItem, false)) {
             pickUpCookingBoardItems(state, world, pos, player);
         }
 
-        return ActionResult.SUCCESS;
+        return InteractionResult.SUCCESS;
     }
 
     // picks up items, boolean used to cancel the block break if the block wasn't empty
-    public void pickUpCookingBoardItems(BlockState state, World world, BlockPos pos, PlayerEntity player) {
+    public void pickUpCookingBoardItems(BlockState state, Level world, BlockPos pos, Player player) {
         CuttingBoardEntity blockEntity = (CuttingBoardEntity) world.getBlockEntity(pos);
-        if (blockEntity != null && !blockEntity.isEmpty() && player.isSneaking()) {
-            player.getInventory().insertStack(blockEntity.getStack(0));
+        if (blockEntity != null && !blockEntity.isEmpty() && player.isShiftKeyDown()) {
+            player.getInventory().add(blockEntity.getItem(0));
             blockEntity.setInteractions(0);
-            world.updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
+            world.sendBlockUpdated(pos, state, state, Block.UPDATE_CLIENTS);
         }
     }
 
-    public boolean resetRecipe(World world, CuttingBoardEntity blockEntity) {
+    public boolean resetRecipe(Level world, CuttingBoardEntity blockEntity) {
         if (blockEntity != null && !blockEntity.isEmpty()) {
             return !blockEntity.process(world, ItemStack.EMPTY, true);
         }
@@ -97,34 +102,34 @@ public class CuttingBoard extends BlockWithEntity {
 
     // cancels particles
     @Override
-    public void onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player) {
-        if (world.isClient && world.getBlockEntity(pos) instanceof CuttingBoardEntity cuttingBoardEntity && !cuttingBoardEntity.isEmpty()) {
+    public void playerWillDestroy(Level world, BlockPos pos, BlockState state, Player player) {
+        if (world.isClientSide && world.getBlockEntity(pos) instanceof CuttingBoardEntity cuttingBoardEntity && !cuttingBoardEntity.isEmpty()) {
             return;
         }
-        super.onBreak(world, pos, state, player);
+        super.playerWillDestroy(world, pos, state, player);
     }
 
     // pick up item in survival before break
     @Override
-    public void onBlockBreakStart(BlockState state, World world, BlockPos pos, PlayerEntity player) {
-        if (world.isClient) return;
+    public void attack(BlockState state, Level world, BlockPos pos, Player player) {
+        if (world.isClientSide) return;
 
         CuttingBoardEntity blockEntity = (CuttingBoardEntity) world.getBlockEntity(pos);
         if (blockEntity != null) {
             blockEntity.process(world, ItemStack.EMPTY, true);
         }
 
-        super.onBlockBreakStart(state, world, pos, player);
+        super.attack(state, world, pos, player);
     }
 
     @Override
-    public BlockState getPlacementState(ItemPlacementContext ctx) {
-        return Objects.requireNonNull(super.getPlacementState(ctx)).with(HORIZONTAL_FACING, ctx.getHorizontalPlayerFacing().getOpposite());
+    public BlockState getStateForPlacement(BlockPlaceContext ctx) {
+        return Objects.requireNonNull(super.getStateForPlacement(ctx)).setValue(HORIZONTAL_FACING, ctx.getHorizontalDirection().getOpposite());
     }
 
     @Nullable
     @Override
-    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new CuttingBoardEntity(pos, state);
     }
 }

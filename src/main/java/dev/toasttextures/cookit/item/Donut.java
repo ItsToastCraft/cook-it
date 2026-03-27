@@ -1,12 +1,13 @@
 package dev.toasttextures.cookit.item;
 
-import net.minecraft.client.item.TooltipContext;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-import net.minecraft.world.World;
+import net.minecraft.world.item.Item.Properties;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.ChatFormatting;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -14,12 +15,12 @@ import java.util.List;
 public class Donut extends Item {
     private final Type donutType;
 
-    public Donut(Settings settings, Type donutType) {
+    public Donut(Properties settings, Type donutType) {
         super(settings);
         this.donutType = donutType;
     }
 
-    public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
+    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag context) {
         if (stack.getItem() instanceof Donut donut) {
             tooltip.add(donut.donutType.getTranslationKey());
         }
@@ -30,14 +31,14 @@ public class Donut extends Item {
         SPRINKLES,
         STRIPED;
 
-        private final MutableText translationKey;
+        private final MutableComponent translationKey;
 
         Type() {
-            this.translationKey = Text.translatable("donut.cook-it." + name().toLowerCase())
-                    .formatted(Formatting.ITALIC, Formatting.YELLOW);
+            this.translationKey = Component.translatable("donut.cook-it." + name().toLowerCase())
+                    .withStyle(ChatFormatting.ITALIC, ChatFormatting.YELLOW);
         }
 
-        public MutableText getTranslationKey() {
+        public MutableComponent getTranslationKey() {
             return translationKey.copy();
         }
     }
