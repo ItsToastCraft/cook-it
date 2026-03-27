@@ -64,7 +64,7 @@ public class BakingSheet extends BlockWithEntity {
     }
     @Override
     public void appendTooltip(ItemStack stack, BlockView world, List<Text> tooltip, TooltipContext context) {
-        Container.appendToolTip(stack, tooltip, item -> true);
+        Container.appendTooltip(stack, tooltip, item -> true);
     }
 
     @Override

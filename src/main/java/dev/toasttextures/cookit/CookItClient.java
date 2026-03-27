@@ -1,12 +1,10 @@
 package dev.toasttextures.cookit;
 
 import dev.toasttextures.cookit.block.containers.MixingBowl;
+import dev.toasttextures.cookit.block.containers.Plate;
 import dev.toasttextures.cookit.block.entity.MixingBowlEntity;
-import dev.toasttextures.cookit.client.render.entity.MuffinTinItemRenderer;
-import dev.toasttextures.cookit.client.render.entity.PizzaPanItemRenderer;
+import dev.toasttextures.cookit.client.render.entity.*;
 import dev.toasttextures.cookit.client.CookItEntityModelLayers;
-import dev.toasttextures.cookit.client.render.entity.PizzaItemRenderer;
-import dev.toasttextures.cookit.client.render.entity.ChefOutfitRenderer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -19,7 +17,6 @@ import net.minecraft.client.color.world.BiomeColors;
 import net.minecraft.client.item.ModelPredicateProviderRegistry;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.util.Identifier;
-import dev.toasttextures.cookit.client.render.entity.BakingSheetItemRenderer;
 import dev.toasttextures.cookit.registries.*;
 
 @Environment(EnvType.CLIENT)
@@ -53,6 +50,10 @@ public class CookItClient implements ClientModInitializer {
         BuiltinItemRendererRegistry.INSTANCE.register(CookItBlocks.UNCOOKED_PIZZA.asItem(), new PizzaItemRenderer());
         BuiltinItemRendererRegistry.INSTANCE.register(CookItItems.PIZZA_SLICE, new PizzaItemRenderer());
 
+        for (Plate plate: CookItBlocks.PLATES) {
+            CookIt.LOGGER.info("registering {}", plate.toString());
+            BuiltinItemRendererRegistry.INSTANCE.register(plate, new PlateItemRenderer());
+        }
 
         ModelPredicateProviderRegistry.register(CookItItems.FIRE_EXTINGUISHER, new Identifier("extinguisher_fuel"), (stack, world, entity, seed) -> (float) Math.round(((float) stack.getMaxDamage() - stack.getDamage()) / 100) / 10);
         ParticleFactoryRegistry.getInstance().register(CookIt.OIL_PARTICLE, OilParticle.Factory::new);

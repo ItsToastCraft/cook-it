@@ -17,6 +17,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
+import java.util.List;
+
 import static dev.toasttextures.cookit.registries.CookItTags.FRYABLE;
 import static net.minecraft.block.Block.NOTIFY_LISTENERS;
 import static net.minecraft.state.property.Properties.LIT;
@@ -45,18 +48,19 @@ public class FryerEntity extends CookingBlockEntity<FryerRecipe> implements Tran
         super.writeNbt(nbt);
     }
 
+    // Ok so only accept fryer baskets OR fryable items if there's already an empty basket
     @Override
     public void transfer(PlayerEntity player, ItemStack stack) {
         ItemStack first = getStack(0);
         if (first.isEmpty() && stack.isOf(CookItItems.FRYER_BASKET)) {
-            items.set(0, stack.split(1));
+            CookIt.LOGGER.info("Hi inserted successfully");
+            setStack(0, stack.split(1));
         } else if (!first.isEmpty()) {
-            if (!stack.isEmpty() && stack.isIn(FRYABLE)) {
+            if (!stack.isEmpty() && stack.isIn(FRYABLE)) {  // Food
                 ItemStorage.setStoredItem(first, stack.split(1));
-
-            } else if (!first.isEmpty()) {
-                player.getInventory().offerOrDrop(stack.copyAndEmpty());
             }
+        } else {
+            player.getInventory().offerOrDrop(stack.copyAndEmpty());
         }
     }
 
@@ -109,9 +113,17 @@ public class FryerEntity extends CookingBlockEntity<FryerRecipe> implements Tran
         }
     }
 
+    @Override
+    public List<FryerRecipe> getRecipes() {
+        SimpleInventory inv = new SimpleInventory(ItemStorage.getStoredItem(getStack(0)));
+        if (world == null) return Collections.emptyList();
+
+        return world.getRecipeManager().getAllMatches(FryerRecipe.Type.INSTANCE, inv, world);
+    }
+
     private void loadRecipe(World world, BlockState state) {
         if (world.isClient) return;
-        cachedRecipe = getRecipes(0).stream().findFirst().orElse(null);
+        cachedRecipe = getRecipes().stream().findFirst().orElse(null);
 
         if (cachedRecipe == null) return;
 
@@ -128,7 +140,7 @@ public class FryerEntity extends CookingBlockEntity<FryerRecipe> implements Tran
             entity.status = CookingStatus.IDLE;
         } else if (!first.isOf(CookItItems.FRYER_BASKET)) {
             entity.status = CookingStatus.INVALID;
-        } else if (first == entity.cachedItem) {
+        } else if (ItemStack.areEqual(first, entity.cachedItem)) { // I don't wanna decode the stored ItemStack every tick
             entity.tickRecipe(world, state);
         } else {
             entity.loadRecipe(world, state);

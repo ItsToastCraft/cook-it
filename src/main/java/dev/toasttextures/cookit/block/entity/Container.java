@@ -28,6 +28,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.function.Predicate;
 
+import static net.minecraft.block.Block.NOTIFY_LISTENERS;
+
 public class Container extends BlockEntity implements DefaultedInventory {
     public static final String CONTAINER_KEY = "Container";
 
@@ -85,6 +87,10 @@ public class Container extends BlockEntity implements DefaultedInventory {
             ItemStack stack = getStack(i);
             if (exclusions.test(stack.getItem())) {
                 this.markDirty();
+                if (world != null) {
+                    CookIt.LOGGER.info("hiiii");
+                    world.updateListeners(pos, getCachedState(), getCachedState(), NOTIFY_LISTENERS);
+                }
                 return stack;
             }
         }
@@ -115,6 +121,7 @@ public class Container extends BlockEntity implements DefaultedInventory {
     @Override
     public void setStackNbt(ItemStack stack) {
         NbtCompound nbt = this.createNbt();
+
         NbtList items = nbt.getList("Items",  NbtElement.COMPOUND_TYPE).copy();
         nbt.remove("Items");
 
@@ -135,15 +142,21 @@ public class Container extends BlockEntity implements DefaultedInventory {
 
     public static DefaultedList<ItemStack> getItems(ItemStack container) {
         NbtCompound nbt = container.getSubNbt(CONTAINER_KEY);
-        if (nbt == null) return DefaultedList.of();
+
+        if (nbt == null) return DefaultedList.ofSize(1, ItemStack.EMPTY);
+        CookIt.LOGGER.info(nbt.toString());
 
         NbtList containerNbt = getItemList(container);
         DefaultedList<ItemStack> items = DefaultedList.ofSize(containerNbt.size(), ItemStack.EMPTY);
         Inventories.readNbt(nbt, items);
+        CookIt.LOGGER.info(items.toString());
         return items;
     }
 
-    public static void appendToolTip(ItemStack container, List<Text> tooltip, Predicate<Item> exclusions) {
+    public static final Text SINGLE_ITEM = Text.literal("Item:").formatted(Formatting.GRAY);
+    public static final Text MULTIPLE_ITEMS = Text.literal("Items:").formatted(Formatting.GRAY);
+
+    public static void appendTooltip(ItemStack container, List<Text> tooltip, Predicate<Item> exclusions) {
         int startSize = tooltip.size();
         for (ItemStack stack : getItems(container)) {
             if (exclusions.test(stack.getItem())) {
@@ -154,7 +167,7 @@ public class Container extends BlockEntity implements DefaultedInventory {
         int size = tooltip.size() - startSize;
         if (size == 0) return;
 
-        tooltip.add(startSize, Text.literal(size > 1 ? "Items" : "Item"));
+    tooltip.add(startSize, size > 1 ? SINGLE_ITEM : MULTIPLE_ITEMS);
     }
 
     public static void writeTo(ItemStack container, List<ItemStack> stacks) {

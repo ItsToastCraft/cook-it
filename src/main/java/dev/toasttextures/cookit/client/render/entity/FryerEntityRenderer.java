@@ -14,11 +14,9 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.RotationAxis;
-import dev.toasttextures.cookit.CookIt;
 import net.minecraft.util.math.Vec2f;
 
 import java.util.EnumMap;
-import java.util.Map;
 
 import static net.minecraft.state.property.Properties.HORIZONTAL_FACING;
 
@@ -31,14 +29,14 @@ public class FryerEntityRenderer implements BlockEntityRenderer<FryerEntity> {
     public void render(FryerEntity entity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
         final MinecraftClient client = MinecraftClient.getInstance();
 
-        ItemStack fryerBasket = entity.getStack(0);
-        if (fryerBasket.isEmpty() || !fryerBasket.isOf(CookItItems.FRYER_BASKET)) return; // Something went seriously wrong if there's something other than a basket here
+        ItemStack fryerBasket = entity.getFirst();
+        if (!fryerBasket.isOf(CookItItems.FRYER_BASKET)) return; // Something went seriously wrong if there's something other than a basket here
 
         ItemStack storedItem = ItemStorage.getStoredItem(fryerBasket);
         Direction facing = entity.getCachedState().get(HORIZONTAL_FACING);
-        Vec2f pos = ITEM_POSITIONS.getOrDefault(facing, Vec2f.ZERO);
+        Vec2f pos = ITEM_POSITIONS.get(facing);
 
-        matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(CookIt.DIRECTION_TO_FLOAT.getOrDefault(facing, 0.0f)));
+        matrices.multiply(RotationAxis.NEGATIVE_Y.rotationDegrees(facing.asRotation()));
         matrices.translate(pos.x, 0.625, pos.y);
 
         client.getItemRenderer().renderItem(fryerBasket, ModelTransformationMode.NONE, light, overlay, matrices, vertexConsumers, entity.getWorld(), 0);
@@ -54,10 +52,12 @@ public class FryerEntityRenderer implements BlockEntityRenderer<FryerEntity> {
         }
     }
 
-    private static final EnumMap<Direction, Vec2f> ITEM_POSITIONS = new EnumMap<>(Map.of(
-        Direction.NORTH, new Vec2f(-0.5f,-0.4375f),
-        Direction.SOUTH, new Vec2f(0.5f, 0.5625f),
-        Direction.EAST, new Vec2f(-0.5f,0.5625f),
-        Direction.WEST, new Vec2f(0.5f, -0.4375f)
-    ));
+    private static final EnumMap<Direction, Vec2f> ITEM_POSITIONS = new EnumMap<>(Direction.class);
+
+    static  {
+        ITEM_POSITIONS.put(Direction.NORTH, new Vec2f(-0.5f,-0.4375f));
+        ITEM_POSITIONS.put(Direction.SOUTH, new Vec2f(0.5f, 0.5625f));
+        ITEM_POSITIONS.put(Direction.EAST, new Vec2f(-0.5f,0.5625f));
+        ITEM_POSITIONS.put(Direction.WEST, new Vec2f(0.5f, -0.4375f));
+    }
 }

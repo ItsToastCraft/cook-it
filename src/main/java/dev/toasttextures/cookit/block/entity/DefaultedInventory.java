@@ -55,7 +55,9 @@ public interface DefaultedInventory extends Inventory {
         }
         return true;
     }
-
+    default ItemStack getFirst() {
+        return getItems().get(0);
+    }
     /**
      * Retrieves the item in the slot.
      */

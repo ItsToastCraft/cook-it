@@ -1,16 +1,16 @@
 {
   "variants": {
     "count=1": {
-      "model": "cook-it:block/platelime_plate_0"
+      "model": "cook-it:block/plate/lime_plate_0"
     },
     "count=2": {
-      "model": "cook-it:block/platelime_plate_1"
+      "model": "cook-it:block/plate/lime_plate_1"
     },
     "count=3": {
-      "model": "cook-it:block/platelime_plate_2"
+      "model": "cook-it:block/plate/lime_plate_2"
     },
     "count=4": {
-      "model": "cook-it:block/platelime_plate_3"
+      "model": "cook-it:block/plate/lime_plate_3"
     }
   }
 }

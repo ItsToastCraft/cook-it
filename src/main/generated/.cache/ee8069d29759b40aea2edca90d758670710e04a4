@@ -1,4 +1,4 @@
-// 1.20.1	2026-03-23T21:48:52.305435952	Cook It!/Block Loot Tables
+// 1.20.1	2026-03-26T23:19:25.372429136	Cook It!/Block Loot Tables
 239f1af5184be26ebf5fb91022fbf7d1de9bae2d data/cook-it/loot_tables/blocks/cyan_bowl.json
 198dc42b5ee1f17b6f07bfdc3bca216033267e6f data/cook-it/loot_tables/blocks/lime_plate.json
 dc426796680c32300610fa2beae617916daebb78 data/cook-it/loot_tables/blocks/purple_bowl.json
@@ -8,8 +8,8 @@ e40dfa2ee066be4c151730a5d9d5b765b343a2e0 data/cook-it/loot_tables/blocks/uncooke
 9297dbf983d200876bbcbdc12c57b76c652fe791 data/cook-it/loot_tables/blocks/red_large_plate.json
 9189deed55b12d683bc6a76581a8adada27542f3 data/cook-it/loot_tables/blocks/white_plate.json
 558546566f9155d50075b60482673734c59a2745 data/cook-it/loot_tables/blocks/toaster.json
-e7cdc6265ded81b9ee29da88af327c9d79a6633a data/cook-it/loot_tables/blocks/pizza_crust.json
 69b2846447371a622a7d936732fd4c1eb254f8d6 data/cook-it/loot_tables/blocks/blue_large_plate.json
+e7cdc6265ded81b9ee29da88af327c9d79a6633a data/cook-it/loot_tables/blocks/pizza_crust.json
 0bc118a3c7177076d987ccf3985397ad8a99cbcd data/cook-it/loot_tables/blocks/acacia_cutting_board.json
 a456dd4329fbccc27039312ad491c9930d645c24 data/cook-it/loot_tables/blocks/black_large_plate.json
 a807eda50aaa409ed0c2b96bb32959e988a7e4b4 data/cook-it/loot_tables/blocks/crimson_cutting_board.json

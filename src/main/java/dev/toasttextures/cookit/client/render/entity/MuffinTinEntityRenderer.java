@@ -28,18 +28,18 @@ public class MuffinTinEntityRenderer implements BlockEntityRenderer<MuffinTinEnt
     public static void render(List<ItemStack> stacks, MatrixStack matrices, VertexConsumerProvider vertexConsumers, @Nullable World world, int light, int overlay) {
         final MinecraftClient client = MinecraftClient.getInstance();
         if (stacks.isEmpty()) return;
+        for (int i = 0; i < stacks.size(); i++) {
+            ItemStack stack = stacks.get(i);
+            if (stack.isEmpty()) continue;
 
-        for (int i = 0; i < 2; i++) {
-            for (int j = 0; j < 3; j++) {
-                ItemStack stack = stacks.get(i * 3 + j);
-                if (stack.isEmpty()) continue;
+            int x = i / 3;
+            int z = i % 3;
 
-                matrices.push();
-                matrices.scale(0.359375f,0.359375f,0.359375f);
-                matrices.translate(i * 0.8675 + 0.95625, 0.5625, j * 0.69125 + 0.6125);
-                client.getItemRenderer().renderItem(stack, ModelTransformationMode.NONE, light, overlay, matrices, vertexConsumers, world, 0);
-                matrices.pop();
-            }
+            matrices.push();
+            matrices.scale(0.359375f,0.359375f,0.359375f);
+            matrices.translate(x * 0.8675 + 0.95625, 0.5625, z * 0.69125 + 0.6125);
+            client.getItemRenderer().renderItem(stack, ModelTransformationMode.NONE, light, overlay, matrices, vertexConsumers, world, 0);
+            matrices.pop();
         }
     }
 }
