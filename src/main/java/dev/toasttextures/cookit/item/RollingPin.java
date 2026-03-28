@@ -2,7 +2,6 @@ package dev.toasttextures.cookit.item;
 
 import dev.toasttextures.cookit.block.WoodType;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Item.Properties;
 
 public class RollingPin extends Item {
     private final WoodType type;

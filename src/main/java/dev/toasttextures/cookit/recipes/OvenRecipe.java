@@ -1,17 +1,17 @@
 package dev.toasttextures.cookit.recipes;
 
 import com.google.gson.JsonObject;
+import net.minecraft.core.NonNullList;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.GsonHelper;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.GsonHelper;
-import net.minecraft.core.NonNullList;
 import net.minecraft.world.level.Level;
 
 import static dev.toasttextures.cookit.registries.CookItRecipes.validateItemStack;
@@ -31,12 +31,14 @@ public class OvenRecipe implements Recipe<SimpleContainer> {
 
     @Override
     public boolean matches(SimpleContainer inventory, Level world) {
-        if(world.isClientSide()) return false;
+        if (world.isClientSide()) return false;
         return input.test(inventory.getItem(0));
     }
 
     @Override
-    public boolean isSpecial() { return true; }
+    public boolean isSpecial() {
+        return true;
+    }
 
     @Override
     public ResourceLocation getId() {
@@ -108,20 +110,20 @@ public class OvenRecipe implements Recipe<SimpleContainer> {
         @Override
         public OvenRecipe fromJson(ResourceLocation id, JsonObject json) {
             return new OvenRecipe(
-                id,
-                Ingredient.fromJson(json.getAsJsonObject("input")),
-                validateItemStack(json.getAsJsonObject("output"), false),
-                GsonHelper.getAsInt(json, "time")
+                    id,
+                    Ingredient.fromJson(json.getAsJsonObject("input")),
+                    validateItemStack(json.getAsJsonObject("output"), false),
+                    GsonHelper.getAsInt(json, "time")
             );
         }
 
         @Override
         public OvenRecipe fromNetwork(ResourceLocation id, FriendlyByteBuf buf) {
             return new OvenRecipe(
-                id,
-                Ingredient.fromNetwork(buf),
-                buf.readItem(),
-                buf.readInt()
+                    id,
+                    Ingredient.fromNetwork(buf),
+                    buf.readItem(),
+                    buf.readInt()
             );
         }
 

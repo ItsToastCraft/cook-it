@@ -7,7 +7,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -29,12 +28,15 @@ import static net.minecraft.world.level.block.state.properties.BlockStatePropert
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.LIT;
 
 public class Fryer extends BaseEntityBlock implements EntityBlock {
-    private static final VoxelShape NORTH_SOUTH_SHAPE = box(3.0, 0.0, 1.0, 13.0, 8.0, 15.0);
-    private static final VoxelShape EAST_WEST_SHAPE = box(1.0, 0.0, 3.0, 15.0, 8.0, 13.0);
+    private static final VoxelShape NORTH_SOUTH_SHAPE = box(3.0, 0.0, 1.0, 13.0, 6.0, 15.0);
+    private static final VoxelShape EAST_WEST_SHAPE = box(1.0, 0.0, 3.0, 15.0, 6.0, 13.0);
 
     public Fryer(Properties settings) {
         super(settings);
-        registerDefaultState(defaultBlockState().setValue(LIT, false).setValue(HORIZONTAL_FACING, Direction.NORTH));
+        registerDefaultState(defaultBlockState()
+            .setValue(HORIZONTAL_FACING, Direction.NORTH)
+            .setValue(LIT, false)
+        );
     }
 
     @Override
@@ -53,12 +55,11 @@ public class Fryer extends BaseEntityBlock implements EntityBlock {
     @Override
     public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (world.isClientSide) return InteractionResult.SUCCESS;
-        FryerEntity blockEntity = (FryerEntity) world.getBlockEntity(pos);
-        if (blockEntity == null) return InteractionResult.FAIL;
 
-        ItemStack heldItem = player.getItemInHand(hand);
-        blockEntity.transfer(player, heldItem);
-        world.sendBlockUpdated(pos, state, state, UPDATE_CLIENTS);
+        if (world.getBlockEntity(pos) instanceof FryerEntity blockEntity) {
+            blockEntity.attemptTransfer(player, player.getItemInHand(hand));
+            world.sendBlockUpdated(pos, state, state, UPDATE_CLIENTS);
+        }
 
         return InteractionResult.SUCCESS;
     }
@@ -69,7 +70,7 @@ public class Fryer extends BaseEntityBlock implements EntityBlock {
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(LIT, HORIZONTAL_FACING);
+        builder.add(HORIZONTAL_FACING, LIT);
     }
 
     @Override

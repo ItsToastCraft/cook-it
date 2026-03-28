@@ -3,6 +3,7 @@ package dev.toasttextures.cookit;
 import dev.toasttextures.cookit.block.containers.MixingBowl;
 import dev.toasttextures.cookit.block.containers.Plate;
 import dev.toasttextures.cookit.block.entity.MixingBowlEntity;
+import dev.toasttextures.cookit.client.CookItVisuals;
 import dev.toasttextures.cookit.client.render.entity.*;
 import dev.toasttextures.cookit.client.CookItEntityModelLayers;
 import net.fabricmc.api.ClientModInitializer;
@@ -16,6 +17,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import dev.toasttextures.cookit.registries.*;
 
@@ -24,11 +26,14 @@ public class CookItClient implements ClientModInitializer {
 
     public static boolean isFiguraLoaded;
 
-
     public void onInitializeClient() {
-        isFiguraLoaded = (FabricLoader.getInstance().isModLoaded("figura"));
+        isFiguraLoaded = FabricLoader.getInstance().isModLoaded("figura");
 
         CookItBlockEntities.registerRenderers();
+        CookItVisuals.registerItemRenderers();
+        ChefOutfitRenderer.register();
+        CookItEntityModelLayers.registerLayers();
+
         BlockRenderLayerMap.INSTANCE.putBlocks(RenderType.translucent(),
                 CookItBlocks.OVEN,
                 CookItBlocks.MICROWAVE,
@@ -40,16 +45,6 @@ public class CookItClient implements ClientModInitializer {
                 CookItBlocks.VANILLA_VINE,
                 CookItBlocks.VANILLA_VINE_STEM);
 
-        ChefOutfitRenderer.register();
-
-        CookItEntityModelLayers.registerLayers();
-        BuiltinItemRendererRegistry.INSTANCE.register(CookItBlocks.BAKING_SHEET.asItem(), new BakingSheetItemRenderer());
-        BuiltinItemRendererRegistry.INSTANCE.register(CookItBlocks.MUFFIN_TIN.asItem(), new MuffinTinItemRenderer());
-        BuiltinItemRendererRegistry.INSTANCE.register(CookItBlocks.PIZZA_PAN.asItem(), new PizzaPanItemRenderer());
-        BuiltinItemRendererRegistry.INSTANCE.register(CookItBlocks.PIZZA.asItem(), new PizzaItemRenderer());
-        BuiltinItemRendererRegistry.INSTANCE.register(CookItBlocks.UNCOOKED_PIZZA.asItem(), new PizzaItemRenderer());
-        BuiltinItemRendererRegistry.INSTANCE.register(CookItItems.PIZZA_SLICE, new PizzaItemRenderer());
-
         for (Plate plate: CookItBlocks.PLATES) {
             CookIt.LOGGER.info("registering {}", plate.toString());
             BuiltinItemRendererRegistry.INSTANCE.register(plate, new PlateItemRenderer());
@@ -59,24 +54,21 @@ public class CookItClient implements ClientModInitializer {
         ParticleFactoryRegistry.getInstance().register(CookIt.OIL_PARTICLE, OilParticle.Factory::new);
 
         ColorProviderRegistry.BLOCK.register((state, view, pos, tintIndex) -> {
-            if (view != null && pos != null) {
-                // Use the biome's grass color
-                return BiomeColors.getAverageFoliageColor(view, pos);
-            }
-            return 0xFFFFFF;
+            if (view == null || pos == null) return 0xFFFFFF;
+            return BiomeColors.getAverageFoliageColor(view, pos);
         }, CookItBlocks.VANILLA_VINE, CookItBlocks.VANILLA_VINE_STEM);
 
         ColorProviderRegistry.BLOCK.register((state, view, pos, tintIndex) -> {
-
-            if (view != null && view.getBlockEntity(pos) instanceof MixingBowlEntity entity && state.getValue(MixingBowl.CONTAINS_LIQUID)) {
-                return entity.getGoopColor();
+            if (view != null && view.getBlockEntity(pos) instanceof MixingBowlEntity blockEntity && state.getValue(MixingBowl.CONTAINS_LIQUID)) {
+                return blockEntity.getGoopColor();
             }
             return 0xF8D478;
         }, CookItBlocks.MIXING_BOWL);
 
         ColorProviderRegistry.ITEM.register((stack, tintIndex) -> {
-            assert stack.getTag() != null;
-            return stack.getTag().getInt("color");
+            CompoundTag nbt = stack.getTag();
+            if (nbt == null) return 0xF8D478;
+            return nbt.getInt("color");
         }, CookItItems.GOOP);
     }
 }

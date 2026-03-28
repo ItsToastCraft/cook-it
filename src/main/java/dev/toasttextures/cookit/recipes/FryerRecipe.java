@@ -1,13 +1,12 @@
 package dev.toasttextures.cookit.recipes;
 
 import com.google.gson.JsonObject;
-import net.minecraft.world.SimpleContainer;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.recipe.*;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -31,7 +30,7 @@ public class FryerRecipe implements Recipe<SimpleContainer> {
 
     @Override
     public boolean matches(SimpleContainer inventory, Level world) {
-        if(world.isClientSide()) {
+        if (world.isClientSide()) {
             return false;
         }
         return input.test(inventory.getItem(0));
@@ -43,7 +42,9 @@ public class FryerRecipe implements Recipe<SimpleContainer> {
     }
 
     @Override
-    public boolean isSpecial() { return true; }
+    public boolean isSpecial() {
+        return true;
+    }
 
     @Override
     public ItemStack assemble(SimpleContainer inventory, RegistryAccess registryManager) {

@@ -50,10 +50,9 @@ public class FryerEntity extends CookingBlockEntity<FryerRecipe> implements Tran
 
     // Ok so only accept fryer baskets OR fryable items if there's already an empty basket
     @Override
-    public void transfer(Player player, ItemStack stack) {
+    public void attemptTransfer(Player player, ItemStack stack) {
         ItemStack first = getItem(0);
         if (first.isEmpty() && stack.is(CookItItems.FRYER_BASKET)) {
-            CookIt.LOGGER.info("Hi inserted successfully");
             setItem(0, stack.split(1));
         } else if (!first.isEmpty()) {
             if (!stack.isEmpty() && stack.is(FRYABLE)) {  // Food

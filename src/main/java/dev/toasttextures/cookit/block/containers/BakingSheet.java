@@ -2,7 +2,6 @@ package dev.toasttextures.cookit.block.containers;
 
 import dev.toasttextures.cookit.block.entity.BakingSheetEntity;
 import dev.toasttextures.cookit.block.entity.Container;
-import net.minecraft.block.*;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
@@ -16,7 +15,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.core.BlockPos;
@@ -36,38 +34,38 @@ public class BakingSheet extends BaseEntityBlock {
     }
 
     @Override
+    public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext ctx) {
+        return SHAPE;
+    }
+
+    @Override
     public RenderShape getRenderShape(BlockState state) {
         return RenderShape.MODEL;
     }
 
     public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (world.isClientSide) return InteractionResult.SUCCESS;
-        BakingSheetEntity blockEntity = (BakingSheetEntity) world.getBlockEntity(pos);
-        if (blockEntity == null) return InteractionResult.SUCCESS;
 
-        if (player.isShiftKeyDown()) return blockEntity.dropAsContainer(player, world, this, pos);
+        if (world.getBlockEntity(pos) instanceof BakingSheetEntity blockEntity) {
+            if (player.isShiftKeyDown()) return blockEntity.dropAsContainer(player, world, this, pos);
 
-        ItemStack heldItem = player.getItemInHand(hand);
-        ItemStack retrieved = blockEntity.retrieve();
-        if (!heldItem.isEmpty()) {
-            if (blockEntity.fillFirst(player, heldItem)) {
+            ItemStack heldItem = player.getItemInHand(hand);
+            ItemStack retrieved = blockEntity.retrieve();
+            if (!heldItem.isEmpty()) {
+                if (blockEntity.fillFirst(player, heldItem)) {
+                    world.playSound(null, pos, SoundEvents.ITEM_FRAME_REMOVE_ITEM, SoundSource.BLOCKS, 0.5f, 0.25f);
+                    world.sendBlockUpdated(pos, state, state, Block.UPDATE_CLIENTS);
+                }
+            } else if (!retrieved.isEmpty()) {
                 world.playSound(null, pos, SoundEvents.ITEM_FRAME_REMOVE_ITEM, SoundSource.BLOCKS, 0.5f, 0.25f);
                 world.sendBlockUpdated(pos, state, state, Block.UPDATE_CLIENTS);
+                player.getInventory().placeItemBackInInventory(retrieved);
             }
-        } else if (!retrieved.isEmpty()) {
-            world.playSound(null, pos, SoundEvents.ITEM_FRAME_REMOVE_ITEM, SoundSource.BLOCKS);
-            world.sendBlockUpdated(pos, state, state, Block.UPDATE_CLIENTS);
-            player.getInventory().placeItemBackInInventory(retrieved);
+            blockEntity.setChanged();
         }
-        blockEntity.setChanged();
-
         return InteractionResult.SUCCESS;
     }
 
-    @Override
-    public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext ctx) {
-        return SHAPE;
-    }
     @Override
     public void appendHoverText(ItemStack stack, BlockGetter world, List<Component> tooltip, TooltipFlag context) {
         Container.appendTooltip(stack, tooltip, item -> true);

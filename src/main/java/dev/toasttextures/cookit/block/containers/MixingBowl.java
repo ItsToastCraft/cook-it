@@ -3,7 +3,6 @@ package dev.toasttextures.cookit.block.containers;
 import dev.toasttextures.cookit.block.entity.CookingBlockEntity;
 import dev.toasttextures.cookit.block.entity.MixingBowlEntity;
 import dev.toasttextures.cookit.registries.CookItItems;
-import net.minecraft.block.*;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
@@ -19,7 +18,6 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
@@ -30,12 +28,12 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
 public class MixingBowl extends BaseEntityBlock implements EntityBlock {
+    private static final VoxelShape SHAPE = box(2.0, 0.0, 2.0, 14.0, 8.0, 14.0);
 
     public static BooleanProperty CONTAINS_LIQUID = BooleanProperty.create("liquid");
 
@@ -45,6 +43,11 @@ public class MixingBowl extends BaseEntityBlock implements EntityBlock {
     public MixingBowl(Properties settings) {
         super(settings);
         registerDefaultState(defaultBlockState().setValue(CONTAINS_LIQUID, false));
+    }
+
+    @Override
+    public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext ctx) {
+        return SHAPE;
     }
 
     @Override
@@ -126,10 +129,7 @@ public class MixingBowl extends BaseEntityBlock implements EntityBlock {
 
     }
 
-    @Override
-    public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext ctx) {
-        return Shapes.box(0.125f, 0f, 0.125f, 0.875f, 0.5f, 0.875f);
-    }
+
 
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {

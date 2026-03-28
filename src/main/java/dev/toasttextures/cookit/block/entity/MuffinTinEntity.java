@@ -16,7 +16,7 @@ public class MuffinTinEntity extends Container implements Transferable {
     }
 
     @Override
-    public void transfer(Player player, ItemStack stack) {
+    public void attemptTransfer(Player player, ItemStack stack) {
         if (!stack.is(CookItBlocks.MIXING_BOWL.asItem())) return;
         ListTag items = Container.getItemList(stack);
         if (items.isEmpty()) return;

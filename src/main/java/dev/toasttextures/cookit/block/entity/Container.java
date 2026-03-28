@@ -27,6 +27,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.function.UnaryOperator;
 
 import static net.minecraft.world.level.block.Block.UPDATE_CLIENTS;
 
@@ -63,6 +64,7 @@ public class Container extends BlockEntity implements DefaultedInventory {
      * Returns -1 if not found.
      */
     public int firstEmpty() {
+        if (isEmpty()) return 0;
         for (int i = 0; i < getItems().size(); i++) {
             if (getItem(i).isEmpty()) return i;
         }
@@ -88,7 +90,6 @@ public class Container extends BlockEntity implements DefaultedInventory {
             if (exclusions.test(stack.getItem())) {
                 this.setChanged();
                 if (level != null) {
-                    CookIt.LOGGER.info("hiiii");
                     level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), UPDATE_CLIENTS);
                 }
                 return stack;
@@ -156,10 +157,14 @@ public class Container extends BlockEntity implements DefaultedInventory {
     public static final Component SINGLE_ITEM = Component.literal("Item:").withStyle(ChatFormatting.GRAY);
     public static final Component MULTIPLE_ITEMS = Component.literal("Items:").withStyle(ChatFormatting.GRAY);
 
-    public static void appendTooltip(ItemStack container, List<Component> tooltip, Predicate<Item> exclusions) {
+    public static void appendTooltip(ItemStack container, List<Component> tooltip) {
+        appendTooltip(container, tooltip, item -> item);
+    }
+
+    public static void appendTooltip(ItemStack container, List<Component> tooltip, UnaryOperator<Item> exclusions) {
         int startSize = tooltip.size();
         for (ItemStack stack : getItems(container)) {
-            if (exclusions.test(stack.getItem())) {
+            if (exclusions.apply(stack.getItem()) != null) {
                 tooltip.add(stack.getHoverName().copy().withStyle(ChatFormatting.BLUE));
             }
         }

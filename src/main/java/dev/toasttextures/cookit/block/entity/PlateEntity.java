@@ -25,7 +25,7 @@ public class PlateEntity extends Container implements DefaultedInventory, Transf
     }
 
     @Override
-    public void transfer(Player player, ItemStack stack) {
+    public void attemptTransfer(Player player, ItemStack stack) {
         ItemStack first = getItem(0);
         if (first.isEmpty() && stack.is(CookItItems.FRYER_BASKET)) {
             items.set(0, ItemStorage.getStoredItem(stack).split(1));

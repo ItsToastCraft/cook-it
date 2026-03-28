@@ -55,6 +55,7 @@ public interface DefaultedInventory extends Container {
         }
         return true;
     }
+
     default ItemStack getFirst() {
         return getItems().get(0);
     }

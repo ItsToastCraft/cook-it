@@ -18,6 +18,6 @@ public class CookItItemTagProvider extends FabricTagProvider<Item> {
 
     @Override
     protected void addTags(HolderLookup.Provider arg) {
-        tag(ROLLING_PINS).add(CookItItems.ROLLING_PINS.toArray(new Item[0]));
+        getOrCreateTagBuilder(ROLLING_PINS).add(CookItItems.ROLLING_PINS.toArray(Item[]::new));
     }
 }

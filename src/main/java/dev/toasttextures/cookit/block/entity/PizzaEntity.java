@@ -14,6 +14,7 @@ import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.core.BlockPos;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class PizzaEntity extends BlockEntity {
@@ -38,10 +39,7 @@ public class PizzaEntity extends BlockEntity {
 
         CompoundTag compound = stack.getTag();
         if (compound != null) {
-            ListTag toppings = PizzaTopping.parse(compound);
-            if (toppings != null) {
-                this.toppings = toppings;
-            }
+            this.toppings = PizzaTopping.parse(compound);
             if (compound.contains(SLICE_COUNT_KEY, Tag.TAG_INT)) {
                 slices = compound.getInt(SLICE_COUNT_KEY);
             }
@@ -90,7 +88,7 @@ public class PizzaEntity extends BlockEntity {
     }
 
     @Override
-    public CompoundTag getUpdateTag() {
+    public @NotNull CompoundTag getUpdateTag() {
         return saveWithoutMetadata();
     }
 }

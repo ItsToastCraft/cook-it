@@ -16,4 +16,3 @@ public class CookItDataGenerator implements DataGeneratorEntrypoint {
         pack.addProvider(CookItItemTagProvider::new);
     }
 }
-

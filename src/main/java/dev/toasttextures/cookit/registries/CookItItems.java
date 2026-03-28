@@ -5,12 +5,12 @@ import dev.toasttextures.cookit.item.*;
 import dev.toasttextures.cookit.item.armor.chef.ChefOutfitItem;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
+import net.minecraft.ChatFormatting;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.item.*;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
@@ -24,15 +24,17 @@ import java.util.function.Function;
 import static dev.toasttextures.cookit.registries.CookItBlocks.*;
 
 public class CookItItems {
+    public static final Component UNCOOKED_TEXT = Component.translatable("stage.cook-it.uncooked").withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY);
+
     public static final List<Item> ITEMS = new ArrayList<>();
     public static final List<RollingPin> ROLLING_PINS = registerWooden("rolling_pin", settings -> new FabricItemSettings(), RollingPin::new);
 
     // -- Utensils --
-    public static final Item KITCHEN_KNIFE = registerItem("knife", new SwordItem(Tiers.IRON, 1, -2, new FabricItemSettings().stacksTo(1)));
+    public static final Item KITCHEN_KNIFE = registerItem("knife", new SwordItem(Tiers.IRON, 1, -2, new FabricItemSettings().maxCount(1)));
     public static final Item BUTCHER_KNIFE = registerItem("butcher_knife", new SwordItem(Tiers.IRON, 1, -1, new FabricItemSettings()));
-    public static final Item SPATULA = registerItem("spatula", new Item(new FabricItemSettings().stacksTo(1)));
-    public static final Item WHISK = registerItem("whisk", new Item(new FabricItemSettings().stacksTo(1)));
-    public static final Item DONUT_CUTTER = registerItem("donut_cutter", new Item(new FabricItemSettings().stacksTo(1)));
+    public static final Item SPATULA = registerItem("spatula", new Item(new FabricItemSettings().maxCount(1)));
+    public static final Item WHISK = registerItem("whisk", new Item(new FabricItemSettings().maxCount(1)));
+    public static final Item DONUT_CUTTER = registerItem("donut_cutter", new Item(new FabricItemSettings().maxCount(1)));
     public static final Item FRYER_BASKET = registerItem("fryer_basket", new FryerBasket(new FabricItemSettings().stacksTo(1)));
 
     // -- Ingredients --
@@ -117,4 +119,3 @@ public class CookItItems {
             })
             .build();
 }
-

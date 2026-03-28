@@ -29,14 +29,10 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class CookItBlocks {
-    private static final FabricBlockSettings CERAMIC_SETTINGS = FabricBlockSettings.create().strength(0.4f).sound(SoundType.DECORATED_POT);
-
     public static final List<Block> BLOCKS = new ArrayList<>();
-    public static final List<Plate> PLATES = registerDyed("plate", dyeColor -> CERAMIC_SETTINGS, Plate::new);
-    public static final List<Bowl> BOWLS = registerDyed("bowl", dyeColor -> CERAMIC_SETTINGS, Bowl::new);
+    public static final List<Plate> PLATES = registerDyed("plate", dyeColor -> FabricBlockSettings.create().strength(0.4f).sounds(SoundType.DECORATED_POT), Plate::new);
+    public static final List<Bowl> BOWLS = registerDyed("bowl", dyeColor -> FabricBlockSettings.create().strength(0.4f).sounds(SoundType.DECORATED_POT), Bowl::new);
     public static final List<CuttingBoard> CUTTING_BOARDS = registerWooden("cutting_board", settings -> FabricBlockSettings.copyOf(Blocks.OAK_PLANKS), CuttingBoard::new);
-    public static final List<Block> APPLIANCES = new ArrayList<>();
-    public static final List<Block> CONTAINERS = new ArrayList<>();
 
     // -- Appliances --
     public static final Block FRYER = registerBlock("fryer", new Fryer(FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).noOcclusion()));
@@ -48,27 +44,27 @@ public class CookItBlocks {
     public static final Block UNCOOKED_PIZZA = registerBlock("uncooked_pizza", new Pizza(FabricBlockSettings.create()));
     public static final Block PIZZA_CRUST = registerBlock("pizza_crust", new Pizza(FabricBlockSettings.create()));
     // -- Containers --
-    public static final Block MUFFIN_TIN = registerBlock("muffin_tin", new MuffinTin(FabricBlockSettings.create().strength(0.2f)));
+    public static final Block MUFFIN_TIN = registerBlock("muffin_tin", new MuffinTin(FabricBlockSettings.create().strength(0.2f).sounds(SoundType.METAL)));
     public static final Block BAKING_SHEET = registerBlock("baking_sheet", new BakingSheet(FabricBlockSettings.copyOf(MUFFIN_TIN)));
     public static final Block PIZZA_PAN = registerBlock("pizza_pan", new PizzaPan(FabricBlockSettings.copyOf(MUFFIN_TIN)));
     public static final Block MIXING_BOWL = registerBlock("mixing_bowl", new MixingBowl(FabricBlockSettings.copyOf(MUFFIN_TIN)));
     // -- Miscellaneous --
-    public static final VanillaVineStem VANILLA_VINE_STEM = registerBlock("vanilla_vine_stem", new VanillaVineStem(FabricBlockSettings.copyOf(Blocks.VINE)), false);
-    public static final VanillaVinePlant VANILLA_VINE = registerBlock("vanilla_vine", new VanillaVinePlant(FabricBlockSettings.copyOf(Blocks.VINE)), false);
+    public static final Block VANILLA_VINE_STEM = registerBlock("vanilla_vine_stem", new VanillaVineStem(FabricBlockSettings.copyOf(Blocks.VINE)), false);
+    public static final Block VANILLA_VINE = registerBlock("vanilla_vine", new VanillaVinePlant(FabricBlockSettings.copyOf(Blocks.VINE)), false);
 
     private static <T extends Block> List<T> registerDyed(String suffix, Function<DyeColor, BlockBehaviour.Properties> settingsProvider, BiFunction<BlockBehaviour.Properties, DyeColor, T> block) {
         List<T> list = new ArrayList<>();
         for (DyeColor color : DyeColor.values()) {
-            AbstractBlock.Settings settings = settingsProvider.apply(color);
+            BlockBehaviour.Properties settings = settingsProvider.apply(color);
             list.add(registerBlock(color + "_" + suffix, block.apply(settings, color)));
         }
         return list;
     }
 
-    private static <T extends Block> List<T> registerWooden(String suffix, Function<WoodType, AbstractBlock.Settings> settingsProvider, BiFunction<AbstractBlock.Settings, WoodType, T> block) {
+    private static <T extends Block> List<T> registerWooden(String suffix, Function<WoodType, BlockBehaviour.Properties> settingsProvider, BiFunction<BlockBehaviour.Properties, WoodType, T> block) {
         List<T> list = new ArrayList<>();
         for (WoodType type : WoodType.values()) {
-            AbstractBlock.Settings settings = settingsProvider.apply(type);
+            BlockBehaviour.Properties settings = settingsProvider.apply(type);
             list.add(registerBlock(type + "_" + suffix, block.apply(settings, type)));
         }
         return list;
@@ -82,22 +78,14 @@ public class CookItBlocks {
         if (withItem) registerBlockItem(name, block);
 
         BLOCKS.add(block);
-        return Registry.register(Registries.BLOCK, CookIt.idOf(name), block);
+        return Registry.register(BuiltInRegistries.BLOCK, CookIt.idOf(name), block);
     }
 
     public static void registerBlockItem(String name, Block block) {
-        Registry.register(Registries.ITEM, CookIt.idOf(name), new BlockItem(block, new FabricItemSettings()));
+        Registry.register(BuiltInRegistries.ITEM, CookIt.idOf(name), new BlockItem(block, new FabricItemSettings()));
     }
 
     public static void register() {
-        PLATES.addAll(registerDyed("large_plate", dyeColor -> CERAMIC_SETTINGS, LargePlate::new));
-        APPLIANCES.add(FRYER);
-        APPLIANCES.add(TOASTER);
-        APPLIANCES.add(OVEN);
-        APPLIANCES.add(MICROWAVE);
-        CONTAINERS.add(MUFFIN_TIN);
-        CONTAINERS.add(BAKING_SHEET);
-        CONTAINERS.add(MIXING_BOWL);
-        CONTAINERS.add(PIZZA_PAN);
+        PLATES.addAll(registerDyed("large_plate", dyeColor -> FabricBlockSettings.create().strength(0.4f).sounds(SoundType.DECORATED_POT), LargePlate::new));
     }
 }

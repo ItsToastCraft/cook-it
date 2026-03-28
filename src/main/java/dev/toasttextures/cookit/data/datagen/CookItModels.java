@@ -1,6 +1,5 @@
 package dev.toasttextures.cookit.data.datagen;
 
-import dev.toasttextures.cookit.block.appliances.Toaster;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.data.models.model.ModelTemplate;
 import net.minecraft.data.models.model.TextureSlot;
@@ -9,7 +8,6 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import dev.toasttextures.cookit.CookIt;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
@@ -27,7 +25,6 @@ public class CookItModels {
     public static final ModelTemplate CUTTING_BOARD_TEMPLATE = newParent("block/cutting_board", CUTTING_BOARD_KEY);
     public static final ModelTemplate ROLLING_PIN_TEMPLATE = newParent("item/rolling_pin", ROLLING_PIN_KEY);
     public static final ModelTemplate VANILLA_VINE_TEMPLATE = newParent("block/blooming_vine", VINE_KEY, DECOR_KEY);
-
     public static final List<ModelTemplate> PLATE_TEMPLATE = IntStream.rangeClosed(1, 4)
             .mapToObj(i -> newParent("block/plate_" + i, PLATE_KEY)).toList();
 

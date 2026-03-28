@@ -32,7 +32,7 @@ public class PizzaToppingReloader implements SimpleSynchronousResourceReloadList
             try (BufferedReader reader = resource.openAsReader()) {
                 codec.parse(JsonOps.INSTANCE, JsonParser.parseReader(reader).getAsJsonObject());
             } catch (IOException e) {
-                return;
+                break;
             }
         }
     }

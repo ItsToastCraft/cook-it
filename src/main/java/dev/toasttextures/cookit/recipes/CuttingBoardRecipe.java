@@ -1,16 +1,16 @@
 package dev.toasttextures.cookit.recipes;
 
 import com.google.gson.JsonObject;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.GsonHelper;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.GsonHelper;
 import net.minecraft.world.level.Level;
 
 import static dev.toasttextures.cookit.registries.CookItRecipes.allowAirIngredient;
@@ -35,14 +35,16 @@ public class CuttingBoardRecipe implements Recipe<SimpleContainer> {
 
     @Override
     public boolean matches(SimpleContainer inventory, Level world) {
-        if(world.isClientSide()) {
+        if (world.isClientSide()) {
             return false;
         }
         return input.test(inventory.getItem(0));
     }
 
     @Override
-    public boolean isSpecial() { return true; }
+    public boolean isSpecial() {
+        return true;
+    }
 
     @Override
     public ItemStack assemble(SimpleContainer inventory, RegistryAccess registryManager) {
@@ -50,7 +52,7 @@ public class CuttingBoardRecipe implements Recipe<SimpleContainer> {
     }
 
     public ItemStack[] getTool() {
-        if (tool.isEmpty()) return new ItemStack[]{ ItemStack.EMPTY};
+        if (tool.isEmpty()) return new ItemStack[]{ItemStack.EMPTY};
 
         return tool.getItems();
     }
@@ -113,24 +115,24 @@ public class CuttingBoardRecipe implements Recipe<SimpleContainer> {
         @Override
         public CuttingBoardRecipe fromJson(ResourceLocation id, JsonObject json) {
             return new CuttingBoardRecipe(
-                id,
-                Ingredient.fromJson(json.getAsJsonObject("input")),
-                validateItemStack(json.getAsJsonObject("output"), false),
-                allowAirIngredient(json, "tool"),
-                GsonHelper.getAsInt(json, "interactions", 1),
-                GsonHelper.getAsBoolean(json, "uses_item", false)
+                    id,
+                    Ingredient.fromJson(json.getAsJsonObject("input")),
+                    validateItemStack(json.getAsJsonObject("output"), false),
+                    allowAirIngredient(json, "tool"),
+                    GsonHelper.getAsInt(json, "interactions", 1),
+                    GsonHelper.getAsBoolean(json, "uses_item", false)
             );
         }
 
         @Override
         public CuttingBoardRecipe fromNetwork(ResourceLocation id, FriendlyByteBuf buf) {
             return new CuttingBoardRecipe(
-                id,
-                Ingredient.fromNetwork(buf),
-                buf.readItem(),
-                Ingredient.fromNetwork(buf),
-                buf.readInt(),
-                buf.readBoolean()
+                    id,
+                    Ingredient.fromNetwork(buf),
+                    buf.readItem(),
+                    Ingredient.fromNetwork(buf),
+                    buf.readInt(),
+                    buf.readBoolean()
             );
         }
 

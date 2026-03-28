@@ -1,28 +1,27 @@
 package dev.toasttextures.cookit.item;
 
-import net.minecraft.world.item.Item.Properties;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.CampfireBlock;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.CampfireBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.LIT;
 
 public class FireExtinguisherItem extends Item {
-    public static final double OFFSET_DISTANCE = 4.0;
+    public static final float OFFSET_DISTANCE = 4.0f;
 
     public FireExtinguisherItem(Properties settings) {
         super(settings);
@@ -31,9 +30,9 @@ public class FireExtinguisherItem extends Item {
     @Override
     public InteractionResult useOn(UseOnContext context) {
         Level world = context.getLevel();
-        if (world.isClientSide) return InteractionResult.CONSUME;
         Player user = context.getPlayer();
-        if (user == null) return InteractionResult.CONSUME;
+
+        if (world.isClientSide || user == null) return InteractionResult.CONSUME;
 
         Vec3 hitPos = context.getClickLocation();
         addExtinguishEffects(hitPos, user, (ServerLevel) world);
@@ -63,7 +62,11 @@ public class FireExtinguisherItem extends Item {
         Vec3 pos = player.position();
         double pitch = Math.toRadians(player.getXRot());
         double yaw = Math.toRadians(player.getYRot());
-        Vec3 direction = new Vec3(-Math.sin(yaw) * Math.cos(pitch) * OFFSET_DISTANCE, -Math.sin(pitch) * OFFSET_DISTANCE, Math.cos(yaw) * Math.cos(pitch) * OFFSET_DISTANCE);
+        Vec3 direction = new Vec3(
+                -Math.sin(yaw) * Math.cos(pitch) * OFFSET_DISTANCE,
+                -Math.sin(pitch) * OFFSET_DISTANCE,
+                Math.cos(yaw) * Math.cos(pitch) * OFFSET_DISTANCE
+        );
 
         Vec3 hitOffset = origin.subtract(pos.x, pos.y + 1.0, pos.z);
         BlockPos.MutableBlockPos mutablePos = new BlockPos.MutableBlockPos();
@@ -76,7 +79,7 @@ public class FireExtinguisherItem extends Item {
 
             mutablePos.set(particleX, particleY, particleZ);
 
-            world.sendParticles(ParticleTypes.SPIT, particleX, particleY, particleZ, 1, 0.0, 0.124, 0.0, 0.0);
+            world.sendParticles(ParticleTypes.SPIT, particleX, particleY, particleZ, 1, 0.0, 0.125, 0.0, 0.0);
 
             if (world.random.nextFloat() < 0.5f) {
                 extinguishFire(player, mutablePos, world);
@@ -86,6 +89,7 @@ public class FireExtinguisherItem extends Item {
 
     private void extinguishFire(Player player, BlockPos pos, ServerLevel world) {
         BlockState state = world.getBlockState(pos);
+
         if (state.is(BlockTags.FIRE)) {
             world.playSound(null, pos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.5f, 1f);
             world.destroyBlock(pos, false, null);

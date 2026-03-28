@@ -3,7 +3,6 @@ package dev.toasttextures.cookit.block.containers;
 import dev.toasttextures.cookit.block.entity.Container;
 import dev.toasttextures.cookit.block.entity.PlateEntity;
 import dev.toasttextures.cookit.item.ItemStorage;
-import net.minecraft.block.*;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
@@ -14,7 +13,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
@@ -32,8 +30,12 @@ import org.jetbrains.annotations.Nullable;
 import dev.toasttextures.cookit.registries.CookItItems;
 
 import java.util.List;
+import java.util.stream.IntStream;
 
 public class Plate extends BaseEntityBlock {
+    private static final VoxelShape[] SHAPES = IntStream.rangeClosed(1, 4)
+            .mapToObj(i -> box(4.0, 0.0, 4.0, 12.0, i, 12.0)).toArray(VoxelShape[]::new);
+
     public static final IntegerProperty COUNT = IntegerProperty.create("count", 1, 4);
 
     private final DyeColor color;
@@ -59,52 +61,52 @@ public class Plate extends BaseEntityBlock {
 
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext ctx) {
-        return box(4.0, 0.0, 4.0, 12.0, state.getValue(COUNT), 12.0);
+        return SHAPES[state.getValue(COUNT) - 1];
     }
 
     @Override
     public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (world.isClientSide) return InteractionResult.SUCCESS;
-        PlateEntity blockEntity = (PlateEntity) world.getBlockEntity(pos);
-        if (blockEntity == null) return InteractionResult.SUCCESS;
 
-        int plateAmount = state.getValue(COUNT);
-        ItemStack heldItem = player.getItemInHand(hand);
+        if (world.getBlockEntity(pos) instanceof PlateEntity blockEntity) {
+            int plateAmount = state.getValue(COUNT);
+            ItemStack heldItem = player.getItemInHand(hand);
 
-        // If there is no item in the player's hand and there is more than one plate, give one plate
-        // Otherwise give back whatever is on the plate (because there's only one sooo)
+            // If there is no item in the player's hand and there is more than one plate, give one plate
+            // Otherwise give back whatever is on the plate (because there's only one sooo)
 
-        ItemStack first = blockEntity.retrieve();
-        if (heldItem.isEmpty()) {
-            if (player.isShiftKeyDown()) {
-                // Why did it take me 80 billion years to remember this exists
-                blockEntity.dropAsContainer(player, world, this, pos);
-                decreasePlates(state, world, pos);
-            } else if (!first.isEmpty()) {
-                player.getInventory().placeItemBackInInventory(first);
-            } else {
-                player.getInventory().placeItemBackInInventory(this.getCloneItemStack(world, pos, state));
-                decreasePlates(state, world, pos);
+            ItemStack first = blockEntity.retrieve();
+            if (heldItem.isEmpty()) {
+                if (player.isShiftKeyDown()) {
+                    blockEntity.dropAsContainer(player, world, this, pos);
+                    decreasePlates(state, world, pos);
+                } else if (!first.isEmpty()) {
+                    player.getInventory().placeItemBackInInventory(first);
+                } else {
+                    player.getInventory().placeItemBackInInventory(this.getCloneItemStack(world, pos, state));
+                    decreasePlates(state, world, pos);
+                }
+                return InteractionResult.SUCCESS;
             }
-            return InteractionResult.SUCCESS;
-        }
 
-        if (heldItem.is(CookItItems.FRYER_BASKET)) return InteractionResult.PASS;
+            if (heldItem.is(CookItItems.FRYER_BASKET)) return InteractionResult.PASS;
 
-        // Add another plate if the player is holding one of the same type and there aren't already 4 on there.
-        if (heldItem.is(this.asItem()) && plateAmount < 4 && first.isEmpty()) {
-            ItemStack stored = ItemStorage.getStoredItem(heldItem);
-            if (!stored.isEmpty()) {
+            // Add another plate if the player is holding one of the same type and there aren't already 4 on there.
+            if (heldItem.is(this.asItem()) && plateAmount < 4 && first.isEmpty()) {
+                ItemStack stored = ItemStorage.getStoredItem(heldItem);
+                if (!stored.isEmpty()) {
+                    blockEntity.setItem(0, heldItem.split(1));
+                }
+                world.playSound(null, pos, SoundEvents.COPPER_PLACE, SoundSource.BLOCKS, 1, 1.75f);
+                world.setBlockAndUpdate(pos, state.setValue(COUNT, plateAmount + 1));
+                // Add whatever is in the player's hand, as long as it's food (sorry)
+            } else if (first.isEmpty() && heldItem.isEdible()) {
                 blockEntity.setItem(0, heldItem.split(1));
+                world.playSound(null, pos, SoundEvents.ITEM_PICKUP, SoundSource.BLOCKS, 1, 1.0f);
+                world.sendBlockUpdated(pos, state, state, UPDATE_CLIENTS);
             }
-            world.playSound(null, pos, SoundEvents.COPPER_PLACE, SoundSource.BLOCKS, 1, 1.75f);
-            world.setBlockAndUpdate(pos, state.setValue(COUNT, plateAmount + 1));
-        // Add whatever is in the player's hand, as long as it's food (sorry)
-        } else if (first.isEmpty() && heldItem.isEdible()) {
-            blockEntity.setItem(0, heldItem.split(1));
-            world.playSound(null, pos, SoundEvents.ITEM_PICKUP, SoundSource.BLOCKS, 1, 1.0f);
-            world.sendBlockUpdated(pos, state, state, UPDATE_CLIENTS);
         }
+
 
         return InteractionResult.SUCCESS;
     }

@@ -2,7 +2,6 @@ package dev.toasttextures.cookit.block.appliances;
 
 import dev.toasttextures.cookit.block.entity.OvenEntity;
 import dev.toasttextures.cookit.registries.CookItTags;
-import net.minecraft.block.*;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
@@ -16,7 +15,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.InteractionResult;
@@ -34,9 +32,10 @@ public class Oven extends BaseEntityBlock implements EntityBlock {
     public Oven(Properties settings) {
         super(settings);
         registerDefaultState(defaultBlockState()
-                .setValue(OPEN, false)
-                .setValue(HORIZONTAL_FACING, Direction.NORTH)
-                .setValue(LIT, false));
+            .setValue(HORIZONTAL_FACING, Direction.NORTH)
+            .setValue(LIT, false)
+            .setValue(OPEN, false)
+        );
     }
 
     @Override
@@ -46,37 +45,36 @@ public class Oven extends BaseEntityBlock implements EntityBlock {
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(OPEN, HORIZONTAL_FACING, LIT);
+        builder.add(HORIZONTAL_FACING, LIT, OPEN);
     }
 
     @Override
     public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (world.isClientSide) return InteractionResult.SUCCESS;
 
-        OvenEntity blockEntity = (OvenEntity) world.getBlockEntity(pos);
-        if (blockEntity == null) return InteractionResult.SUCCESS;
+        if (world.getBlockEntity(pos) instanceof OvenEntity blockEntity) {
+            ItemStack heldItem = player.getItemInHand(hand);
 
-        ItemStack heldItem = player.getItemInHand(hand);
-
-        if (!state.getValue(OPEN) && heldItem.isEmpty()) {
-            openOven(world, pos, state, true);
-            return InteractionResult.SUCCESS;
-        }
-
-        if (heldItem.isEmpty()) {
-            if (state.getValue(LIT)) {
-                ItemStack retrieved = blockEntity.retrieve();
-                if (!retrieved.isEmpty()) {
-                    player.getInventory().placeItemBackInInventory(retrieved);
-                }
-            } else {
-                openOven(world, pos, state, false);
+            if (!state.getValue(OPEN) && heldItem.isEmpty()) {
+                openOven(world, pos, state, true);
+                return InteractionResult.SUCCESS;
             }
-        } else if (Block.byItem(heldItem.getItem()).defaultBlockState().is(CookItTags.CONTAINERS)) {
-            return blockEntity.fillFirst(player, heldItem) ? InteractionResult.SUCCESS : InteractionResult.FAIL;
+
+            if (heldItem.isEmpty()) {
+                if (state.getValue(LIT)) {
+                    ItemStack retrieved = blockEntity.retrieve();
+                    if (!retrieved.isEmpty()) {
+                        player.getInventory().placeItemBackInInventory(retrieved);
+                    }
+                } else {
+                    openOven(world, pos, state, false);
+                }
+            } else if (Block.byItem(heldItem.getItem()).defaultBlockState().is(CookItTags.CONTAINERS)) {
+                return blockEntity.fillFirst(player, heldItem) ? InteractionResult.SUCCESS : InteractionResult.FAIL;
+            }
         }
 
-        return InteractionResult.FAIL;
+        return InteractionResult.SUCCESS;
     }
     public BlockState getStateForPlacement(BlockPlaceContext ctx) {
         return this.defaultBlockState().setValue(HORIZONTAL_FACING, ctx.getHorizontalDirection().getOpposite());
@@ -90,7 +88,9 @@ public class Oven extends BaseEntityBlock implements EntityBlock {
 
     @Nullable
     @Override
-    public OvenEntity newBlockEntity(BlockPos pos, BlockState state) { return new OvenEntity(pos, state); }
+    public OvenEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return new OvenEntity(pos, state);
+    }
 
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level world, BlockState state, BlockEntityType<T> type) {

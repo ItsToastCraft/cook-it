@@ -2,15 +2,14 @@ package dev.toasttextures.cookit.recipes;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import net.minecraft.core.NonNullList;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.GsonHelper;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.StackedContents;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.recipe.*;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.GsonHelper;
-import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -53,7 +52,9 @@ public class MixingBowlRecipe implements Recipe<SimpleContainer> {
     }
 
     @Override
-    public boolean isSpecial() { return true; }
+    public boolean isSpecial() {
+        return true;
+    }
 
     @Override
     public ResourceLocation getId() {
@@ -83,6 +84,7 @@ public class MixingBowlRecipe implements Recipe<SimpleContainer> {
     public int getUses() {
         return output.getCount();
     }
+
     public boolean liquidPresent() {
         return !liquid.isEmpty();
     }
