@@ -21,16 +21,14 @@ import java.util.Collections;
 import java.util.List;
 
 import static dev.toasttextures.cookit.registries.CookItTags.FRYABLE;
-import static net.minecraft.world.level.block.Block.UPDATE_CLIENTS;
+import static net.minecraft.world.level.block.Block.UPDATE_ALL;
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.LIT;
 
 public class FryerEntity extends CookingBlockEntity<FryerRecipe> implements Transferable {
     private int progress = 0;
     private int maxProgress = 0;
-
     private ItemStack cachedItem = ItemStack.EMPTY;
-    @Nullable
-    private FryerRecipe cachedRecipe = null;
+    private @Nullable FryerRecipe cachedRecipe = null;
 
     public FryerEntity(BlockPos pos, BlockState state) {
         super(CookItBlockEntities.FRYER, FryerRecipe.Type.INSTANCE, pos, state, 1);
@@ -51,15 +49,20 @@ public class FryerEntity extends CookingBlockEntity<FryerRecipe> implements Tran
     // Ok so only accept fryer baskets OR fryable items if there's already an empty basket
     @Override
     public void attemptTransfer(Player player, ItemStack stack) {
-        ItemStack first = getItem(0);
-        if (first.isEmpty() && stack.is(CookItItems.FRYER_BASKET)) {
-            setItem(0, stack.split(1));
-        } else if (!first.isEmpty()) {
-            if (!stack.isEmpty() && stack.is(FRYABLE)) {  // Food
-                ItemStorage.setStoredItem(first, stack.split(1));
+        ItemStack first = getFirst();
+
+        if (first.isEmpty()) {
+            if (stack.is(CookItItems.FRYER_BASKET)) {
+                setItem(0, stack.split(1));
             }
-        } else {
-            player.getInventory().placeItemBackInInventory(stack.copyAndClear());
+        } else if (stack.isEmpty()) {
+            player.getInventory().placeItemBackInInventory(first.split(1));
+        } else if (stack.is(FRYABLE)) {
+            ItemStorage.setStoredItem(first, stack.split(1));
+            if (level != null && !level.isClientSide) {
+                level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), UPDATE_ALL);
+                setChanged();
+            }
         }
     }
 
@@ -83,15 +86,17 @@ public class FryerEntity extends CookingBlockEntity<FryerRecipe> implements Tran
 
     @Override
     public void craft(Level world, FryerRecipe recipe) {
-        ItemStack first = getItem(0);
+        ItemStack first = getFirst();
 
-        if (!first.isEmpty() && status == CookingStatus.DONE) {
+        if (!getFirst().isEmpty() && status == CookingStatus.DONE) {
             ItemStorage.setStoredItem(first, recipe.assemble(new SimpleContainer(first), world.registryAccess()));
+            world.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), UPDATE_ALL);
         }
     }
 
     @Override
     public void reset() {
+        status = CookingStatus.IDLE;
         progress = 0;
         cachedItem = ItemStack.EMPTY;
         cachedRecipe = null;
@@ -101,9 +106,9 @@ public class FryerEntity extends CookingBlockEntity<FryerRecipe> implements Tran
     private void tickRecipe(Level world, BlockState state) {
         if (maxProgress <= progress) {
             status = CookingStatus.DONE;
-            if (cachedRecipe == null && !world.isClientSide) {
-                world.setBlock(worldPosition, state.setValue(LIT, false), UPDATE_CLIENTS);
+            if (cachedRecipe != null && !world.isClientSide) {
                 craft(world, cachedRecipe);
+                world.setBlockAndUpdate(worldPosition, state.setValue(LIT, false));
             }
             reset();
         } else {
@@ -123,26 +128,33 @@ public class FryerEntity extends CookingBlockEntity<FryerRecipe> implements Tran
     private void loadRecipe(Level world, BlockState state) {
         if (world.isClientSide) return;
         cachedRecipe = getRecipes().stream().findFirst().orElse(null);
-
         if (cachedRecipe == null) return;
 
         status = CookingStatus.PROCESSING;
-        world.setBlock(worldPosition, state.setValue(LIT, true), UPDATE_CLIENTS);
+        world.setBlock(worldPosition, state.setValue(LIT, true), UPDATE_ALL);
         maxProgress = cachedRecipe.getMaxProgress();
         setChanged();
     }
 
     public static void tick(Level world, BlockPos pos, BlockState state, FryerEntity entity) {
         if (world.isClientSide) return;
-        ItemStack first = entity.getItem(0);
+        ItemStack first = entity.getFirst();
+
         if (first.isEmpty()) {
-            entity.status = CookingStatus.IDLE;
-        } else if (!first.is(CookItItems.FRYER_BASKET)) {
-            entity.status = CookingStatus.INVALID;
-        } else if (ItemStack.matches(first, entity.cachedItem)) { // I don't wanna decode the stored ItemStack every tick
+            if (entity.status != CookingStatus.IDLE) {
+                world.setBlockAndUpdate(pos, state.setValue(LIT, false));
+                entity.reset();
+            }
+            return;
+        }
+
+        if (!ItemStack.matches(first, entity.cachedItem)) {
+            if (entity.status == CookingStatus.IDLE) {
+                entity.cachedItem = first.copy();
+                entity.loadRecipe(world, state);
+            }
+        } else if (entity.cachedRecipe != null && entity.status == CookingStatus.PROCESSING) {
             entity.tickRecipe(world, state);
-        } else {
-            entity.loadRecipe(world, state);
         }
     }
 }

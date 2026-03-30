@@ -1,6 +1,7 @@
 package dev.toasttextures.cookit.block.entity;
 
-import dev.toasttextures.cookit.CookIt;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -10,7 +11,6 @@ import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.ListTag;
@@ -23,16 +23,19 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.function.UnaryOperator;
 
-import static net.minecraft.world.level.block.Block.UPDATE_CLIENTS;
+import static net.minecraft.world.level.block.Block.UPDATE_ALL;
 
 public class Container extends BlockEntity implements DefaultedInventory {
     public static final String CONTAINER_KEY = "Container";
+    public static final Component SINGLE_ITEM = Component.literal("Item: ").withStyle(ChatFormatting.GRAY);
+    public static final Component MULTIPLE_ITEMS = Component.literal("Items: ").withStyle(ChatFormatting.GRAY);
 
     protected final NonNullList<ItemStack> items;
 
@@ -73,28 +76,37 @@ public class Container extends BlockEntity implements DefaultedInventory {
 
     public boolean fillFirst(Player player, ItemStack stack) {
         if (stack.isEmpty()) return false;
+
         int available = firstEmpty();
         if (available == -1) return false;
+
         ItemStack inserted = player.isCreative() ? stack.copyWithCount(1) : stack.split(1);
         setItem(available, inserted);
+        this.setChanged();
+        if (level != null && !level.isClientSide) {
+            playRetrievalSound(level, getBlockPos());
+            level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), UPDATE_ALL);
+        }
+
         return true;
     }
 
     public ItemStack retrieve() {
-        return retrieve(item -> item != Items.AIR);
+        return retrieve(item -> true);
     }
 
     public ItemStack retrieve(Predicate<Item> exclusions) {
-        for (int i = items.size() - 1; i >= 0; i--) {
-            ItemStack stack = getItem(i);
-            if (exclusions.test(stack.getItem())) {
+        for (ItemStack stack : getItems()) {
+            if (!stack.isEmpty() && exclusions.test(stack.getItem())) {
                 this.setChanged();
-                if (level != null) {
-                    level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), UPDATE_CLIENTS);
+                if (level != null && !level.isClientSide) {
+                    playRetrievalSound(level, getBlockPos());
+                    level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), UPDATE_ALL);
                 }
                 return stack;
             }
         }
+
         return ItemStack.EMPTY;
     }
 
@@ -104,17 +116,24 @@ public class Container extends BlockEntity implements DefaultedInventory {
     }
 
     @Override
-    public CompoundTag getUpdateTag() {
+    public @NotNull CompoundTag getUpdateTag() {
         return saveWithoutMetadata();
     }
 
     public InteractionResult dropAsContainer(Player player, Level world, Block block, BlockPos pos) {
+        return dropAsContainer(player, world, block, pos, true);
+    }
+
+    public InteractionResult dropAsContainer(Player player, Level world, Block block, BlockPos pos, boolean shouldDestroy) {
         ItemStack defaultStack = block.asItem().getDefaultInstance();
         if (!this.isEmpty()) {
             this.saveToItem(defaultStack);
         }
         player.getInventory().placeItemBackInInventory(defaultStack);
-        world.destroyBlock(pos, false);
+        if (shouldDestroy) {
+            world.destroyBlock(pos, false);
+        }
+
         return InteractionResult.SUCCESS;
     }
 
@@ -145,26 +164,24 @@ public class Container extends BlockEntity implements DefaultedInventory {
         CompoundTag nbt = container.getTagElement(CONTAINER_KEY);
 
         if (nbt == null) return NonNullList.withSize(1, ItemStack.EMPTY);
-        CookIt.LOGGER.info(nbt.toString());
 
         ListTag containerNbt = getItemList(container);
-        NonNullList<ItemStack> items = NonNullList.withSize(containerNbt.size(), ItemStack.EMPTY);
+        int size = containerNbt.isEmpty() ? 1 : containerNbt.size();
+        NonNullList<ItemStack> items = NonNullList.withSize(size, ItemStack.EMPTY);
+
         ContainerHelper.loadAllItems(nbt, items);
-        CookIt.LOGGER.info(items.toString());
         return items;
     }
 
-    public static final Component SINGLE_ITEM = Component.literal("Item:").withStyle(ChatFormatting.GRAY);
-    public static final Component MULTIPLE_ITEMS = Component.literal("Items:").withStyle(ChatFormatting.GRAY);
-
     public static void appendTooltip(ItemStack container, List<Component> tooltip) {
-        appendTooltip(container, tooltip, item -> item);
+        appendTooltip(container, tooltip, ItemStack::getItem);
     }
 
-    public static void appendTooltip(ItemStack container, List<Component> tooltip, UnaryOperator<Item> exclusions) {
+    public static void appendTooltip(ItemStack container, List<Component> tooltip, Function<ItemStack, Item> exclusions) {
         int startSize = tooltip.size();
         for (ItemStack stack : getItems(container)) {
-            if (exclusions.apply(stack.getItem()) != null) {
+            if (stack.isEmpty()) continue;
+            if (exclusions.apply(stack) != null) {
                 tooltip.add(stack.getHoverName().copy().withStyle(ChatFormatting.BLUE));
             }
         }
@@ -172,7 +189,7 @@ public class Container extends BlockEntity implements DefaultedInventory {
         int size = tooltip.size() - startSize;
         if (size == 0) return;
 
-    tooltip.add(startSize, size > 1 ? SINGLE_ITEM : MULTIPLE_ITEMS);
+        tooltip.add(startSize, size > 1 ? MULTIPLE_ITEMS : SINGLE_ITEM);
     }
 
     public static void writeTo(ItemStack container, List<ItemStack> stacks) {
@@ -185,7 +202,7 @@ public class Container extends BlockEntity implements DefaultedInventory {
         ListTag list = getItemList(container);
         CompoundTag compound = new CompoundTag();
 
-        compound.putByte("Slot", (byte) (list.size() + 1));
+        compound.putByte("Slot", (byte) (list.size()));
         stack.save(compound);
         list.add(compound);
         container.getOrCreateTagElement(CONTAINER_KEY).put("Items", list);
@@ -199,5 +216,9 @@ public class Container extends BlockEntity implements DefaultedInventory {
         if (nbt != null) {
             ContainerHelper.loadAllItems(nbt, entity.items);
         }
+    }
+
+    public static void playRetrievalSound(Level world, BlockPos pos) {
+        world.playSound(null, pos, SoundEvents.ITEM_FRAME_REMOVE_ITEM, SoundSource.BLOCKS, 0.5f, 0.25f);
     }
 }

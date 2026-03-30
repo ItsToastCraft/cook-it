@@ -59,7 +59,7 @@ public class CookItModelProvider extends FabricModelProvider {
 
             for (int i = 0; i < 4; i++) {
                 ModelTemplate model = templateSet.get(i);
-                ResourceLocation id = model.create(setModelOutput(plate, "block/plate","_" + i), textureMap, modelGenerator.modelOutput);
+                ResourceLocation id = model.create(setModelOutput(plate, "block/plate/","_" + i), textureMap, modelGenerator.modelOutput);
                 if (i == 0) modelGenerator.delegateItemModel(plate, id);
 
                 variantMap.select(i + 1, Variant.variant().with(VariantProperties.MODEL, id));

@@ -20,6 +20,7 @@ import org.jetbrains.annotations.Nullable;
 public class PizzaEntity extends BlockEntity {
     private static final String SLICE_COUNT_KEY = "Slices";
     private static final String COOKED_KEY = "Cooked";
+
     private ListTag toppings = new ListTag();
     private boolean isCooked;
     private int sliceCount = 4;

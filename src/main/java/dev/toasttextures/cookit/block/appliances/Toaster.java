@@ -1,5 +1,6 @@
 package dev.toasttextures.cookit.block.appliances;
 
+import dev.toasttextures.cookit.block.entity.Container;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
@@ -25,6 +26,7 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import dev.toasttextures.cookit.registries.CookItItems;
+import org.jetbrains.annotations.NotNull;
 
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING;
 
@@ -46,8 +48,9 @@ public class Toaster extends HorizontalDirectionalBlock {
         builder.add(HORIZONTAL_FACING, STAGE);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
-    public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext ctx) {
+    public @NotNull VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext ctx) {
         return switch (state.getValue(HORIZONTAL_FACING)) {
             case NORTH, SOUTH -> NORTH_SOUTH_SHAPE;
             default -> EAST_WEST_SHAPE;
@@ -55,23 +58,22 @@ public class Toaster extends HorizontalDirectionalBlock {
     }
     
     // I know this allows you to just put a piece of bread at the last second but like I don't care :cat_plushie:
+    @SuppressWarnings("deprecation")
     @Override
-    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    public @NotNull InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (world.isClientSide) return InteractionResult.SUCCESS;
         ItemStack heldItem = player.getItemInHand(hand);
         Stage stage = state.getValue(STAGE);
 
         if (!stage.isFull() && heldItem.is(Items.BREAD)) {
             heldItem.shrink(1);
-            world.setBlockAndUpdate(pos, state.setValue(STAGE, stage.increment()));
+            world.setBlockAndUpdate(pos, state.setValue(STAGE, stage.insert()));
             this.scheduleTick(world, pos);
-        }
-
-        if (heldItem.isEmpty() && stage.isToasted()) {
+        } else if (heldItem.isEmpty() && stage.isToasted()) {
             player.getInventory().add(new ItemStack(CookItItems.TOAST));
             world.setBlockAndUpdate(pos, state.setValue(STAGE, stage.retrieve()));
 
-            world.playSound(null, pos, SoundEvents.ITEM_PICKUP, SoundSource.MASTER);
+            Container.playRetrievalSound(world, pos);
         }
         return InteractionResult.SUCCESS;
     }
@@ -87,6 +89,7 @@ public class Toaster extends HorizontalDirectionalBlock {
         }
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void tick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
         world.playSound(null, pos, SoundEvents.IRON_GOLEM_REPAIR, SoundSource.MASTER);
@@ -101,7 +104,7 @@ public class Toaster extends HorizontalDirectionalBlock {
         FULL_TOASTED;
 
         @Override
-        public String getSerializedName() {
+        public @NotNull String getSerializedName() {
             return name().toLowerCase();
         }
 
@@ -113,7 +116,7 @@ public class Toaster extends HorizontalDirectionalBlock {
             return this == FULL_TOASTED || this == FULL_UNTOASTED;
         }
 
-        public Stage increment() {
+        public Stage insert() {
             return switch (this) {
                 case EMPTY -> HALF_UNTOASTED;
                 case HALF_UNTOASTED -> FULL_UNTOASTED;

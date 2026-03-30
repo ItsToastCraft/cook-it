@@ -52,20 +52,22 @@ public class Microwave extends BaseEntityBlock {
     }
 
     @Override
-    public RenderShape getRenderShape(BlockState state) {
+    public @NotNull RenderShape getRenderShape(BlockState state) {
         return RenderShape.MODEL;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
-    public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext ctx) {
+    public @NotNull VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext ctx) {
         return switch (state.getValue(HORIZONTAL_FACING)) {
             case NORTH, SOUTH -> NORTH_SOUTH_SHAPE;
             default -> EAST_WEST_SHAPE;
         };
     }
 
+    @SuppressWarnings("deprecation")
     @Override
-    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    public @NotNull InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (world.isClientSide) return InteractionResult.SUCCESS;
 
         if (world.getBlockEntity(pos) instanceof MicrowaveEntity blockEntity) {
@@ -111,8 +113,8 @@ public class Microwave extends BaseEntityBlock {
     }
 
     public enum Event implements StringRepresentable {
-        NONE((world, pos) -> {
-        }), EXPLOSION((world, pos) -> world.explode(null, pos.getX(), pos.getY(), pos.getZ(), 3, Level.ExplosionInteraction.BLOCK));
+        NONE((world, pos) -> {}),
+        EXPLOSION((world, pos) -> world.explode(null, pos.getX(), pos.getY(), pos.getZ(), 3, Level.ExplosionInteraction.BLOCK));
 
         private final BiConsumer<ServerLevel, BlockPos> processor;
 

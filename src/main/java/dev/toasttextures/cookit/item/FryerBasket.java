@@ -1,5 +1,6 @@
 package dev.toasttextures.cookit.item;
 
+import dev.toasttextures.cookit.block.entity.Container;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.SlotAccess;
@@ -8,13 +9,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.ClickAction;
-import net.minecraft.ChatFormatting;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-
-import static dev.toasttextures.cookit.block.entity.Container.SINGLE_ITEM;
 
 public class FryerBasket extends Item {
     public FryerBasket(Properties settings) {
@@ -37,12 +35,9 @@ public class FryerBasket extends Item {
     }
 
     public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag context) {
-        ItemStack stored = ItemStorage.getStoredItem(stack);
-        Component text = SINGLE_ITEM.copy().append(Component.literal(stored.getHoverName().getString()).withStyle(ChatFormatting.BLUE));
-        if (!stored.isEmpty()) {
-            tooltip.add(text);
-        } else {
-            tooltip.remove(text);
-        }
+        Container.appendTooltip(stack, tooltip, itemStack -> {
+            ItemStack storedItem = ItemStorage.getStoredItem(stack);
+            return !storedItem.isEmpty() ? storedItem.getItem() : null;
+        });
     }
 }

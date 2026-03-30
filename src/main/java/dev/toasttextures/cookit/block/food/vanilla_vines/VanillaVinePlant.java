@@ -2,7 +2,6 @@ package dev.toasttextures.cookit.block.food.vanilla_vines;
 
 import dev.toasttextures.cookit.registries.CookItBlocks;
 import dev.toasttextures.cookit.registries.CookItItems;
-import net.minecraft.block.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.server.level.ServerLevel;
@@ -10,7 +9,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.BonemealableBlock;
 import net.minecraft.world.level.block.GrowingPlantBodyBlock;
 import net.minecraft.world.level.block.GrowingPlantHeadBlock;
-import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.InteractionResult;
@@ -24,6 +22,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
+import org.jetbrains.annotations.NotNull;
 
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING;
 
@@ -37,7 +36,7 @@ public class VanillaVinePlant extends GrowingPlantBodyBlock implements Bonemeala
     }
 
     @Override
-    protected GrowingPlantHeadBlock getHeadBlock() {
+    protected @NotNull GrowingPlantHeadBlock getHeadBlock() {
         return CookItBlocks.VANILLA_VINE_STEM;
     }
 
@@ -47,17 +46,18 @@ public class VanillaVinePlant extends GrowingPlantBodyBlock implements Bonemeala
     }
 
     @Override
-    protected BlockState updateHeadAfterConvertedFromBody(BlockState from, BlockState to) {
+    protected @NotNull BlockState updateHeadAfterConvertedFromBody(BlockState from, BlockState to) {
         return to.setValue(PLANT_STATE, from.getValue(PLANT_STATE)).setValue(HORIZONTAL_FACING, from.getValue(HORIZONTAL_FACING));
     }
 
     @Override
-    public ItemStack getCloneItemStack(BlockGetter world, BlockPos pos, BlockState state) {
+    public @NotNull ItemStack getCloneItemStack(BlockGetter world, BlockPos pos, BlockState state) {
         return new ItemStack(CookItItems.VANILLA_BEAN);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
-    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    public @NotNull InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         return VanillaVines.removeVanilla(player, state, world, pos);
     }
 
@@ -77,6 +77,8 @@ public class VanillaVinePlant extends GrowingPlantBodyBlock implements Bonemeala
             world.setBlock(pos, state.setValue(PLANT_STATE, Stage.BLOOMED), Block.UPDATE_CLIENTS);
         }
     }
+
+    @SuppressWarnings("deprecation")
     @Override
     public void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
         super.randomTick(state, world, pos, random);
@@ -84,8 +86,10 @@ public class VanillaVinePlant extends GrowingPlantBodyBlock implements Bonemeala
 
         world.setBlock(pos, state.setValue(PLANT_STATE, Stage.HARVESTABLE), Block.UPDATE_CLIENTS);
     }
+
+
     @Override
-    public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
+    public @NotNull VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
         return getOutlineShape(state.getValue(HORIZONTAL_FACING));
     }
 }

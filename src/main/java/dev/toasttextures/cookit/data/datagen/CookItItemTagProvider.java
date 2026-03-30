@@ -9,6 +9,7 @@ import net.minecraft.core.HolderLookup;
 
 import java.util.concurrent.CompletableFuture;
 
+import static dev.toasttextures.cookit.registries.CookItTags.FRYABLE;
 import static dev.toasttextures.cookit.registries.CookItTags.ROLLING_PINS;
 
 public class CookItItemTagProvider extends FabricTagProvider<Item> {
@@ -19,5 +20,7 @@ public class CookItItemTagProvider extends FabricTagProvider<Item> {
     @Override
     protected void addTags(HolderLookup.Provider arg) {
         getOrCreateTagBuilder(ROLLING_PINS).add(CookItItems.ROLLING_PINS.toArray(Item[]::new));
+
+        getOrCreateTagBuilder(FRYABLE).add(CookItItems.UNCOOKED_FRIES, CookItItems.RAW_DONUT);
     }
 }

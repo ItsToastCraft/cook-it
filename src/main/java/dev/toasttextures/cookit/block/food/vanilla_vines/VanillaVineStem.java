@@ -1,14 +1,12 @@
 package dev.toasttextures.cookit.block.food.vanilla_vines;
 
 import dev.toasttextures.cookit.registries.CookItBlocks;
-import net.minecraft.block.*;
 
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.BonemealableBlock;
 import net.minecraft.world.level.block.GrowingPlantHeadBlock;
-import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.core.BlockPos;
@@ -19,6 +17,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
@@ -40,12 +39,12 @@ public class VanillaVineStem extends GrowingPlantHeadBlock implements Bonemealab
     }
 
     @Override
-    protected BlockState updateBodyAfterConvertedFromHead(BlockState from, BlockState to) {
+    protected @NotNull BlockState updateBodyAfterConvertedFromHead(BlockState from, BlockState to) {
         return to.setValue(PLANT_STATE, from.getValue(PLANT_STATE)).setValue(HORIZONTAL_FACING, from.getValue(HORIZONTAL_FACING));
     }
 
     @Override
-    protected Block getBodyBlock() {
+    protected @NotNull Block getBodyBlock() {
         return CookItBlocks.VANILLA_VINE;
     }
 
@@ -73,7 +72,7 @@ public class VanillaVineStem extends GrowingPlantHeadBlock implements Bonemealab
     }
 
     @Override
-    protected BlockState getGrowIntoState(BlockState state, RandomSource random) {
+    protected @NotNull BlockState getGrowIntoState(BlockState state, RandomSource random) {
         VanillaVines.Stage stage = state.getValue(PLANT_STATE);
         return super.getGrowIntoState(state, random).setValue(PLANT_STATE, random.nextFloat() < GROW_CHANCE ? stage.increment() : stage);
     }
@@ -87,6 +86,7 @@ public class VanillaVineStem extends GrowingPlantHeadBlock implements Bonemealab
         return false;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void neighborChanged(BlockState state, Level world, BlockPos pos, Block block, BlockPos neighborPos, boolean moved) {
         super.neighborChanged(state, world, pos, block, neighborPos, moved);
@@ -101,7 +101,7 @@ public class VanillaVineStem extends GrowingPlantHeadBlock implements Bonemealab
     }
 
     @Override
-    public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
+    public @NotNull VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
         return getOutlineShape(state.getValue(HORIZONTAL_FACING));
     }
 }

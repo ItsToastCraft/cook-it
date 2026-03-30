@@ -13,8 +13,8 @@
   "item.cook-it.toast": "Toast",
   "item.cook-it.raw_croissant": "Raw Croissant",
   "item.cook-it.croissant": "Croissant",
-  "item.cook-it.uncooked_french_fries": "French Fries",
-  "item.cook-it.french_fries": "French Fries",
+  "item.cook-it.uncooked_fries": "Fries",
+  "item.cook-it.fries": "Fries",
   "item.cook-it.dough": "Dough",
   "item.cook-it.dough_rolled": "Rolled Dough",
   "item.cook-it.dough_sliced": "Sliced Dough",
@@ -129,12 +129,12 @@
   "block.cook-it.spruce_cutting_board": "Spruce Cutting Board",
   "block.cook-it.warped_cutting_board": "Warped Cutting Board",
 
-  "topping.cook-it.porkchop": "Pork",
-  "topping.cook-it.beef": "Beef",
-  "topping.cook-it.kelp": "Kelp",
-
   "itemGroup.cook-it.items": "Cook It!",
   "subtitles.cook-it.microwave_hum": "Microwave Hums",
   "subtitles.cook-it.microwave_beep": "Microwave Beeps",
-  "stage.cook-it.uncooked": "Uncooked"
+
+  "stage.cook-it.uncooked": "Uncooked",
+  "donut.cook-it.plain": "Plain",
+  "donut.cook-it.sprinkles": "Sprinkles",
+  "donut.cook-it.striped": "Striped"
 }

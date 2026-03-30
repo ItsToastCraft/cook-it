@@ -15,10 +15,11 @@ import net.minecraft.world.level.storage.loot.functions.CopyBlockState;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.advancements.critereon.StatePropertiesPredicate;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CookItLootTables extends FabricBlockLootTableProvider {
-    List<Block> blocks = List.copyOf(CookItBlocks.BLOCKS);
+    List<Block> blocks = new ArrayList<>(CookItBlocks.BLOCKS);
 
     public CookItLootTables(FabricDataOutput dataOutput) {
         super(dataOutput);

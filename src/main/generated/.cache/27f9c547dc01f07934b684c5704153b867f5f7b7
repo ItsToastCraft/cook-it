@@ -1,4 +1,4 @@
-// 1.20.1	2026-03-26T23:19:25.371296271	Cook It!/Recipes
+// 1.20.1	2026-03-30T22:58:06.352635578	Cook It!/Recipes
 c3b7edeb183b8461795f978bcc8e976accee0249 data/cook-it/advancements/recipes/decorations/green_bowl.json
 118bf3f96830353fa42c78520e1cdb26389d81dd data/cook-it/advancements/recipes/decorations/green_plate.json
 8402094659f478e338a469d60b69baebab697e53 data/cook-it/advancements/recipes/misc/jungle_cutting_board.json
@@ -107,8 +107,8 @@ f6b8d2905507ba86def9d52818fb3077707dbcce data/cook-it/advancements/recipes/misc/
 78db64f82f9c923cc31b9cf47a08dbed6fb1993e data/cook-it/recipes/purple_large_plate.json
 c5aeac7d517e8b43bd5113b80d504811b1605145 data/cook-it/recipes/cyan_bowl.json
 083a17f4b4dfbd9e1092ae00ca568765bc7e25e3 data/cook-it/recipes/oak_cutting_board.json
-38956d04cad5b881a7a3bb00994edde12ea1e3ff data/cook-it/recipes/magenta_bowl.json
 9212336ce3338747aedbd25ed4652d01771df7f7 data/cook-it/recipes/cherry_cutting_board.json
+38956d04cad5b881a7a3bb00994edde12ea1e3ff data/cook-it/recipes/magenta_bowl.json
 412d9fb1456d80bd4b5eedc2fb6cf8c2824b386e data/cook-it/recipes/crimson_cutting_board.json
 49e41623592ea8374e791f61c3d43ee05549ece0 data/cook-it/recipes/green_large_plate.json
 bf95252e03da6d6fb6f7f17a2e623ec147da22ff data/cook-it/recipes/light_gray_plate.json
@@ -131,7 +131,7 @@ d3d1b3e934b3d408b68edba4f8fb00634d942c8a data/cook-it/advancements/recipes/decor
 3de02f0f5334ac83f8a741ccc3e0139d191f8438 data/cook-it/advancements/recipes/misc/crimson_cutting_board.json
 e8be1b062360e5f793761e803c04760adf13ff81 data/cook-it/advancements/recipes/decorations/brown_large_plate.json
 a1b50aeea9391cf1f7666c8cc6db97c8ebc0b3ac data/cook-it/advancements/recipes/decorations/brown_plate.json
-567fc6d7d1ddb33b184a96b24a5cd264cea365ca data/cook-it/advancements/recipes/decorations/orange_plate.json
 96726aac3d50641bdad8bb9ad90ad6a27aa68d80 data/cook-it/recipes/cyan_plate.json
+567fc6d7d1ddb33b184a96b24a5cd264cea365ca data/cook-it/advancements/recipes/decorations/orange_plate.json
 069f30bc31491cc0674206d06f7f25568b1b97e1 data/cook-it/advancements/recipes/tools/acacia_rolling_pin.json
 8df3a7785c8b9be7531fa58ee7f092d63b7e00bb data/cook-it/advancements/recipes/decorations/gray_plate.json

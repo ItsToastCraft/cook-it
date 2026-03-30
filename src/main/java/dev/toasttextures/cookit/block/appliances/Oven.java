@@ -23,6 +23,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import dev.toasttextures.cookit.registries.CookItBlockEntities;
 
@@ -39,7 +40,7 @@ public class Oven extends BaseEntityBlock implements EntityBlock {
     }
 
     @Override
-    public RenderShape getRenderShape(BlockState state) {
+    public @NotNull RenderShape getRenderShape(BlockState state) {
         return RenderShape.MODEL;
     }
 
@@ -48,30 +49,30 @@ public class Oven extends BaseEntityBlock implements EntityBlock {
         builder.add(HORIZONTAL_FACING, LIT, OPEN);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
-    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    public @NotNull InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (world.isClientSide) return InteractionResult.SUCCESS;
 
-        if (world.getBlockEntity(pos) instanceof OvenEntity blockEntity) {
-            ItemStack heldItem = player.getItemInHand(hand);
+        if (!(world.getBlockEntity(pos) instanceof OvenEntity blockEntity)) return InteractionResult.PASS;
+        ItemStack heldItem = player.getItemInHand(hand);
 
-            if (!state.getValue(OPEN) && heldItem.isEmpty()) {
-                openOven(world, pos, state, true);
-                return InteractionResult.SUCCESS;
-            }
+        if (!state.getValue(OPEN) && heldItem.isEmpty()) {
+            openOven(world, pos, state, true);
+            return InteractionResult.SUCCESS;
+        }
 
-            if (heldItem.isEmpty()) {
-                if (state.getValue(LIT)) {
-                    ItemStack retrieved = blockEntity.retrieve();
-                    if (!retrieved.isEmpty()) {
-                        player.getInventory().placeItemBackInInventory(retrieved);
-                    }
-                } else {
-                    openOven(world, pos, state, false);
+        if (heldItem.isEmpty()) {
+            if (state.getValue(LIT)) {
+                ItemStack retrieved = blockEntity.retrieve();
+                if (!retrieved.isEmpty()) {
+                    player.getInventory().placeItemBackInInventory(retrieved);
                 }
-            } else if (Block.byItem(heldItem.getItem()).defaultBlockState().is(CookItTags.CONTAINERS)) {
-                return blockEntity.fillFirst(player, heldItem) ? InteractionResult.SUCCESS : InteractionResult.FAIL;
+            } else {
+                openOven(world, pos, state, false);
             }
+        } else if (Block.byItem(heldItem.getItem()).defaultBlockState().is(CookItTags.CONTAINERS)) {
+            return blockEntity.fillFirst(player, heldItem) ? InteractionResult.SUCCESS : InteractionResult.FAIL;
         }
 
         return InteractionResult.SUCCESS;

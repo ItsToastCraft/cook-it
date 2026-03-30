@@ -14,6 +14,7 @@ import dev.toasttextures.cookit.block.food.pizza.CookedPizza;
 import dev.toasttextures.cookit.block.food.pizza.Pizza;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
+import net.minecraft.world.level.block.GrowingPlantHeadBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -49,7 +50,7 @@ public class CookItBlocks {
     public static final Block PIZZA_PAN = registerBlock("pizza_pan", new PizzaPan(FabricBlockSettings.copyOf(MUFFIN_TIN)));
     public static final Block MIXING_BOWL = registerBlock("mixing_bowl", new MixingBowl(FabricBlockSettings.copyOf(MUFFIN_TIN)));
     // -- Miscellaneous --
-    public static final Block VANILLA_VINE_STEM = registerBlock("vanilla_vine_stem", new VanillaVineStem(FabricBlockSettings.copyOf(Blocks.VINE)), false);
+    public static final GrowingPlantHeadBlock VANILLA_VINE_STEM = registerBlock("vanilla_vine_stem", new VanillaVineStem(FabricBlockSettings.copyOf(Blocks.VINE)), false);
     public static final Block VANILLA_VINE = registerBlock("vanilla_vine", new VanillaVinePlant(FabricBlockSettings.copyOf(Blocks.VINE)), false);
 
     private static <T extends Block> List<T> registerDyed(String suffix, Function<DyeColor, BlockBehaviour.Properties> settingsProvider, BiFunction<BlockBehaviour.Properties, DyeColor, T> block) {

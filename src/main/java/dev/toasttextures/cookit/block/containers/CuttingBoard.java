@@ -5,6 +5,7 @@ import dev.toasttextures.cookit.block.entity.CuttingBoardEntity;
 import dev.toasttextures.cookit.registries.CookItItems;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -39,7 +40,13 @@ public class CuttingBoard extends BaseEntityBlock {
     }
 
     @Override
-    public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext ctx) {
+    public @NotNull RenderShape getRenderShape(BlockState state) {
+        return RenderShape.MODEL;
+    }
+
+    @SuppressWarnings("deprecation")
+    @Override
+    public @NotNull VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext ctx) {
         return switch (state.getValue(HORIZONTAL_FACING)) {
             case NORTH, SOUTH -> NORTH_SOUTH_SHAPE;
             default -> EAST_WEST_SHAPE;
@@ -55,41 +62,36 @@ public class CuttingBoard extends BaseEntityBlock {
         builder.add(HORIZONTAL_FACING);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
-    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    public @NotNull InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (world.isClientSide) return InteractionResult.SUCCESS;
 
-        if (world.getBlockEntity(pos) instanceof CuttingBoardEntity blockEntity) {
-            ItemStack heldItem = player.getItemInHand(hand);
+        if (!(world.getBlockEntity(pos) instanceof CuttingBoardEntity blockEntity)) return InteractionResult.PASS;
 
-            if (heldItem.isEmpty()) {
-                if (!blockEntity.process(world, heldItem, false)) {
-                    blockEntity.retrieve();
-                    blockEntity.reset();
-                }
-                return InteractionResult.SUCCESS;
+        ItemStack heldItem = player.getItemInHand(hand);
+
+        if (heldItem.isEmpty()) {
+            if (!blockEntity.process(world, heldItem, false)) {
+                pickUpCookingBoardItems(world, pos, player);
             }
+            return InteractionResult.SUCCESS;
+        } else if (heldItem.is(CookItItems.FRYER_BASKET)) return InteractionResult.PASS;
 
-            if (heldItem.is(CookItItems.FRYER_BASKET)) return InteractionResult.PASS;
-
-            if (blockEntity.isEmpty()) {
-                blockEntity.fillFirst(player, heldItem.split(1));
-            } else if (!blockEntity.process(world, heldItem, false)) {
-                pickUpCookingBoardItems(state, world, pos, player);
-            }
+        if (blockEntity.isEmpty()) {
+            blockEntity.fillFirst(player, heldItem);
+        } else if (!blockEntity.process(world, heldItem, false)) {
+            pickUpCookingBoardItems(world, pos, player);
         }
 
         return InteractionResult.SUCCESS;
     }
 
     // picks up items, boolean used to cancel the block break if the block wasn't empty
-    public void pickUpCookingBoardItems(BlockState state, Level world, BlockPos pos, Player player) {
-        if (world.getBlockEntity(pos) instanceof CuttingBoardEntity blockEntity) {
-            if (!blockEntity.isEmpty() && player.isShiftKeyDown()) {
-                player.getInventory().add(blockEntity.getFirst());
-                blockEntity.reset();
-                world.sendBlockUpdated(pos, state, state, Block.UPDATE_CLIENTS);
-            }
+    public void pickUpCookingBoardItems(Level world, BlockPos pos, Player player) {
+        if (world.getBlockEntity(pos) instanceof CuttingBoardEntity blockEntity && player.isShiftKeyDown()) {
+            player.getInventory().placeItemBackInInventory(blockEntity.retrieve());
+            blockEntity.reset();
         }
     }
 
@@ -110,6 +112,7 @@ public class CuttingBoard extends BaseEntityBlock {
     }
 
     // pick up item in survival before break
+    @SuppressWarnings("deprecation")
     @Override
     public void attack(BlockState state, Level world, BlockPos pos, Player player) {
         if (world.isClientSide) return;

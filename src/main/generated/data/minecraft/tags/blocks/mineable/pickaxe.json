@@ -33,13 +33,7 @@
     "cook-it:green_large_plate",
     "cook-it:red_large_plate",
     "cook-it:black_large_plate",
-    "cook-it:fryer",
-    "cook-it:toaster",
-    "cook-it:oven",
-    "cook-it:microwave",
-    "cook-it:muffin_tin",
-    "cook-it:baking_sheet",
-    "cook-it:mixing_bowl",
-    "cook-it:pizza_pan"
+    "#cook-it:appliances",
+    "#cook-it:containers"
   ]
 }

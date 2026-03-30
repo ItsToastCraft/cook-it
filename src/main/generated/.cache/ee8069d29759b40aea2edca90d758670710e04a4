@@ -1,4 +1,4 @@
-// 1.20.1	2026-03-26T23:19:25.372429136	Cook It!/Block Loot Tables
+// 1.20.1	2026-03-30T22:58:06.354142386	Cook It!/Block Loot Tables
 239f1af5184be26ebf5fb91022fbf7d1de9bae2d data/cook-it/loot_tables/blocks/cyan_bowl.json
 198dc42b5ee1f17b6f07bfdc3bca216033267e6f data/cook-it/loot_tables/blocks/lime_plate.json
 dc426796680c32300610fa2beae617916daebb78 data/cook-it/loot_tables/blocks/purple_bowl.json
@@ -7,9 +7,9 @@ e40dfa2ee066be4c151730a5d9d5b765b343a2e0 data/cook-it/loot_tables/blocks/uncooke
 21001b74559d4383cbf1224af5b7bcad441bf07b data/cook-it/loot_tables/blocks/yellow_large_plate.json
 9297dbf983d200876bbcbdc12c57b76c652fe791 data/cook-it/loot_tables/blocks/red_large_plate.json
 9189deed55b12d683bc6a76581a8adada27542f3 data/cook-it/loot_tables/blocks/white_plate.json
+e7cdc6265ded81b9ee29da88af327c9d79a6633a data/cook-it/loot_tables/blocks/pizza_crust.json
 558546566f9155d50075b60482673734c59a2745 data/cook-it/loot_tables/blocks/toaster.json
 69b2846447371a622a7d936732fd4c1eb254f8d6 data/cook-it/loot_tables/blocks/blue_large_plate.json
-e7cdc6265ded81b9ee29da88af327c9d79a6633a data/cook-it/loot_tables/blocks/pizza_crust.json
 0bc118a3c7177076d987ccf3985397ad8a99cbcd data/cook-it/loot_tables/blocks/acacia_cutting_board.json
 a456dd4329fbccc27039312ad491c9930d645c24 data/cook-it/loot_tables/blocks/black_large_plate.json
 a807eda50aaa409ed0c2b96bb32959e988a7e4b4 data/cook-it/loot_tables/blocks/crimson_cutting_board.json
@@ -29,8 +29,8 @@ c30a855af11d3e4e17f7bf41bd84200f99b9680b data/cook-it/loot_tables/blocks/gray_bo
 65922b36cf456aa67029a3b70282549e46241df2 data/cook-it/loot_tables/blocks/lime_large_plate.json
 0e2c48160bda6f106018385efcf24fc31298fd01 data/cook-it/loot_tables/blocks/white_large_plate.json
 94012eeb09a67e63d349238762e8ed4ccb3cc960 data/cook-it/loot_tables/blocks/brown_large_plate.json
-2127ed723ad0d87f5b5eaf452aa3aa419ec212ea data/cook-it/loot_tables/blocks/white_bowl.json
 ba1f6149624b4b83084290bebc7aa56cfc2d840d data/cook-it/loot_tables/blocks/green_plate.json
+2127ed723ad0d87f5b5eaf452aa3aa419ec212ea data/cook-it/loot_tables/blocks/white_bowl.json
 c03c46a479b5a5082b636f95df26826d2eef06e5 data/cook-it/loot_tables/blocks/light_gray_bowl.json
 15a2188f3546591c6b9e3a3fc6095327065715e5 data/cook-it/loot_tables/blocks/pink_large_plate.json
 376096ed2888facbcbdad640b9efe53e46196c92 data/cook-it/loot_tables/blocks/green_large_plate.json

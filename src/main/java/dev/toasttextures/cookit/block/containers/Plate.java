@@ -10,7 +10,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.level.block.state.BlockState;
@@ -26,6 +25,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import dev.toasttextures.cookit.registries.CookItItems;
 
@@ -55,58 +55,56 @@ public class Plate extends BaseEntityBlock {
     }
 
     @Override
-    public RenderShape getRenderShape(BlockState state) {
+    public @NotNull RenderShape getRenderShape(BlockState state) {
         return RenderShape.MODEL;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
-    public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext ctx) {
+    public @NotNull VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext ctx) {
         return SHAPES[state.getValue(COUNT) - 1];
     }
 
+    @SuppressWarnings("deprecation")
     @Override
-    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    public @NotNull InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (world.isClientSide) return InteractionResult.SUCCESS;
 
-        if (world.getBlockEntity(pos) instanceof PlateEntity blockEntity) {
-            int plateAmount = state.getValue(COUNT);
-            ItemStack heldItem = player.getItemInHand(hand);
+        if (!(world.getBlockEntity(pos) instanceof PlateEntity blockEntity)) return InteractionResult.PASS;
 
-            // If there is no item in the player's hand and there is more than one plate, give one plate
-            // Otherwise give back whatever is on the plate (because there's only one sooo)
+        int plateAmount = state.getValue(COUNT);
+        ItemStack heldItem = player.getItemInHand(hand);
+        ItemStack first = blockEntity.retrieve();
 
-            ItemStack first = blockEntity.retrieve();
-            if (heldItem.isEmpty()) {
-                if (player.isShiftKeyDown()) {
-                    blockEntity.dropAsContainer(player, world, this, pos);
-                    decreasePlates(state, world, pos);
-                } else if (!first.isEmpty()) {
-                    player.getInventory().placeItemBackInInventory(first);
-                } else {
-                    player.getInventory().placeItemBackInInventory(this.getCloneItemStack(world, pos, state));
-                    decreasePlates(state, world, pos);
-                }
-                return InteractionResult.SUCCESS;
+        // If there is no item in the player's hand and there is more than one plate, give one plate
+        // Otherwise give back whatever is on the plate (because there's only one sooo)
+        if (heldItem.isEmpty()) {
+            if (player.isShiftKeyDown()) {
+                decreasePlates(state, world, pos);
+                return blockEntity.dropAsContainer(player, world, this, pos, false);
+            } else if (!first.isEmpty()) {
+                player.getInventory().placeItemBackInInventory(first);
+            } else {
+                player.getInventory().placeItemBackInInventory(this.getCloneItemStack(world, pos, state));
+                decreasePlates(state, world, pos);
             }
+            return InteractionResult.SUCCESS;
+        } else if (heldItem.is(CookItItems.FRYER_BASKET)) return InteractionResult.PASS;
 
-            if (heldItem.is(CookItItems.FRYER_BASKET)) return InteractionResult.PASS;
-
-            // Add another plate if the player is holding one of the same type and there aren't already 4 on there.
-            if (heldItem.is(this.asItem()) && plateAmount < 4 && first.isEmpty()) {
-                ItemStack stored = ItemStorage.getStoredItem(heldItem);
-                if (!stored.isEmpty()) {
-                    blockEntity.setItem(0, heldItem.split(1));
-                }
-                world.playSound(null, pos, SoundEvents.COPPER_PLACE, SoundSource.BLOCKS, 1, 1.75f);
-                world.setBlockAndUpdate(pos, state.setValue(COUNT, plateAmount + 1));
-                // Add whatever is in the player's hand, as long as it's food (sorry)
-            } else if (first.isEmpty() && heldItem.isEdible()) {
+        // Add another plate if the player is holding one of the same type and there aren't already 4 on there.
+        if (heldItem.is(this.asItem()) && plateAmount < 4 && first.isEmpty()) {
+            ItemStack stored = ItemStorage.getStoredItem(heldItem);
+            if (!stored.isEmpty()) {
                 blockEntity.setItem(0, heldItem.split(1));
-                world.playSound(null, pos, SoundEvents.ITEM_PICKUP, SoundSource.BLOCKS, 1, 1.0f);
-                world.sendBlockUpdated(pos, state, state, UPDATE_CLIENTS);
             }
+            world.playSound(null, pos, SoundEvents.COPPER_PLACE, SoundSource.BLOCKS, 1, 1.75f);
+            world.setBlockAndUpdate(pos, state.setValue(COUNT, plateAmount + 1));
+            // Add whatever is in the player's hand, as long as it's food (sorry)
+        } else if (first.isEmpty() && heldItem.isEdible()) {
+            blockEntity.setItem(0, heldItem.split(1));
+            Container.playRetrievalSound(world, pos);
+            world.sendBlockUpdated(pos, state, state, UPDATE_CLIENTS);
         }
-
 
         return InteractionResult.SUCCESS;
     }
@@ -130,7 +128,7 @@ public class Plate extends BaseEntityBlock {
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable BlockGetter world, List<Component> tooltip, TooltipFlag options) {
-        Container.appendTooltip(stack, tooltip, item -> item != Items.AIR);
+        Container.appendTooltip(stack, tooltip);
     }
 
     @Nullable

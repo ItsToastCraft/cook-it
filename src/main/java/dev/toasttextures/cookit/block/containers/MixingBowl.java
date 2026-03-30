@@ -1,6 +1,5 @@
 package dev.toasttextures.cookit.block.containers;
 
-import dev.toasttextures.cookit.block.entity.CookingBlockEntity;
 import dev.toasttextures.cookit.block.entity.MixingBowlEntity;
 import dev.toasttextures.cookit.registries.CookItItems;
 import net.minecraft.world.level.block.BaseEntityBlock;
@@ -14,7 +13,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.sounds.SoundEvents;
@@ -30,6 +28,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class MixingBowl extends BaseEntityBlock implements EntityBlock {
@@ -37,7 +36,8 @@ public class MixingBowl extends BaseEntityBlock implements EntityBlock {
 
     public static BooleanProperty CONTAINS_LIQUID = BooleanProperty.create("liquid");
 
-    public RenderShape getRenderShape(BlockState state) {
+
+    public @NotNull RenderShape getRenderShape(BlockState state) {
         return RenderShape.MODEL;
     }
     public MixingBowl(Properties settings) {
@@ -45,8 +45,9 @@ public class MixingBowl extends BaseEntityBlock implements EntityBlock {
         registerDefaultState(defaultBlockState().setValue(CONTAINS_LIQUID, false));
     }
 
+    @SuppressWarnings("deprecation")
     @Override
-    public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext ctx) {
+    public @NotNull VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext ctx) {
         return SHAPE;
     }
 
@@ -55,8 +56,9 @@ public class MixingBowl extends BaseEntityBlock implements EntityBlock {
         builder.add(CONTAINS_LIQUID);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
-    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    public @NotNull InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (world.isClientSide) return InteractionResult.SUCCESS;
 
         MixingBowlEntity entity = (MixingBowlEntity) world.getBlockEntity(pos);
@@ -93,17 +95,6 @@ public class MixingBowl extends BaseEntityBlock implements EntityBlock {
         }
         return InteractionResult.FAIL;
     }
-    public static void transferTo(ItemStack bowl, CookingBlockEntity to, int stack) {
-        CompoundTag nbt = bowl.getTagElement("BlockEntityTag");
-        if (nbt == null || !nbt.contains("Items")) return;
-
-        ListTag items = nbt.getList("Items", Tag.TAG_COMPOUND);
-        ItemStack item = ItemStack.of(items.getCompound(0));
-        if (item.is(CookItItems.GOOP)) {
-            to.setItem(stack, item);
-            items.getCompound(0).putInt("Count", item.getCount() - 1);
-        }
-    }
 
     @Override
     public void setPlacedBy(Level world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
@@ -122,14 +113,12 @@ public class MixingBowl extends BaseEntityBlock implements EntityBlock {
         }
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void tick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
         super.tick(state, world, pos, random);
         world.setBlockAndUpdate(pos, state.setValue(CONTAINS_LIQUID, true));
-
     }
-
-
 
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
