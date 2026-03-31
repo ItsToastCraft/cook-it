@@ -17,8 +17,11 @@ jobs:
         with:
           java-version: '21'
           distribution: 'graalvm'
+          cache: 'gradle'
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v5
+        with:
+          cache-read-only: false
       - name: build
         run: ./gradlew build
       - name: capture build artifacts
