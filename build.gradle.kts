@@ -13,10 +13,6 @@ base {
 
 repositories {
 	maven {
-			name = "ParchmentMC"
-			url = uri("https://maven.parchmentmc.org")
-		}
-	maven {
 		name = "Figura Maven"
 		url = uri("https://maven.figuramc.org/snapshots")
 		content {
@@ -50,7 +46,7 @@ tasks.processResources {
 }
 
 tasks.withType<JavaCompile>().configureEach {
-	options.release = 21
+	options.release = 17
 }
 
 java {
