@@ -1,5 +1,6 @@
 package dev.toasttextures.cookit.client.render.entity;
 
+import dev.toasttextures.cookit.CookIt;
 import dev.toasttextures.cookit.block.containers.MixingBowl;
 import dev.toasttextures.cookit.block.entity.MixingBowlEntity;
 import net.fabricmc.api.EnvType;
@@ -12,7 +13,6 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.world.item.ItemDisplayContext;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.core.registries.BuiltInRegistries;
 import com.mojang.math.Axis;
 
 @Environment(EnvType.CLIENT)
@@ -27,17 +27,18 @@ public class MixingBowlEntityRenderer implements BlockEntityRenderer<MixingBowlE
         BlockState state = blockEntity.getBlockState();
         if (state.getValue(MixingBowl.CONTAINS_LIQUID)) return;
 
-        for (int i = 0; i < blockEntity.getContainerSize(); i++) {
+        for (int i = 0; i < blockEntity.getContainerSize() - 1; i++) {
             ItemStack stack = blockEntity.getItem(i);
             if (stack.isEmpty()) continue;
             ItemRenderPosition pos = ITEM_RENDER_POSITIONS[i];
-            float height = BuiltInRegistries.ITEM.getKey(stack.getItem()).getNamespace().equals("minecraft") ? 0.25f : 0.5f;
+
+            float height = CookIt.isVanilla(stack) ? 0.25f : 0.5f;
 
             matrices.pushPose();
             matrices.scale(0.3125f,0.3125f,0.3125f);
-            matrices.translate(pos.x, height + pos.y, pos.z);
+            matrices.translate(pos.x(), height + pos.y(), pos.z());
             matrices.mulPose(Axis.XN.rotationDegrees(90));
-            matrices.mulPose(Axis.ZN.rotationDegrees(pos.angle));
+            matrices.mulPose(Axis.ZN.rotationDegrees(pos.extra()));
             client.getItemRenderer().renderStatic(stack, ItemDisplayContext.NONE, light, overlay, matrices, vertexConsumers, blockEntity.getLevel(), 0);
             matrices.popPose();
         }
@@ -45,12 +46,10 @@ public class MixingBowlEntityRenderer implements BlockEntityRenderer<MixingBowlE
 
     private static final ItemRenderPosition[] ITEM_RENDER_POSITIONS = new ItemRenderPosition[] {
             new ItemRenderPosition(1.0f, 0.0675f, 1.5f, 30.0f),
-            new ItemRenderPosition(2.125f, 0.125f, 0.875f, 18.7f),
+            new ItemRenderPosition(2.125f, 0.125f, 0.875f, 18.0f),
             new ItemRenderPosition(1.75f, 0.0675f, 1.75f, -30.0f),
             new ItemRenderPosition(1.125f, 0.0f, 1.0f, 120.0f),
-            new ItemRenderPosition(1.0f, 0.0f, 2.25f, 60f),
+            new ItemRenderPosition(1.0f, 0.0f, 2.25f, 60.0f),
             new ItemRenderPosition(2.25f, 0.0f, 2.125f, 72.0f)
     };
-
-    private record ItemRenderPosition(float x, float y, float z, float angle) {}
 }

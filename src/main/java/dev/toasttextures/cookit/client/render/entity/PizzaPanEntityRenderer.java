@@ -19,12 +19,12 @@ public class PizzaPanEntityRenderer implements BlockEntityRenderer<PizzaPanEntit
 
     @Override
     public int getViewDistance() {
-        return 16;
+        return 32;
     }
 
     @Override
     public void render(PizzaPanEntity blockEntity, float tickDelta, PoseStack matrices, MultiBufferSource vertexConsumers, int light, int overlay) {
-        render(blockEntity.getItem(0), matrices, vertexConsumers, blockEntity.getLevel(), light, overlay);
+        render(blockEntity.getFirst(), matrices, vertexConsumers, blockEntity.getLevel(), light, overlay);
     }
 
     public static void render(ItemStack stack, PoseStack matrices, MultiBufferSource vertexConsumers, Level world, int light, int overlay) {

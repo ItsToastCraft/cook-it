@@ -56,6 +56,7 @@ public class CookedPizza extends Pizza {
 
             if (pizzaAmount > 1) {
                 entity.setSliceCount(entity.getSliceCount() - 1);
+                world.sendBlockUpdated(pos, state, state, UPDATE_ALL);
             } else {
                 world.destroyBlock(pos, false);
             }

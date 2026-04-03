@@ -8,7 +8,6 @@ import net.minecraft.client.model.Model;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.model.PlayerModel;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.world.entity.player.Player;
 
@@ -19,7 +18,7 @@ public class ChefOutfitRenderer {
 
     public static void register() {
         ArmorRenderer renderer = (matrices, vertexConsumers, stack, entity, slot, light, contextModel) -> {
-            boolean shouldRender = !(contextModel instanceof PlayerModel<?>) || (FiguraCompatibility.renderArmorPart((Player) entity, slot));
+            boolean shouldRender = !(entity instanceof Player player) || (FiguraCompatibility.renderArmorPart(player, slot));
             if (!shouldRender) return;
 
             ChefOutfitItem armor = (ChefOutfitItem) stack.getItem();

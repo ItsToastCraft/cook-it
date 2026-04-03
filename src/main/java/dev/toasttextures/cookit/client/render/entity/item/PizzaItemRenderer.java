@@ -1,4 +1,4 @@
-package dev.toasttextures.cookit.client.render.entity;
+package dev.toasttextures.cookit.client.render.entity.item;
 
 import dev.toasttextures.cookit.block.entity.PizzaEntity;
 import dev.toasttextures.cookit.registries.CookItBlocks;

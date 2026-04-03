@@ -2,6 +2,7 @@ package dev.toasttextures.cookit.client.render.entity;
 
 import dev.toasttextures.cookit.block.entity.CuttingBoardEntity;
 import dev.toasttextures.cookit.registries.CookItItems;
+import it.unimi.dsi.fastutil.ints.Int2ObjectFunction;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
@@ -11,7 +12,6 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.world.item.ItemDisplayContext;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.Direction;
 import com.mojang.math.Axis;
 import dev.toasttextures.cookit.CookIt;
@@ -30,39 +30,26 @@ public class CuttingBoardEntityRenderer implements BlockEntityRenderer<CuttingBo
 
     @Override
     public void render(CuttingBoardEntity blockEntity, float tickDelta, PoseStack matrices, MultiBufferSource vertexConsumers, int light, int overlay) {
-        final Minecraft client = Minecraft.getInstance();
-
-        ItemStack stack = blockEntity.getItem(0);
+        ItemStack stack = blockEntity.getFirst();
         if (stack.isEmpty()) return;
 
+        final Minecraft client = Minecraft.getInstance();
         Direction dir = blockEntity.getBlockState().getValue(HORIZONTAL_FACING);
         Level world = blockEntity.getLevel();
-        float facing = CookIt.DIRECTION_TO_FLOAT.getOrDefault(dir, 0.0f);
 
-        if (BuiltInRegistries.ITEM.getKey(stack.getItem()).getNamespace().equals("minecraft")) {
+        if (CookIt.isVanilla(stack)) {
             Vec2 position = ITEM_POSITIONS.get(dir);
             matrices.mulPose(Axis.XP.rotationDegrees(90));
             matrices.translate(position.x, position.y, -0.125f);
         } else {
             matrices.translate(0.5f, 0.4375f, 0.5f);
         }
-        matrices.mulPose(Axis.YP.rotationDegrees(facing));
+        matrices.mulPose(Axis.YN.rotationDegrees(dir.toYRot()));
 
         if (stack.is(CookItItems.RAW_DONUT) || stack.is(CookItItems.RAW_CINNAMON_ROLL)) {
-            for (int i = 0; i < stack.getCount(); i++) {
-                matrices.scale(0.5f, 0.5f, 0.5f);
-                matrices.translate(0.375f - 0.675f * (i % 2), -0.25f, 0.375 - 0.675f * (double) (i / 2));
-                client.getItemRenderer().renderStatic(stack, ItemDisplayContext.NONE, light, overlay, matrices, vertexConsumers, world, 0);
-                matrices.popPose();
-            }
+            renderInPlace(client, stack, RAW_CINNAMON_ROLL_POS, matrices, vertexConsumers, light, overlay);
         } else if (stack.is(CookItItems.RAW_CROISSANT)) {
-            for (int i = 0; i < stack.getCount(); i++) {
-                matrices.pushPose();
-                matrices.scale(0.5f, 0.5f, 0.5f);
-                matrices.translate(-i / 2.5f + 0.5625f, -0.25f, (i % 2) / 3.0f - 0.125f);
-                client.getItemRenderer().renderStatic(stack, ItemDisplayContext.NONE, light, overlay, matrices, vertexConsumers, world, 0);
-                matrices.popPose();
-            }
+            renderInPlace(client, stack, RAW_CROISSANT_POS, matrices, vertexConsumers, light, overlay);
         } else {
             matrices.pushPose();
             matrices.scale(0.75f, 0.75f, 0.75f);
@@ -70,6 +57,20 @@ public class CuttingBoardEntityRenderer implements BlockEntityRenderer<CuttingBo
             matrices.popPose();
         }
     }
+
+    private static void renderInPlace(Minecraft client, ItemStack stack, Int2ObjectFunction<ItemRenderPosition> location, PoseStack matrices, MultiBufferSource vertexConsumers, int light, int overlay) {
+        for (int i = 0; i < stack.getCount(); i++) {
+            ItemRenderPosition pos = location.apply(i);
+            matrices.pushPose();
+            matrices.scale(pos.extra(), pos.extra(), pos.extra());
+            matrices.translate(pos.x(), pos.y(), pos.z());
+            client.getItemRenderer().renderStatic(stack, ItemDisplayContext.NONE, light, overlay, matrices, vertexConsumers, null, 0);
+            matrices.popPose();
+        }
+    }
+
+    private static final Int2ObjectFunction<ItemRenderPosition> RAW_CROISSANT_POS = (i) -> new ItemRenderPosition(-i / 2.5f + 0.5625f, -0.25f, (i % 2) / 3.0f - 0.125f, 0.5f);
+    private static final Int2ObjectFunction<ItemRenderPosition> RAW_CINNAMON_ROLL_POS = (i) -> new ItemRenderPosition(0.375f - 0.675f * (i % 2), -0.25f, 0.375f - 0.675f * (i / 2.0f), 0.5f);
 
     private static final EnumMap<Direction, Vec2> ITEM_POSITIONS = new EnumMap<>(Map.of(
         Direction.NORTH, new Vec2(0.5f, 0.625f),

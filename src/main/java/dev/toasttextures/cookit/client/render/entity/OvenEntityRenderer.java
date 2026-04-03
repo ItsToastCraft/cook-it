@@ -7,10 +7,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemDisplayContext;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.core.Direction;
 import com.mojang.math.Axis;
 
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING;
@@ -29,9 +29,9 @@ public class OvenEntityRenderer implements BlockEntityRenderer<OvenEntity> {
             if (stack.isEmpty()) continue;
             matrices.pushPose();
             matrices.scale(0.875f, 0.875f, 0.875f);
-
             matrices.translate(0.5625f, 0.3f * i + 0.9125f, 0.5625f);
-            if (blockEntity.getBlockState().getValue(HORIZONTAL_FACING).getAxis() == net.minecraft.core.Direction.Axis.Z) {
+
+            if (blockEntity.getBlockState().getValue(HORIZONTAL_FACING).getAxis() == Direction.Axis.Z) {
                 matrices.mulPose(Axis.YP.rotationDegrees(90));
             }
 

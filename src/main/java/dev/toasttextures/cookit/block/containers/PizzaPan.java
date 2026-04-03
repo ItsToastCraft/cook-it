@@ -2,11 +2,11 @@ package dev.toasttextures.cookit.block.containers;
 
 import dev.toasttextures.cookit.block.entity.PizzaPanEntity;
 import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionHand;
@@ -42,15 +42,15 @@ public class PizzaPan extends BaseEntityBlock implements EntityBlock {
     @Override
     public @NotNull InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (world.isClientSide) { return InteractionResult.SUCCESS; }
-        PizzaPanEntity blockEntity = (PizzaPanEntity) world.getBlockEntity(pos);
-        if (blockEntity == null) { return InteractionResult.PASS; }
+
+        if (!(world.getBlockEntity(pos) instanceof PizzaPanEntity blockEntity)) return InteractionResult.PASS;
 
         if (player.isShiftKeyDown()) return blockEntity.dropAsContainer(player, world, this, pos);
 
         ItemStack heldItem = player.getItemInHand(hand);
-
         boolean hasPizza = !blockEntity.isEmpty();
-        if (heldItem.getItem() instanceof BlockItem blockItem && blockItem.getBlock() instanceof Pizza && !hasPizza) {
+
+        if (Block.byItem(heldItem.getItem()) instanceof Pizza && !hasPizza) {
             blockEntity.setItem(0, heldItem.split(1));
         } else if (heldItem.isEmpty() && hasPizza) {
             player.getInventory().placeItemBackInInventory(blockEntity.getItem(0).split(1));

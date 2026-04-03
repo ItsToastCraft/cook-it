@@ -17,6 +17,7 @@ import com.mojang.math.Axis;
 import net.minecraft.world.phys.Vec2;
 
 import java.util.EnumMap;
+import java.util.Map;
 
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING;
 
@@ -27,17 +28,16 @@ public class FryerEntityRenderer implements BlockEntityRenderer<FryerEntity> {
 
     @Override
     public void render(FryerEntity entity, float tickDelta, PoseStack matrices, MultiBufferSource vertexConsumers, int light, int overlay) {
-        final Minecraft client = Minecraft.getInstance();
-
         ItemStack fryerBasket = entity.getFirst();
         if (!fryerBasket.is(CookItItems.FRYER_BASKET)) return; // Something went seriously wrong if there's something other than a basket here
 
+        final Minecraft client = Minecraft.getInstance();
         ItemStack storedItem = ItemStorage.getStoredItem(fryerBasket);
         Direction facing = entity.getBlockState().getValue(HORIZONTAL_FACING);
         Vec2 pos = ITEM_POSITIONS.get(facing);
 
         matrices.mulPose(Axis.YN.rotationDegrees(facing.toYRot()));
-        matrices.translate(pos.x, 0.625, pos.y);
+        matrices.translate(pos.x, 0.625f, pos.y);
 
         client.getItemRenderer().renderStatic(fryerBasket, ItemDisplayContext.NONE, light, overlay, matrices, vertexConsumers, entity.getLevel(), 0);
 
@@ -52,12 +52,10 @@ public class FryerEntityRenderer implements BlockEntityRenderer<FryerEntity> {
         }
     }
 
-    private static final EnumMap<Direction, Vec2> ITEM_POSITIONS = new EnumMap<>(Direction.class);
-
-    static  {
-        ITEM_POSITIONS.put(Direction.NORTH, new Vec2(-0.5f,-0.4375f));
-        ITEM_POSITIONS.put(Direction.SOUTH, new Vec2(0.5f, 0.5625f));
-        ITEM_POSITIONS.put(Direction.EAST, new Vec2(-0.5f,0.5625f));
-        ITEM_POSITIONS.put(Direction.WEST, new Vec2(0.5f, -0.4375f));
-    }
+    private static final EnumMap<Direction, Vec2> ITEM_POSITIONS = new EnumMap<>(Map.of(
+            Direction.NORTH, new Vec2(-0.5f,-0.4375f),
+            Direction.SOUTH, new Vec2(0.5f, 0.5625f),
+            Direction.EAST, new Vec2(-0.5f,0.5625f),
+            Direction.WEST, new Vec2(0.5f, -0.4375f)
+    ));
 }
