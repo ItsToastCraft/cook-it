@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "cook-it:plain_muffin",
+    "cook-it:blueberry_muffin",
+    "cook-it:chocolate_muffin",
+    "cook-it:chocolate_chip_muffin",
+    "cook-it:sweet_berry_muffin"
+  ]
+}

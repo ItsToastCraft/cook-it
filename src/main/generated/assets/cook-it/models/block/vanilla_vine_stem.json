@@ -1,6 +1,6 @@
 {
   "parent": "cook-it:block/plane",
   "textures": {
-    "texture": "cook-it:block/vanilla_vine_bottom"
+    "texture": "cook-it:block/vanilla_vine_stem_bottom"
   }
 }

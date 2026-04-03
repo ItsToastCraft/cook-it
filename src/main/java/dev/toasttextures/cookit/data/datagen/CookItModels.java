@@ -20,6 +20,7 @@ public class CookItModels {
     public static final TextureSlot VINE_KEY = TextureSlot.create("vine");
     public static final TextureSlot DECOR_KEY = TextureSlot.create("decor");
 
+    public static final ModelTemplate PLATE_ITEM_TEMPLATE = newParent("item/plate", PLATE_KEY);
     public static final ModelTemplate PLANE = newParent("block/plane", TextureSlot.TEXTURE);
     public static final ModelTemplate BOWL_TEMPLATE = newParent("block/bowl", BOWL_KEY);
     public static final ModelTemplate CUTTING_BOARD_TEMPLATE = newParent("block/cutting_board", CUTTING_BOARD_KEY);
@@ -35,18 +36,15 @@ public class CookItModels {
         return new ModelTemplate(Optional.of(CookIt.idOf(parent)), Optional.empty(), requiredTextureKeys);
     }
 
-    public static TextureMapping coloredTextureMap(TextureSlot type, Block block, String folder) {
-        return TextureMapping.singleSlot(type, setTextureOutput(block, "colored/" + folder + "/" + BuiltInRegistries.BLOCK.getKey(block).getPath()));
+    public static TextureMapping dyedTextureMap(TextureSlot type, Block block, String folder) {
+        return TextureMapping.singleSlot(type, getTextureLocation(block, "dyed/" + folder + "/"));
     }
 
-    public static ResourceLocation setTextureOutput(Block block, String path) {
-        return BuiltInRegistries.BLOCK.getKey(block).withPath("block/" + path);
-    }
-    public static ResourceLocation setModelOutput(Block block, String path) {
-        return CookIt.idOf(path + BuiltInRegistries.BLOCK.getKey(block).getPath());
+    public static ResourceLocation getTextureLocation(Block block, String path) {
+        return BuiltInRegistries.BLOCK.getKey(block).withPath(name -> "block/" + path + name);
     }
 
-    public static ResourceLocation setModelOutput(Block block, String path, String suffix) {
-        return CookIt.idOf(path + BuiltInRegistries.BLOCK.getKey(block).getPath() + suffix);
+    public static ResourceLocation getTextureLocation(Block block, String path, String suffix) {
+        return BuiltInRegistries.BLOCK.getKey(block).withPath((name) -> "block/" + path + name + suffix);
     }
 }

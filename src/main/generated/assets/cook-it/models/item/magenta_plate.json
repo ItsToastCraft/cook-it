@@ -1,3 +1,6 @@
 {
-  "parent": "cook-it:block/plate/magenta_plate_0"
+  "parent": "cook-it:item/plate",
+  "textures": {
+    "plate": "cook-it:block/dyed/plate/magenta_plate"
+  }
 }

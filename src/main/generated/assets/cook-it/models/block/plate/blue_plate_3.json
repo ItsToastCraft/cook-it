@@ -1,6 +1,6 @@
 {
   "parent": "cook-it:block/plate_4",
   "textures": {
-    "plate": "cook-it:block/colored/plate/blue_plate"
+    "plate": "cook-it:block/dyed/plate/blue_plate"
   }
 }

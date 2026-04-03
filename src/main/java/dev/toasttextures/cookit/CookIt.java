@@ -11,6 +11,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.Direction;
+import net.minecraft.world.item.ItemStack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,6 +44,10 @@ public class CookIt implements ModInitializer {
             }
             return true;
         });
+    }
+
+    public static boolean isVanilla(ItemStack stack) {
+        return BuiltInRegistries.ITEM.getKey(stack.getItem()).getNamespace().equals(ResourceLocation.DEFAULT_NAMESPACE);
     }
 
     public static final EnumMap<Direction, Float> DIRECTION_TO_FLOAT = new EnumMap<>(Map.of(

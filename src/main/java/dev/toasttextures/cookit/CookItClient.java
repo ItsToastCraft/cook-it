@@ -1,7 +1,6 @@
 package dev.toasttextures.cookit;
 
 import dev.toasttextures.cookit.block.containers.MixingBowl;
-import dev.toasttextures.cookit.block.containers.Plate;
 import dev.toasttextures.cookit.block.entity.MixingBowlEntity;
 import dev.toasttextures.cookit.client.CookItVisuals;
 import dev.toasttextures.cookit.client.render.entity.*;
@@ -11,7 +10,6 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
-import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.renderer.BiomeColors;
@@ -44,11 +42,6 @@ public class CookItClient implements ClientModInitializer {
                 CookItBlocks.PIZZA_CRUST,
                 CookItBlocks.VANILLA_VINE,
                 CookItBlocks.VANILLA_VINE_STEM);
-
-        for (Plate plate: CookItBlocks.PLATES) {
-            CookIt.LOGGER.info("registering {}", plate.toString());
-            BuiltinItemRendererRegistry.INSTANCE.register(plate, new PlateItemRenderer());
-        }
 
         ItemProperties.register(CookItItems.FIRE_EXTINGUISHER, new ResourceLocation("extinguisher_fuel"), (stack, world, entity, seed) -> (float) Math.round(((float) stack.getMaxDamage() - stack.getDamageValue()) / 100) / 10);
         ParticleFactoryRegistry.getInstance().register(CookIt.OIL_PARTICLE, OilParticle.Factory::new);

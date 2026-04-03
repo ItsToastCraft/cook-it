@@ -1,6 +1,6 @@
 {
   "parent": "cook-it:block/bowl",
   "textures": {
-    "bowl": "cook-it:block/colored/bowl/white_bowl"
+    "bowl": "cook-it:block/dyed/bowl/white_bowl"
   }
 }

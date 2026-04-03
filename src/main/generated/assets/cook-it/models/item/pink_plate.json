@@ -1,3 +1,6 @@
 {
-  "parent": "cook-it:block/plate/pink_plate_0"
+  "parent": "cook-it:item/plate",
+  "textures": {
+    "plate": "cook-it:block/dyed/plate/pink_plate"
+  }
 }
