@@ -2,6 +2,9 @@ package dev.toasttextures.cookit.block.entity;
 
 import dev.toasttextures.cookit.recipes.OvenRecipe;
 import dev.toasttextures.cookit.registries.CookItBlockEntities;
+import it.unimi.dsi.fastutil.Pair;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.SimpleContainer;
@@ -14,6 +17,7 @@ import net.minecraft.world.level.Level;
 import java.util.List;
 
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING;
+import static net.minecraft.world.level.block.state.properties.BlockStateProperties.OPEN;
 
 public class OvenEntity extends CookingBlockEntity<OvenRecipe> implements SlotProvider<OvenSlot> {
     private int[] progress = new int[2];
@@ -23,11 +27,11 @@ public class OvenEntity extends CookingBlockEntity<OvenRecipe> implements SlotPr
     public OvenEntity(BlockPos pos, BlockState state) {
         super(CookItBlockEntities.OVEN, OvenRecipe.Type.INSTANCE, pos, state, 2);
         Direction dir = state.getValue(HORIZONTAL_FACING);
-        List<Vec3> slots = OvenSlot.rotated(dir);
+        Pair<Vec3, Vec3> slots = OvenSlot.rotated(dir);
 
         this.slots = List.of(
-            createSlot(slots.get(0), this, 0),
-            createSlot(slots.get(1), this, 1)
+            createSlot(slots.left(), this, 0),
+            createSlot(slots.right(), this, 1)
         );
     }
 
@@ -88,14 +92,15 @@ public class OvenEntity extends CookingBlockEntity<OvenRecipe> implements SlotPr
         return new OvenSlot(pos, (OvenEntity) entity, index);
     }
 
-    @Override
-    public OvenSlot getSlotAt(Vec3 entityPos, Vec3 clickPos) {
-        return null;
-    }
-
     public static void tick(Level world, BlockPos pos, BlockState state, OvenEntity entity) {
-        for (OvenSlot slot : entity.getSlots()) {
-            slot.process(world, state);
+        if (state.getValue(OPEN)) return;
+
+        if (!world.isClientSide) {
+            for (OvenSlot slot : entity.getSlots()) {
+                ((ServerLevel) world).sendParticles(ParticleTypes.ASH, slot.pos.x, slot.pos.y, slot.pos.z, 1, 0.0, .0, 0.0, 0.0);
+
+                slot.process(world, state);
+            }
         }
     }
 
@@ -108,58 +113,6 @@ public class OvenEntity extends CookingBlockEntity<OvenRecipe> implements SlotPr
         progress[slot.index]++;
     }
 }
-
-//private int[] progress = new int[2];
-//private boolean done = false;
-//
-//public OvenEntity(BlockPos pos, BlockState state) {
-//    super(CookItBlockEntities.OVEN, pos, state, 2);
-//}
-//
-//@Override
-//public void readNbt(NbtCompound nbt) {
-//    super.readNbt(nbt);
-//    this.progress = nbt.getIntArray(PROGRESS_KEY);
-//}
-//
-//@Override
-//public void writeNbt(NbtCompound nbt) {
-//    nbt.putIntArray(PROGRESS_KEY, progress);
-//    super.writeNbt(nbt);
-//}
-//
-//public void tick(World world, BlockPos pos, BlockState state) {
-//    if (world.isClient()) {
-//        return;
-//    }
-//    world.setBlockState(pos, state.with(DONE, !this.getItems().isEmpty() && this.done));
-//    if (this.isEmpty()) { this.done = false; return;}
-//    if (state.get(OPEN)) { return; }
-//
-//    for (int i = 0; i < this.size(); i++) {
-//        ItemStack item = this.getStack(i);
-//        if(item.isEmpty()) { break; }
-//
-//        Optional<RecipeEntry<OvenRecipe>> recipe = getCurrentRecipe(item);
-//        if (item.isOf(CookItBlocks.MUFFIN_TIN.asItem())) {
-//            this.processMuffinRecipe(world, pos, state, i);
-//        } else if (recipe.isPresent()) {
-//            if (recipe.get().value().getMaxProgress() >= this.progress[i]) {
-//                this.progress[i]++;
-//                this.done = false;
-//            } else {
-//                craftRecipe(i);
-//                this.markDirty();
-//                this.done = true;
-//                world.setBlockState(pos, state.with(DONE, true));
-//
-//
-//                this.progress[i] = 0;
-//            }
-//        } else { this.done = true; break; }
-//    }
-//
-//}
 //
 //private void processMuffinRecipe(World world, BlockPos pos, BlockState state, int slot) {
 //    if (this.done) return;

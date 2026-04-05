@@ -34,8 +34,8 @@ import java.util.function.BiConsumer;
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.*;
 
 public class Microwave extends BaseEntityBlock {
-    private static final VoxelShape NORTH_SOUTH_SHAPE = box(3.0, 0.0, 1.0, 13.0, 8.0, 15.0);
-    private static final VoxelShape EAST_WEST_SHAPE = box(1.0, 0.0, 3.0, 15.0, 8.0, 13.0);
+    private static final VoxelShape NORTH_SOUTH_SHAPE = box(1.0, 0.0, 3.0, 15.0, 8.0, 13.0);
+    private static final VoxelShape EAST_WEST_SHAPE = box(3.0, 0.0, 1.0, 13.0, 8.0, 15.0);
 
     public Microwave(Properties settings) {
         super(settings);

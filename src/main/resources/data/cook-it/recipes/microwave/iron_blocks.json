@@ -1,0 +1,11 @@
+{
+  "type": "cook-it:microwaving",
+  "input": {
+    "tag": "minecraft:acacia_logs"
+  },
+  "output": {
+    "item": "minecraft:air"
+  },
+  "time": 150,
+  "event": "explosion"
+}

@@ -16,9 +16,14 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 
+import java.util.Collections;
+import java.util.List;
+
+import static dev.toasttextures.cookit.block.containers.MixingBowl.CONTAINS_LIQUID;
+
 public class MixingBowlEntity extends CookingBlockEntity<MixingBowlRecipe> implements DefaultedInventory {
     private static final String USES_KEY = "Uses";
-    private static final String COLOR_KEY = "Color";
+    public static final String COLOR_KEY = "Color";
     private int interactions = 0;
     private int uses = 0;
     private int color = 0;
@@ -46,16 +51,17 @@ public class MixingBowlEntity extends CookingBlockEntity<MixingBowlRecipe> imple
     }
 
     // Amount of times the entity has been clicked (mixed)
-    public int getClicks() {
+    public int getInteractions() {
         return this.interactions;
     }
 
     public boolean process(Level world) {
         if (world.isClientSide) return false;
 
-        MixingBowlRecipe recipe = getRecipes(0).stream().findFirst().orElse(null);
+        MixingBowlRecipe recipe = getRecipes().stream().findFirst().orElse(null);
 
         if (recipe == null) return false;
+
         boolean hasGoop = recipe.hasGoop();
         this.interactions++;
 
@@ -77,6 +83,7 @@ public class MixingBowlEntity extends CookingBlockEntity<MixingBowlRecipe> imple
 
     public void setGoopColor(int color) {
         this.color = color;
+        level.setBlockAndUpdate(getBlockPos(), getBlockState().setValue(CONTAINS_LIQUID, true));
     }
     public int getGoopColor() {
         return this.color;
@@ -92,8 +99,16 @@ public class MixingBowlEntity extends CookingBlockEntity<MixingBowlRecipe> imple
             output.setCount(1);
             output.save(goop.getOrCreateTagElement("Output"));
             output = goop;
+            setChanged();
         }
         this.setItem(0, output);
+    }
+
+    @Override
+    public List<MixingBowlRecipe> getRecipes() {
+        SimpleContainer inv = new SimpleContainer(getItems().subList(0, 6).toArray(ItemStack[]::new));
+        if (level == null) return Collections.emptyList();
+        return level.getRecipeManager().getRecipesFor(MixingBowlRecipe.Type.INSTANCE, inv, level);
     }
 
     @Override

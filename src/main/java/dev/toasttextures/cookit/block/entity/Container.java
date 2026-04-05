@@ -82,11 +82,10 @@ public class Container extends BlockEntity implements DefaultedInventory {
 
         ItemStack inserted = player.isCreative() ? stack.copyWithCount(1) : stack.split(1);
         setItem(available, inserted);
-        this.setChanged();
         if (level != null && !level.isClientSide) {
             playRetrievalSound(level, getBlockPos());
-            level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), UPDATE_ALL);
         }
+        setChanged();
 
         return true;
     }
@@ -98,12 +97,11 @@ public class Container extends BlockEntity implements DefaultedInventory {
     public ItemStack retrieve(Predicate<Item> exclusions) {
         for (ItemStack stack : getItems()) {
             if (!stack.isEmpty() && exclusions.test(stack.getItem())) {
-                this.setChanged();
                 if (level != null && !level.isClientSide) {
                     playRetrievalSound(level, getBlockPos());
-                    level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), UPDATE_ALL);
                 }
-                return stack;
+                setChanged();
+                return stack.split(1);
             }
         }
 
@@ -113,6 +111,15 @@ public class Container extends BlockEntity implements DefaultedInventory {
     @Override
     public @Nullable Packet<ClientGamePacketListener> getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this);
+    }
+
+    @Override
+    public void setChanged() {
+        super.setChanged();
+
+        if (hasLevel() && !level.isClientSide) {
+            level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), UPDATE_ALL);
+        }
     }
 
     @Override
@@ -218,7 +225,7 @@ public class Container extends BlockEntity implements DefaultedInventory {
         }
     }
 
-    public static void playRetrievalSound(Level world, BlockPos pos) {
+    public static void playRetrievalSound(@NotNull Level world, BlockPos pos) {
         world.playSound(null, pos, SoundEvents.ITEM_FRAME_REMOVE_ITEM, SoundSource.BLOCKS, 0.5f, 0.25f);
     }
 }

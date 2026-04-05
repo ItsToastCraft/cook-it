@@ -121,10 +121,7 @@ public interface DefaultedInventory extends Container {
      * Must be called after changes in the inventory, so that the game can properly save
      * the inventory contents and notify neighboring blocks of inventory changes.
      */
-    @Override
-    default void setChanged() {
-        // Override if you want behavior.
-    }
+    default void setChanged() {}
 
     /**
      * @return true if the player can use the inventory, false otherwise.

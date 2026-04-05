@@ -74,32 +74,31 @@ public class Plate extends BaseEntityBlock {
 
         int plateAmount = state.getValue(COUNT);
         ItemStack heldItem = player.getItemInHand(hand);
+
         ItemStack first = blockEntity.retrieve();
 
-        // If there is no item in the player's hand and there is more than one plate, give one plate
-        // Otherwise give back whatever is on the plate (because there's only one sooo)
         if (heldItem.isEmpty()) {
+            ItemStack returned;
             if (player.isShiftKeyDown()) {
                 decreasePlates(state, world, pos);
                 return blockEntity.dropAsContainer(player, world, this, pos, false);
             } else if (!first.isEmpty()) {
-                player.getInventory().placeItemBackInInventory(first);
+                returned = first;
             } else {
-                player.getInventory().placeItemBackInInventory(this.getCloneItemStack(world, pos, state));
+                returned = this.getCloneItemStack(world, pos, state);
                 decreasePlates(state, world, pos);
             }
+            player.getInventory().placeItemBackInInventory(returned);
             return InteractionResult.SUCCESS;
         } else if (heldItem.is(CookItItems.FRYER_BASKET)) return InteractionResult.PASS;
 
-        // Add another plate if the player is holding one of the same type and there aren't already 4 on there.
         if (heldItem.is(this.asItem()) && plateAmount < 4 && first.isEmpty()) {
             ItemStack stored = ItemStorage.getStoredItem(heldItem);
             if (!stored.isEmpty()) {
-                blockEntity.setItem(0, heldItem.split(1));
+                blockEntity.setItem(0, stored);
             }
             world.playSound(null, pos, SoundEvents.COPPER_PLACE, SoundSource.BLOCKS, 1, 1.75f);
             world.setBlockAndUpdate(pos, state.setValue(COUNT, plateAmount + 1));
-            // Add whatever is in the player's hand, as long as it's food (sorry)
         } else if (first.isEmpty() && heldItem.isEdible()) {
             blockEntity.setItem(0, heldItem.split(1));
             Container.playRetrievalSound(world, pos);

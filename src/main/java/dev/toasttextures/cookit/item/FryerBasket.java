@@ -1,6 +1,9 @@
 package dev.toasttextures.cookit.item;
 
 import dev.toasttextures.cookit.block.entity.Container;
+import dev.toasttextures.cookit.block.entity.Transferable;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.SlotAccess;
@@ -9,7 +12,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.ClickAction;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -32,6 +37,16 @@ public class FryerBasket extends Item {
         }
 
         return true;
+    }
+
+    @Override
+    public @NotNull InteractionResult useOn(UseOnContext context) {
+        BlockPos pos = context.getClickedPos();
+
+        if (context.getLevel().getBlockEntity(pos) instanceof Transferable transferable) {
+            transferable.attemptTransfer(context.getPlayer(), context.getItemInHand());
+        }
+        return InteractionResult.SUCCESS;
     }
 
     public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag context) {

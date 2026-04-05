@@ -97,8 +97,6 @@ public class CookItModelProvider extends FabricModelProvider {
             Block vinePlant = CookItBlocks.VANILLA_VINE;
             ResourceLocation id = getModelLocation(vinePlant);
 
-            CookIt.LOGGER.info(String.valueOf(id));
-
             TextureMapping BASE = TextureMapping.singleSlot(TextureSlot.TEXTURE, id);
             TextureMapping DECOR = TextureMapping.singleSlot(VINE_KEY, id).put(DECOR_KEY, id.withSuffix("_decor"));
             TextureMapping HARVESTABLE = TextureMapping.singleSlot(VINE_KEY, id.withSuffix( "_done")).put(DECOR_KEY, id.withSuffix( "_decor_done"));

@@ -10,13 +10,9 @@ import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.EnumMap;
-import java.util.Map;
 
 public class CookIt implements ModInitializer {
     public static final String MOD_ID = "cook-it";
@@ -49,11 +45,4 @@ public class CookIt implements ModInitializer {
     public static boolean isVanilla(ItemStack stack) {
         return BuiltInRegistries.ITEM.getKey(stack.getItem()).getNamespace().equals(ResourceLocation.DEFAULT_NAMESPACE);
     }
-
-    public static final EnumMap<Direction, Float> DIRECTION_TO_FLOAT = new EnumMap<>(Map.of(
-            Direction.NORTH, 0.0f,
-            Direction.SOUTH, 180.0f,
-            Direction.EAST, 90.0f,
-            Direction.WEST, 270.0f
-    ));
 }

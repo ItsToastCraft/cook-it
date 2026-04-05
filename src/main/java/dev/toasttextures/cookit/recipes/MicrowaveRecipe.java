@@ -6,6 +6,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.GsonHelper;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -15,6 +16,8 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 
 import java.util.Objects;
+
+import static dev.toasttextures.cookit.registries.CookItRecipes.validateItemStack;
 
 public class MicrowaveRecipe implements Recipe<SimpleContainer> {
     private final ResourceLocation id;
@@ -33,9 +36,7 @@ public class MicrowaveRecipe implements Recipe<SimpleContainer> {
 
     @Override
     public boolean matches(SimpleContainer inventory, Level world) {
-        if (world.isClientSide()) {
-            return false;
-        }
+        if (world.isClientSide()) return false;
         return input.test(inventory.getItem(0));
     }
 
@@ -124,7 +125,13 @@ public class MicrowaveRecipe implements Recipe<SimpleContainer> {
 
         @Override
         public MicrowaveRecipe fromJson(ResourceLocation id, JsonObject json) {
-            return null;
+            return new MicrowaveRecipe(
+                    id,
+                    Ingredient.fromJson(json.getAsJsonObject("input")),
+                    validateItemStack(json.getAsJsonObject("output"), true),
+                    GsonHelper.getAsInt(json, "time", 200),
+                    Microwave.Event.valueOf(GsonHelper.getAsString(json, "event", "none").toUpperCase())
+            );
         }
 
         @Override

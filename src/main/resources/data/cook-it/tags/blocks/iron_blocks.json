@@ -1,0 +1,10 @@
+{
+  "values": [
+    "#c:chests",
+    "#minecraft:iron_ores",
+    "minecraft:iron_bars",
+    "minecraft:iron_door",
+    "minecraft:iron_trapdoor",
+    "minecraft:iron_block"
+  ]
+}

@@ -15,6 +15,7 @@ import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -44,11 +45,14 @@ public class MixingBowlRecipe implements Recipe<SimpleContainer> {
         if (world.isClientSide) return false;
 
         StackedContents matcher = new StackedContents();
+        int added = 0;
         for (ItemStack stack : inventory.items) {
+            if (stack.isEmpty()) continue;
+            added++;
             matcher.accountStack(stack, 1);
         }
 
-        return matcher.contents.size() == this.ingredients.size() && matcher.canCraft(this, null);
+        return added == this.ingredients.size() && matcher.canCraft(this, null);
     }
 
     @Override
@@ -57,17 +61,17 @@ public class MixingBowlRecipe implements Recipe<SimpleContainer> {
     }
 
     @Override
-    public ResourceLocation getId() {
+    public @NotNull ResourceLocation getId() {
         return id;
     }
 
     @Override
-    public ItemStack assemble(SimpleContainer inventory, RegistryAccess registryManager) {
+    public @NotNull ItemStack assemble(SimpleContainer inventory, RegistryAccess registryManager) {
         return output.copy();
     }
 
     @Override
-    public NonNullList<Ingredient> getIngredients() {
+    public @NotNull NonNullList<Ingredient> getIngredients() {
         NonNullList<Ingredient> list = NonNullList.createWithCapacity(this.ingredients.size());
         list.addAll(ingredients);
         return list;

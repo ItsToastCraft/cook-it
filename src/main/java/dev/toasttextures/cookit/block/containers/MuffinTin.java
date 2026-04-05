@@ -4,6 +4,7 @@ import dev.toasttextures.cookit.block.entity.Container;
 import dev.toasttextures.cookit.block.entity.MuffinTinEntity;
 import dev.toasttextures.cookit.item.ItemStorage;
 import dev.toasttextures.cookit.registries.CookItItems;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.RenderShape;
@@ -22,6 +23,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -53,12 +55,14 @@ public class MuffinTin extends BaseEntityBlock implements EntityBlock {
         if (player.isShiftKeyDown()) return blockEntity.dropAsContainer(player, world, this, pos);
 
         ItemStack heldItem = player.getItemInHand(hand);
-        ItemStack retrieved = blockEntity.retrieve(item -> item != CookItItems.GOOP);
 
         if (!heldItem.isEmpty()) {
-            blockEntity.attemptTransfer(player, heldItem);
+            blockEntity.attemptTransfer(player, heldItem, hit.getLocation());
             return InteractionResult.CONSUME;
-        } else if (!retrieved.isEmpty()) {
+        }
+
+        ItemStack retrieved = blockEntity.retrieve(hit.getLocation(),item -> item != CookItItems.GOOP);
+        if (!retrieved.isEmpty()) {
             player.getInventory().placeItemBackInInventory(retrieved);
         }
 
@@ -74,6 +78,11 @@ public class MuffinTin extends BaseEntityBlock implements EntityBlock {
             }
             return itemStack.getItem();
         });
+    }
+
+    @Override
+    public void setPlacedBy(Level world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
+        Container.onPlaced(world, pos, itemStack);
     }
 
     @Override

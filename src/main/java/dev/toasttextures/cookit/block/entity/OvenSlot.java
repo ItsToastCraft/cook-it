@@ -1,6 +1,8 @@
 package dev.toasttextures.cookit.block.entity;
 
 import dev.toasttextures.cookit.recipes.OvenRecipe;
+import it.unimi.dsi.fastutil.Pair;
+import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.Direction;
@@ -11,14 +13,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static dev.toasttextures.cookit.CookIt.DIRECTION_TO_FLOAT;
 import static net.minecraft.world.level.block.Block.UPDATE_CLIENTS;
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.LIT;
 
 public class OvenSlot extends Slot<OvenEntity> {
-    private static final Map<Direction, List<Vec3>> DIR_TO_POS = new HashMap<>();
-    private static final Vec3 FIRST = new Vec3(0.0,0.0,0.0);
-    private static final Vec3 SECOND = new Vec3(0.0,0.0,0.0);
+    private static final Map<Direction, Vec3> OFFSETS = Map.of(
+            Direction.NORTH, new Vec3(0, 0, -0.5),
+            Direction.SOUTH, new Vec3(0, 0, 0.5),
+            Direction.EAST, new Vec3(0.5, 0, 0),
+            Direction.WEST, new Vec3(-0.5, 0, 0));
+
+    private static final Map<Direction, Pair<Vec3, Vec3>> ROTATION_CACHE = new HashMap<>();
 
     private int maxProgress;
     private ItemStack cachedItem = ItemStack.EMPTY;
@@ -29,12 +34,12 @@ public class OvenSlot extends Slot<OvenEntity> {
         super(pos, attachedEntity, index);
     }
 
-    public static List<Vec3> rotated(Direction dir) {
-        return DIR_TO_POS.computeIfAbsent(dir, direction -> {
-            float value = DIRECTION_TO_FLOAT.getOrDefault(direction, 0.0f);
-            return List.of(
-                    FIRST.xRot(value),
-                    SECOND.xRot(value)
+    public static Pair<Vec3, Vec3> rotated(Direction dir) {
+        return ROTATION_CACHE.computeIfAbsent(dir, _dir -> {
+            Vec3 offset = OFFSETS.get(_dir);
+            return Pair.of(
+                    offset.add(0.5, 0.625, 0.5),
+                    offset.add(0.5, 0.375, 0.5)
             );
         });
     }
@@ -71,16 +76,14 @@ public class OvenSlot extends Slot<OvenEntity> {
         return status;
     }
 
-    public void process(Level world, BlockState state) {
-        ItemStack stack = attachedEntity.getItem(index);
-        if (stack.isEmpty()) return;
-        if (status == CookingStatus.INVALID) return;
 
-        if (stack == cachedItem) {
-            tickRecipe(world, state);
-        } else {
-            loadRecipe(world, state);
-            cachedItem = stack;
+
+    public void process(Level world, BlockState state) {
+        ItemStack first = attachedEntity.getItem(index);
+
+        if (!first.isEmpty()) {
+            attachedEntity.setItem(index, cachedRecipe.assemble(new SimpleContainer(first), world.registryAccess()));
+            attachedEntity.reset();
         }
     }
 }

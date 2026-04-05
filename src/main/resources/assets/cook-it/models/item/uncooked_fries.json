@@ -1,0 +1,7 @@
+{
+	"parent": "cook-it:item/fries",
+	"textures": {
+		"fries": "cook-it:item/uncooked_fries"
+	}
+
+}

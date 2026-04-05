@@ -1,0 +1,11 @@
+{
+  "type": "cook-it:microwaving",
+  "input": {
+    "tag": "cook-it:iron_items"
+  },
+  "output": {
+    "item": "minecraft:air"
+  },
+  "time": 150,
+  "event": "explosion"
+}

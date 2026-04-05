@@ -1,0 +1,10 @@
+{
+  "type": "cook-it:microwaving",
+  "input": {
+    "item": "minecraft:diamond_block"
+  },
+  "output": {
+    "item": "minecraft:diamond"
+  },
+  "time": 70
+}

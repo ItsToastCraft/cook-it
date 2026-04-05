@@ -15,13 +15,13 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
 
 import static dev.toasttextures.cookit.registries.CookItTags.FRYABLE;
-import static net.minecraft.world.level.block.Block.UPDATE_ALL;
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.LIT;
 
 public class FryerEntity extends CookingBlockEntity<FryerRecipe> implements Transferable {
@@ -48,21 +48,20 @@ public class FryerEntity extends CookingBlockEntity<FryerRecipe> implements Tran
 
     // Ok so only accept fryer baskets OR fryable items if there's already an empty basket
     @Override
-    public void attemptTransfer(Player player, ItemStack stack) {
+    public void attemptTransfer(Player player, ItemStack stack, @Nullable Vec3 interactionPos) {
         ItemStack first = getFirst();
 
         if (first.isEmpty()) {
             if (stack.is(CookItItems.FRYER_BASKET)) {
                 setItem(0, stack.split(1));
+                setChanged();
             }
         } else if (stack.isEmpty()) {
             player.getInventory().placeItemBackInInventory(first.split(1));
+            setChanged();
         } else if (stack.is(FRYABLE)) {
             ItemStorage.setStoredItem(first, stack.split(1));
-            if (level != null && !level.isClientSide) {
-                level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), UPDATE_ALL);
-                setChanged();
-            }
+            setChanged();
         }
     }
 
@@ -90,7 +89,6 @@ public class FryerEntity extends CookingBlockEntity<FryerRecipe> implements Tran
 
         if (!getFirst().isEmpty() && status == CookingStatus.DONE) {
             ItemStorage.setStoredItem(first, recipe.assemble(new SimpleContainer(first), world.registryAccess()));
-            world.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), UPDATE_ALL);
         }
     }
 
@@ -131,7 +129,6 @@ public class FryerEntity extends CookingBlockEntity<FryerRecipe> implements Tran
         if (cachedRecipe == null) return;
 
         status = CookingStatus.PROCESSING;
-        world.setBlock(worldPosition, state.setValue(LIT, true), UPDATE_ALL);
         maxProgress = cachedRecipe.getMaxProgress();
         setChanged();
     }

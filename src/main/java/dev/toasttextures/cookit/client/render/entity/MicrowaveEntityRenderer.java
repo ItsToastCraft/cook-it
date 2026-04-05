@@ -36,7 +36,7 @@ public class MicrowaveEntityRenderer implements BlockEntityRenderer<MicrowaveEnt
 
     @Override
     public void render(MicrowaveEntity blockEntity, float tickDelta, PoseStack matrices, MultiBufferSource vertexConsumers, int light, int overlay) {
-        ItemStack stack = blockEntity.getItem(0);
+        ItemStack stack = blockEntity.getFirst();
         if (stack.isEmpty()) return;
 
         final Minecraft client = Minecraft.getInstance();
@@ -57,7 +57,6 @@ public class MicrowaveEntityRenderer implements BlockEntityRenderer<MicrowaveEnt
         }
         matrices.mulPose(Axis.YN.rotationDegrees(facing.toYRot()));
 
-        // Rotate the item
         if (blockEntity.getProgress() > 0) {
             matrices.mulPose(Axis.YN.rotationDegrees((world.getGameTime() + tickDelta) * 4));
         }

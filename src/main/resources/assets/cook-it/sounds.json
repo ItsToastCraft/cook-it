@@ -1,8 +1,8 @@
 {
-  "microwave": {
-    "subtitle": "subtitles.cook-it.microwave_hum",
+  "microwave_working": {
+    "subtitle": "subtitles.cook-it.microwave_working",
     "sounds": [
-      "cook-it:block/microwave"
+      "cook-it:block/microwave_working"
     ]
   },
   "microwave_beep": {

@@ -1,0 +1,11 @@
+{
+  "type": "cook-it:microwaving",
+  "input": {
+    "item": "minecraft:trident"
+  },
+  "output": {
+    "item": "minecraft:air"
+  },
+  "time": 150,
+  "event": "explosion"
+}
