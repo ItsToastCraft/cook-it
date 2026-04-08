@@ -33,7 +33,6 @@ public class MuffinTinEntityRenderer implements BlockEntityRenderer<MuffinTinEnt
 
             matrices.pushPose();
             matrices.scale(0.359375f,0.359375f,0.359375f);
-            //CookIt.LOGGER.info("{} {}", i, stack);
             matrices.translate((float) ( i / 3) * 0.8675 + 0.95625, 0.5625, (i % 3) * 0.69125 + 0.6125);
             client.getItemRenderer().renderStatic(stack, ItemDisplayContext.NONE, light, overlay, matrices, vertexConsumers, world, 0);
             matrices.popPose();

@@ -1,0 +1,10 @@
+{
+  "type": "cook-it:baking",
+  "input":{
+      "item": "cook-it:goop"
+  },
+  "output": {
+    "item": "cook-it:sweet_berry_muffin"
+  },
+  "time": 225
+}

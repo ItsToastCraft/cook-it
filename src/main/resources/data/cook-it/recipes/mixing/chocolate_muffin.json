@@ -22,7 +22,7 @@
   ],
 
   "output": {
-    "item": "cook-it:plain_muffin",
+    "item": "cook-it:chocolate_muffin",
     "count": 6
   },
   "interactions": 4,

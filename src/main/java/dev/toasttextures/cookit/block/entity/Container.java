@@ -161,6 +161,10 @@ public class Container extends BlockEntity implements DefaultedInventory {
         return container.getTagElement(CONTAINER_KEY);
     }
 
+    public static boolean isContainer(ItemStack container) {
+        return getContainerNbt(container) != null;
+    }
+
     public static ListTag getItemList(ItemStack container) {
         CompoundTag nbt = getContainerNbt(container);
         if (nbt == null) return new ListTag();
@@ -173,7 +177,11 @@ public class Container extends BlockEntity implements DefaultedInventory {
         if (nbt == null) return NonNullList.withSize(1, ItemStack.EMPTY);
 
         ListTag containerNbt = getItemList(container);
-        int size = containerNbt.isEmpty() ? 1 : containerNbt.size();
+        int size = 1;
+        if (!containerNbt.isEmpty()) {
+            CompoundTag lastElem = containerNbt.getCompound(containerNbt.size() - 1);
+            size = lastElem.getByte("Slot") + 1;
+        }
         NonNullList<ItemStack> items = NonNullList.withSize(size, ItemStack.EMPTY);
 
         ContainerHelper.loadAllItems(nbt, items);

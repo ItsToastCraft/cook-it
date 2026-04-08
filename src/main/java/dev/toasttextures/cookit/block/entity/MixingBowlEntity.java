@@ -22,7 +22,7 @@ import java.util.List;
 import static dev.toasttextures.cookit.block.containers.MixingBowl.CONTAINS_LIQUID;
 
 public class MixingBowlEntity extends CookingBlockEntity<MixingBowlRecipe> implements DefaultedInventory {
-    private static final String USES_KEY = "Uses";
+    public static final String OUTPUT_KEY = "Output";
     public static final String COLOR_KEY = "Color";
     private int interactions = 0;
     private int uses = 0;
@@ -35,14 +35,12 @@ public class MixingBowlEntity extends CookingBlockEntity<MixingBowlRecipe> imple
     public void load(CompoundTag nbt) {
         super.load(nbt);
         this.interactions = nbt.getInt(INTERACTIONS_KEY);
-        this.uses = nbt.getInt(USES_KEY);
         this.color = nbt.getInt(COLOR_KEY);
     }
 
     @Override
     public void saveAdditional(CompoundTag nbt) {
         nbt.putInt(INTERACTIONS_KEY, interactions);
-        nbt.putInt(USES_KEY, uses);
         nbt.putInt(COLOR_KEY, color);
         super.saveAdditional(nbt);
     }

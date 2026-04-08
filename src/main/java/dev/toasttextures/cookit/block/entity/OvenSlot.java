@@ -2,18 +2,15 @@ package dev.toasttextures.cookit.block.entity;
 
 import dev.toasttextures.cookit.recipes.OvenRecipe;
 import it.unimi.dsi.fastutil.Pair;
-import net.minecraft.world.SimpleContainer;
+import it.unimi.dsi.fastutil.ints.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import static net.minecraft.world.level.block.Block.UPDATE_CLIENTS;
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.LIT;
 
 public class OvenSlot extends Slot<OvenEntity> {
@@ -25,10 +22,12 @@ public class OvenSlot extends Slot<OvenEntity> {
 
     private static final Map<Direction, Pair<Vec3, Vec3>> ROTATION_CACHE = new HashMap<>();
 
-    private int maxProgress;
+    private List<OvenRecipe> cachedRecipes = new ArrayList<>();
+    private int lastTicked = 0;
     private ItemStack cachedItem = ItemStack.EMPTY;
-    private OvenRecipe cachedRecipe = null;
     private CookingStatus status = CookingStatus.IDLE;
+
+    private final int[] maxProgress = new int[8];
 
     public OvenSlot(Vec3 pos, OvenEntity attachedEntity, int index) {
         super(pos, attachedEntity, index);
@@ -45,45 +44,80 @@ public class OvenSlot extends Slot<OvenEntity> {
     }
 
     private void tickRecipe(Level world, BlockState state) {
-        if (maxProgress <= attachedEntity.getProgress(index)) {
-            status = CookingStatus.DONE;
-            if (cachedRecipe == null && !world.isClientSide) {
-                world.setBlock(attachedEntity.getBlockPos(), state.setValue(LIT, false), UPDATE_CLIENTS);
-                attachedEntity.updateStatus(this);
-                attachedEntity.craft(world, cachedRecipe);
+        for (int i = 0; i < cachedRecipes.size(); i++) {
+            OvenRecipe recipe = cachedRecipes.get(i);
+            if (recipe == null) continue;
+            if (maxProgress[i] <= attachedEntity.getProgress(index)[i]) {
+                lastTicked = i;
+
+                status = CookingStatus.DONE;
+                if (!world.isClientSide) {
+                    world.setBlockAndUpdate(attachedEntity.getBlockPos(), state.setValue(LIT, false));
+                    attachedEntity.updateStatus(this);
+                    attachedEntity.craft(world, recipe);
+                }
+
+                reset();
+            } else {
+                attachedEntity.addProgress(this, i);
             }
-            attachedEntity.reset();
-        } else {
-            attachedEntity.addProgress(this);
         }
+    }
+
+    private void reset() {
+        status = CookingStatus.IDLE;
+        maxProgress[lastTicked] = 0;
+
+        attachedEntity.reset();
+        attachedEntity.setChanged();
+        lastTicked = -1;
     }
 
     private void loadRecipe(Level world, BlockState state) {
         if (world.isClientSide) return;
-        List<OvenRecipe> recipes = attachedEntity.getRecipes(index);
-        if (recipes.isEmpty()) return;
-        cachedRecipe = recipes.get(0);
+        cachedRecipes = attachedEntity.getRecipes(index);
 
-        if (cachedRecipe == null) return;
+        if (cachedRecipes.stream().allMatch(Objects::isNull)) return; // Since it's always going to have at least 1 null, therefore isEmpty would be useless
+
+        for (int i = 0; i < cachedRecipes.size(); i++) {
+            OvenRecipe recipe = cachedRecipes.get(i);
+            if (recipe == null) continue;
+            maxProgress[i] = recipe.getMaxProgress();
+        }
 
         status = CookingStatus.PROCESSING;
-        world.setBlock(attachedEntity.getBlockPos(), state.setValue(LIT, true), UPDATE_CLIENTS);
-        maxProgress = cachedRecipe.getMaxProgress();
+        world.setBlockAndUpdate(attachedEntity.getBlockPos(), state.setValue(LIT, true));
+
         attachedEntity.setChanged();
+    }
+
+    public int getLastTicked() {
+        return lastTicked;
     }
 
     public CookingStatus getStatus() {
         return status;
     }
 
-
-
     public void process(Level world, BlockState state) {
         ItemStack first = attachedEntity.getItem(index);
 
-        if (!first.isEmpty()) {
-            attachedEntity.setItem(index, cachedRecipe.assemble(new SimpleContainer(first), world.registryAccess()));
-            attachedEntity.reset();
+        if (first.isEmpty()) {
+            if (attachedEntity.getStatus() != CookingStatus.IDLE) {
+                world.setBlockAndUpdate(attachedEntity.getBlockPos(), state.setValue(LIT, false));
+                attachedEntity.reset();
+            }
+            return;
+        }
+
+        if (!ItemStack.matches(first, cachedItem)) {
+            if (status == CookingStatus.IDLE) {
+                attachedEntity.reset();
+                cachedItem = first.copy();
+                loadRecipe(world, state);
+            }
+        } else if (!cachedRecipes.isEmpty() && status == CookingStatus.PROCESSING) {
+            tickRecipe(world, state);
         }
     }
 }

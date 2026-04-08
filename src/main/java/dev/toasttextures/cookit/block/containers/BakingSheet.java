@@ -52,11 +52,11 @@ public class BakingSheet extends BaseEntityBlock {
         if (player.isShiftKeyDown()) return blockEntity.dropAsContainer(player, world, this, pos);
 
         ItemStack heldItem = player.getItemInHand(hand);
-        ItemStack retrieved = blockEntity.retrieve();
+        ItemStack retrieved;
 
         if (!heldItem.isEmpty()) {
             blockEntity.fillFirst(player, heldItem);
-        } else if (!retrieved.isEmpty()) {
+        } else if (!(retrieved = blockEntity.retrieve()).isEmpty()) {
             player.getInventory().placeItemBackInInventory(retrieved);
             Container.playRetrievalSound(world, pos);
         }

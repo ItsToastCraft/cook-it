@@ -9,21 +9,26 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 public interface SlotProvider<T extends Slot<?>> {
     List<T> getSlots();
 
     <E extends BlockEntity> T createSlot(Vec3 pos, E entity, int index);
-    
-    default T getSlotAt(Vec3 clickPos) {
+
+    default Optional<T> getSlotAt(Vec3 clickPos) {
         return getSlots().stream()
-                .min(Comparator.comparingDouble(slot -> clickPos.distanceToSqr(slot.pos)))
-                .orElse(getSlots().get(0));
+                .filter(slot -> clickPos.distanceToSqr(slot.pos) < 0.04)
+                .min(Comparator.comparingDouble(slot -> clickPos.distanceToSqr(slot.pos)));
     }
 
     default boolean fillAt(Player player, @NotNull Vec3 interactionPos, ItemStack stack) {
-        T slot = getSlotAt(interactionPos);
+        Optional<T> slotOpt = getSlotAt(interactionPos);
+
+        if (slotOpt.isEmpty()) return false;
+
+        T slot = slotOpt.get();
 
         if (!(slot.attachedEntity instanceof Container container)) return false; // Idk how you got here if you're not a container
         if (!container.getItem(slot.index).isEmpty()) return false;
@@ -35,7 +40,11 @@ public interface SlotProvider<T extends Slot<?>> {
     }
 
     default ItemStack retrieve(@NotNull Vec3 interactionPos, Predicate<Item> exclusions) {
-        T slot = getSlotAt(interactionPos);
+        Optional<T> slotOpt = getSlotAt(interactionPos);
+
+        if (slotOpt.isEmpty()) return ItemStack.EMPTY;
+
+        T slot = slotOpt.get();
 
         if (!(slot.attachedEntity instanceof Container container)) return ItemStack.EMPTY; // Idk how you got here if you're not a container
         ItemStack retrieved = container.getItem(slot.index);

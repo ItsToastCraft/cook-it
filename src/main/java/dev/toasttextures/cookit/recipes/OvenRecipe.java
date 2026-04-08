@@ -113,7 +113,7 @@ public class OvenRecipe implements Recipe<SimpleContainer> {
                     id,
                     Ingredient.fromJson(json.getAsJsonObject("input")),
                     validateItemStack(json.getAsJsonObject("output"), false),
-                    GsonHelper.getAsInt(json, "time")
+                    GsonHelper.getAsInt(json, "time", 150)
             );
         }
 

@@ -63,16 +63,14 @@ public class Oven extends BaseEntityBlock implements EntityBlock {
         }
 
         if (heldItem.isEmpty()) {
-            if (state.getValue(LIT)) {
-                ItemStack retrieved = blockEntity.retrieve();
-                if (!retrieved.isEmpty()) {
-                    player.getInventory().placeItemBackInInventory(retrieved);
-                }
+            ItemStack retrieved = blockEntity.retrieve(hit.getLocation(), item -> true);
+            if (!retrieved.isEmpty()) {
+                player.getInventory().placeItemBackInInventory(retrieved);
             } else {
                 openOven(world, pos, state, false);
             }
         } else if (Block.byItem(heldItem.getItem()).defaultBlockState().is(CookItTags.CONTAINERS)) {
-            return blockEntity.fillFirst(player, heldItem) ? InteractionResult.SUCCESS : InteractionResult.FAIL;
+            return blockEntity.fillAt(player, hit.getLocation(), heldItem) ? InteractionResult.SUCCESS : InteractionResult.FAIL;
         }
 
         return InteractionResult.SUCCESS;

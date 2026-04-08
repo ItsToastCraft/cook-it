@@ -2,9 +2,14 @@ package dev.toasttextures.cookit.block.entity;
 
 import dev.toasttextures.cookit.recipes.OvenRecipe;
 import dev.toasttextures.cookit.registries.CookItBlockEntities;
+import dev.toasttextures.cookit.registries.CookItItems;
 import it.unimi.dsi.fastutil.Pair;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.server.level.ServerLevel;
+import net.minecraft.core.NonNullList;
+import net.minecraft.nbt.IntArrayTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.SimpleContainer;
@@ -13,14 +18,17 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
+import java.util.*;
+import java.util.function.Predicate;
 
+import static dev.toasttextures.cookit.block.entity.MixingBowlEntity.OUTPUT_KEY;
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING;
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.OPEN;
 
 public class OvenEntity extends CookingBlockEntity<OvenRecipe> implements SlotProvider<OvenSlot> {
-    private int[] progress = new int[2];
+    private int[][] progress = new int[2][8];
     private OvenSlot completed = null;
 
     private final List<OvenSlot> slots;
@@ -30,34 +38,50 @@ public class OvenEntity extends CookingBlockEntity<OvenRecipe> implements SlotPr
         Pair<Vec3, Vec3> slots = OvenSlot.rotated(dir);
 
         this.slots = List.of(
-            createSlot(slots.left(), this, 0),
-            createSlot(slots.right(), this, 1)
+            createSlot(slots.right(), this, 0),
+            createSlot(slots.left(), this, 1)
         );
     }
 
     @Override
     public void load(CompoundTag nbt) {
         super.load(nbt);
-        progress = nbt.getIntArray(PROGRESS_KEY);
+        ListTag list = nbt.getList(PROGRESS_KEY, CompoundTag.TAG_INT_ARRAY);
+
+        for (int i = 0; i < list.size(); i++) {
+            progress[i] = list.getIntArray(i);
+        }
     }
 
     @Override
     protected void saveAdditional(CompoundTag nbt) {
-        nbt.putIntArray(PROGRESS_KEY, progress);
+        ListTag list = new ListTag();
+        for (int[] row : progress) {
+            list.add(new IntArrayTag(row));
+        }
+
+        nbt.put(PROGRESS_KEY, list);
         super.saveAdditional(nbt);
     }
 
     @Override
     public void craft(Level world, OvenRecipe recipe) {
-        if (completed == null) return;
-        if (!items.get(completed.index).isEmpty() && completed.getStatus() == CookingStatus.DONE) {
-            setItem(completed.index, recipe.assemble(new SimpleContainer(items.get(completed.index)), world.registryAccess()));
+        if (completed == null || recipe == null || completed.getLastTicked() == -1) return;
+        ItemStack container = items.get(completed.index);
+        if (!container.isEmpty() && completed.getStatus() == CookingStatus.DONE) {
+            NonNullList<ItemStack> stored = Container.getItems(container);
+            stored.set(completed.getLastTicked(), recipe.assemble(new SimpleContainer(stored.get(completed.getLastTicked())), world.registryAccess()));
+            ContainerHelper.saveAllItems(container.getTagElement(CONTAINER_KEY), stored);
+
+            setItem(completed.index, container);
+            setChanged();
         }
     }
 
     @Override
     public void reset() {
-        progress[completed.index] = 0;
+        if (completed == null) return;
+        progress[completed.index][completed.getLastTicked()] = 0;
         completed = null;
         setChanged();
     }
@@ -97,107 +121,63 @@ public class OvenEntity extends CookingBlockEntity<OvenRecipe> implements SlotPr
 
         if (!world.isClientSide) {
             for (OvenSlot slot : entity.getSlots()) {
-                ((ServerLevel) world).sendParticles(ParticleTypes.ASH, slot.pos.x, slot.pos.y, slot.pos.z, 1, 0.0, .0, 0.0, 0.0);
-
                 slot.process(world, state);
             }
         }
     }
 
-    public int getProgress(int index) {
+    public int[] getProgress(int index) {
         return progress[index];
     }
 
-    // Just so that it can't be called by a random class
-    public void addProgress(OvenSlot slot) {
-        progress[slot.index]++;
+    public void addProgress(OvenSlot slot, int index) {
+        progress[slot.index][index]++;
+    }
+
+    @Override
+    public List<OvenRecipe> getRecipes(int slot) {
+        if (!Container.isContainer(getItem(slot))) return Collections.emptyList();
+
+        List<ItemStack> items = Container.getItems(getItem(slot));
+        SimpleContainer inv;
+        List<OvenRecipe> collected = new ArrayList<>(8);
+
+        if (level == null) return Collections.emptyList();
+
+        itemLoop:
+        for (ItemStack item : items) {
+            inv = new SimpleContainer(item);
+
+            if (item.is(CookItItems.GOOP)) {
+                List<OvenRecipe> recipes = level.getRecipeManager().getRecipesFor(OvenRecipe.Type.INSTANCE, inv, level);
+
+                CompoundTag root = item.getTag();
+                if (root == null) continue;
+                CompoundTag nbt = root.getCompound(OUTPUT_KEY);
+                if (nbt.isEmpty()) continue;
+                ItemStack stored = ItemStack.of(nbt);
+                for (OvenRecipe recipe : recipes) {
+
+                    if (ItemStack.isSameItem(recipe.getResultItem(null), stored)) {
+                        collected.add(recipe);
+                        continue itemLoop;
+                    }
+                }
+                collected.add(null);
+            } else {
+                Optional<OvenRecipe> recipe = level.getRecipeManager().getRecipeFor(OvenRecipe.Type.INSTANCE, inv, level);
+                collected.add(recipe.orElse(null)); // I'm so evil who cares about optionals???
+            }
+        }
+
+        return collected;
+    }
+    @Override
+    public ItemStack retrieve(@NotNull Vec3 interactionPos, Predicate<Item> exclusions) {
+        Optional<OvenSlot> slotOpt = getSlotAt(interactionPos);
+
+        if (slotOpt.isEmpty()) return ItemStack.EMPTY;
+
+        return slotOpt.get().getStatus() != CookingStatus.PROCESSING ? super.retrieve(exclusions) : ItemStack.EMPTY;
     }
 }
-//
-//private void processMuffinRecipe(World world, BlockPos pos, BlockState state, int slot) {
-//    if (this.done) return;
-//    ItemStack muffinTin = this.getStack(slot);
-//
-//    NbtList nbtList = new NbtList();
-//    ArrayList<ItemStack> containerItems = CookingBlockEntity.getContainerItems(muffinTin);
-//
-//    if (400 >= this.progress[slot]) {
-//        this.progress[slot]++;
-//        this.done = false;
-//    } else {
-//        for (int i = 0; i < containerItems.size(); i++) {
-//            NbtCompound nbtCompound = new NbtCompound(); // Create a new compound for each iteration
-//            nbtCompound.putByte("Slot", (byte) i);
-//            ItemStack stack = containerItems.get(i);
-//            if (stack.isOf(CookItItems.GOOP)) {
-//                ItemStack muffin = ItemStack.fromNbt(stack.getSubNbt("output"));
-//                muffin.writeNbt(nbtCompound);
-//            } else {
-//                containerItems.get(i).writeNbt(nbtCompound);
-//            }
-//            nbtList.add(nbtCompound);
-//        }
-//        muffinTin.getOrCreateSubNbt("BlockEntityTag").put("Items", nbtList);
-//        this.markDirty();
-//        this.done = true;
-//        world.setBlockState(pos, state.with(DONE, true));
-//        this.progress[slot] = 0;
-//        world.playSound(null, this.getPos(), SoundEvent.of(new Identifier("block.note_block.xylophone")), SoundCategory.BLOCKS, 3.0f, 1.5f);
-//        world.playSound(null, this.getPos(), SoundEvent.of(new Identifier("block.note_block.xylophone")), SoundCategory.BLOCKS, 3.0f, 2f);
-//        world.playSound(null, this.getPos(), SoundEvent.of(new Identifier("block.note_block.xylophone")), SoundCategory.BLOCKS, 3.0f, 2.5f);
-//
-//    }
-//
-//
-//}
-//
-//private void craftRecipe(int index) {
-//    ItemStack item = this.getStack(index);
-//    if (CookingBlockEntity.isContainer(item)) {
-//        ArrayList<ItemStack> containerItems = CookingBlockEntity.getContainerItems(item);
-//        NbtList nbtList = new NbtList();
-//
-//        for (int i = 0; i < containerItems.size(); i++) {
-//            NbtCompound nbtCompound = new NbtCompound(); // Create a new compound for each iteration
-//            nbtCompound.putByte("Slot", (byte) i);
-//
-//            Optional<RecipeEntry<OvenRecipe>> recipe = getCurrentRecipe(containerItems.get(i));
-//            if (recipe.isPresent()) {
-//                if (!containerItems.get(i).isEmpty() && recipe.get().value().getMaxProgress() <= this.progress[index]) {
-//                    ItemStack output = recipe.get().value().craft(new SimpleInventory(item), this.world.getRegistryManager());
-//                    if (containerItems.get(i).getNbt() != null) {
-//                        output.setNbt(containerItems.get(i).getNbt());
-//                    }
-//                    output.writeNbt(nbtCompound);
-//                }
-//            } else {
-//                containerItems.get(i).writeNbt(nbtCompound);
-//            }
-//            nbtList.add(nbtCompound);
-//        }
-//        item.getOrCreateSubNbt("BlockEntityTag").put("Items", nbtList);
-//    } else {
-//        Optional<RecipeEntry<OvenRecipe>> recipe = getCurrentRecipe(item);
-//        NbtCompound nbtCompound = item.getOrCreateNbt();
-//        this.removeStack(index, 1);
-//        ItemStack result = recipe.get().value().craft(new SimpleInventory(item), this.world.getRegistryManager());
-//        result.setNbt(nbtCompound);
-//        this.setStack(index, result);
-//    }
-//    assert world != null;
-//    world.playSound(null, this.getPos(), SoundEvent.of(new Identifier("block.note_block.xylophone")), SoundCategory.BLOCKS, 3.0f, 1.5f);
-//}
-//
-//public static void tick(World world, BlockPos pos, BlockState state, OvenEntity entity) {
-//    if (world.isClient) return;
-//    ItemStack first = entity.items.getFirst();
-//    if (first.isEmpty()) {
-//        entity.status = CookingStatus.IDLE;
-//    } else if (!first.isOf(CookItItems.FRYER_BASKET)) {
-//        entity.status = CookingStatus.INVALID;
-//    } else if (first == entity.cachedItem) {
-//        entity.tickRecipe(world, state);
-//    } else {
-//        entity.loadRecipe(world, state);
-//    }
-//}

@@ -61,7 +61,7 @@ public class CookItClient implements ClientModInitializer {
         ColorProviderRegistry.ITEM.register((stack, tintIndex) -> {
             CompoundTag nbt = stack.getTag();
             if (nbt == null) return 0xF8D478;
-            return nbt.getInt("color");
+            return nbt.getInt(MixingBowlEntity.COLOR_KEY);
         }, CookItItems.GOOP);
     }
 }
