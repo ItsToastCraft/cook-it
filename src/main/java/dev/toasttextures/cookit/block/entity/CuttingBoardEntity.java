@@ -7,7 +7,6 @@ import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.StringTag;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -48,20 +47,19 @@ public class CuttingBoardEntity extends CookingBlockEntity<CuttingBoardRecipe> {
     }
 
     public boolean process(Level world, ItemStack tool, boolean shouldReset) {
-        ItemStack first = items.get(0);
+        ItemStack first = getFirst();
         if (world.isClientSide) return false;
 
         if (first.is(CookItBlocks.UNCOOKED_PIZZA.asItem())) {
             return craftPizza(tool);
         }
         List<CuttingBoardRecipe> recipes = getRecipes(0);
+
         if (recipes.isEmpty()) return false;
 
-        for (CuttingBoardRecipe recipe : getRecipes(0)) {
-            if (recipe.resets()) {
-                if (shouldReset && tool.isEmpty()) {
-                    craft(world, recipe);
-                }
+        for (CuttingBoardRecipe recipe : recipes) {
+            if (recipe.resets() && shouldReset && tool.isEmpty()) {
+                craft(world, recipe);
                 return true;
             }
             for (ItemStack stack : recipe.getTool()) {
@@ -85,16 +83,16 @@ public class CuttingBoardEntity extends CookingBlockEntity<CuttingBoardRecipe> {
     }
 
     public boolean craftPizza(ItemStack stack) {
-        ListTag toppings = PizzaTopping.parse(getItem(0).getTagElement(PizzaTopping.TOPPINGS_KEY));
-        if (toppings == null) return false;
-        if (toppings.size() == 3) return false;
-
         PizzaTopping topping = PizzaTopping.byItem(stack.getItem());
         if (topping == null) return false;
 
-        toppings.copy().add(StringTag.valueOf(topping.toString()));
+        ListTag toppings = PizzaTopping.parse(getFirst().getOrCreateTag()).copy();
+        if (toppings.size() == 3) return false;
+        toppings.add(topping.asNbt());
+
         stack.shrink(1);
-        getItem(0).getOrCreateTag().put(PizzaTopping.TOPPINGS_KEY, toppings);
+        getFirst().getTag().put(PizzaTopping.TOPPINGS_KEY, toppings);
+        setChanged();
         return true;
     }
 

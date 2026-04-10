@@ -14,10 +14,8 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.level.BlockGetter;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-
 public class Pizza extends BaseEntityBlock implements EntityBlock {
-    protected static final ArrayList<VoxelShape> SLICES = new ArrayList<>();
+    protected static final VoxelShape[] SLICES = new VoxelShape[4];
 
     public Pizza(Properties settings) {
         super(settings);
@@ -29,7 +27,7 @@ public class Pizza extends BaseEntityBlock implements EntityBlock {
 
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext ctx) {
-        return SLICES.get(0);
+        return SLICES[3];
     }
 
     @Override
@@ -47,9 +45,9 @@ public class Pizza extends BaseEntityBlock implements EntityBlock {
     }
 
     static {
-        SLICES.add(box(1.0, 0.0, 1.0, 8.0, 2.0, 8.0));
-        SLICES.add(box(1.0, 0.0, 1.0, 15.0, 2.0, 8.0));
-        SLICES.add(Shapes.or(SLICES.get(1), box(8.0, 0.0, 8.0, 15.0, 2.0, 15.0)));
-        SLICES.add(box(1.0, 0.0, 1.0, 15.0, 2.0, 15.0));
+        SLICES[0] = box(1.0, 0.0, 1.0, 8.0, 2.0, 8.0);
+        SLICES[1] = box(1.0, 0.0, 1.0, 15.0, 2.0, 8.0);
+        SLICES[2] = Shapes.or(SLICES[1], box(8.0, 0.0, 8.0, 15.0, 2.0, 15.0));
+        SLICES[3] = box(1.0, 0.0, 1.0, 15.0, 2.0, 15.0);
     }
 }

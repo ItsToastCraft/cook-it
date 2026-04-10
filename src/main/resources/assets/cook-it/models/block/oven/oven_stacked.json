@@ -1,0 +1,99 @@
+{
+	"credit": "Made by ToastTextures using Blockbench",
+	"textures": {
+		"oven_inside": "cook-it:block/oven_inside",
+		"oven_front": "cook-it:block/oven_front",
+		"oven_side": "cook-it:block/oven_side",
+		"oven_accessories": "cook-it:block/oven_accessories",
+		"particle": "#oven_side"
+	},
+	"elements": [
+		{
+			"from": [0, 0, 0],
+			"to": [16, 16, 16],
+			"rotation": {"angle": 0, "axis": "y", "origin": [-38, 0, 0]},
+			"faces": {
+				"north": {"uv": [0, 0, 16, 16], "texture": "#oven_front"},
+				"east": {"uv": [16, 0, 0, 16], "texture": "#oven_side"},
+				"south": {"uv": [0, 0, 16, 16], "texture": "#oven_side"},
+				"west": {"uv": [0, 0, 16, 16], "texture": "#oven_side"},
+				"up": {"uv": [0, 0, 16, 16], "texture": "#oven_side"},
+				"down": {"uv": [0, 0, 16, 16], "texture": "#oven_inside"}
+			}
+		},
+		{
+			"from": [0, 12.89, -0.61],
+			"to": [16.02, 15.91, 1.41],
+			"rotation": {"angle": 22.5, "axis": "x", "origin": [-30, 14.4, -0.1]},
+			"faces": {
+				"north": {"uv": [8, 2, 16, 3.5], "texture": "#oven_accessories"},
+				"east": {"uv": [9, 0, 8, 1.5], "texture": "#oven_accessories"},
+				"west": {"uv": [16, 0, 15, 1.5], "texture": "#oven_accessories"},
+				"up": {"uv": [8, 8.5, 0, 8], "texture": "#oven_accessories"},
+				"down": {"uv": [0, 8, 8, 8.5], "texture": "#oven_accessories"}
+			}
+		},
+		{
+			"from": [15, 14, 15],
+			"to": [1, 3, 0],
+			"rotation": {"angle": 0, "axis": "y", "origin": [-46, -1, 0]},
+			"faces": {
+				"north": {"uv": [1, 12, 15, 1], "texture": "#oven_inside"},
+				"east": {"uv": [1, 12, 15, 1], "texture": "#oven_inside"},
+				"west": {"uv": [1, 12, 15, 1], "texture": "#oven_inside"},
+				"up": {"uv": [1, 1, 15, 16], "texture": "#oven_inside"},
+				"down": {"uv": [1, 1, 15, 16], "texture": "#oven_inside"}
+			}
+		},
+		{
+			"from": [1, 11, -0.75],
+			"to": [15, 12, 0.25],
+			"rotation": {"angle": 0, "axis": "y", "origin": [-29, 1, 0.75]},
+			"faces": {
+				"north": {"uv": [1, 12, 15, 13], "texture": "#oven_front"},
+				"east": {"uv": [1, 14, 1.5, 14.5], "texture": "#oven_front"},
+				"west": {"uv": [1, 14, 1.5, 14.5], "texture": "#oven_front"}
+			}
+		},
+		{
+			"from": [1, 9.01, 2.01],
+			"to": [14.98, 9.99, 14.99],
+			"rotation": {"angle": 0, "axis": "y", "origin": [-73, 10, 7]},
+			"faces": {
+				"north": {"uv": [8, 9.5, 15, 10], "texture": "#oven_accessories"},
+				"east": {"uv": [8, 3.5, 8.5, 10], "rotation": 90, "texture": "#oven_accessories"},
+				"west": {"uv": [14.5, 3.5, 15, 10], "rotation": 90, "texture": "#oven_accessories"},
+				"up": {"uv": [14.99, 9.99, 8, 3.5], "texture": "#oven_accessories"}
+			}
+		},
+		{
+			"from": [1, 5.01, 2.01],
+			"to": [14.98, 5.99, 14.99],
+			"rotation": {"angle": 0, "axis": "y", "origin": [-73, 6, 7]},
+			"faces": {
+				"north": {"uv": [8, 9.5, 15, 10], "texture": "#oven_accessories"},
+				"east": {"uv": [8, 3.5, 8.5, 10], "rotation": 90, "texture": "#oven_accessories"},
+				"west": {"uv": [14.5, 3.5, 15, 10], "rotation": 90, "texture": "#oven_accessories"},
+				"up": {"uv": [14.99, 9.99, 8, 3.5], "texture": "#oven_accessories"}
+			}
+		},
+		{
+			"from": [1, 3, -0.75],
+			"to": [15, 4, 0.25],
+			"rotation": {"angle": 0, "axis": "y", "origin": [-29, -7, 0.75]},
+			"faces": {
+				"north": {"uv": [1, 12, 15, 13], "texture": "#oven_front"},
+				"east": {"uv": [1, 12, 1.5, 12.5], "texture": "#oven_front"},
+				"west": {"uv": [1, 12, 1.5, 12.5], "texture": "#oven_front"}
+			}
+		}
+	],
+	"groups": [
+		{
+			"name": "Oven",
+			"origin": [-14, 8, 0],
+			"color": 0,
+			"children": [0, 1, 2, 3, 4, 5, 6]
+		}
+	]
+}

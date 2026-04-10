@@ -1,4 +1,5 @@
-// 1.20.1	2026-04-03T10:59:17.058058398	Cook It!/Model Definitions
+// 1.20.1	2026-04-09T21:59:36.451853926	Cook It!/Model Definitions
+02576c734708fe4891ac9f0068496d1aad588b17 assets/cook-it/models/item/oven.json
 44b5b2a2b694c2c9853f03e97c1a54acd175990d assets/cook-it/models/item/blue_large_plate.json
 4333445a9b2de9138fb926276e66a20bb9ffeb38 assets/cook-it/models/block/plate/light_gray_plate_2.json
 da5608c537d2f437c76621e506b73ce1268e715f assets/cook-it/models/item/acacia_rolling_pin.json
@@ -102,14 +103,14 @@ e633cdf4430fdd50f1e7fea88f302bc3ac3b79b9 assets/cook-it/blockstates/purple_large
 ac1b7ab2110a9c88c9647df98b6df6bccc84a1c3 assets/cook-it/models/block/plate/lime_plate_3.json
 7d2e63ede6923d77a3a86c953239e5ab97abee8e assets/cook-it/blockstates/magenta_bowl.json
 a2e370cf74da9be88b0fb42ef42f7050b5bf82b8 assets/cook-it/models/item/purple_plate.json
-2268203ab1d096c5ac1231d1039b68068947793e assets/cook-it/blockstates/magenta_large_plate.json
 b4b5ea222bab84e5c24fe2775daaef397ad21d74 assets/cook-it/blockstates/orange_large_plate.json
+2268203ab1d096c5ac1231d1039b68068947793e assets/cook-it/blockstates/magenta_large_plate.json
 5f28dec8606ad8fb31f0bba8286d7801e042a308 assets/cook-it/models/item/purple_large_plate.json
 dcb373ee551d9036dd048a5210cfcc5c60b4233f assets/cook-it/models/block/plate/green_plate_0.json
 ee5341a729f6881477fce6151eeb60d443a9dcbf assets/cook-it/models/block/plate/white_large_plate_1.json
 7f54ef8cda4777bf6cce8b04850b4f2ee43fc3ec assets/cook-it/models/block/plate/cyan_plate_0.json
-fa5cda509a40a0864f538b49a276bf40e89a8cec assets/cook-it/models/item/lime_plate.json
 1f516ab98e9a8b716dcd1fa3c18707ce38e376ae assets/cook-it/models/block/plate/purple_large_plate_0.json
+fa5cda509a40a0864f538b49a276bf40e89a8cec assets/cook-it/models/item/lime_plate.json
 46075a184c8bd689e7c328abcb070456a6b541c4 assets/cook-it/blockstates/lime_large_plate.json
 bbbb61e728c51398e1a87a3b236c5362806fce9f assets/cook-it/blockstates/vanilla_vine_stem.json
 5bf449ed810c61295b947a400ef063594cb2a6a2 assets/cook-it/models/item/gray_plate.json
@@ -130,8 +131,8 @@ f9dba27a71e54cdf6b1a332f81ae12e39430b289 assets/cook-it/models/block/cherry_cutt
 795a16530b005de79e2b7a1bd1900919da7fc955 assets/cook-it/models/item/mangrove_rolling_pin.json
 4831cca7a1b61f2d1a08392f4105a669b8e6b92d assets/cook-it/models/block/plate/blue_plate_2.json
 5a03dcd6ff108ae3eee4c3efbbb220229119288a assets/cook-it/models/block/plate/light_gray_plate_1.json
-e1671c5da3af1241e28280f186d3e25082e89cda assets/cook-it/blockstates/light_gray_large_plate.json
 2e6f1031ac02b8a53fc429486a1d034bf9ea7c5c assets/cook-it/blockstates/green_large_plate.json
+e1671c5da3af1241e28280f186d3e25082e89cda assets/cook-it/blockstates/light_gray_large_plate.json
 67217217a7e99c900ee3b3afa57b31c9d6d1ea0c assets/cook-it/models/block/plate/orange_large_plate_0.json
 eeaaa3d5cb2267e0c84cfa0e7983d1ca7e35f33a assets/cook-it/models/item/orange_large_plate.json
 81264ad74474512b4eaf0b767399d90b68391d34 assets/cook-it/models/block/plate/purple_large_plate_2.json
@@ -270,6 +271,7 @@ e3d2bb3df3297a2dc0d86864cd51c6ad9008150a assets/cook-it/models/block/vanilla_vin
 94024b7fed03689a6fadbe34c25aaee8dcf4e47c assets/cook-it/models/block/plate/blue_large_plate_2.json
 80fe341c428172009187b4186e92cd79ce92b462 assets/cook-it/models/block/plate/green_large_plate_2.json
 12a16c79f07d36deb3686883fe7a9bd4789691c0 assets/cook-it/blockstates/light_blue_large_plate.json
+b0f25acd0594553acb642e056d342c33defe2835 assets/cook-it/blockstates/oven.json
 665b22db780fe98311ca3b0d6ee96f6918210f25 assets/cook-it/models/item/light_blue_bowl.json
 8ec1b3be3447065273a86447a05f9f4b0f2e41a3 assets/cook-it/models/item/oak_cutting_board.json
 4b184fa3194dc3a2c3298b58feb92686c5112e65 assets/cook-it/models/block/plate/light_gray_large_plate_2.json

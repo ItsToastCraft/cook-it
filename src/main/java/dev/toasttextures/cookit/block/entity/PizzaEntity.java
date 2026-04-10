@@ -36,7 +36,6 @@ public class PizzaEntity extends BlockEntity {
 
     public void readFromItemStack(ItemStack stack) {
         int slices = stack.is(CookItItems.PIZZA_SLICE) ? 1 : 4;
-        this.toppings.clear();
 
         CompoundTag compound = stack.getTag();
         if (compound != null) {
@@ -44,6 +43,8 @@ public class PizzaEntity extends BlockEntity {
             if (compound.contains(SLICE_COUNT_KEY, Tag.TAG_INT)) {
                 slices = compound.getInt(SLICE_COUNT_KEY);
             }
+        } else {
+            toppings.clear();
         }
 
         this.isCooked = stack.getItem() != CookItBlocks.UNCOOKED_PIZZA.asItem();

@@ -2,14 +2,17 @@ package dev.toasttextures.cookit;
 
 import dev.toasttextures.cookit.block.containers.CuttingBoard;
 import dev.toasttextures.cookit.block.entity.CuttingBoardEntity;
+import dev.toasttextures.cookit.data.PizzaToppingReloader;
 import dev.toasttextures.cookit.registries.*;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackType;
 import net.minecraft.world.item.ItemStack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +36,7 @@ public class CookIt implements ModInitializer {
         CookItTags.register();
         CookItBlockEntities.registerEntities();
         Registry.register(BuiltInRegistries.PARTICLE_TYPE, idOf("oil"), OIL_PARTICLE);
+        ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(new PizzaToppingReloader());
 
         PlayerBlockBreakEvents.BEFORE.register((world, player, pos, state, blockEntity) -> {
             if (state.getBlock() instanceof CuttingBoard cuttingBoard) {

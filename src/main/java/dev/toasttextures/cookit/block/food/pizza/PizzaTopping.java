@@ -1,5 +1,6 @@
 package dev.toasttextures.cookit.block.food.pizza;
 
+import dev.toasttextures.cookit.CookIt;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
@@ -25,14 +26,14 @@ public class PizzaTopping {
 
     private PizzaTopping(ResourceLocation id, Item item, ResourceLocation texture) {
         this.id = id;
-        this.translationKey = Component.translatable("topping." + id.getNamespace() + "." + id.getPath()).withStyle(ChatFormatting.BLUE);
+        this.translationKey = Component.translatable("topping." + CookIt.MOD_ID + "." + id.getPath()).withStyle(ChatFormatting.BLUE);
         this.item = item;
-        this.texture = texture;
+        this.texture = texture.withSuffix(".png");
     }
 
     public StringTag asNbt() {
         if (nbt == null) {
-            nbt = StringTag.valueOf(this.toString());
+            nbt = StringTag.valueOf(this.id.toString());
         }
         return nbt;
     }
@@ -76,6 +77,7 @@ public class PizzaTopping {
         List<PizzaTopping> toppings = new ArrayList<>();
         for (Tag element : list) {
             ResourceLocation id = new ResourceLocation(element.getAsString());
+
             PizzaTopping topping = byId(id);
             if (topping != null) {
                 toppings.add(topping);

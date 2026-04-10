@@ -1,0 +1,84 @@
+{
+  "variants": {
+    "facing=east,open=false,stacked=false": {
+      "model": "cook-it:block/oven/oven",
+      "uvlock": false,
+      "y": 90
+    },
+    "facing=east,open=false,stacked=true": {
+      "model": "cook-it:block/oven/oven_stacked",
+      "uvlock": false,
+      "y": 90
+    },
+    "facing=east,open=true,stacked=false": {
+      "model": "cook-it:block/oven/oven_open",
+      "uvlock": false,
+      "y": 90
+    },
+    "facing=east,open=true,stacked=true": {
+      "model": "cook-it:block/oven/oven_open_stacked",
+      "uvlock": false,
+      "y": 90
+    },
+    "facing=north,open=false,stacked=false": {
+      "model": "cook-it:block/oven/oven",
+      "uvlock": false,
+      "y": 0
+    },
+    "facing=north,open=false,stacked=true": {
+      "model": "cook-it:block/oven/oven_stacked",
+      "uvlock": false,
+      "y": 0
+    },
+    "facing=north,open=true,stacked=false": {
+      "model": "cook-it:block/oven/oven_open",
+      "uvlock": false,
+      "y": 0
+    },
+    "facing=north,open=true,stacked=true": {
+      "model": "cook-it:block/oven/oven_open_stacked",
+      "uvlock": false,
+      "y": 0
+    },
+    "facing=south,open=false,stacked=false": {
+      "model": "cook-it:block/oven/oven",
+      "uvlock": false,
+      "y": 180
+    },
+    "facing=south,open=false,stacked=true": {
+      "model": "cook-it:block/oven/oven_stacked",
+      "uvlock": false,
+      "y": 180
+    },
+    "facing=south,open=true,stacked=false": {
+      "model": "cook-it:block/oven/oven_open",
+      "uvlock": false,
+      "y": 180
+    },
+    "facing=south,open=true,stacked=true": {
+      "model": "cook-it:block/oven/oven_open_stacked",
+      "uvlock": false,
+      "y": 180
+    },
+    "facing=west,open=false,stacked=false": {
+      "model": "cook-it:block/oven/oven",
+      "uvlock": false,
+      "y": 270
+    },
+    "facing=west,open=false,stacked=true": {
+      "model": "cook-it:block/oven/oven_stacked",
+      "uvlock": false,
+      "y": 270
+    },
+    "facing=west,open=true,stacked=false": {
+      "model": "cook-it:block/oven/oven_open",
+      "uvlock": false,
+      "y": 270
+    },
+    "facing=west,open=true,stacked=true": {
+      "model": "cook-it:block/oven/oven_open_stacked",
+      "uvlock": false,
+      "y": 270
+    }
+  }
+}

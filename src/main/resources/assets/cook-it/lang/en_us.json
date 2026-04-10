@@ -136,5 +136,9 @@
   "stage.cook-it.uncooked": "Uncooked",
   "donut.cook-it.plain": "Plain",
   "donut.cook-it.sprinkles": "Sprinkles",
-  "donut.cook-it.striped": "Striped"
+  "donut.cook-it.striped": "Striped",
+
+  "topping.cook-it.kelp": "Kelp",
+  "topping.cook-it.beef": "Beef",
+  "topping.cook-it.porkchop": "Pepperoni"
 }

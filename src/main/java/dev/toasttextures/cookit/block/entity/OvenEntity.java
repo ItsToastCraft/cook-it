@@ -70,7 +70,14 @@ public class OvenEntity extends CookingBlockEntity<OvenRecipe> implements SlotPr
         ItemStack container = items.get(completed.index);
         if (!container.isEmpty() && completed.getStatus() == CookingStatus.DONE) {
             NonNullList<ItemStack> stored = Container.getItems(container);
-            stored.set(completed.getLastTicked(), recipe.assemble(new SimpleContainer(stored.get(completed.getLastTicked())), world.registryAccess()));
+            ItemStack lastTicked = stored.get(completed.getLastTicked());
+            ItemStack output = recipe.assemble(new SimpleContainer(lastTicked), world.registryAccess());
+
+            if (!lastTicked.is(CookItItems.GOOP) && lastTicked.hasTag()) {
+                output.setTag(lastTicked.getTag());
+            }
+
+            stored.set(completed.getLastTicked(), output);
             ContainerHelper.saveAllItems(container.getTagElement(CONTAINER_KEY), stored);
 
             setItem(completed.index, container);

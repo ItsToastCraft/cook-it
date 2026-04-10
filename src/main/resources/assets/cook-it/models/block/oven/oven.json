@@ -4,10 +4,10 @@
 	"textures": {
 		"oven_inside": "cook-it:block/oven_inside",
 		"oven_front": "cook-it:block/oven_front",
-		"particle": "cook-it:block/oven_side",
 		"oven_side": "cook-it:block/oven_side",
 		"oven_accessories": "cook-it:block/oven_accessories",
-		"oven_top": "cook-it:block/oven_top"
+		"oven_top": "cook-it:block/oven_top",
+		"particle": "#oven_side"
 	},
 	"elements": [
 		{
@@ -26,11 +26,11 @@
 			"from": [0, 16, 15],
 			"to": [16, 20, 16],
 			"faces": {
-				"north": {"uv": [7, 2, 15, 4], "texture": "#oven_accessories"},
-				"east": {"uv": [7, 2, 7.5, 4], "texture": "#oven_accessories"},
-				"south": {"uv": [7, 0, 15, 2], "texture": "#oven_accessories"},
-				"west": {"uv": [14.5, 2, 15, 4], "texture": "#oven_accessories"},
-				"up": {"uv": [15, 2.5, 7, 2], "texture": "#oven_accessories"}
+				"north": {"uv": [0, 0, 8, 2], "texture": "#oven_accessories"},
+				"east": {"uv": [0, 0, 0.5, 2], "texture": "#oven_accessories"},
+				"south": {"uv": [8, 0, 16, 2], "texture": "#oven_accessories"},
+				"west": {"uv": [7.5, 0, 8, 2], "texture": "#oven_accessories"},
+				"up": {"uv": [8, 0.5, 0, 0], "texture": "#oven_accessories"}
 			}
 		},
 		{
@@ -104,7 +104,7 @@
 			"scale": [0.4, 0.4, 0.4]
 		},
 		"firstperson_lefthand": {
-			"rotation": [0, 225, 0],
+			"rotation": [0, -135, 0],
 			"scale": [0.4, 0.4, 0.4]
 		},
 		"ground": {
@@ -112,7 +112,7 @@
 			"scale": [0.25, 0.25, 0.25]
 		},
 		"gui": {
-			"rotation": [30, 225, 0],
+			"rotation": [30, -135, 0],
 			"scale": [0.625, 0.625, 0.625]
 		},
 		"fixed": {
@@ -123,6 +123,7 @@
 		{
 			"name": "Oven",
 			"origin": [8, 8, 8],
+			"scope": 0,
 			"color": 0,
 			"children": [0, 1, 2, 3, 4, 5, 6]
 		}

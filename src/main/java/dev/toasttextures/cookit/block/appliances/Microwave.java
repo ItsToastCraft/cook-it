@@ -70,22 +70,21 @@ public class Microwave extends BaseEntityBlock {
     public @NotNull InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (world.isClientSide) return InteractionResult.SUCCESS;
 
-        if (world.getBlockEntity(pos) instanceof MicrowaveEntity blockEntity) {
-            ItemStack heldItem = player.getItemInHand(hand);
-            boolean open = state.getValue(OPEN);
+        if (!(world.getBlockEntity(pos) instanceof MicrowaveEntity blockEntity)) return InteractionResult.PASS;
+        ItemStack heldItem = player.getItemInHand(hand);
+        boolean open = state.getValue(OPEN);
 
-            if (!open && heldItem.isEmpty()) {
-                toggleDoor(state, world, pos, true);
-                return InteractionResult.SUCCESS;
-            }
-
-            if (!heldItem.isEmpty() && open) {
-                blockEntity.fillFirst(player, heldItem);
-            } else if (!blockEntity.getFirst().isEmpty()) {
-                player.getInventory().placeItemBackInInventory(blockEntity.getFirst());
-            }
-            toggleDoor(state, world, pos, false);
+        if (!open && heldItem.isEmpty()) {
+            toggleDoor(state, world, pos, true);
+            return InteractionResult.SUCCESS;
         }
+
+        if (!heldItem.isEmpty() && open) {
+            blockEntity.fillFirst(player, heldItem);
+        } else if (!blockEntity.getFirst().isEmpty()) {
+            player.getInventory().placeItemBackInInventory(blockEntity.getFirst());
+        }
+        toggleDoor(state, world, pos, false);
 
         return InteractionResult.SUCCESS;
     }

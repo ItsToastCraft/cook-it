@@ -1,5 +1,7 @@
 package dev.toasttextures.cookit.block.entity;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.world.level.block.state.BlockState;
@@ -22,6 +24,7 @@ public class MicrowaveEntity extends CookingBlockEntity<MicrowaveRecipe> {
     private int progress = 0;
     private int maxProgress = 0;
     private ItemStack cachedItem = ItemStack.EMPTY;
+    @Environment(EnvType.CLIENT)
     private final SoundInstance inst = new MicrowaveSoundInstance(this);
     @Nullable
     private MicrowaveRecipe cachedRecipe = null;

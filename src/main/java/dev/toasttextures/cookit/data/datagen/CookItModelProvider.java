@@ -1,6 +1,7 @@
 package dev.toasttextures.cookit.data.datagen;
 
 import dev.toasttextures.cookit.CookIt;
+import dev.toasttextures.cookit.block.appliances.Oven;
 import dev.toasttextures.cookit.block.appliances.Toaster;
 import dev.toasttextures.cookit.block.containers.*;
 import dev.toasttextures.cookit.block.food.vanilla_vines.VanillaVines;
@@ -42,6 +43,7 @@ public class CookItModelProvider extends FabricModelProvider {
         generateFryer(modelGenerator);
         generateMicrowave(modelGenerator);
         generateMixingBowl(modelGenerator);
+        generateOven(modelGenerator);
     }
 
     @Override
@@ -156,17 +158,32 @@ public class CookItModelProvider extends FabricModelProvider {
     private static void generateMicrowave(BlockModelGenerators modelGenerator) {
         Block microwave = CookItBlocks.MICROWAVE;
         PropertyDispatch.C3<Direction, Boolean, Boolean> variantMap = PropertyDispatch.properties(HORIZONTAL_FACING, LIT, OPEN);
-        ResourceLocation closed = getTextureLocation(microwave, "microwave/");
+        ResourceLocation base = getTextureLocation(microwave, "microwave/");
 
         for (Direction dir : Direction.Plane.HORIZONTAL) {
-            variantMap.select(dir, false, false, createDirectionalVariant(dir, closed));
-            variantMap.select(dir, true,  false, createDirectionalVariant(dir, closed.withSuffix("_on")));
-            variantMap.select(dir, false, true,  createDirectionalVariant(dir, closed.withSuffix("_open")));
-            variantMap.select(dir, true,  true,  createDirectionalVariant(dir, closed.withSuffix("_open_on")));
+            variantMap.select(dir, false, false, createDirectionalVariant(dir, base));
+            variantMap.select(dir, true,  false, createDirectionalVariant(dir, base.withSuffix("_on")));
+            variantMap.select(dir, false, true,  createDirectionalVariant(dir, base.withSuffix("_open")));
+            variantMap.select(dir, true,  true,  createDirectionalVariant(dir, base.withSuffix("_open_on")));
         }
         modelGenerator.blockStateOutput.accept(MultiVariantGenerator.multiVariant(microwave).with(variantMap));
-        modelGenerator.delegateItemModel(microwave,  closed);
+        modelGenerator.delegateItemModel(microwave, base);
     }
+
+    private static void generateOven(BlockModelGenerators modelGenerator) {
+        Block oven = CookItBlocks.OVEN;
+        PropertyDispatch.C3<Direction, Boolean, Boolean> variantMap = PropertyDispatch.properties(HORIZONTAL_FACING, Oven.STACKED, OPEN);
+        ResourceLocation base = getTextureLocation(oven, "oven/");
+        for (Direction dir : Direction.Plane.HORIZONTAL) {
+            variantMap.select(dir, false, false, createDirectionalVariant(dir, base));
+            variantMap.select(dir, true,  false, createDirectionalVariant(dir, base.withSuffix("_stacked")));
+            variantMap.select(dir, false, true,  createDirectionalVariant(dir, base.withSuffix("_open")));
+            variantMap.select(dir, true,  true,  createDirectionalVariant(dir, base.withSuffix("_open_stacked")));
+        }
+        modelGenerator.blockStateOutput.accept(MultiVariantGenerator.multiVariant(oven).with(variantMap));
+        modelGenerator.delegateItemModel(oven, base);
+    }
+
 
     private static void generateMixingBowl(BlockModelGenerators modelGenerator) {
         Block mixingBowl = CookItBlocks.MIXING_BOWL;

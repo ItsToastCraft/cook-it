@@ -1,6 +1,8 @@
 package dev.toasttextures.cookit.block.containers;
 
+import dev.toasttextures.cookit.block.entity.Container;
 import dev.toasttextures.cookit.block.entity.PizzaPanEntity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
@@ -51,11 +53,16 @@ public class PizzaPan extends BaseEntityBlock implements EntityBlock {
         boolean hasPizza = !blockEntity.isEmpty();
 
         if (Block.byItem(heldItem.getItem()) instanceof Pizza && !hasPizza) {
-            blockEntity.setItem(0, heldItem.split(1));
+            blockEntity.fillFirst(player, heldItem);
         } else if (heldItem.isEmpty() && hasPizza) {
-            player.getInventory().placeItemBackInInventory(blockEntity.getItem(0).split(1));
+            player.getInventory().placeItemBackInInventory(blockEntity.retrieve());
         }
         return InteractionResult.SUCCESS;
+    }
+
+    @Override
+    public void setPlacedBy(Level world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+        Container.onPlaced(world, pos, stack);
     }
 
     @Override

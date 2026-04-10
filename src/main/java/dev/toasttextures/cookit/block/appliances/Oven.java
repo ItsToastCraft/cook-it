@@ -2,6 +2,7 @@ package dev.toasttextures.cookit.block.appliances;
 
 import dev.toasttextures.cookit.block.entity.OvenEntity;
 import dev.toasttextures.cookit.registries.CookItTags;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
@@ -19,6 +20,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -30,12 +32,15 @@ import dev.toasttextures.cookit.registries.CookItBlockEntities;
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.*;
 
 public class Oven extends BaseEntityBlock implements EntityBlock {
+    public static final BooleanProperty STACKED = BooleanProperty.create("stacked");
+
     public Oven(Properties settings) {
         super(settings);
         registerDefaultState(defaultBlockState()
             .setValue(HORIZONTAL_FACING, Direction.NORTH)
             .setValue(LIT, false)
             .setValue(OPEN, false)
+            .setValue(STACKED, false)
         );
     }
 
@@ -46,7 +51,7 @@ public class Oven extends BaseEntityBlock implements EntityBlock {
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(HORIZONTAL_FACING, LIT, OPEN);
+        builder.add(HORIZONTAL_FACING, LIT, OPEN, STACKED);
     }
 
     @SuppressWarnings("deprecation")
@@ -76,7 +81,16 @@ public class Oven extends BaseEntityBlock implements EntityBlock {
         return InteractionResult.SUCCESS;
     }
     public BlockState getStateForPlacement(BlockPlaceContext ctx) {
-        return this.defaultBlockState().setValue(HORIZONTAL_FACING, ctx.getHorizontalDirection().getOpposite());
+        return this.defaultBlockState()
+                .setValue(HORIZONTAL_FACING, ctx.getHorizontalDirection().getOpposite())
+                .setValue(STACKED, !ctx.getLevel().getBlockState(ctx.getClickedPos()).isAir());
+    }
+
+    @Override
+    public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor levelAccessor, BlockPos pos, BlockPos neighborPos) {
+        if (direction != Direction.UP) return state;
+
+        return state.setValue(STACKED, !neighborState.isAir());
     }
 
     public void openOven(Level world, BlockPos pos, BlockState state, boolean open) {

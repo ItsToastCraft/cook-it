@@ -2,6 +2,7 @@ package dev.toasttextures.cookit.block.food.pizza;
 
 import dev.toasttextures.cookit.block.entity.PizzaEntity;
 import dev.toasttextures.cookit.registries.CookItItems;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -32,7 +33,7 @@ public class CookedPizza extends Pizza {
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext ctx) {
         int pizzaAmount = world.getBlockEntity(pos) instanceof PizzaEntity pizzaEntity ? pizzaEntity.getSliceCount() : 4;
-        return SLICES.get(pizzaAmount - 1);
+        return SLICES[pizzaAmount - 1];
     }
 
     public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
@@ -71,17 +72,17 @@ public class CookedPizza extends Pizza {
 
     @Override
     public void playerWillDestroy(Level world, BlockPos pos, BlockState state, Player player) {
-        if (world.getBlockEntity(pos) instanceof PizzaEntity pizzaEntity) {
-            int pizzaAmount = pizzaEntity.getSliceCount();
-            if (pizzaAmount > 0) {
-                ItemStack itemStack = new ItemStack(CookItItems.PIZZA_SLICE, pizzaAmount);
-                if (!pizzaEntity.getToppings().isEmpty()) {
-                    itemStack.getOrCreateTag().put(PizzaTopping.TOPPINGS_KEY, pizzaEntity.getToppings());
-                }
-                popResource(world, pos, itemStack);
-            }
-        }
         super.playerWillDestroy(world, pos, state, player);
+        if (!(world.getBlockEntity(pos) instanceof PizzaEntity pizzaEntity)) return;
+
+        int pizzaAmount = pizzaEntity.getSliceCount();
+        if (pizzaAmount > 0) {
+            ItemStack itemStack = new ItemStack(CookItItems.PIZZA_SLICE, pizzaAmount);
+            if (!pizzaEntity.getToppings().isEmpty()) {
+                itemStack.getOrCreateTag().put(PizzaTopping.TOPPINGS_KEY, pizzaEntity.getToppings());
+            }
+            popResource(world, pos, itemStack);
+        }
     }
 
     @Override
@@ -99,5 +100,12 @@ public class CookedPizza extends Pizza {
         for (PizzaTopping topping : toppings) {
             tooltip.add(topping.getTranslationKey());
         }
+    }
+
+    @Override
+    public void setPlacedBy(Level world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+        if (world.isClientSide) return;
+        if (!(world.getBlockEntity(pos) instanceof PizzaEntity pizzaEntity)) return;
+        pizzaEntity.readFromItemStack(stack);
     }
 }

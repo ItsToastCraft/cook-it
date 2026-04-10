@@ -225,11 +225,11 @@ public class Container extends BlockEntity implements DefaultedInventory {
 
     public static void onPlaced(Level world, BlockPos pos, ItemStack itemStack) {
         if (world.isClientSide) return;
-        Container entity = (Container) world.getBlockEntity(pos);
-        if (entity == null) return;
+        if (!(world.getBlockEntity(pos) instanceof Container container)) return;
+
         CompoundTag nbt = getContainerNbt(itemStack);
         if (nbt != null) {
-            ContainerHelper.loadAllItems(nbt, entity.items);
+            ContainerHelper.loadAllItems(nbt, container.items);
         }
     }
 
