@@ -1,6 +1,6 @@
 {
 	"comment": "So like basically what if I replace all of the vanilla item models with 3d models :trol:",
-	"credit": "Made with Blockbench",
+	"credit": "ToastTextures",
 	"textures": {
 		"0": "cook-it:item/potato",
 		"particle": "cook-it:item/potato"

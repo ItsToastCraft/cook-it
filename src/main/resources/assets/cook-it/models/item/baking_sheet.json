@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:builtin/entity",
-  "credit": "Made by ToastTextures using Blockbench",
+  "credit": "ToastTextures",
   "texture_size": [32, 32],
   "textures": {
     "baking_sheet": "cook-it:block/baking_sheet",

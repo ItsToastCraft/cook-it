@@ -1,6 +1,6 @@
 {
 	"parent": "minecraft:builtin/entity",
-	"credit": "Made with Blockbench",
+	"credit": "ToastTextures",
 	"textures": {
 		"particle": "cook-it:block/pizza_pan",
 		"pizza_pan": "cook-it:block/pizza_pan",

@@ -1,8 +1,9 @@
 {
-	"credit": "Made with Blockbench",
+	"credit": "ToastTextures",
 	"texture_size": [32, 32],
 	"textures": {
-		"pie_tin": "cook-it:item/sweet_berry_pie"
+		"pie_tin": "cook-it:item/sweet_berry_pie",
+		"particle": "#pie_tin"
 	},
 	"elements": [
 		{

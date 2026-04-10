@@ -1,9 +1,9 @@
 {
-	"credit": "Made by ToastTextures using Blockbench",
+	"credit": "ToastTextures",
 	"texture_size": [32, 32],
 	"textures": {
-		"particle": "cook-it:block/toaster",
-		"toaster": "cook-it:block/toaster"
+		"toaster": "cook-it:block/toaster",
+		"particle": "#toaster"
 	},
 	"elements": [
 		{

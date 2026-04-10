@@ -1,5 +1,6 @@
 {
-	"credit": "Made by ToastTextures using Blockbench",
+	"credit": "ToastTextures",
+	"ambientocclusion": false,
 	"texture_size": [32, 32],
 	"textures": {
 		"oven_inside": "cook-it:block/oven_inside",

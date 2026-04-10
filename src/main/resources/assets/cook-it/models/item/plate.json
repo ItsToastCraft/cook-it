@@ -1,6 +1,6 @@
 {
 	"parent": "builtin/entity",
-	"credit": "Made by ToastTextures using Blockbench",
+	"credit": "ToastTextures",
 	"display": {
 		"thirdperson_righthand": {
 			"rotation": [90, 0, 0],

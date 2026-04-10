@@ -1,5 +1,5 @@
 {
-	"credit": "Made by ToastTextures using Blockbench",
+	"credit": "ToastTextures",
 	"texture_size": [32, 32],
 	"textures": {
 		"oven_inside": "cook-it:block/oven_inside",
@@ -123,7 +123,6 @@
 		{
 			"name": "Oven",
 			"origin": [8, 8, 8],
-			"scope": 0,
 			"color": 0,
 			"children": [0, 1, 2, 3, 4, 5, 6]
 		}

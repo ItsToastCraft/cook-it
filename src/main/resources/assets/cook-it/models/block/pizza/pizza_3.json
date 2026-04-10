@@ -1,9 +1,9 @@
 {
-	"credit": "Made with Blockbench",
+	"credit": "ToastTextures",
 	"texture_size": [32, 32],
 	"textures": {
-		"particle": "cook-it:block/pizza",
-		"pizza": "cook-it:block/pizza"
+		"pizza": "cook-it:block/pizza",
+		"particle": "#pizza"
 	},
 	"elements": [
 		{
