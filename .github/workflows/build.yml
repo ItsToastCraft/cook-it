@@ -3,23 +3,26 @@ name: Build
 on: [push, pull_request]
 jobs:
   build:
-    runs-on: ubuntu-24.04-arm
+    runs-on: toaster
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v6
-
-      - name: Setup GraalVM
-        uses: graalvm/setup-graalvm@v1
+        
+      - name: setup jdk
+        uses: actions/setup-java@v5
         with:
           java-version: '21'
           distribution: 'graalvm'
           cache: 'gradle'
-
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v5
+        with:
+          cache-read-only: false
       - name: Build with Gradle
         run: ./gradlew build
 
       - name: Capture Build Artifacts
-        uses: actions/upload-artifact@v7
+        uses: https://data.forgejo.org/forgejo/upload-artifact@v4
         with:
           name: Artifacts
           path: build/libs/
