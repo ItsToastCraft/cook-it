@@ -75,7 +75,7 @@ public class Plate extends BaseEntityBlock {
         int plateAmount = state.getValue(COUNT);
         ItemStack heldItem = player.getItemInHand(hand);
 
-        ItemStack first = blockEntity.retrieve();
+        ItemStack first = blockEntity.getFirst();
 
         if (heldItem.isEmpty()) {
             ItemStack returned;

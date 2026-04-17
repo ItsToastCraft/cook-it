@@ -4,7 +4,6 @@ import dev.toasttextures.cookit.registries.CookItBlocks;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.EggItem;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Item.Properties;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -22,11 +21,12 @@ public class EggItemMixin extends Item {
         super(settings);
     }
     @Inject(method = "use(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/InteractionHand;)Lnet/minecraft/world/InteractionResultHolder;", at = @At("HEAD"), cancellable = true)
-    private void injectMethod(Level world, Player user, InteractionHand hand, CallbackInfoReturnable<InteractionResultHolder<ItemStack>> cir) {
-        HitResult cast = user.pick(3,1, false);
+    private void injectMethod(Level level, Player player, InteractionHand interactionHand, CallbackInfoReturnable<InteractionResultHolder<ItemStack>> cir) {
+        HitResult cast = player.pick(3,1, false);
+        if (cast.getType() != HitResult.Type.BLOCK) return;
 
-        if (cast.getType().equals(HitResult.Type.BLOCK) && world.getBlockState(BlockPos.containing(cast.getLocation())).getBlock().equals(CookItBlocks.MIXING_BOWL)) {
-            cir.setReturnValue(InteractionResultHolder.fail(user.getItemInHand(hand)));
+        if (level.getBlockState(BlockPos.containing(cast.getLocation())).is(CookItBlocks.MIXING_BOWL)) {
+            cir.setReturnValue(InteractionResultHolder.fail(player.getItemInHand(interactionHand)));
             cir.cancel();
         }
     }
