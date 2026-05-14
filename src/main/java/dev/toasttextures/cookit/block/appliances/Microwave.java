@@ -2,11 +2,11 @@ package dev.toasttextures.cookit.block.appliances;
 
 import dev.toasttextures.cookit.block.entity.MicrowaveEntity;
 import dev.toasttextures.cookit.registries.CookItBlockEntities;
+import dev.toasttextures.cookit.registries.CookItSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.InteractionHand;
@@ -91,7 +91,7 @@ public class Microwave extends BaseEntityBlock {
 
     private void toggleDoor(BlockState state, Level world, BlockPos pos, boolean doorState) {
         if (world.isClientSide()) return;
-        SoundEvent sound = doorState ? SoundEvents.IRON_DOOR_OPEN : SoundEvents.IRON_DOOR_CLOSE;
+        SoundEvent sound = doorState ? CookItSounds.MICROWAVE_OPEN : CookItSounds.MICROWAVE_CLOSE;
 
         world.playSound(null, pos, sound, SoundSource.BLOCKS);
         world.setBlockAndUpdate(pos, state.setValue(OPEN, doorState).setValue(LIT, doorState && state.getValue(LIT)));

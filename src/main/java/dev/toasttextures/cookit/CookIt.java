@@ -1,6 +1,5 @@
 package dev.toasttextures.cookit;
 
-import dev.toasttextures.cookit.block.containers.CuttingBoard;
 import dev.toasttextures.cookit.block.entity.CuttingBoardEntity;
 import dev.toasttextures.cookit.data.PizzaToppingReloader;
 import dev.toasttextures.cookit.registries.*;
@@ -39,8 +38,8 @@ public class CookIt implements ModInitializer {
         ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(new PizzaToppingReloader());
 
         PlayerBlockBreakEvents.BEFORE.register((world, player, pos, state, blockEntity) -> {
-            if (state.getBlock() instanceof CuttingBoard cuttingBoard) {
-                return cuttingBoard.resetRecipe(world, (CuttingBoardEntity) blockEntity);
+            if (blockEntity instanceof CuttingBoardEntity cuttingBoardEntity) {
+                return cuttingBoardEntity.resetRecipe(world);
             }
             return true;
         });

@@ -1,7 +1,5 @@
 package dev.toasttextures.cookit;
 
-import dev.toasttextures.cookit.block.containers.MixingBowl;
-import dev.toasttextures.cookit.block.entity.MixingBowlEntity;
 import dev.toasttextures.cookit.client.CookItVisuals;
 import dev.toasttextures.cookit.client.render.entity.*;
 import dev.toasttextures.cookit.client.CookItEntityModelLayers;
@@ -10,12 +8,9 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
-import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import dev.toasttextures.cookit.registries.*;
 
@@ -31,6 +26,7 @@ public class CookItClient implements ClientModInitializer {
         CookItVisuals.registerItemRenderers();
         ChefOutfitRenderer.register();
         CookItEntityModelLayers.registerLayers();
+        CookItVisuals.registerColorProviders();
 
         BlockRenderLayerMap.INSTANCE.putBlocks(RenderType.translucent(),
                 CookItBlocks.OVEN,
@@ -45,23 +41,5 @@ public class CookItClient implements ClientModInitializer {
 
         ItemProperties.register(CookItItems.FIRE_EXTINGUISHER, new ResourceLocation("extinguisher_fuel"), (stack, world, entity, seed) -> (float) Math.round(((float) stack.getMaxDamage() - stack.getDamageValue()) / 100) / 10);
         ParticleFactoryRegistry.getInstance().register(CookIt.OIL_PARTICLE, OilParticle.Factory::new);
-
-        ColorProviderRegistry.BLOCK.register((state, view, pos, tintIndex) -> {
-            if (view == null || pos == null) return 0xFFFFFF;
-            return BiomeColors.getAverageFoliageColor(view, pos);
-        }, CookItBlocks.VANILLA_VINE, CookItBlocks.VANILLA_VINE_STEM);
-
-        ColorProviderRegistry.BLOCK.register((state, view, pos, tintIndex) -> {
-            if (view != null && view.getBlockEntity(pos) instanceof MixingBowlEntity blockEntity && state.getValue(MixingBowl.CONTAINS_LIQUID)) {
-                return blockEntity.getGoopColor();
-            }
-            return 0xF8D478;
-        }, CookItBlocks.MIXING_BOWL);
-
-        ColorProviderRegistry.ITEM.register((stack, tintIndex) -> {
-            CompoundTag nbt = stack.getTag();
-            if (nbt == null) return 0xF8D478;
-            return nbt.getInt(MixingBowlEntity.COLOR_KEY);
-        }, CookItItems.GOOP);
     }
 }

@@ -2,6 +2,7 @@ package dev.toasttextures.cookit.recipes;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import dev.toasttextures.cookit.block.containers.MixingBowl;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.FriendlyByteBuf;
@@ -26,11 +27,11 @@ public class MixingBowlRecipe implements Recipe<SimpleContainer> {
     private final ItemStack output;
     private final List<Ingredient> ingredients;
     private final int interactions;
-    private final ItemStack liquid;
+    private final MixingBowl.Liquid liquid;
     private final boolean goop;
     private final int goopColor;
 
-    public MixingBowlRecipe(ResourceLocation id, List<Ingredient> ingredients, ItemStack output, int interactions, ItemStack liquid, boolean outputIsGoop, int goopColor) {
+    public MixingBowlRecipe(ResourceLocation id, List<Ingredient> ingredients, ItemStack output, int interactions, MixingBowl.Liquid liquid, boolean outputIsGoop, int goopColor) {
         this.id = id;
         this.output = output;
         this.ingredients = ingredients;
@@ -77,7 +78,7 @@ public class MixingBowlRecipe implements Recipe<SimpleContainer> {
         return list;
     }
 
-    public ItemStack getLiquid() {
+    public MixingBowl.Liquid getLiquid() {
         return liquid;
     }
 
@@ -90,7 +91,7 @@ public class MixingBowlRecipe implements Recipe<SimpleContainer> {
     }
 
     public boolean liquidPresent() {
-        return !liquid.isEmpty();
+        return liquid != MixingBowl.Liquid.NONE;
     }
 
     public boolean hasGoop() {
@@ -161,7 +162,7 @@ public class MixingBowlRecipe implements Recipe<SimpleContainer> {
                     inputs,
                     validateItemStack(json.getAsJsonObject("output"), false),
                     GsonHelper.getAsInt(json, "interactions", 1),
-                    validateItemStack(json.getAsJsonObject("liquid"), true),
+                    MixingBowl.Liquid.fromItem(GsonHelper.getAsItem(json, "liquid")),
                     GsonHelper.getAsBoolean(json, "outputs_goop", false),
                     GsonHelper.getAsInt(json, "goop_color", 0)
             );
@@ -176,7 +177,7 @@ public class MixingBowlRecipe implements Recipe<SimpleContainer> {
                     inputs,
                     buf.readItem(),
                     buf.readInt(),
-                    buf.readItem(),
+                    MixingBowl.Liquid.values()[buf.readInt()],
                     buf.readBoolean(),
                     buf.readInt()
             );
@@ -192,7 +193,7 @@ public class MixingBowlRecipe implements Recipe<SimpleContainer> {
 
             buf.writeItem(recipe.output);
             buf.writeInt(recipe.interactions);
-            buf.writeItem(recipe.liquid);
+            buf.writeInt(recipe.liquid.ordinal());
             buf.writeBoolean(recipe.hasGoop());
             buf.writeInt(recipe.goopColor());
         }

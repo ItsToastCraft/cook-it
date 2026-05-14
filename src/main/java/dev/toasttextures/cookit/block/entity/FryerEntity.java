@@ -1,18 +1,21 @@
 package dev.toasttextures.cookit.block.entity;
 
 import dev.toasttextures.cookit.CookIt;
+import dev.toasttextures.cookit.client.sound.FryerSoundInstance;
 import dev.toasttextures.cookit.item.ItemStorage;
 import dev.toasttextures.cookit.recipes.FryerRecipe;
 import dev.toasttextures.cookit.registries.CookItBlockEntities;
 import dev.toasttextures.cookit.registries.CookItItems;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
@@ -29,6 +32,8 @@ public class FryerEntity extends CookingBlockEntity<FryerRecipe> implements Tran
     private int maxProgress = 0;
     private ItemStack cachedItem = ItemStack.EMPTY;
     private @Nullable FryerRecipe cachedRecipe = null;
+    @Environment(EnvType.CLIENT)
+    private final SoundInstance inst = new FryerSoundInstance(this);
 
     public FryerEntity(BlockPos pos, BlockState state) {
         super(CookItBlockEntities.FRYER, FryerRecipe.Type.INSTANCE, pos, state, 1);
@@ -38,6 +43,10 @@ public class FryerEntity extends CookingBlockEntity<FryerRecipe> implements Tran
     public void load(CompoundTag nbt) {
         super.load(nbt);
         progress = nbt.getInt(PROGRESS_KEY);
+    }
+
+    public float getProgressRatio() {
+        return (float) progress / maxProgress;
     }
 
     @Override
@@ -67,12 +76,6 @@ public class FryerEntity extends CookingBlockEntity<FryerRecipe> implements Tran
 
     private void addFryerEffects(Level world) {
         if (world.isClientSide) return;
-        if (progress % 8 == 0) {
-            world.playSound(null, worldPosition, SoundEvents.BUBBLE_COLUMN_UPWARDS_AMBIENT, SoundSource.BLOCKS, 0.5f, 8.0f);
-        }
-        if (progress % 30 == 0) {
-            world.playSound(null, worldPosition, SoundEvents.FIRE_AMBIENT, SoundSource.BLOCKS, 0.5f, 1.0f);
-        }
 
         for (int i = 0; i < 3; i++) {
             double particleX = worldPosition.getX() + 0.5 + world.getRandom().nextDouble() * 0.375 - 0.1875;
@@ -131,10 +134,12 @@ public class FryerEntity extends CookingBlockEntity<FryerRecipe> implements Tran
         status = CookingStatus.PROCESSING;
         maxProgress = cachedRecipe.getMaxProgress();
         setChanged();
+        Minecraft.getInstance().getSoundManager().play(inst);
     }
 
     public static void tick(Level world, BlockPos pos, BlockState state, FryerEntity entity) {
         if (world.isClientSide) return;
+        CookIt.LOGGER.info(entity.getStatus().toString());
         ItemStack first = entity.getFirst();
 
         if (first.isEmpty()) {

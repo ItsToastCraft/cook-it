@@ -1,5 +1,6 @@
 package dev.toasttextures.cookit.block.entity;
 
+import dev.toasttextures.cookit.client.sound.MicrowaveSoundInstance;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
@@ -111,7 +112,7 @@ public class MicrowaveEntity extends CookingBlockEntity<MicrowaveRecipe> {
             setItem(0, recipe.assemble(new SimpleContainer(first), world.registryAccess()));
             reset();
         }
-        level.playSound(null, getBlockPos(), CookItSounds.MICROWAVE_BEEP, SoundSource.BLOCKS);
+        world.playSound(null, getBlockPos(), CookItSounds.MICROWAVE_BEEP, SoundSource.BLOCKS);
     }
 
     @Override

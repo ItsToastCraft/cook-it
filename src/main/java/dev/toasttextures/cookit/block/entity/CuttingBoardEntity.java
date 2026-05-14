@@ -1,5 +1,6 @@
 package dev.toasttextures.cookit.block.entity;
 
+import dev.toasttextures.cookit.CookIt;
 import dev.toasttextures.cookit.block.food.pizza.PizzaTopping;
 import dev.toasttextures.cookit.registries.CookItBlocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -47,6 +48,7 @@ public class CuttingBoardEntity extends CookingBlockEntity<CuttingBoardRecipe> {
     }
 
     public boolean process(Level world, ItemStack tool, boolean shouldReset) {
+        CookIt.LOGGER.info(String.valueOf(shouldReset));
         ItemStack first = getFirst();
         if (world.isClientSide) return false;
 
@@ -58,9 +60,12 @@ public class CuttingBoardEntity extends CookingBlockEntity<CuttingBoardRecipe> {
         if (recipes.isEmpty()) return false;
 
         for (CuttingBoardRecipe recipe : recipes) {
-            if (recipe.resets() && shouldReset && tool.isEmpty()) {
-                craft(world, recipe);
-                return true;
+            if (recipe.resets()) {
+                if (shouldReset && tool.isEmpty()) {
+                    craft(world, recipe);
+                    return true;
+                }
+                continue;
             }
             for (ItemStack stack : recipe.getTool()) {
                 if (!tool.is(stack.getItem())) continue;
@@ -85,13 +90,13 @@ public class CuttingBoardEntity extends CookingBlockEntity<CuttingBoardRecipe> {
     public boolean craftPizza(ItemStack stack) {
         PizzaTopping topping = PizzaTopping.byItem(stack.getItem());
         if (topping == null) return false;
-
-        ListTag toppings = PizzaTopping.parse(getFirst().getOrCreateTag()).copy();
-        if (toppings.size() == 3) return false;
+        CompoundTag tag = getFirst().getOrCreateTag();
+        ListTag toppings = PizzaTopping.parse(tag).copy();
+        if (toppings.size() == PizzaTopping.MAX_TOPPINGS) return false;
         toppings.add(topping.asNbt());
 
         stack.shrink(1);
-        getFirst().getTag().put(PizzaTopping.TOPPINGS_KEY, toppings);
+        tag.put(PizzaTopping.TOPPINGS_KEY, toppings);
         setChanged();
         return true;
     }
@@ -100,6 +105,13 @@ public class CuttingBoardEntity extends CookingBlockEntity<CuttingBoardRecipe> {
     public void reset() {
         interactions = 0;
         setChanged();
+    }
+
+    public boolean resetRecipe(Level world) {
+        if (!isEmpty()) {
+            return !process(world, ItemStack.EMPTY, true);
+        }
+        return true;
     }
 
     @Override

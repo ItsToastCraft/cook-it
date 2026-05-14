@@ -1,5 +1,7 @@
-package dev.toasttextures.cookit.block.entity;
+package dev.toasttextures.cookit.client.sound;
 
+import dev.toasttextures.cookit.block.entity.CookingStatus;
+import dev.toasttextures.cookit.block.entity.MicrowaveEntity;
 import dev.toasttextures.cookit.registries.CookItSounds;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;

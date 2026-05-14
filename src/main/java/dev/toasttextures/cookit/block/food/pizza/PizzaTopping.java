@@ -17,6 +17,7 @@ import java.util.*;
 public class PizzaTopping {
     public static final Map<ResourceLocation, PizzaTopping> REGISTRY = new HashMap<>();
     public static final String TOPPINGS_KEY = "Toppings";
+    public static final int MAX_TOPPINGS = 3;
 
     private final Component translationKey;
     private final ResourceLocation id;

@@ -1,8 +1,11 @@
 package dev.toasttextures.cookit.block.containers;
 
+import dev.toasttextures.cookit.CookIt;
 import dev.toasttextures.cookit.block.entity.Container;
 import dev.toasttextures.cookit.block.entity.MixingBowlEntity;
 import dev.toasttextures.cookit.registries.CookItItems;
+import net.minecraft.util.StringRepresentable;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
@@ -32,7 +35,8 @@ import org.jetbrains.annotations.Nullable;
 public class MixingBowl extends BaseEntityBlock implements EntityBlock {
     private static final VoxelShape SHAPE = box(2.0, 0.0, 2.0, 14.0, 8.0, 14.0);
 
-    public static BooleanProperty CONTAINS_LIQUID = BooleanProperty.create("liquid");
+    public static BooleanProperty CONTAINS_GOOP = BooleanProperty.create("goop");
+    public static BooleanProperty LIQUID_LAYER = BooleanProperty.create("liquid");
 
     public @NotNull RenderShape getRenderShape(BlockState state) {
         return RenderShape.MODEL;
@@ -40,7 +44,7 @@ public class MixingBowl extends BaseEntityBlock implements EntityBlock {
 
     public MixingBowl(Properties settings) {
         super(settings);
-        registerDefaultState(defaultBlockState().setValue(CONTAINS_LIQUID, false));
+        registerDefaultState(defaultBlockState().setValue(CONTAINS_GOOP, false).setValue(LIQUID_LAYER, false));
     }
 
     @SuppressWarnings("deprecation")
@@ -51,17 +55,24 @@ public class MixingBowl extends BaseEntityBlock implements EntityBlock {
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(CONTAINS_LIQUID);
+        builder.add(CONTAINS_GOOP, LIQUID_LAYER);
     }
 
     @SuppressWarnings("deprecation")
     @Override
     public @NotNull InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        if (world.isClientSide) return InteractionResult.SUCCESS;
-
+        ItemStack heldItem = player.getItemInHand(hand);
+        Liquid liquid = Liquid.fromItem(heldItem.getItem());
+        CookIt.LOGGER.info("println");
         if (!(world.getBlockEntity(pos) instanceof MixingBowlEntity blockEntity)) return InteractionResult.PASS;
 
-        ItemStack heldItem = player.getItemInHand(hand);
+        if (world.isClientSide) {
+
+            if (liquid != Liquid.NONE && blockEntity.getLiquid() == Liquid.NONE) {
+                blockEntity.updateLiquid(liquid);
+            }
+            return InteractionResult.SUCCESS;
+        }
 
         if (player.isShiftKeyDown()) return blockEntity.dropAsContainer(player, world, this, pos);
 
@@ -69,12 +80,12 @@ public class MixingBowl extends BaseEntityBlock implements EntityBlock {
 
         if (heldItem.is(CookItItems.WHISK)) {
             if (blockEntity.process(world)) {
-                world.setBlockAndUpdate(pos, state.setValue(CONTAINS_LIQUID, true));
+                world.setBlockAndUpdate(pos, state.setValue(CONTAINS_GOOP, true));
             }
-        } else if ((heldItem.is(Items.MILK_BUCKET) || heldItem.is(Items.WATER_BUCKET)) && blockEntity.getLiquid() == Items.AIR) {
+        } else if (liquid != Liquid.NONE && blockEntity.getLiquid() == Liquid.NONE) {
+            blockEntity.updateLiquid(liquid);
+            player.setItemInHand(hand, heldItem.getRecipeRemainder());
             world.playSound(null, pos.getX(), pos.getY(), pos.getZ(), SoundEvents.WATER_AMBIENT, SoundSource.BLOCKS, 0.5f, 1.25f);
-            blockEntity.setItem(blockEntity.getContainerSize() - 1, heldItem.split(1));
-            player.setItemInHand(hand, new ItemStack(Items.BUCKET, 1));
         } else if (!heldItem.isEmpty()) {
             blockEntity.fillFirst(player, heldItem);
         }
@@ -98,5 +109,33 @@ public class MixingBowl extends BaseEntityBlock implements EntityBlock {
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new MixingBowlEntity(pos, state);
+    }
+
+    public enum Liquid implements StringRepresentable {
+        NONE("none", 0x000000),
+        WATER("water", 0x3B5382),
+        MILK("milk", 0xFFFFFF);
+
+        public final String name;
+        private final int color;
+        Liquid(String name, int color) {
+            this.name = name;
+            this.color = color;
+        }
+
+        public static Liquid fromItem(Item item) {
+            if (item == Items.MILK_BUCKET) return MILK;
+            else if (item == Items.WATER_BUCKET) return WATER;
+            else return NONE;
+        }
+
+        public int getColor() {
+            return color;
+        }
+
+        @Override
+        public @NotNull String getSerializedName() {
+            return name.toLowerCase();
+        }
     }
 }

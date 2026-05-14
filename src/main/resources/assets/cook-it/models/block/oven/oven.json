@@ -50,9 +50,9 @@
 			"to": [15, 13, 0.25],
 			"rotation": {"angle": 0, "axis": "y", "origin": [8, 2, 0.75]},
 			"faces": {
-				"north": {"uv": [1, 14, 15, 15], "texture": "#oven_front"},
-				"east": {"uv": [1, 14, 1.5, 14.5], "texture": "#oven_front"},
-				"west": {"uv": [1, 14, 1.5, 14.5], "texture": "#oven_front"}
+				"north": {"uv": [1, 12, 15, 13], "texture": "#oven_front"},
+				"east": {"uv": [1, 12, 1.5, 12.5], "texture": "#oven_front"},
+				"west": {"uv": [1, 12, 1.5, 12.5], "texture": "#oven_front"}
 			}
 		},
 		{
@@ -60,7 +60,7 @@
 			"to": [15, 4, 0.25],
 			"rotation": {"angle": 0, "axis": "y", "origin": [8, -7, 0.75]},
 			"faces": {
-				"north": {"uv": [1, 2, 15, 3], "texture": "#oven_front"},
+				"north": {"uv": [1, 12, 15, 13], "texture": "#oven_front"},
 				"east": {"uv": [1, 12, 1.5, 12.5], "texture": "#oven_front"},
 				"west": {"uv": [1, 12, 1.5, 12.5], "texture": "#oven_front"}
 			}
@@ -70,10 +70,10 @@
 			"to": [14.99, 9.99, 14.99],
 			"rotation": {"angle": 0, "axis": "y", "origin": [-36, 10, 7]},
 			"faces": {
-				"north": {"uv": [0, 6, 7, 6.5], "texture": "#oven_accessories"},
-				"east": {"uv": [0, 0, 0.5, 6.5], "rotation": 90, "texture": "#oven_accessories"},
-				"west": {"uv": [6.5, 0, 7, 6.5], "rotation": 90, "texture": "#oven_accessories"},
-				"up": {"uv": [6.99, 6.49, 0, 0], "texture": "#oven_accessories"}
+				"north": {"uv": [8, 9.5, 15, 10], "texture": "#oven_accessories"},
+				"east": {"uv": [8, 3.5, 8.5, 10], "rotation": 90, "texture": "#oven_accessories"},
+				"west": {"uv": [14.5, 3.5, 15, 10], "rotation": 90, "texture": "#oven_accessories"},
+				"up": {"uv": [14.99, 9.99, 8, 3.5], "texture": "#oven_accessories"}
 			}
 		},
 		{
@@ -81,10 +81,10 @@
 			"to": [14.99, 5.99, 14.99],
 			"rotation": {"angle": 0, "axis": "y", "origin": [-36, 6, 7]},
 			"faces": {
-				"north": {"uv": [0, 6, 7, 6.5], "texture": "#oven_accessories"},
-				"east": {"uv": [0, 0, 0.5, 6.5], "rotation": 90, "texture": "#oven_accessories"},
-				"west": {"uv": [6.5, 0, 7, 6.5], "rotation": 90, "texture": "#oven_accessories"},
-				"up": {"uv": [6.99, 6.49, 0, 0], "texture": "#oven_accessories"}
+				"north": {"uv": [8, 9.5, 15, 10], "texture": "#oven_accessories"},
+				"east": {"uv": [8, 3.5, 8.5, 10], "rotation": 90, "texture": "#oven_accessories"},
+				"west": {"uv": [14.5, 3.5, 15, 10], "rotation": 90, "texture": "#oven_accessories"},
+				"up": {"uv": [14.99, 9.99, 8, 3.5], "texture": "#oven_accessories"}
 			}
 		}
 	],

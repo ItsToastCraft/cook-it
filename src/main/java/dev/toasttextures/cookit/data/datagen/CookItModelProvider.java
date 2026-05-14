@@ -188,10 +188,15 @@ public class CookItModelProvider extends FabricModelProvider {
     private static void generateMixingBowl(BlockModelGenerators modelGenerator) {
         Block mixingBowl = CookItBlocks.MIXING_BOWL;
         ResourceLocation normal = getModelLocation(mixingBowl);
+        ResourceLocation filled = normal.withSuffix("_filled");
+        ResourceLocation liquid = normal.withSuffix("_with_liquid");
+
         modelGenerator.blockStateOutput.accept(MultiVariantGenerator.multiVariant(mixingBowl)
-                .with(PropertyDispatch.property(MixingBowl.CONTAINS_LIQUID)
-                        .select(false, Variant.variant().with(VariantProperties.MODEL, normal))
-                        .select(true, Variant.variant().with(VariantProperties.MODEL, normal.withSuffix("_filled")))
+                .with(PropertyDispatch.properties(MixingBowl.CONTAINS_GOOP, MixingBowl.LIQUID_LAYER)
+                        .select(false, false, Variant.variant().with(VariantProperties.MODEL, normal))
+                        .select(false, true, Variant.variant().with(VariantProperties.MODEL, liquid))
+                        .select(true, false, Variant.variant().with(VariantProperties.MODEL, filled)) // Goop always has priority
+                        .select(true, true, Variant.variant().with(VariantProperties.MODEL, filled))
         ));
         modelGenerator.delegateItemModel(mixingBowl, normal);
     }

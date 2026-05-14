@@ -9,6 +9,10 @@ import dev.toasttextures.cookit.CookIt;
 public class CookItSounds {
     public static final SoundEvent MICROWAVE_WORKING = registerSound("microwave_working");
     public static final SoundEvent MICROWAVE_BEEP = registerSound("microwave_beep");
+    public static final SoundEvent MICROWAVE_OPEN = registerSound("microwave_open");
+    public static final SoundEvent MICROWAVE_CLOSE = registerSound("microwave_close");
+
+    public static final SoundEvent FRYER_WORKING = registerSound("fryer_working");
 
     private static SoundEvent registerSound(String name) {
         ResourceLocation id = CookIt.idOf(name);

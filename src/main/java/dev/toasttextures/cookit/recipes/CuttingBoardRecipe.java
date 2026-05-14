@@ -22,14 +22,16 @@ public class CuttingBoardRecipe implements Recipe<SimpleContainer> {
     private final Ingredient input;
     private final int interactions;
     private final Ingredient tool;
+    private final boolean resets;
     private final boolean usesItem;
 
-    public CuttingBoardRecipe(ResourceLocation id, Ingredient input, ItemStack output, Ingredient tool, int interactions, boolean usesItem) {
+    public CuttingBoardRecipe(ResourceLocation id, Ingredient input, ItemStack output, Ingredient tool, int interactions, boolean resets, boolean usesItem) {
         this.id = id;
         this.output = output;
         this.input = input;
         this.tool = tool;
         this.usesItem = usesItem;
+        this.resets = resets;
         this.interactions = interactions;
     }
 
@@ -58,7 +60,7 @@ public class CuttingBoardRecipe implements Recipe<SimpleContainer> {
     }
 
     public boolean resets() {
-        return tool.isEmpty();
+        return resets;
     }
 
     public boolean usesItem() {
@@ -120,6 +122,7 @@ public class CuttingBoardRecipe implements Recipe<SimpleContainer> {
                     validateItemStack(json.getAsJsonObject("output"), false),
                     allowAirIngredient(json, "tool"),
                     GsonHelper.getAsInt(json, "interactions", 1),
+                    GsonHelper.getAsBoolean(json, "resets", false),
                     GsonHelper.getAsBoolean(json, "uses_item", false)
             );
         }
@@ -132,6 +135,7 @@ public class CuttingBoardRecipe implements Recipe<SimpleContainer> {
                     buf.readItem(),
                     Ingredient.fromNetwork(buf),
                     buf.readInt(),
+                    buf.readBoolean(),
                     buf.readBoolean()
             );
         }
@@ -142,6 +146,7 @@ public class CuttingBoardRecipe implements Recipe<SimpleContainer> {
             buf.writeItem(recipe.getResultItem(null));
             recipe.tool.toNetwork(buf);
             buf.writeInt(recipe.interactions);
+            buf.writeBoolean(recipe.resets());
             buf.writeBoolean(recipe.usesItem());
         }
     }

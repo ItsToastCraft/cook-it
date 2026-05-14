@@ -10,6 +10,28 @@
     "sounds": [
       "cook-it:block/microwave_beep"
     ]
+  },
+  "microwave_open": {
+    "subtitle": "subtitles.cook-it.microwave_open",
+    "sounds": [
+      "cook-it:block/microwave_open_0",
+      "cook-it:block/microwave_open_1",
+      "cook-it:block/microwave_open_2"
+    ]
+  },
+  "microwave_close": {
+    "subtitle": "subtitles.cook-it.microwave_close",
+    "sounds": [
+      "cook-it:block/microwave_close_0",
+      "cook-it:block/microwave_close_1",
+      "cook-it:block/microwave_close_2"
+    ]
+  },
+  "fryer_working": {
+    "subtitle": "subtitles.cook-it.fryer_working",
+    "sounds": [
+      "cook-it:block/fryer_working"
+    ]
   }
 }
 

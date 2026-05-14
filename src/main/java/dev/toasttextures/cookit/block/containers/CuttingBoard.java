@@ -95,13 +95,6 @@ public class CuttingBoard extends BaseEntityBlock {
         }
     }
 
-    public boolean resetRecipe(Level world, @NotNull CuttingBoardEntity blockEntity) {
-        if (!blockEntity.isEmpty()) {
-            return !blockEntity.process(world, ItemStack.EMPTY, true);
-        }
-        return true;
-    }
-
     // cancels particles
     @Override
     public void playerWillDestroy(Level world, BlockPos pos, BlockState state, Player player) {
