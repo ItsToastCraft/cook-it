@@ -1,6 +1,5 @@
 package dev.toasttextures.cookit.client;
 
-import dev.toasttextures.cookit.CookIt;
 import dev.toasttextures.cookit.block.containers.MixingBowl;
 import dev.toasttextures.cookit.block.containers.Plate;
 import dev.toasttextures.cookit.block.entity.MixingBowlEntity;
@@ -13,6 +12,8 @@ import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.nbt.CompoundTag;
 
 public class CookItVisuals {
+    private static final int DEFAULT_GOOP_COLOR = 0xF8D478;
+
     public static void registerItemRenderers() {
         BuiltinItemRendererRegistry.INSTANCE.register(CookItBlocks.BAKING_SHEET.asItem(), new BakingSheetItemRenderer());
         BuiltinItemRendererRegistry.INSTANCE.register(CookItBlocks.MUFFIN_TIN.asItem(), new MuffinTinItemRenderer());
@@ -35,18 +36,14 @@ public class CookItVisuals {
         ColorProviderRegistry.BLOCK.register((state, view, pos, tintIndex) -> {
             if (view != null && view.getBlockEntity(pos) instanceof MixingBowlEntity blockEntity) {
                 if (state.getValue(MixingBowl.CONTAINS_GOOP)) return blockEntity.getGoopColor();
-                CookIt.LOGGER.info("{} {}", state.getValue(MixingBowl.LIQUID_LAYER), blockEntity.getLiquid());
-                if (state.getValue(MixingBowl.LIQUID_LAYER)) {
-                    CookIt.LOGGER.info(String.valueOf(blockEntity.getLiquid().getColor()));
-                    return blockEntity.getLiquid().getColor();
-                }
+                if (state.getValue(MixingBowl.LIQUID_LAYER)) return blockEntity.getLiquid().getColor();
             }
-            return 0xF8D478;
+            return DEFAULT_GOOP_COLOR;
         }, CookItBlocks.MIXING_BOWL);
 
         ColorProviderRegistry.ITEM.register((stack, tintIndex) -> {
             CompoundTag nbt = stack.getTag();
-            if (nbt == null) return 0xF8D478;
+            if (nbt == null) return DEFAULT_GOOP_COLOR;
             return nbt.getInt(MixingBowlEntity.COLOR_KEY);
         }, CookItItems.GOOP);
     }

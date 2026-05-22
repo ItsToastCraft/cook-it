@@ -42,7 +42,7 @@ public class VanillaVinePlant extends GrowingPlantBodyBlock implements Bonemeala
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(PLANT_STATE).add(HORIZONTAL_FACING);
+        builder.add(PLANT_STATE, HORIZONTAL_FACING);
     }
 
     @Override

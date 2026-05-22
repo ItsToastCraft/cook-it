@@ -53,7 +53,7 @@ public class CuttingBoardRecipe implements Recipe<SimpleContainer> {
         return output.copy();
     }
 
-    public ItemStack[] getTool() {
+    public ItemStack[] getTools() {
         if (tool.isEmpty()) return new ItemStack[]{ItemStack.EMPTY};
 
         return tool.getItems();

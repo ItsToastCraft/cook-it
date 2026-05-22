@@ -1,6 +1,7 @@
 {
 	"parent": "item/generated",
 	"textures": {
-		"layer0": "cook-it:item/temp/cheese"
+		"layer0": "cook-it:item/temp/cheese",
+		"particle": "#layer0"
 	}
 }

@@ -1,6 +1,5 @@
 package dev.toasttextures.cookit.block.entity;
 
-import dev.toasttextures.cookit.CookIt;
 import dev.toasttextures.cookit.block.containers.MixingBowl;
 import dev.toasttextures.cookit.recipes.MixingBowlRecipe;
 import dev.toasttextures.cookit.registries.CookItBlockEntities;
@@ -59,7 +58,6 @@ public class MixingBowlEntity extends CookingBlockEntity<MixingBowlRecipe> imple
     public void updateLiquid(MixingBowl.Liquid liquid) {
         if (hasLevel()) {
             this.liquid = liquid;
-            CookIt.LOGGER.info("gup {}", this.liquid);
             level.setBlockAndUpdate(getBlockPos(), getBlockState().setValue(LIQUID_LAYER, true));
         }
     }

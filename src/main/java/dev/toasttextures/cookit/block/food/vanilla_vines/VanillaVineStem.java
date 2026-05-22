@@ -5,7 +5,6 @@ import dev.toasttextures.cookit.registries.CookItBlocks;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.BonemealableBlock;
 import net.minecraft.world.level.block.GrowingPlantHeadBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -23,7 +22,7 @@ import java.util.Objects;
 
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING;
 
-public class VanillaVineStem extends GrowingPlantHeadBlock implements BonemealableBlock, VanillaVines {
+public class VanillaVineStem extends GrowingPlantHeadBlock implements VanillaVines {
 
     public VanillaVineStem(Properties settings) {
         super(settings, Direction.DOWN, EAST, false, GROW_CHANCE);
@@ -79,11 +78,6 @@ public class VanillaVineStem extends GrowingPlantHeadBlock implements Bonemealab
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext ctx) {
         return Objects.requireNonNull(super.getStateForPlacement(ctx)).setValue(HORIZONTAL_FACING, ctx.getHorizontalDirection().getOpposite());
-    }
-
-    @Override
-    public boolean isValidBonemealTarget(LevelReader world, BlockPos pos, BlockState state, boolean isClient) {
-        return false;
     }
 
     @SuppressWarnings("deprecation")

@@ -1,6 +1,5 @@
 package dev.toasttextures.cookit.block.containers;
 
-import dev.toasttextures.cookit.CookIt;
 import dev.toasttextures.cookit.block.entity.Container;
 import dev.toasttextures.cookit.block.entity.MixingBowlEntity;
 import dev.toasttextures.cookit.registries.CookItItems;
@@ -63,7 +62,7 @@ public class MixingBowl extends BaseEntityBlock implements EntityBlock {
     public @NotNull InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         ItemStack heldItem = player.getItemInHand(hand);
         Liquid liquid = Liquid.fromItem(heldItem.getItem());
-        CookIt.LOGGER.info("println");
+
         if (!(world.getBlockEntity(pos) instanceof MixingBowlEntity blockEntity)) return InteractionResult.PASS;
 
         if (world.isClientSide) {

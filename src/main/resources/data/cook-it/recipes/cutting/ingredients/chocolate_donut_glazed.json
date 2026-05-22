@@ -7,7 +7,7 @@
     "item": "cook-it:chocolate_donut_striped"
   },
   "tool": {
-    "tag": "cook-it:vanilla_bean"
+    "item": "cook-it:vanilla_bean"
   },
   "uses_item": true
 }

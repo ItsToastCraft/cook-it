@@ -132,6 +132,8 @@
   "itemGroup.cook-it.items": "Cook It!",
   "subtitles.cook-it.microwave_working": "Microwave Hums",
   "subtitles.cook-it.microwave_beep": "Microwave Beeps",
+  "subtitles.cook-it.microwave_close": "Microwave Closes",
+  "subtitles.cook-it.microwave_open": "Microwave Opens",
   "subtitles.cook-it.fryer_working": "Fryer Bubbles",
 
   "stage.cook-it.uncooked": "Uncooked",

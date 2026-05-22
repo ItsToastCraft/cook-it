@@ -1,6 +1,5 @@
 package dev.toasttextures.cookit.block.entity;
 
-import dev.toasttextures.cookit.CookIt;
 import dev.toasttextures.cookit.block.food.pizza.PizzaTopping;
 import dev.toasttextures.cookit.registries.CookItBlocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -48,7 +47,6 @@ public class CuttingBoardEntity extends CookingBlockEntity<CuttingBoardRecipe> {
     }
 
     public boolean process(Level world, ItemStack tool, boolean shouldReset) {
-        CookIt.LOGGER.info(String.valueOf(shouldReset));
         ItemStack first = getFirst();
         if (world.isClientSide) return false;
 
@@ -67,7 +65,8 @@ public class CuttingBoardEntity extends CookingBlockEntity<CuttingBoardRecipe> {
                 }
                 continue;
             }
-            for (ItemStack stack : recipe.getTool()) {
+
+            for (ItemStack stack : recipe.getTools()) {
                 if (!tool.is(stack.getItem())) continue;
 
                 world.playSound(null, worldPosition, SoundEvents.ITEM_FRAME_REMOVE_ITEM, SoundSource.BLOCKS, 0.5f, 0.25f);
@@ -105,13 +104,6 @@ public class CuttingBoardEntity extends CookingBlockEntity<CuttingBoardRecipe> {
     public void reset() {
         interactions = 0;
         setChanged();
-    }
-
-    public boolean resetRecipe(Level world) {
-        if (!isEmpty()) {
-            return !process(world, ItemStack.EMPTY, true);
-        }
-        return true;
     }
 
     @Override

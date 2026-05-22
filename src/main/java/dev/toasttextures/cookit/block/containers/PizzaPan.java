@@ -24,6 +24,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class PizzaPan extends BaseEntityBlock implements EntityBlock {
+    private static final VoxelShape SHAPE = box(0.0, 0.0, 0.0, 16.0, 1.0, 16.0);
+
     public PizzaPan(Properties settings) {
         super(settings);
     }
@@ -31,8 +33,6 @@ public class PizzaPan extends BaseEntityBlock implements EntityBlock {
     public @NotNull RenderShape getRenderShape(BlockState state) {
         return RenderShape.MODEL;
     }
-
-    private static final VoxelShape SHAPE = box(0.0, 0.0, 0.0, 16.0, 1.0, 16.0);
 
     @SuppressWarnings("deprecation")
     @Override

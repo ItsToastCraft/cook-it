@@ -1,6 +1,6 @@
 package dev.toasttextures.cookit;
 
-import dev.toasttextures.cookit.block.entity.CuttingBoardEntity;
+import dev.toasttextures.cookit.block.containers.CuttingBoard;
 import dev.toasttextures.cookit.data.PizzaToppingReloader;
 import dev.toasttextures.cookit.registries.*;
 import net.fabricmc.api.ModInitializer;
@@ -37,12 +37,7 @@ public class CookIt implements ModInitializer {
         Registry.register(BuiltInRegistries.PARTICLE_TYPE, idOf("oil"), OIL_PARTICLE);
         ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(new PizzaToppingReloader());
 
-        PlayerBlockBreakEvents.BEFORE.register((world, player, pos, state, blockEntity) -> {
-            if (blockEntity instanceof CuttingBoardEntity cuttingBoardEntity) {
-                return cuttingBoardEntity.resetRecipe(world);
-            }
-            return true;
-        });
+        PlayerBlockBreakEvents.BEFORE.register(CuttingBoard::beforeBlockBreak);
     }
 
     public static boolean isVanilla(ItemStack stack) {

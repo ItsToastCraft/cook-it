@@ -2,7 +2,6 @@ package dev.toasttextures.cookit.client.render.entity;
 
 import dev.toasttextures.cookit.block.entity.CuttingBoardEntity;
 import dev.toasttextures.cookit.registries.CookItItems;
-import it.unimi.dsi.fastutil.ints.Int2ObjectFunction;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
@@ -18,6 +17,7 @@ import dev.toasttextures.cookit.CookIt;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.level.Level;
 
+import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -58,9 +58,9 @@ public class CuttingBoardEntityRenderer implements BlockEntityRenderer<CuttingBo
         }
     }
 
-    private static void renderInPlace(Minecraft client, ItemStack stack, Int2ObjectFunction<ItemRenderPosition> location, PoseStack matrices, MultiBufferSource vertexConsumers, int light, int overlay) {
+    private static void renderInPlace(Minecraft client, ItemStack stack, ArrayList<ItemRenderPosition> location, PoseStack matrices, MultiBufferSource vertexConsumers, int light, int overlay) {
         for (int i = 0; i < stack.getCount(); i++) {
-            ItemRenderPosition pos = location.apply(i);
+            ItemRenderPosition pos = location.get(i);
             matrices.pushPose();
             matrices.scale(pos.extra(), pos.extra(), pos.extra());
             matrices.translate(pos.x(), pos.y(), pos.z());
@@ -69,8 +69,8 @@ public class CuttingBoardEntityRenderer implements BlockEntityRenderer<CuttingBo
         }
     }
 
-    private static final Int2ObjectFunction<ItemRenderPosition> RAW_CROISSANT_POS = (i) -> new ItemRenderPosition(-i / 2.5f + 0.5625f, -0.25f, (i % 2) / 3.0f - 0.125f, 0.5f);
-    private static final Int2ObjectFunction<ItemRenderPosition> RAW_CINNAMON_ROLL_POS = (i) -> new ItemRenderPosition(0.375f - 0.675f * (i % 2), -0.25f, 0.375f - 0.675f * (i / 2.0f), 0.5f);
+    private static final ArrayList<ItemRenderPosition> RAW_CROISSANT_POS = ItemRenderPosition.createCache((i) -> new ItemRenderPosition(-i / 2.5f + 0.5625f, -0.25f, (i % 2) / 3.0f - 0.125f, 0.5f), 4);
+    private static final ArrayList<ItemRenderPosition> RAW_CINNAMON_ROLL_POS = ItemRenderPosition.createCache((i) -> new ItemRenderPosition(0.375f - 0.625f * (i % 2), -0.25f, 0.375f - 0.675f * (i / 2.0f), 0.5f), 4);
 
     private static final EnumMap<Direction, Vec2> ITEM_POSITIONS = new EnumMap<>(Map.of(
         Direction.NORTH, new Vec2(0.5f, 0.625f),

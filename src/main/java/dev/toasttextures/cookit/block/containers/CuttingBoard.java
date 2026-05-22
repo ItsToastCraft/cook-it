@@ -22,6 +22,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -70,7 +71,10 @@ public class CuttingBoard extends BaseEntityBlock {
         if (!(world.getBlockEntity(pos) instanceof CuttingBoardEntity blockEntity)) return InteractionResult.PASS;
 
         ItemStack heldItem = player.getItemInHand(hand);
-
+        if (player.isCrouching()) {
+            pickUpCookingBoardItems(world, pos, player);
+            return InteractionResult.SUCCESS;
+        }
         if (heldItem.isEmpty()) {
             if (!blockEntity.process(world, heldItem, false)) {
                 pickUpCookingBoardItems(world, pos, player);
@@ -89,7 +93,7 @@ public class CuttingBoard extends BaseEntityBlock {
 
     // picks up items, boolean used to cancel the block break if the block wasn't empty
     public void pickUpCookingBoardItems(Level world, BlockPos pos, Player player) {
-        if (world.getBlockEntity(pos) instanceof CuttingBoardEntity blockEntity && player.isShiftKeyDown()) {
+        if (world.getBlockEntity(pos) instanceof CuttingBoardEntity blockEntity && player.isCrouching()) {
             player.getInventory().placeItemBackInInventory(blockEntity.retrieve());
             blockEntity.reset();
         }
@@ -98,7 +102,7 @@ public class CuttingBoard extends BaseEntityBlock {
     // cancels particles
     @Override
     public void playerWillDestroy(Level world, BlockPos pos, BlockState state, Player player) {
-        if (world.isClientSide && world.getBlockEntity(pos) instanceof CuttingBoardEntity cuttingBoardEntity && !cuttingBoardEntity.isEmpty()) {
+        if (world.isClientSide && world.getBlockEntity(pos) instanceof CuttingBoardEntity cuttingBoardEntity && !cuttingBoardEntity.isEmpty() && player.isCreative()) {
             return;
         }
         super.playerWillDestroy(world, pos, state, player);
@@ -115,6 +119,15 @@ public class CuttingBoard extends BaseEntityBlock {
         }
 
         super.attack(state, world, pos, player);
+    }
+
+    public static boolean beforeBlockBreak(Level world, Player player, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity) {
+        if (blockEntity instanceof CuttingBoardEntity cuttingBoardEntity && player.isCreative() && player.isCrouching()) {
+            if (!cuttingBoardEntity.isEmpty()) {
+                return !cuttingBoardEntity.process(world, ItemStack.EMPTY, true);
+            }
+        }
+        return true;
     }
 
     @Override

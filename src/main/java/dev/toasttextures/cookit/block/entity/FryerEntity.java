@@ -6,10 +6,6 @@ import dev.toasttextures.cookit.item.ItemStorage;
 import dev.toasttextures.cookit.recipes.FryerRecipe;
 import dev.toasttextures.cookit.registries.CookItBlockEntities;
 import dev.toasttextures.cookit.registries.CookItItems;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.SimpleContainer;
@@ -32,8 +28,6 @@ public class FryerEntity extends CookingBlockEntity<FryerRecipe> implements Tran
     private int maxProgress = 0;
     private ItemStack cachedItem = ItemStack.EMPTY;
     private @Nullable FryerRecipe cachedRecipe = null;
-    @Environment(EnvType.CLIENT)
-    private final SoundInstance inst = new FryerSoundInstance(this);
 
     public FryerEntity(BlockPos pos, BlockState state) {
         super(CookItBlockEntities.FRYER, FryerRecipe.Type.INSTANCE, pos, state, 1);
@@ -127,19 +121,21 @@ public class FryerEntity extends CookingBlockEntity<FryerRecipe> implements Tran
     }
 
     private void loadRecipe(Level world, BlockState state) {
-        if (world.isClientSide) return;
         cachedRecipe = getRecipes().stream().findFirst().orElse(null);
         if (cachedRecipe == null) return;
 
         status = CookingStatus.PROCESSING;
         maxProgress = cachedRecipe.getMaxProgress();
         setChanged();
-        Minecraft.getInstance().getSoundManager().play(inst);
+
+        world.setBlockAndUpdate(getBlockPos(), state.setValue(LIT, true));
+        if (world.isClientSide) {
+            FryerSoundInstance.startSoundInstance(this);
+        }
     }
 
     public static void tick(Level world, BlockPos pos, BlockState state, FryerEntity entity) {
         if (world.isClientSide) return;
-        CookIt.LOGGER.info(entity.getStatus().toString());
         ItemStack first = entity.getFirst();
 
         if (first.isEmpty()) {

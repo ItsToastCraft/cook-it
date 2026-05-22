@@ -1,10 +1,6 @@
 package dev.toasttextures.cookit.block.entity;
 
 import dev.toasttextures.cookit.client.sound.MicrowaveSoundInstance;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
@@ -25,8 +21,7 @@ public class MicrowaveEntity extends CookingBlockEntity<MicrowaveRecipe> {
     private int progress = 0;
     private int maxProgress = 0;
     private ItemStack cachedItem = ItemStack.EMPTY;
-    @Environment(EnvType.CLIENT)
-    private final SoundInstance inst = new MicrowaveSoundInstance(this);
+
     @Nullable
     private MicrowaveRecipe cachedRecipe = null;
 
@@ -77,8 +72,11 @@ public class MicrowaveEntity extends CookingBlockEntity<MicrowaveRecipe> {
         maxProgress = cachedRecipe.getMaxProgress();
 
         addMicrowaveEffects(world, getBlockPos(), state, true);
-        Minecraft.getInstance().getSoundManager().play(inst);
         setChanged();
+
+        if (world.isClientSide) {
+            MicrowaveSoundInstance.startSoundInstance(this);
+        }
     }
 
     public static void tick(Level world, BlockPos pos, BlockState state, MicrowaveEntity entity) {

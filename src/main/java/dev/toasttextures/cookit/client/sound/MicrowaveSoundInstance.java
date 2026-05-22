@@ -5,6 +5,7 @@ import dev.toasttextures.cookit.block.entity.MicrowaveEntity;
 import dev.toasttextures.cookit.registries.CookItSounds;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.AbstractTickableSoundInstance;
 import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.core.BlockPos;
@@ -18,12 +19,15 @@ public class MicrowaveSoundInstance extends AbstractTickableSoundInstance {
         super(CookItSounds.MICROWAVE_WORKING, SoundSource.BLOCKS, SoundInstance.createUnseededRandom());
         this.microwave = microwave;
         this.looping = true;
-        this.delay = 128;
-        this.volume = 0.75F;
+        this.volume = 1.0F;
         BlockPos pos = microwave.getBlockPos();
         this.x = pos.getX() + 0.5;
         this.y = pos.getY() + 0.5;
         this.z = pos.getZ() + 0.5;
+    }
+
+    public static void startSoundInstance(MicrowaveEntity entity) {
+        Minecraft.getInstance().getSoundManager().play(new MicrowaveSoundInstance(entity));
     }
 
     @Override
